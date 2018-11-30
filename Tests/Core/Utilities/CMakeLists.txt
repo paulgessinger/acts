@@ -71,3 +71,8 @@ add_test (NAME ResultTests COMMAND ResultTests)
 add_executable (TypeTraitsTest TypeTraitsTest.cpp)
 target_link_libraries (TypeTraitsTest PRIVATE ActsCore ActsTestsCommonHelpers)
 add_test (NAME TypeTraitsTest COMMAND TypeTraitsTest)
+
+add_executable (BoundingBoxTest BoundingBoxTest.cpp)
+target_link_libraries (BoundingBoxTest PRIVATE ActsCore)
+add_test (NAME BoundingBoxTest COMMAND BoundingBoxTest)
+
