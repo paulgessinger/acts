@@ -219,7 +219,7 @@ public:
 
     //std::cout << "tmin:" << tmin << "\ntmax:" << tmax << std::endl;
     
-    return tmin < tmax && tmin > 0.0;
+    return tmin < tmax && tmax > 0.0;// ((tmin > 0.0 && tmax > 0.0) || (tmin < 0.0 && tmax > 0.0));
   }
 
 private:
