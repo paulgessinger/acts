@@ -15,9 +15,9 @@ namespace Test {
 struct Object {};
 
 using ObjectBBox = Acts::AABB<Object>;
-using vertex_type = ObjectBBox::vertex_type;
-using vertex_array_type = ObjectBBox::vertex_array_type;
-using value_type = ObjectBBox::value_type;
+//using vertex_type = ObjectBBox::vertex_type;
+//using vertex_array_type = ObjectBBox::vertex_array_type;
+//using value_type = ObjectBBox::value_type;
 
 
 //void test_general() 
@@ -95,11 +95,12 @@ using value_type = ObjectBBox::value_type;
 
 void
 make_grid(std::vector<std::unique_ptr<ObjectBBox>>& boxes,
-          vertex_type             vmin,
-          vertex_type             vmax,
-          vertex_array_type       n,
-          vertex_type             hw)
+          ObjectBBox::vertex_type             vmin,
+          ObjectBBox::vertex_type             vmax,
+          ObjectBBox::vertex_array_type       n,
+          ObjectBBox::vertex_type             hw)
 {
+  using vertex_type = ObjectBBox::vertex_type;
   Object      o;
   vertex_type step = (vmax - vmin).array() / (n - 1);
   // vertex_type hw = step / 2.;
@@ -121,33 +122,36 @@ make_grid(std::vector<std::unique_ptr<ObjectBBox>>& boxes,
   }
 }
 
-std::array<std::vector<ObjectBBox*>, 8>
-make_octants(const std::vector<ObjectBBox*>& boxes) {
+//std::array<std::vector<ObjectBBox*>, 8>
+//make_octants(const std::vector<ObjectBBox*>& boxes) {
+  //using vertex_type = ObjectBBox::vertex_type;
+  //using vertex_array_type = ObjectBBox::vertex_array_type;
+  //using value_type = ObjectBBox::value_type;
 
-  std::array<std::vector<ObjectBBox*>, 8> octants;
-  // calc center of boxes
-  //ObjectBBox wrap = ObjectBBox::wrap(boxes);
-  ObjectBBox::vertex_type vmin, vmax;
-  std::tie(vmin, vmax) = ObjectBBox::wrap(boxes);
-  ObjectBBox::vertex_type glob_ctr = (vmin + vmax)/2.;
+  //std::array<std::vector<ObjectBBox*>, 8> octants;
+  //// calc center of boxes
+  ////ObjectBBox wrap = ObjectBBox::wrap(boxes);
+  //ObjectBBox::vertex_type vmin, vmax;
+  //std::tie(vmin, vmax) = ObjectBBox::wrap(boxes);
+  //ObjectBBox::vertex_type glob_ctr = (vmin + vmax)/2.;
 
-  //std::cout << vmin << std::endl << vmax << std::endl;
+  ////std::cout << vmin << std::endl << vmax << std::endl;
 
-  for(auto* box : boxes) {
-    vertex_type ctr = box->center() - glob_ctr;
-    if(ctr.x() < 0 && ctr.y() < 0 && ctr.z() < 0) {octants[0].push_back(box);}
-    if(ctr.x() > 0 && ctr.y() < 0 && ctr.z() < 0) {octants[1].push_back(box);}
-    if(ctr.x() < 0 && ctr.y() > 0 && ctr.z() < 0) {octants[2].push_back(box);}
-    if(ctr.x() > 0 && ctr.y() > 0 && ctr.z() < 0) {octants[3].push_back(box);}
+  //for(auto* box : boxes) {
+    //vertex_type ctr = box->center() - glob_ctr;
+    //if(ctr.x() < 0 && ctr.y() < 0 && ctr.z() < 0) {octants[0].push_back(box);}
+    //if(ctr.x() > 0 && ctr.y() < 0 && ctr.z() < 0) {octants[1].push_back(box);}
+    //if(ctr.x() < 0 && ctr.y() > 0 && ctr.z() < 0) {octants[2].push_back(box);}
+    //if(ctr.x() > 0 && ctr.y() > 0 && ctr.z() < 0) {octants[3].push_back(box);}
 
-    if(ctr.x() < 0 && ctr.y() < 0 && ctr.z() > 0) {octants[4].push_back(box);}
-    if(ctr.x() > 0 && ctr.y() < 0 && ctr.z() > 0) {octants[5].push_back(box);}
-    if(ctr.x() < 0 && ctr.y() > 0 && ctr.z() > 0) {octants[6].push_back(box);}
-    if(ctr.x() > 0 && ctr.y() > 0 && ctr.z() > 0) {octants[7].push_back(box);}
-  }
+    //if(ctr.x() < 0 && ctr.y() < 0 && ctr.z() > 0) {octants[4].push_back(box);}
+    //if(ctr.x() > 0 && ctr.y() < 0 && ctr.z() > 0) {octants[5].push_back(box);}
+    //if(ctr.x() < 0 && ctr.y() > 0 && ctr.z() > 0) {octants[6].push_back(box);}
+    //if(ctr.x() > 0 && ctr.y() > 0 && ctr.z() > 0) {octants[7].push_back(box);}
+  //}
 
-  return octants;
-}
+  //return octants;
+//}
 
 
 //std::tuple<std::vector<ObjectBBox>, std::vector<ObjectBBox>, ObjectBBox*>
@@ -234,26 +238,35 @@ make_octants(const std::vector<ObjectBBox*>& boxes) {
   //return world;
 //
 
-ObjectBBox* make_octree(std::vector<std::unique_ptr<ObjectBBox>>& store,
-                        const std::vector<ObjectBBox*>& prims,
+template <typename box_t>
+box_t* 
+make_octree(std::vector<std::unique_ptr<box_t>>& store,
+                        const std::vector<box_t*>& prims,
                         size_t max_depth = 1)
 {
-  std::function<ObjectBBox*(const std::vector<ObjectBBox*>&, size_t)> oct;
+  using vertex_type = typename box_t::vertex_type;
+
+  std::function<box_t*(const std::vector<box_t*>&, size_t)> oct;
   
-  oct = [&store, &max_depth, &oct] (const std::vector<ObjectBBox*>& lprims, size_t depth) -> ObjectBBox* {
+  oct = [&store, &max_depth, &oct] (const std::vector<box_t*>& lprims, size_t depth) -> box_t* {
+
+    if(lprims.size() == 1) {
+      // just return
+      return lprims.front();
+    }
     
     if (depth >= max_depth) {
       // just wrap them all up
-      auto bb = std::make_unique<ObjectBBox>(lprims);
+      auto bb = std::make_unique<box_t>(lprims);
       store.push_back(std::move(bb));
       return store.back().get();
     }
 
-    std::array<std::vector<ObjectBBox*>, 8> octants;
+    std::array<std::vector<box_t*>, 8> octants;
     // calc center of boxes
-    ObjectBBox::vertex_type vmin, vmax;
-    std::tie(vmin, vmax) = ObjectBBox::wrap(lprims);
-    ObjectBBox::vertex_type glob_ctr = (vmin + vmax)/2.;
+    vertex_type vmin, vmax;
+    std::tie(vmin, vmax) = box_t::wrap(lprims);
+    vertex_type glob_ctr = (vmin + vmax)/2.;
 
     for(auto* box : lprims) {
       vertex_type ctr = box->center() - glob_ctr;
@@ -269,19 +282,33 @@ ObjectBBox* make_octree(std::vector<std::unique_ptr<ObjectBBox>>& store,
     }
 
 
-    std::vector<ObjectBBox*> sub_octs;
+    std::vector<box_t*> sub_octs;
     for(const auto& sub_prims : octants) {
     //for (size_t i=0;i<octants.size();i++) {
-        //const std::vector<ObjectBBox*>& sub_prims = octants.at(i); 
+        //const std::vector<box_t*>& sub_prims = octants.at(i); 
+      if (sub_prims.size() < 8) {
+        if(sub_prims.size() < 1) {
+           // done
+        }
+        else if(sub_prims.size() == 1) {
+          sub_octs.push_back(sub_prims.front());
+        }
+        else {
+          store.push_back(std::make_unique<box_t>(sub_prims));
+          sub_octs.push_back(store.back().get());
+        }
+      } 
+      else {
         sub_octs.push_back(oct(sub_prims, depth+1));
+      }
     }
 
-    auto bb = std::make_unique<ObjectBBox>(sub_octs);
+    auto bb = std::make_unique<box_t>(sub_octs);
     store.push_back(std::move(bb));
     return store.back().get();
   };
 
-  ObjectBBox* top = oct(prims, 0);
+  box_t* top = oct(prims, 0);
   return top;
 }
 
@@ -295,14 +322,14 @@ void test_points() {
       [](const auto& box) { return box.get(); });
   
   ObjectBBox* top;
-  top = make_octree(boxstore, prim_boxes, 2);
+  top = make_octree(boxstore, prim_boxes, 0);
 
   std::ofstream obj("octree.obj");
   size_t n_vtx = 1;
   
   const ObjectBBox* node = top;
   do {
-    std::cout << *node << std::endl;
+    //std::cout << *node << std::endl;
     node->obj(obj, n_vtx);
     if(node->hasEntity()) {
       node = node->getSkip();
@@ -314,16 +341,151 @@ void test_points() {
 
   obj.close();
   
+  auto bench = [](const std::vector<ObjectBBox::vertex_type>& points,
+                  const std::vector<ObjectBBox*>& prims,
+                  const ObjectBBox*               world)
+      -> std::tuple<size_t, size_t, double, double> {
+    size_t n_intersects = 0;
 
-  //std::vector<std::unique_ptr<ObjectBBox>> octants;
+    auto dumb_search = [&](const ObjectBBox::vertex_type& v) -> const ObjectBBox* {
+      for (const auto& bb : prims) {
+        n_intersects++;
+        if (bb->intersect(v)) { return bb; }
+      }
+      return nullptr;
+    };
 
-  return;
+    auto bvh_search = [&](const ObjectBBox::vertex_type& v) -> const ObjectBBox* {
+      const ObjectBBox* node = world;
+      do {
+        n_intersects++;
+        if (node->intersect(v)) {
+
+          if (node->hasEntity()) {
+            // found primitive
+            // hit = node;
+            // break;
+            return node;
+          } else {
+            // go over children
+            node = node->getLeftChild();
+          }
+        } else {
+          node = node->getSkip();
+        }
+      } while (node != nullptr);
+      return nullptr;
+    };
+
+    std::vector<const ObjectBBox*> dumb_hits;
+    dumb_hits.reserve(points.size());
+
+    std::chrono::steady_clock::time_point begin
+        = std::chrono::steady_clock::now();
+
+    // dumb search algorithm
+    for (const auto& v : points) { dumb_hits.push_back(dumb_search(v)); }
+
+    std::chrono::steady_clock::time_point end
+        = std::chrono::steady_clock::now();
+    double diff_dumb
+        = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin)
+              .count()
+        / 1000.;
+    //std::cout << "dumb = " << diff_dumb << "s, " << n_intersects
+              //<< " intersects" << std::endl;
+
+    size_t n_int_dumb = n_intersects;
+
+    std::vector<const ObjectBBox*> bvh_hits;
+    bvh_hits.reserve(points.size());
+    n_intersects = 0;
+
+    begin = std::chrono::steady_clock::now();
+
+    for (const auto& v : points) { bvh_hits.push_back(bvh_search(v)); }
+
+    end = std::chrono::steady_clock::now();
+    double diff_bvh
+        = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin)
+              .count()
+        / 1000.;
+    //std::cout << "bvh = " << diff_bvh << "s, " << n_intersects
+              //<< " intersects" << std::endl;
+
+    size_t n_int_bvh = n_intersects;
+
+    for (size_t i = 0; i < points.size(); i++) {
+      auto dumb = dumb_hits.at(i);
+      auto bvh  = bvh_hits.at(i);
+      // std::cout << "dumb: " << dumb << ", bvh: " << bvh << std::endl;
+      assert(dumb == bvh);
+    }
+
+    return {n_int_dumb, n_int_bvh, diff_dumb, diff_bvh};
+  };
+
+    
+  ObjectBBox::vertex_array_type width(1, 1, 1);
+  ObjectBBox::vertex_array_type space(0.2, 0.2, 0.2);
+
+  std::mt19937 rng(42);
+  std::uniform_real_distribution<ObjectBBox::value_type> dist;
+
+  std::vector<size_t> npoints = {10, 100, 1000, 10000, 100000};
+  size_t n_boxes_1d_max = 20;
+
+  std::vector<size_t> octree_depths = {1, 2, 3, 4, 5};
+
+  std::ofstream csv_centers("centers.csv");
+  csv_centers << "n_boxes,octree_depth,n_int_dumb,n_int_bvh,diff_dumb,diff_bvh" << std::endl;
+
+  for(size_t n_boxes_1d=2;n_boxes_1d<n_boxes_1d_max;n_boxes_1d++) {
+    for(size_t octree_depth : octree_depths) {
+      // produce primitives for problem size
+      std::vector<std::unique_ptr<ObjectBBox>> lboxstore;
+      std::cout << "n_box_1D: " << n_boxes_1d << " oct_d: " << octree_depth << std::flush;
+
+      ObjectBBox::vertex_array_type n(n_boxes_1d, n_boxes_1d, n_boxes_1d);
+      ObjectBBox::vertex_type vmin = -1*n*(width+space);
+      ObjectBBox::vertex_type vmax = +1*n*(width+space);
+
+      //std::cout << vmin << "\n" << vmax << std::endl;
+      make_grid(lboxstore, vmin, vmax, n, width);
+
+      std::vector<ObjectBBox*> lprim_boxes;
+      prim_boxes.reserve(lboxstore.size());
+      std::transform(lboxstore.begin(),lboxstore.end(), std::back_inserter(lprim_boxes),
+          [](const auto& box) { return box.get(); });
+
+      ObjectBBox* ltop;
+      ltop = make_octree(boxstore, lprim_boxes, octree_depth);
+
+      std::vector<ObjectBBox::vertex_type> centers;
+      centers.reserve(lprim_boxes.size());
+      for(const auto* prim: lprim_boxes) {
+        centers.push_back(prim->center());
+      }
+      std::shuffle(centers.begin(), centers.end(), rng);
+
+      size_t n_int_dumb, n_int_bvh;
+      double diff_dumb, diff_bvh;
+      std::tie(n_int_dumb, n_int_bvh, diff_dumb, diff_bvh) = bench(centers, prim_boxes, top);
+      csv_centers << n_boxes_1d << "," << octree_depth << "," << n_int_dumb << "," << n_int_bvh
+                  << "," << diff_dumb << "," << diff_bvh << std::endl;;
+
+      std::cout << ": dumb/bvh: " << diff_dumb << "s " << diff_bvh << "s, " << n_int_dumb << ", " << n_int_bvh;
+      std::cout << std::endl;
+    }
+
+  }
+
+  csv_centers.close();
 
 
-  //std::unique_ptr<ObjectBBox> world = make_geometry(boxes, octants);
+  //for(size_t size : sizes) {
 
-  //std::mt19937 rng(42);
-  //std::uniform_real_distribution<value_type> dist;
+  //}
 
   //std::vector<vertex_type> points;
   
@@ -332,88 +494,6 @@ void test_points() {
   //}
 
   //std::shuffle(points.begin(), points.end(), rng);
-  
-
-  //auto bench = [&boxes, &world](const std::vector<vertex_type>& points) -> std::tuple<size_t, size_t, double, double> {
-    //size_t n_intersects = 0;
-
-    //auto dumb_search = [&](const vertex_type& v) -> const ObjectBBox* {
-      //for(const auto& bb : boxes) {
-        //n_intersects++;
-        //if(bb->intersect(v)) {
-          //return bb.get();
-        //}
-      //}
-      //return nullptr;
-    //};
-
-    //auto bvh_search = [&](const vertex_type& v) -> const ObjectBBox* {
-      //const ObjectBBox* node = world.get();
-      //do {
-        //n_intersects++;
-        //if(node->intersect(v)) {
-          
-          //if(node->hasEntity()) {
-            //// found primitive
-            ////hit = node;
-            ////break;
-            //return node;
-          //}
-          //else {
-            //// go over children
-            //node = node->getLeftChild();
-          //}
-        //}
-        //else {
-          //node = node->getSkip();
-        //}
-      //}
-      //while(node != nullptr);
-      //return nullptr;
-    //};
-
-    //std::vector<const ObjectBBox*> dumb_hits;
-    //dumb_hits.reserve(points.size());
-
-    //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
-    //// dumb search algorithm
-    //for(const auto& v : points) {
-      //dumb_hits.push_back(dumb_search(v));
-    //}
-
-    //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    //double diff_dumb = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() / 1000.;
-    //std::cout << "Time difference = " << diff_dumb << "s, " << n_intersects << " intersects" <<std::endl;
-
-    //size_t n_int_dumb = n_intersects;
-
-    //std::vector<const ObjectBBox*> bvh_hits;
-    //bvh_hits.reserve(points.size());
-    //n_intersects = 0;
-
-    //begin = std::chrono::steady_clock::now();
-
-    //for(const auto& v : points) {
-      //bvh_hits.push_back(bvh_search(v));
-    //}
-
-    //end = std::chrono::steady_clock::now();
-    //double diff_bvh = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() / 1000.;
-    //std::cout << "Time difference = " << diff_bvh << "s, " << n_intersects << " intersects" <<std::endl;
-    
-    //size_t n_int_bvh = n_intersects;
-
-    //for(size_t i=0;i<points.size();i++) {
-      //auto dumb = dumb_hits.at(i);
-      //auto bvh = bvh_hits.at(i);
-      ////std::cout << "dumb: " << dumb << ", bvh: " << bvh << std::endl;
-      //assert(dumb == bvh);
-    //}
-
-    //return {n_int_dumb, n_int_bvh, diff_dumb, diff_bvh};
-
-  //};
 
   //bench(points);
 
@@ -452,6 +532,8 @@ void test_points() {
 
 void test_intersect_points()
 {
+  using vertex_type = ObjectBBox::vertex_type;
+
   Object o;
   ObjectBBox bb(o, {0, 0, 0}, {1, 1, 1});
   vertex_type p; 
@@ -496,12 +578,13 @@ void test_intersect_points()
   assert(!bb.intersect(p));
   p = {-1, -1, -1};
   assert(!bb.intersect(p));
+
 }
 
 void test_intersect_rays()
 {
-
   using Box = AxisAlignedBoundingBox<Object, float, 2>;
+
   Object o;
   Box bb(o, {-1, -1}, {1, 1});
 
@@ -622,28 +705,49 @@ void test_intersect_rays()
   ray = {{-2, 0}, {0.1, 0.5}};
   assert(!bb.intersect(ray));
 
+  // starting point inside
+  ray = {{0, 0,}, {-1, 0}};
+  assert(bb.intersect(ray));
+  ray = {{0, 0,}, {1, 0}};
+  assert(bb.intersect(ray));
+  ray = {{0, 0,}, {0, -1}};
+  assert(bb.intersect(ray));
+  ray = {{0, 0,}, {0, 1}};
+  assert(bb.intersect(ray));
+
+
+
+  using vertex_type3 = ObjectBBox::vertex_type;
 
   // lets make sure it also works in 3d
   ObjectBBox bb3(o, {-1, -1, -1}, {1, 1, 1});
   Ray<float, 3> ray3({0, 0, -2}, {0, 0, 1});
   assert(bb3.intersect(ray3));
 
+  // facing away from box
   ray3 = {{0, 0, -2}, {0, 0, -1}};
   assert(!bb3.intersect(ray3));
-  
+
   ray3 = {{0, 2, -2}, {0, 0, 1}};
   assert(!bb3.intersect(ray3));
   
   ray3 = {{0, -2, -2}, {0, 0, 1}};
   assert(!bb3.intersect(ray3));
 
+  // right on slab
   ray3 = {{0, 1, -2}, {0, 0, 1}};
   assert(!bb3.intersect(ray3));
 
+  // right on slab
   ray3 = {{0, -1, -2}, {0, 0, 1}};
-  assert(!bb3.intersect(ray3));
+  assert(bb3.intersect(ray3));
 
+  // right on slab
   ray3 = {{-1, 0, -2 }, {0, 0, 1}};
+  assert(!bb3.intersect(ray3));
+  
+  // right on slab
+  ray3 = {{1, 0, -2 }, {0, 0, 1}};
   assert(!bb3.intersect(ray3));
 
   ray3 = {{-0.95, 0, -2 }, {0, 0, 1}};
@@ -652,40 +756,54 @@ void test_intersect_rays()
   // some off-axis rays
   ObjectBBox::vertex_type p(0, 0, -2);
 
-  ray3 = {p, vertex_type(1, 1, 1)-p};
+  ray3 = {p, vertex_type3(1, 1, 1)-p};
   assert(bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(-1, 1, 1)-p};
+  ray3 = {p, vertex_type3(-1, 1, 1)-p};
   assert(bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(-1, -1, 1)-p};
+  ray3 = {p, vertex_type3(-1, -1, 1)-p};
   assert(bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(1, -1, 1)-p};
+  ray3 = {p, vertex_type3(1, -1, 1)-p};
   assert(bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(1.1, 0, -1)-p};
+  ray3 = {p, vertex_type3(1.1, 0, -1)-p};
   assert(!bb3.intersect(ray3));
   
-  ray3 = {p, vertex_type(-1.1, 0, -1)-p};
+  ray3 = {p, vertex_type3(-1.1, 0, -1)-p};
   assert(!bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(0, 1.1, -1)-p};
+  ray3 = {p, vertex_type3(0, 1.1, -1)-p};
   assert(!bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(0, -1.1, -1)-p};
+  ray3 = {p, vertex_type3(0, -1.1, -1)-p};
   assert(!bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(0.9, 0, -1)-p};
+  ray3 = {p, vertex_type3(0.9, 0, -1)-p};
   assert(bb3.intersect(ray3));
   
-  ray3 = {p, vertex_type(-0.9, 0, -1)-p};
+  ray3 = {p, vertex_type3(-0.9, 0, -1)-p};
   assert(bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(0, 0.9, -1)-p};
+  ray3 = {p, vertex_type3(0, 0.9, -1)-p};
   assert(bb3.intersect(ray3));
 
-  ray3 = {p, vertex_type(0, -0.9, -1)-p};
+  ray3 = {p, vertex_type3(0, -0.9, -1)-p};
+  assert(bb3.intersect(ray3));
+
+  ray3 = {{0, 0, 0}, {1, 0, 0}};
+  assert(bb3.intersect(ray3));
+  ray3 = {{0, 0, 0}, {0, 1, 0}};
+  assert(bb3.intersect(ray3));
+  ray3 = {{0, 0, 0}, {0, 0, 1}};
+  assert(bb3.intersect(ray3));
+  
+  ray3 = {{0, 0, 0}, {-1, 0, 0}};
+  assert(bb3.intersect(ray3));
+  ray3 = {{0, 0, 0}, {0, -1, 0}};
+  assert(bb3.intersect(ray3));
+  ray3 = {{0, 0, 0}, {0, 0, -1}};
   assert(bb3.intersect(ray3));
 
 }
