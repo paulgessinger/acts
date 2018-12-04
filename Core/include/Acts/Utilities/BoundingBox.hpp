@@ -274,7 +274,7 @@ public:
 
   std::ostream& dump(std::ostream& os) const
   {
-    os << "AxisAlignedBoundingBox(center=(";
+    os << "AABB(ctr=(";
 
     for(size_t i=0;i<DIM;i++) {
       if (i>0) {
