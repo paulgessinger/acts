@@ -54,7 +54,7 @@ public:
     }
     os << ")";
 
-    os << m_idir;
+    //os << m_idir;
 
     return os;
   }
@@ -84,6 +84,8 @@ public:
   using vertex_array_type = Eigen::Array<value_t, DIM, 1>;
   using entity_type = entity_t;
   using value_type = value_t;
+
+  static const size_t dim = DIM;
 
   // if we construct this with an entity, the entity can not be null
   AxisAlignedBoundingBox(const entity_t& entity, const vertex_type& vmin, const vertex_type& vmax)
@@ -194,7 +196,6 @@ public:
   bool
   intersect(const Ray<value_type, DIM>& ray) const
   {
-    //std::cout << "--- " << ray << std::endl;
 
     const vertex_type& origin = ray.origin();
     const vertex_array_type& idir = ray.idir();
@@ -203,7 +204,6 @@ public:
     vertex_array_type t0s = (m_vertices[0] - origin).array() * idir;
     vertex_array_type t1s = (m_vertices[1] - origin).array() * idir;
     
-    //std::cout << "t0s:\n" << t0s << "\nt1s\n" << t1s << "\n\n";
 
     // this is non-compliant with IEEE-754-2008, NaN gets propagated through
     // http://eigen.tuxfamily.org/bz/show_bug.cgi?id=564
@@ -212,11 +212,13 @@ public:
     vertex_array_type tsmaller = t0s.min(t1s);
     vertex_array_type tbigger = t0s.max(t1s);
 
-    //std::cout << "tsmaller:\n" << tsmaller << "\ntbigger\n" << tbigger << "\n\n";
 
     value_type tmin = tsmaller.maxCoeff();
     value_type tmax = tbigger.minCoeff();
 
+    //std::cout << "--- " << ray << " -> " << this << std::endl;
+    //std::cout << "t0s:\n" << t0s << "\nt1s\n" << t1s << "\n\n";
+    //std::cout << "tsmaller:\n" << tsmaller << "\ntbigger\n" << tbigger << "\n\n";
     //std::cout << "tmin:" << tmin << "\ntmax:" << tmax << std::endl;
     
     return tmin < tmax && tmax > 0.0;// ((tmin > 0.0 && tmax > 0.0) || (tmin < 0.0 && tmax > 0.0));
