@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Utilities/Helpers.hpp"
 #include <array>
 #include <vector>
 #include <iostream>
@@ -17,6 +18,285 @@
 #include <algorithm>
 
 namespace Acts {
+
+template <typename value_t, size_t DIM, size_t SIDES>
+class Frustum
+{
+  static_assert(DIM >= SIDES, "Cannot have DIM<=SIDES");
+  using transform_t = Eigen::Transform<value_t, DIM, Eigen::Affine>;
+  using translation_t = Eigen::Translation<value_t, DIM>;
+public:
+  using value_type = value_t;
+  using vertex_type = ActsVector<value_t, DIM>;
+  using vertex_array_type = Eigen::Array<value_t, DIM, 1>;
+
+  static const size_t dim = DIM;
+  static const size_t sides = SIDES;
+
+  template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
+  Frustum(const vertex_type& origin, const vertex_type& dir, value_type opening_angle)
+    : m_origin(origin)
+  {
+    using rotation_t = Eigen::Rotation2D<value_type>;
+
+    static_assert(SIDES==2, "2D frustum can only have 2 sides");
+    std::cout << "2DIM constructor" << std::endl;
+    translation_t translation(origin);
+    value_type angle = VectorHelpers::phi(dir);
+    Eigen::Rotation2D<value_type> rot(-angle);
+    m_transform = transform_t(translation * rot);
+
+    value_type normal_angle = 0.5*M_PI - 0.5*opening_angle;
+    vertex_type normal1 = rotation_t(normal_angle) * vertex_type::UnitX();
+    vertex_type normal2 = rotation_t(-normal_angle) * vertex_type::UnitX();
+
+    m_normals = {
+      rot * vertex_type::UnitX(),
+      rot * normal1,
+      rot * normal2
+    };
+
+  }
+  
+  template <size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
+  Frustum(const vertex_type& origin, const vertex_type& dir, const vertex_type& up, value_type opening_angle)
+    : m_origin(origin)
+  {
+    using angle_axis_t = Eigen::AngleAxis<value_type>;
+
+    std::cout << "3DIM constructor" << std::endl;
+    
+    const vertex_type ldir = vertex_type::UnitZ();
+    const vertex_type lup = vertex_type::UnitX();
+
+    // perpendicular component of up vector
+    vertex_type up_perp = up - (up.dot(dir)*dir).normalized();
+    
+    m_transform = (
+        Eigen::Quaternion<value_type>().setFromTwoVectors(ldir, dir)
+        *Eigen::Quaternion<value_type>().setFromTwoVectors(lup, up_perp)
+    );
+
+    m_normals[0] = dir;
+
+    const value_type phi_sep = 2*M_PI / sides;
+    transform_t rot;
+    rot = angle_axis_t(phi_sep, ldir);
+
+    value_type half_opening_angle = opening_angle/2.;
+    auto calculate_normal = [&ldir, &half_opening_angle](const vertex_type& out) 
+      -> vertex_type
+    {
+      const vertex_type tilt_axis = -1*out.cross(ldir);
+      return (-1 * (angle_axis_t(half_opening_angle, tilt_axis) * out)).normalized();
+    };
+
+    vertex_type current_outward = lup;
+    //vertex_type current_normal;
+    //current_normal = -1*current_outward;
+    //current_normal = angle_axis_t(opening_angle/2., tilt_axis) * current_normal;
+    //current_normal
+    //m_normals[1] = current_normal;
+    m_normals[1] = calculate_normal(current_outward);
+
+    for(size_t i=1;i<sides;i++) {
+      current_outward = rot * current_outward;
+      //m_normals[i+1] = -1*(current_outward.normalized());
+      m_normals[i+1] = calculate_normal(current_outward);
+    }
+
+  }
+
+  //Frustum(const vertex_type& origin, const vertex_type& dir, const vertex_type& up)
+    //: m_origin(origin), m_dir(dir)
+  //{
+    //// Derive transform from origin and direction.
+    //// This is different for 2D and 3D (not sure it works above 3D)
+    //// We use runtime branches here, one could refactor this
+    //// into separate sub-methods using SFINAE on DIM, if
+    //// this turns out to be a bottleneck.
+    //translation_t translation = origin;
+
+    //assert(DIM == 2 || DIM == 3);
+    //if(DIM == 2) {
+
+      //value_type angle = VectorHelpers::phi(m_dir);
+      //Eigen::Rotation2D<value_type> rot(angle);
+      //m_transform = transform_t(translation * rot);
+
+    //}
+    //else { // DIM == 3
+
+      //vertex_type ref = vertex_type::UnitX();
+      ////vertex_type axis = m_dir.cross(ref);
+      
+      //m_transform = Eigen::Quaternion<value_type>().setFromTwoVectors(ref, m_dir);
+
+      
+    //}
+
+    //std::cout << m_transform.matrix() << std::endl;
+
+
+
+  //}
+
+  std::ofstream& obj(std::ofstream& os, size_t& n_vtx) const
+  {
+    using angle_axis_t = Eigen::AngleAxis<value_type>;
+    assert(DIM == 3);
+
+    auto draw_line = [&os, &n_vtx](const vertex_type& start,
+                                   const vertex_type& end)
+    {
+    
+      os << "v " << start.x() << " " << start.y() << " " << start.z() << std::endl;
+      os << "v " << end.x() << " " << end.y() << " " << end.z() << std::endl;
+
+      os << "l " << n_vtx << " " << n_vtx+1 << std::endl;
+      n_vtx += 2;
+    };
+
+    auto draw_plane = [&os, &n_vtx](const std::vector<vertex_type>& vtxs)
+    {
+      for(const auto& v : vtxs) {
+        os << "v " << v.x() << " " << v.y() << " " << v.z() << std::endl;
+      }
+
+      os << "f";
+      for(size_t i=0;i<vtxs.size();i++) {
+        os << " " << n_vtx+i;
+      }
+      os << std::endl;
+      n_vtx += vtxs.size();
+
+      //os << "f " << n_vtx << " " << n_vtx+1 << " " << n_vtx+2 << " " << n_vtx+3 << std::endl;
+      //n_vtx += 4;
+    };
+    
+    translation_t trans(m_origin);
+    value_type opening_angle = M_PI/2. - std::acos(m_normals[0].dot(m_normals[1]));
+    value_type normal_angle = std::acos(m_normals[1].dot(m_normals[2]));
+    std::cout << opening_angle << std::endl;
+    for(size_t i=0;i<m_normals.size();i++) {
+      const auto& normal = m_normals.at(i);
+    //for(const auto& normal : m_normals) {
+      transform_t l2g(trans);
+      l2g = l2g * Eigen::Quaternion<value_type>().setFromTwoVectors(vertex_type::UnitZ(), normal);
+
+      std::vector<vertex_type> vtxs = {
+        {10, 10, 0},
+        {10, -10, 0},
+        {-10, -10, 0},
+        {-10, 10, 0},
+      };
+
+      for(auto& v : vtxs) {
+        v = l2g * v;
+      }
+
+      draw_line(m_origin, m_origin + normal*5);
+      draw_plane(vtxs);
+
+      //if(i==0) continue;
+     
+      //const auto& dir = m_normals[0];
+      ////draw_plane({
+          ////m_origin, dir*10, normal*10
+      ////});
+
+      ////vertex_type left = 10*dir;
+      ////vertex_type right = 10*dir;
+      //const vertex_type tilt_axis = normal.cross(dir);
+      ////transform_t tilt;
+      ////tilt = angle_axis_t(opening_angle, tilt_axis);
+      ////left = tilt * left;
+      ////right = tilt * right;
+
+      //vertex_type left = l2g * vertex_type::UnitX();
+      //vertex_type right = l2g * vertex_type::UnitX();
+
+      //draw_plane({m_origin, left, dir*10});
+
+      ////// rotate around normal now!
+      //value_type angle = M_PI/4.;
+      //left = angle_axis_t(angle, normal) * left;
+      //right = angle_axis_t(-angle, normal) * right;
+
+      //draw_plane({m_origin, left, right});
+
+      //if(i>0) break;
+
+    }
+
+
+    return os;
+  }
+
+  std::ofstream& svg(std::ofstream& os) const
+  {
+    assert(DIM == 2);
+
+    value_type w = 500;
+    vertex_type mid(w/2., w/2.);
+
+    os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
+    os << "<svg width=\"" << w << "\" height=\"" << w << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+
+    std::array<std::string, 3> colors({"orange", "blue", "red"});
+
+    auto draw_line = [&os](const vertex_type& left, 
+                           const vertex_type& right,
+                           std::string color, 
+                           size_t width) {
+      os << "<line ";
+
+      os << "x1=\"" << left.x() << "\" ";
+      os << "x2=\"" << right.x() << "\" ";
+      os << "y1=\"" << left.y() << "\" "; 
+      os << "y2=\"" << right.y() << "\" ";
+
+      os <<" stroke=\"" << color << "\" stroke-width=\"" << width << "\"/>\n";
+
+    };
+
+    auto color = colors.begin();
+    for(const auto& normal : m_normals) {
+      vertex_type plane_dir(normal.y(), -normal.x());
+      plane_dir.normalize();
+      value_type s = 10;
+      const value_type unit = 10;
+
+      vertex_type left = (m_origin - s*plane_dir) * unit + mid;
+      vertex_type right = (m_origin + s*plane_dir) * unit + mid;
+      
+      draw_line(left, right, *color, 2);
+
+      draw_line(mid+m_origin*unit, mid+(m_origin+normal*5)*unit, *color, 5);
+
+
+      ++color;
+      
+
+    }
+
+    os << "</svg>";
+
+    return os;
+
+  }
+
+private:
+  vertex_type m_origin;
+  vertex_type m_dir;
+  transform_t m_transform;
+  // need one more for direction we're facing
+  std::array<vertex_type, SIDES+1> m_normals;
+
+};
+
+
+
 
 template <typename value_t, size_t DIM>
 class Ray 
@@ -90,7 +370,8 @@ public:
   // if we construct this with an entity, the entity can not be null
   AxisAlignedBoundingBox(const entity_t& entity, const vertex_type& vmin, const vertex_type& vmax)
     : m_entity(&entity),
-      m_vertices({vmin, vmax}),
+      m_vmin(vmin),
+      m_vmax(vmax),
       m_center((vmin + vmax)/2.),
       m_width(vmax - vmin),
       m_iwidth(1/m_width)
@@ -120,10 +401,10 @@ public:
     m_right_child = boxes.back();
     m_skip = nullptr;
 
-    std::tie(m_vertices[0], m_vertices[1]) = wrap(boxes, envelope);
+    std::tie(m_vmin, m_vmax) = wrap(boxes, envelope);
 
-    m_center = (m_vertices[0] + m_vertices[1])/2.;
-    m_width = m_vertices[1] - m_vertices[0];
+    m_center = (m_vmin + m_vmax)/2.;
+    m_width = m_vmax - m_vmin;
     m_iwidth = 1/m_width;
   }
 
@@ -141,8 +422,8 @@ public:
         vertex_array_type::Constant(std::numeric_limits<value_type>::max()));
 
     for(size_t i=0;i<boxes.size();i++) {
-      vmin = vmin.min(boxes[i]->m_vertices[0].array());
-      vmax = vmax.max(boxes[i]->m_vertices[1].array());
+      vmin = vmin.min(boxes[i]->min().array());
+      vmax = vmax.max(boxes[i]->max().array());
     }
 
     vmax += envelope;
@@ -180,7 +461,7 @@ public:
   bool
   intersect(const vertex_type& point) const
   {
-    vertex_array_type t = (point - m_vertices[0]).array() * m_iwidth;
+    vertex_array_type t = (point - m_vmin).array() * m_iwidth;
     return t.minCoeff() >= 0 && t.maxCoeff() < 1;
   }
 
@@ -201,8 +482,8 @@ public:
     const vertex_array_type& idir = ray.idir();
     // this is NaN origin is on box boundary and ray is parallel to
     // that boundary, since 0*inf = NaN. 
-    vertex_array_type t0s = (m_vertices[0] - origin).array() * idir;
-    vertex_array_type t1s = (m_vertices[1] - origin).array() * idir;
+    vertex_array_type t0s = (m_vmin - origin).array() * idir;
+    vertex_array_type t1s = (m_vmax - origin).array() * idir;
     
 
     // this is non-compliant with IEEE-754-2008, NaN gets propagated through
@@ -261,17 +542,16 @@ public:
   const vertex_type& center() const
   {
     return m_center;
-    //return (m_vertices[0] + m_vertices[1]) /2.;
   }
 
   const vertex_type& min() const
   {
-    return m_vertices[0];
+    return m_vmin;
   }
 
   const vertex_type& max() const
   {
-    return m_vertices[1];
+    return m_vmax;
   }
 
   std::ostream& dump(std::ostream& os) const
@@ -291,7 +571,7 @@ public:
       if (i>0) {
         os << ", ";
       }
-      os << m_vertices[0][i];
+      os << m_vmin[i];
     }
 
     os << ") vmax=(";
@@ -300,7 +580,7 @@ public:
       if (i>0) {
         os << ", ";
       }
-      os << m_vertices[1][i];
+      os << m_vmax[i];
     }
 
     os << "))";
@@ -312,8 +592,8 @@ public:
   {
     assert(DIM == 3);
     using face_t = std::array<vertex_type, 4>;
-    const vertex_type& vmin = m_vertices[0];
-    const vertex_type& vmax = m_vertices[1];
+    const vertex_type& vmin = m_vmin;
+    const vertex_type& vmax = m_vmax;
 
     face_t min_x = {
       vertex_type(vmin.x(), vmin.y(), vmin.z()),
@@ -381,7 +661,8 @@ public:
 
 private:
   const entity_t* m_entity;
-  std::array<vertex_type, 2> m_vertices;
+  vertex_type m_vmin;
+  vertex_type m_vmax;
   vertex_type m_center;
   vertex_array_type m_width;
   vertex_array_type m_iwidth;
