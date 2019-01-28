@@ -328,20 +328,108 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
 
   }
   
-  BOOST_TEST_CONTEXT("3D")
+  BOOST_TEST_CONTEXT("3D - 3 Sides")
   {
 
     using Frustum3 = Frustum<float, 3, 3>;
-    Frustum3 fr({2, 0, 0}, {1, 0, 1}, {0, 1, 0}, 3*M_PI/4.);
-    
-    std::ofstream os("frust3d.obj");
     size_t n_vtx = 1;
-    fr.obj(os, n_vtx);
+    //Frustum3 fr({2, 0, 0}, {1, 0, 1}, {0, 1, 0}, 1*M_PI/4.);
+    auto make = [&](double angle, ActsVectorF<3> origin, std::ofstream& os) {
+      float far = 1;
+      Frustum3 fr(origin, {0, 0, 1}, angle);
+      fr.obj(os, n_vtx, far);
+      fr = Frustum3(origin, {0, 0, -1}, angle);
+      fr.obj(os, n_vtx, far);
+      fr = Frustum3(origin, {1, 0, 0}, angle);
+      fr.obj(os, n_vtx, far);
+      fr = Frustum3(origin, {-1, 0, 0}, angle);
+      fr.obj(os, n_vtx, far);
+      
+      fr = Frustum3(origin, {0, 1, 0}, angle);
+      fr.obj(os, n_vtx, far);
+      fr = Frustum3(origin, {0, -1, 0}, angle);
+      fr.obj(os, n_vtx, far);
+    };
+
+    std::ofstream os("frust3d_dir.obj");
+    size_t s = 5;
+    double min = -10, max = 10;
+    double step = (max-min)/double(s);
+    for(size_t i=0;i<=s;i++) {
+      for(size_t j=0;j<=s;j++) {
+        for(size_t k=0;k<=s;k++) {
+          ActsVectorF<3> origin(min + i*step, min+j*step, min+k*step);
+          //std::cout << origin.transpose() << std::endl;
+          make(M_PI/4., origin, os);
+        }
+      }
+    }
     os.close();
 
+    os = std::ofstream("frust3D_angle.obj");
+    n_vtx = 1;
+    size_t n = 10;
+    Eigen::Affine3f rot;
+    for(size_t i=0;i<=n;i++) {
+      ActsVectorF<3> origin(i*4, 0, 0);
+      rot = Eigen::AngleAxisf(M_PI/float(n)*i, ActsVectorF<3>::UnitY());
+      float angle = (M_PI/2.)/float(n) * (1+i);
+      ActsVectorF<3> dir(1, 0, 0);
+      Frustum3 fr(origin, rot*dir, angle);
+      fr.obj(os, n_vtx, 2);
 
+    }
+
+    os.close();
 
   }
+  
+  BOOST_TEST_CONTEXT("3D - 4 Sides")
+  {
+    using Frustum34 = Frustum<float, 3, 4>;
+    size_t n_vtx = 1;
+    
+    std::ofstream os("frust3d-4s_dir.obj");
+
+    size_t s = 5;
+    double min = -10, max = 10;
+    double step = (max-min)/double(s);
+    const double angle = M_PI/4.;
+    for(size_t i=0;i<=s;i++) {
+      for(size_t j=0;j<=s;j++) {
+        for(size_t k=0;k<=s;k++) {
+          ActsVectorF<3> origin(min + i*step, min+j*step, min+k*step);
+          ActsVectorF<3> dir(1, 0, 0);
+
+          Eigen::Affine3f rot;
+          rot = Eigen::AngleAxisf(M_PI/float(s)*i, ActsVectorF<3>::UnitX())
+              * Eigen::AngleAxisf(M_PI/float(s)*j, ActsVectorF<3>::UnitY())
+              * Eigen::AngleAxisf(M_PI/float(s)*k, ActsVectorF<3>::UnitZ());
+
+          Frustum34 fr(origin, rot*dir, angle);
+          fr.obj(os, n_vtx, 1);
+        }
+      }
+    }
+    os.close();
+    os = std::ofstream("frust3d-4s_angle.obj");
+
+    n_vtx = 1;
+    size_t n = 10;
+    for(size_t i=0;i<=n;i++) {
+      ActsVectorF<3> origin(i*4, 0, 0);
+      Eigen::Affine3f rot;
+      rot = Eigen::AngleAxisf(M_PI/float(n)*i, ActsVectorF<3>::UnitY());
+      float angle = (M_PI/2.)/float(n) * (1+i);
+      ActsVectorF<3> dir(1, 0, 0);
+      Frustum34 fr(origin, rot*dir, angle);
+      fr.obj(os, n_vtx, 2);
+
+    }
+
+    os.close();
+  }
+
 }
 
 
