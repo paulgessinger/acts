@@ -319,12 +319,39 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
   BOOST_TEST_CONTEXT("2D")
   {
 
-    using Frustum2 = Frustum<float, 2, 2>;
-    Frustum2 fr({2, 2}, {1, 1}, M_PI/4.);
+    // BEGIN VISUAL PARAMETER TEST
 
     std::ofstream os("frust2d.svg");
-    fr.svg(os);
+    float w = 1000;
+    os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
+    os << "<svg width=\"" << w << "\" height=\"" << w << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+
+    size_t n=10;
+    float min = -20, max = 20;
+    float step = (max-min)/float(n);
+
+    for(size_t i=0;i<=n;i++) {
+      for(size_t j=0;j<=n;j++) {
+        using Frustum2 = Frustum<float, 2, 2>;
+        ActsVectorF<2> dir = {0, 1};
+        ActsVectorF<2> origin = {min + step*i, min + step*j};
+        origin.x() *= 1.10; // visual
+        Eigen::Rotation2D<float> rot(2*M_PI/float(n) * i);
+        float angle = 0.5*M_PI/n * j;
+        Frustum2 fr(origin, rot * ActsVectorF<2>(1, 0), angle);
+        fr.svg(os, w, w, 2);
+      }
+    }
+
+    os << "</svg>";
     os.close();
+
+    // END VISUAL PARAMETER TEST
+
+    //using Box = AxisAlignedBoundingBox<Object, float, 2>;
+    //Object o;
+    //Box bb(o, {-1, -1}, {1, 1});
+
 
   }
   
@@ -394,7 +421,7 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
     size_t s = 5;
     double min = -10, max = 10;
     double step = (max-min)/double(s);
-    const double angle = M_PI/4.;
+    double angle = M_PI/4.;
     for(size_t i=0;i<=s;i++) {
       for(size_t j=0;j<=s;j++) {
         for(size_t k=0;k<=s;k++) {
@@ -420,7 +447,7 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
       ActsVectorF<3> origin(i*4, 0, 0);
       Eigen::Affine3f rot;
       rot = Eigen::AngleAxisf(M_PI/float(n)*i, ActsVectorF<3>::UnitY());
-      float angle = (M_PI/2.)/float(n) * (1+i);
+      angle = (M_PI/2.)/float(n) * (1+i);
       ActsVectorF<3> dir(1, 0, 0);
       Frustum34 fr(origin, rot*dir, angle);
       fr.obj(os, n_vtx, 2);
