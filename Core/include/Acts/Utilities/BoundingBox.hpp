@@ -40,10 +40,11 @@ public:
     using rotation_t = Eigen::Rotation2D<value_type>;
 
     static_assert(SIDES==2, "2D frustum can only have 2 sides");
-    std::cout << "2DIM constructor" << std::endl;
+    assert(opening_angle < M_PI);
+
     translation_t translation(origin);
     value_type angle = VectorHelpers::phi(dir);
-    Eigen::Rotation2D<value_type> rot(-angle);
+    Eigen::Rotation2D<value_type> rot(angle);
     m_transform = transform_t(translation * rot);
 
     value_type normal_angle = 0.5*M_PI - 0.5*opening_angle;
@@ -59,23 +60,18 @@ public:
   }
   
   template <size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
-  Frustum(const vertex_type& origin, const vertex_type& dir, /*const vertex_type& up,*/ value_type opening_angle)
+  Frustum(const vertex_type& origin, const vertex_type& dir, value_type opening_angle)
     : m_origin(origin)
   {
     static_assert(SIDES>2, "3D frustum must have 3 or more sides");
+    assert(opening_angle < M_PI);
     using angle_axis_t = Eigen::AngleAxis<value_type>;
 
-    //std::cout << "3DIM constructor" << std::endl;
-    
     const vertex_type ldir = vertex_type::UnitZ();
     const vertex_type lup = vertex_type::UnitX();
 
-    // perpendicular component of up vector
-    //vertex_type up_perp = up - (up.dot(dir)*dir).normalized();
-    
     m_transform = (
         Eigen::Quaternion<value_type>().setFromTwoVectors(ldir, dir)
-        //*Eigen::Quaternion<value_type>().setFromTwoVectors(lup, up_perp)
     );
 
     m_normals[0] = ldir;
@@ -93,16 +89,10 @@ public:
     };
 
     vertex_type current_outward = lup;
-    //vertex_type current_normal;
-    //current_normal = -1*current_outward;
-    //current_normal = angle_axis_t(opening_angle/2., tilt_axis) * current_normal;
-    //current_normal
-    //m_normals[1] = current_normal;
     m_normals[1] = calculate_normal(current_outward);
 
     for(size_t i=1;i<sides;i++) {
       current_outward = rot * current_outward;
-      //m_normals[i+1] = -1*(current_outward.normalized());
       m_normals[i+1] = calculate_normal(current_outward);
     }
 
@@ -112,55 +102,22 @@ public:
 
   }
 
-  //Frustum(const vertex_type& origin, const vertex_type& dir, const vertex_type& up)
-    //: m_origin(origin), m_dir(dir)
-  //{
-    //// Derive transform from origin and direction.
-    //// This is different for 2D and 3D (not sure it works above 3D)
-    //// We use runtime branches here, one could refactor this
-    //// into separate sub-methods using SFINAE on DIM, if
-    //// this turns out to be a bottleneck.
-    //translation_t translation = origin;
-
-    //assert(DIM == 2 || DIM == 3);
-    //if(DIM == 2) {
-
-      //value_type angle = VectorHelpers::phi(m_dir);
-      //Eigen::Rotation2D<value_type> rot(angle);
-      //m_transform = transform_t(translation * rot);
-
-    //}
-    //else { // DIM == 3
-
-      //vertex_type ref = vertex_type::UnitX();
-      ////vertex_type axis = m_dir.cross(ref);
-      
-      //m_transform = Eigen::Quaternion<value_type>().setFromTwoVectors(ref, m_dir);
-
-      
-    //}
-
-    //std::cout << m_transform.matrix() << std::endl;
-
-
-
-  //}
-
+  template <size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
   std::ofstream& obj(std::ofstream& os, size_t& n_vtx, value_type far_distance = 10) const
   {
-    using angle_axis_t = Eigen::AngleAxis<value_type>;
-    assert(DIM == 3);
+    //using angle_axis_t = Eigen::AngleAxis<value_type>;
+    static_assert(DIM == 3, "OBJ is only supported in 3D");
 
-    auto draw_line = [&os, &n_vtx](const vertex_type& start,
-                                   const vertex_type& end)
-    {
+    //auto draw_line = [&os, &n_vtx](const vertex_type& start,
+                                   //const vertex_type& end)
+    //{
     
-      os << "v " << start.x() << " " << start.y() << " " << start.z() << std::endl;
-      os << "v " << end.x() << " " << end.y() << " " << end.z() << std::endl;
+      //os << "v " << start.x() << " " << start.y() << " " << start.z() << std::endl;
+      //os << "v " << end.x() << " " << end.y() << " " << end.z() << std::endl;
 
-      os << "l " << n_vtx << " " << n_vtx+1 << std::endl;
-      n_vtx += 2;
-    };
+      //os << "l " << n_vtx << " " << n_vtx+1 << std::endl;
+      //n_vtx += 2;
+    //};
 
     auto draw_plane = [&os, &n_vtx](const std::vector<vertex_type>& vtxs)
     {
@@ -174,65 +131,29 @@ public:
       }
       os << std::endl;
       n_vtx += vtxs.size();
-
-      //os << "f " << n_vtx << " " << n_vtx+1 << " " << n_vtx+2 << " " << n_vtx+3 << std::endl;
-      //n_vtx += 4;
     };
     
+
     //translation_t trans(m_origin);
-    //value_type opening_angle = M_PI/2. - std::acos(m_normals[0].dot(m_normals[1]));
-    //value_type normal_angle = std::acos(m_normals[1].dot(m_normals[2]));
-    //std::cout << opening_angle << std::endl;
-    //for(size_t i=0;i<m_normals.size();i++) {
-      //const auto& normal = m_normals.at(i);
-    ////for(const auto& normal : m_normals) {
-      //transform_t l2g(trans);
-      //l2g = l2g * Eigen::Quaternion<value_type>().setFromTwoVectors(vertex_type::UnitZ(), normal);
+    //const auto& normal = m_normals.at(0);
+    //transform_t l2g(trans);
+    //l2g = l2g * Eigen::Quaternion<value_type>().setFromTwoVectors(vertex_type::UnitZ(), normal);
 
-      //std::vector<vertex_type> vtxs = {
-        //{10, 10, 0},
-        //{10, -10, 0},
-        //{-10, -10, 0},
-        //{-10, 10, 0},
-      //};
+    //std::vector<vertex_type> vtxs = {
+      //{10, 10, 0},
+      //{10, -10, 0},
+      //{-10, -10, 0},
+      //{-10, 10, 0},
+    //};
 
-      //for(auto& v : vtxs) {
-        //v = l2g * (v * 2.);
-      //}
-     
-
-      ////if(i==0) {
-        ////draw_plane(vtxs);
-        ////continue;
-      ////}
-
+    //for(auto& v : vtxs) {
+      //v = l2g * (v * 2.);
     //}
+   
       
-    //const auto& dir = m_normals[0];
-    //const double f = 20;
-    //vertex_type left = f*dir;
-    //vertex_type right = f*dir;
-    
-    //const vertex_type tilt_axis = normal.cross(dir);
-    //transform_t tilt;
-    //tilt = angle_axis_t(opening_angle, tilt_axis);
-    //left = tilt * left;
-    //right = tilt * right;
-    
-    //// rotate around normal now!
-    //value_type angle = M_PI/4.;
-    //left = angle_axis_t(angle, normal) * left;
-    //right = angle_axis_t(-angle, normal) * right;
-
-    //draw_plane({m_origin, trans*left, trans*right});
-
-
-
     // iterate around normals, calculate cross with "far" plane
     // to get intersection lines.
     // Work in O = (0, 0) and shift draw vertices at the end
-    //using Line3D = Eigen::ParametrizedLine<value_type, 3>;
-    using Line3D = Eigen::Hyperplane<value_type, 3>;
     vertex_type far_normal = m_normals[0]; // far has same normal as pseudo-near
     vertex_type far_center = m_normals[0] * far_distance; // center defined as 10 "forward"
     std::array<std::pair<vertex_type, vertex_type>, SIDES> planeFarIXs;
@@ -289,54 +210,107 @@ public:
     return os;
   }
 
-  std::ofstream& svg(std::ofstream& os) const
+  template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
+  std::ofstream& svg(std::ofstream& os, value_type w, value_type h, value_type far_distance = 1) const
   {
-    assert(DIM == 2);
+    static_assert(DIM == 2, "SVG is only supported in 2D");
+    const value_type unit = 20;
 
-    value_type w = 500;
-    vertex_type mid(w/2., w/2.);
+    vertex_type mid(w/2., h/2.);
 
-    os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
-    os << "<svg width=\"" << w << "\" height=\"" << w << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+    //using transform_t = Eigen::Transform<value_type, 2, Eigen::Affine>;
+    transform_t trf = transform_t::Identity();
+    //Eigen::Matrix<value_type, 2, 2> flip;
+    //flip << 1,  0,
+            //0, -1;
+    trf.translate(mid);
+    trf = trf * Eigen::Scaling(vertex_type(1, -1));
+    trf.scale(unit);
+
+    //trf =  * Eigen::Translation<value_type, 2>(mid);
 
     std::array<std::string, 3> colors({"orange", "blue", "red"});
 
-    auto draw_line = [&os](const vertex_type& left, 
-                           const vertex_type& right,
+    auto draw_line = [&](const vertex_type& left_, 
+                           const vertex_type& right_,
                            std::string color, 
                            size_t width) {
+
+      //vertex_type left = mid + left_*unit;
+      //vertex_type right = mid + right_*unit;
+      vertex_type left = trf*left_;
+      vertex_type right = trf*right_;
       os << "<line ";
 
       os << "x1=\"" << left.x() << "\" ";
-      os << "x2=\"" << right.x() << "\" ";
       os << "y1=\"" << left.y() << "\" "; 
+      os << "x2=\"" << right.x() << "\" ";
       os << "y2=\"" << right.y() << "\" ";
 
       os <<" stroke=\"" << color << "\" stroke-width=\"" << width << "\"/>\n";
 
     };
 
-    auto color = colors.begin();
-    for(const auto& normal : m_normals) {
-      vertex_type plane_dir(normal.y(), -normal.x());
-      plane_dir.normalize();
-      value_type s = 10;
-      const value_type unit = 10;
-
-      vertex_type left = (m_origin - s*plane_dir) * unit + mid;
-      vertex_type right = (m_origin + s*plane_dir) * unit + mid;
+    auto draw_point = [&](const vertex_type& p_, std::string color, size_t r) {
+      //vertex_type p = mid + unit*p_;
+      vertex_type p = trf*p_;
+      os << "<circle ";
+      os << "cx=\"" << p.x() << "\" cy=\"" << p.y() << "\" r=\"" << r << "\"";
+      os << " fill=\"" << color << "\"";
+      os << "/>\n";
+    };
+    
+    using vec3 = ActsVector<value_type, 3>;
+    auto ixLineLine = [](const vertex_type& p1_2, const vertex_type& d1_2, const vertex_type& p2_2, const vertex_type& d2_2)
+      -> vertex_type {
       
-      draw_line(left, right, *color, 2);
+      const vec3 p1(p1_2.x(), p1_2.y(), 0);
+      const vec3 p2(p2_2.x(), p2_2.y(), 0);
+      const vec3 d1(d1_2.x(), d1_2.y(), 0);
+      const vec3 d2(d2_2.x(), d2_2.y(), 0);
 
-      draw_line(mid+m_origin*unit, mid+(m_origin+normal*5)*unit, *color, 5);
+      vec3 num = (p2-p1).cross(d2);
+      vec3 den = d1.cross(d2);
 
+      value_type f = 1.;
+      value_type dot = num.normalized().dot(den.normalized());
+      if(std::abs(dot)-1 < 1e-9 && dot < 0) {
+        f = -1.;
+      }
 
-      ++color;
+      const vec3 p = p1 + f*( num.norm() / den.norm() ) * d1;
+      assert(std::abs(p.z()) < 1e-9);
+      return {p.x(), p.y()};
+    };
+
+    const vertex_type far_dir = {m_normals[0].y(), -m_normals[0].x()};
+    const vertex_type far_point = m_normals[0]*far_distance;
+
+    //draw_line(m_origin+far_point - 5*far_dir, m_origin+far_point + 5*far_dir, "black", 2);
+
+    std::array<vertex_type, 2> points;
+
+    for(size_t i=1;i<m_normals.size();i++) {
+      vertex_type plane_dir(m_normals[i].y(), -m_normals[i].x());
       
-
+      const vertex_type ix = ixLineLine(far_point, far_dir, {0, 0}, plane_dir);
+      draw_point(m_origin + ix, "black", 3);
+      draw_line(m_origin, m_origin + ix, "black", 2);
+      points.at(i-1) = ix;
     }
+  
+    draw_line(m_origin + points.at(0), m_origin + points.at(1), "black", 2);
 
-    os << "</svg>";
+    //for(size_t i=1;i<points.size();i++) {
+      //size_t j = (i+1)%points.size();
+    //}
+    
+
+    draw_line(m_origin, m_origin+m_normals[0]*2, colors[0], 3);
+    
+    draw_point({0, 0}, "yellow", 5);
+    draw_point(m_origin, "green", 5);
+
 
     return os;
 
