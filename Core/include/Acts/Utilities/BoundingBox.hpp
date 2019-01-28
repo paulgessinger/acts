@@ -211,10 +211,9 @@ public:
   }
 
   template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
-  std::ofstream& svg(std::ofstream& os, value_type w, value_type h, value_type far_distance = 1) const
+  std::ofstream& svg(std::ofstream& os, value_type w, value_type h, value_type far_distance = 1, value_type unit = 20.) const
   {
     static_assert(DIM == 2, "SVG is only supported in 2D");
-    const value_type unit = 20;
 
     vertex_type mid(w/2., h/2.);
 
@@ -719,12 +718,14 @@ public:
   }
 
   template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
-  std::ofstream& svg(std::ofstream& os, value_type w, value_type h, value_type unit = 10) const
+  std::ofstream& svg(std::ofstream& os, value_type w, value_type h, value_type unit = 10, std::string label = "") const
   {
     static_assert(DIM == 2, "SVG is only supported in 2D");
 
     vertex_type mid(w/2., h/2.);
-
+ 
+    using transform_t = Eigen::Transform<value_t, DIM, Eigen::Affine>;
+    
     transform_t trf = transform_t::Identity();
     trf.translate(mid);
     trf = trf * Eigen::Scaling(vertex_type(1, -1));
@@ -757,7 +758,48 @@ public:
       os << "/>\n";
     };
 
+    auto draw_rect = [&](const vertex_type& center_, const vertex_type& size_, std::string color) {
+      vertex_type size = size_ * unit;
+      vertex_type center = trf * center_ - size*0.5;
 
+      os << "<rect ";
+      os << "x=\"" << center.x() << "\" y=\"" << center.y() << "\" ";
+      os << "width=\"" << size.x() << "\" height=\"" << size.y() << "\"";
+      os << " fill=\"" << color << "\"";
+      os << "/>\n";
+    };
+
+    auto draw_text = [&](const vertex_type& center_, std::string text, std::string color, size_t size) {
+      vertex_type center = trf * center_;
+      os << "<text dominant-baseline=\"middle\" text-anchor=\"middle\" ";
+      os << "fill=\"" << color << "\" font-size=\"" << size << "\" ";
+      os << "x=\"" << center.x() << "\" y=\"" << center.y() << "\">";
+      os << text << "</text>\n";
+    };
+
+    //std::array<vertex_type, 4> points = {
+      //m_vmin,bb
+      //{m_vmin.x(), m_vmax.y()},
+      //m_vmax,
+      //{m_vmax.x(), m_vmin.y()}
+    //};
+
+    draw_rect(m_center, m_width, "blue");
+    draw_point(m_vmin, "black", 2);
+    draw_point(m_vmax, "black", 2);
+    draw_text(m_center, label, "white", 10);
+
+    //for(size_t i=0;i<points.size();i++) {
+      //size_t j = (i+1)%points.size();
+      //draw_point(points.at(i), "black", 3);
+      ////draw_line(points.at(i), points.at(j), "black", 3);
+    //}
+
+
+
+
+
+    return os;
   }
 
 private:
