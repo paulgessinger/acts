@@ -348,11 +348,17 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
 
     // END VISUAL PARAMETER TEST
 
-    //using Box = AxisAlignedBoundingBox<Object, float, 2>;
-    //Object o;
-    //Box bb(o, {-1, -1}, {1, 1});
+    os = std::ofstream("frust2d_test.svg");
+    float w = 100;
+    os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
+    os << "<svg width=\"" << w << "\" height=\"" << w << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
 
+    using Box = AxisAlignedBoundingBox<Object, float, 2>;
+    Object o;
+    Box::Size size(ActsVectorF<2>(2, 2));
+    Box bb(o, {1, 0}, size);
 
+    os.close();
   }
   
   BOOST_TEST_CONTEXT("3D - 3 Sides")
