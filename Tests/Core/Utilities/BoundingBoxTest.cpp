@@ -318,6 +318,7 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
 {
   BOOST_TEST_CONTEXT("2D")
   {
+    using Frustum2 = Frustum<float, 2, 2>;
 
     // BEGIN VISUAL PARAMETER TEST
 
@@ -332,13 +333,12 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
 
     for(size_t i=0;i<=n;i++) {
       for(size_t j=0;j<=n;j++) {
-        using Frustum2 = Frustum<float, 2, 2>;
-        ActsVectorF<2> dir = {0, 1};
+        ActsVectorF<2> dir = {1, 0};
         ActsVectorF<2> origin = {min + step*i, min + step*j};
         origin.x() *= 1.10; // visual
         Eigen::Rotation2D<float> rot(2*M_PI/float(n) * i);
         float angle = 0.5*M_PI/n * j;
-        Frustum2 fr(origin, rot * ActsVectorF<2>(1, 0), angle);
+        Frustum2 fr(origin, rot * dir, angle);
         fr.svg(os, w, w, 2);
       }
     }
@@ -349,14 +349,38 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
     // END VISUAL PARAMETER TEST
 
     os = std::ofstream("frust2d_test.svg");
-    float w = 100;
+    w = 1000;
+    float unit = 20;
     os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
     os << "<svg width=\"" << w << "\" height=\"" << w << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
 
     using Box = AxisAlignedBoundingBox<Object, float, 2>;
     Object o;
     Box::Size size(ActsVectorF<2>(2, 2));
-    Box bb(o, {1, 0}, size);
+
+    n = 10;
+    float minx = -20;
+    float miny = -20;
+    float maxx = 20;
+    float maxy = 20;
+    float stepx = (maxx-minx)/float(n);
+    float stepy = (maxy-miny)/float(n);
+
+    std::vector<Box> boxes;
+    boxes.reserve((n+1)*(n+1));
+    for(size_t i=0;i<=n;i++) {
+      for(size_t j=0;j<=n;j++) {
+        boxes.emplace_back(o, ActsVectorF<2>{minx + i*stepx, miny + j*stepy}, size);
+        std::stringstream ss;
+        ss << boxes.size()-1;
+        boxes.back().svg(os, w, w, unit, ss.str());
+      }
+    }
+
+    Frustum2 fr({0, 0}, {1, 0}, M_PI/2.);
+    fr.svg(os, w, w, 6, unit);
+    
+    os << "</svg>";
 
     os.close();
   }
