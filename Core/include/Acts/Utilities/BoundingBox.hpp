@@ -236,8 +236,6 @@ public:
                            std::string color, 
                            size_t width) {
 
-      //vertex_type left = mid + left_*unit;
-      //vertex_type right = mid + right_*unit;
       vertex_type left = trf*left_;
       vertex_type right = trf*right_;
       os << "<line ";
@@ -252,7 +250,6 @@ public:
     };
 
     auto draw_point = [&](const vertex_type& p_, std::string color, size_t r) {
-      //vertex_type p = mid + unit*p_;
       vertex_type p = trf*p_;
       os << "<circle ";
       os << "cx=\"" << p.x() << "\" cy=\"" << p.y() << "\" r=\"" << r << "\"";
@@ -389,11 +386,30 @@ class AxisAlignedBoundingBox
 {
 private:
   using self_t = AxisAlignedBoundingBox<entity_t, value_t, DIM>;
+  
+  // strong type helper, not public
+  template <typename T, typename P>
+  class NamedType
+  {
+    public:
+      explicit NamedType(const T& value) : m_value(value) {}
+      explicit NamedType(T&& value) : m_value(std::move(value)) {}
+      T& get() { return m_value; }
+      const T& get() const { return m_value; }
+    private:
+      T m_value;
+  };
+
+  struct SizeParameter{};
+
+
 public:
   using vertex_type = ActsVector<value_t, DIM>;
   using vertex_array_type = Eigen::Array<value_t, DIM, 1>;
   using entity_type = entity_t;
   using value_type = value_t;
+  
+  using Size = NamedType<vertex_type, struct SizeParameter>;
 
   static const size_t dim = DIM;
 
@@ -405,6 +421,18 @@ public:
       m_center((vmin + vmax)/2.),
       m_width(vmax - vmin),
       m_iwidth(1/m_width)
+  {
+  }
+
+  AxisAlignedBoundingBox(const entity_t&    entity,
+                         const vertex_type& center,
+                         const Size& size)
+    : m_entity(&entity)
+    , m_vmin(center - size.get() * 0.5)
+    , m_vmax(center + size.get() * 0.5)
+    , m_center(center)
+    , m_width(size.get())
+    , m_iwidth(1 / m_width)
   {
   }
 
@@ -618,9 +646,10 @@ public:
     return os;
   }
 
+  template <size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
   void obj(std::ostream& os, size_t& vtx_offset) const 
   {
-    assert(DIM == 3);
+    static_assert(DIM == 3, "OBJ output only supported in 3D");
     using face_t = std::array<vertex_type, 4>;
     const vertex_type& vmin = m_vmin;
     const vertex_type& vmax = m_vmax;
@@ -686,6 +715,48 @@ public:
     write(max_y);
     write(min_z);
     write(max_z);
+
+  }
+
+  template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
+  std::ofstream& svg(std::ofstream& os, value_type w, value_type h, value_type unit = 10) const
+  {
+    static_assert(DIM == 2, "SVG is only supported in 2D");
+
+    vertex_type mid(w/2., h/2.);
+
+    transform_t trf = transform_t::Identity();
+    trf.translate(mid);
+    trf = trf * Eigen::Scaling(vertex_type(1, -1));
+    trf.scale(unit);
+
+
+    auto draw_line = [&](const vertex_type& left_, 
+                           const vertex_type& right_,
+                           std::string color, 
+                           size_t width) {
+
+      vertex_type left = trf*left_;
+      vertex_type right = trf*right_;
+      os << "<line ";
+
+      os << "x1=\"" << left.x() << "\" ";
+      os << "y1=\"" << left.y() << "\" "; 
+      os << "x2=\"" << right.x() << "\" ";
+      os << "y2=\"" << right.y() << "\" ";
+
+      os <<" stroke=\"" << color << "\" stroke-width=\"" << width << "\"/>\n";
+
+    };
+
+    auto draw_point = [&](const vertex_type& p_, std::string color, size_t r) {
+      vertex_type p = trf*p_;
+      os << "<circle ";
+      os << "cx=\"" << p.x() << "\" cy=\"" << p.y() << "\" r=\"" << r << "\"";
+      os << " fill=\"" << color << "\"";
+      os << "/>\n";
+    };
+
 
   }
 
