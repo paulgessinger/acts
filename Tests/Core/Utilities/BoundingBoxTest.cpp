@@ -227,6 +227,20 @@ BOOST_AUTO_TEST_CASE(intersect_rays)
     Ray<float, 3> ray3({0, 0, -2}, {0, 0, 1});
     BOOST_TEST(bb3.intersect(ray3));
 
+    std::ofstream ofs("bb.ply");
+    ply_helper<float> ply;
+    bb3.draw(ply);
+    //std::cout << ply << std::endl;
+    ofs << ply << std::endl;
+    ofs.close();
+
+    ofs = std::ofstream("bb.obj");
+    obj_helper<float> obj;
+    bb3.draw(obj);
+    ofs << obj << std::endl;
+    ofs.close();
+
+
     // facing away from box
     ray3 = {{0, 0, -2}, {0, 0, -1}};
     BOOST_TEST(!bb3.intersect(ray3));
@@ -318,14 +332,22 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
 {
   BOOST_TEST_CONTEXT("2D")
   {
+    auto make_svg = [](std::string fname, size_t w, size_t h) {
+      std::ofstream os(fname);
+      os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
+      os << "<svg width=\"" << w << "\" height=\"" << h << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+      return os;
+    };
+
     using Frustum2 = Frustum<float, 2, 2>;
 
     // BEGIN VISUAL PARAMETER TEST
 
-    std::ofstream os("frust2d.svg");
+    //std::ofstream os("frust2d.svg");
     float w = 1000;
-    os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
-    os << "<svg width=\"" << w << "\" height=\"" << w << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+    //os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
+    //os << "<svg width=\"" << w << "\" height=\"" << w << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+    std::ofstream os = make_svg("frust2d.svg", w, w);
 
     size_t n=10;
     float min = -20, max = 20;
@@ -348,11 +370,9 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
 
     // END VISUAL PARAMETER TEST
 
-    os = std::ofstream("frust2d_test.svg");
+
     w = 1000;
     float unit = 20;
-    os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
-    os << "<svg width=\"" << w << "\" height=\"" << w << "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
 
     using Box = AxisAlignedBoundingBox<Object, float, 2>;
     Object o;
@@ -366,27 +386,123 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
     float stepx = (maxx-minx)/float(n);
     float stepy = (maxy-miny)/float(n);
 
-    std::vector<Box> boxes;
-    boxes.reserve((n+1)*(n+1));
-    for(size_t i=0;i<=n;i++) {
-      for(size_t j=0;j<=n;j++) {
-        boxes.emplace_back(o, ActsVectorF<2>{minx + i*stepx, miny + j*stepy}, size);
-        std::stringstream ss;
-        ss << boxes.size()-1;
-        boxes.back().svg(os, w, w, unit, ss.str());
+    std::set<size_t> act_idxs;
+
+    // clang-format off
+    std::vector<std::pair<Frustum2, std::set<size_t>>> fr_exp;
+    fr_exp = {
+        {Frustum2({0, 0}, {1, 0}, M_PI / 2.),
+         {60,  70,  71,  72,  80,  81,  82,  83,  84,  90,  91,  92,
+          93,  94,  95,  96,  100, 101, 102, 103, 104, 105, 106, 107,
+          108, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120}
+        },
+        {Frustum2({0, 0}, {1, 0}, 0.5 * M_PI / 2.),
+         {60,  71,  81,  82,  83,  92,  93,  94, 102, 
+          103, 104, 105, 106, 113, 114, 115, 116, 117}
+        },
+        {Frustum2({0, 0}, {1, 0}, 0.2 * M_PI / 2.),
+         {60, 71, 82, 93, 104, 114, 115, 116}
+        },
+        {Frustum2({0, 0}, {1, 0},  3 * M_PI / 4.),
+         {60, 68, 69, 70, 71, 72, 73, 74, 77, 78, 79, 80, 81, 82, 83, 
+          84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 
+          99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 
+          112, 113, 114, 115, 116, 117, 118, 119, 120}
+        },
+        {Frustum2({0, 0}, {0, 1}, 0.5 * M_PI / 2.),
+         {42, 43, 51, 52, 53, 54, 60, 61, 62, 63, 64, 65, 73, 74, 75, 76, 86, 87}
+        },
+        {Frustum2({0, 0}, {-1, 0}, 0.5 * M_PI / 2.),
+         {3, 4, 5, 6, 7, 14, 15, 16, 17, 18, 26, 27, 28, 37, 38, 39, 49, 60}
+        },
+        {Frustum2({0, 0}, {0, -1}, 0.5 * M_PI / 2.),
+         {33, 34, 44, 45, 46, 47, 55, 56, 57, 58, 59, 60, 66, 67, 68, 69, 77, 78}
+        },
+        {Frustum2({0, 0}, {1, 1}, 0.5 * M_PI / 2.),
+         {60, 72, 73, 74, 83, 84, 85, 86, 87, 94, 95, 96, 97, 98, 106, 107,
+          108, 109, 117, 118, 119, 120}
+        },
+        {Frustum2({0, 0}, {-1, 1}, 0.5 * M_PI / 2.),
+         {7, 8, 9, 10, 18, 19, 20, 21, 28, 29, 30, 31, 32, 39, 40, 41, 42, 
+          43, 50, 51, 52, 60}
+        },
+        {Frustum2({0, 0}, {-1, -1}, 0.5 * M_PI / 2.),
+         {0, 1, 2, 3, 11, 12, 13, 14, 22, 23, 24, 25, 26, 33, 34, 35, 36, 
+          37, 46, 47, 48, 60}
+        },
+        {Frustum2({0, 0}, {1, -1}, 0.5 * M_PI / 2.),
+         {60, 68, 69, 70, 77, 78, 79, 80, 81, 88, 89, 90, 91, 92, 99, 100, 
+          101, 102, 110, 111, 112, 113}
+        },
+        {Frustum2({1, 1}, {1, -1}, M_PI / 2.),
+         {55, 56, 57, 58, 59, 60, 66, 67, 68, 69, 70, 71, 77, 78, 79, 80, 
+          81, 82, 88, 89, 90, 91, 92, 93, 99, 100, 101, 102, 103, 104, 110, 111, 112, 113, 114, 115}
+        },
+        {Frustum2({-1, -1}, {1, -1}, M_PI / 2.),
+         {55, 56, 57, 58, 59, 60, 66, 67, 68, 69, 70, 71, 77, 78, 79, 80, 
+          81, 82, 88, 89, 90, 91, 92, 93, 99, 100, 101, 102, 103, 104, 110, 111, 112, 113, 114, 115}
+        },
+        {Frustum2({10, -10}, {1, 1}, 0.5 * M_PI / 2.),
+         {91, 92, 102, 103, 104, 105, 114, 115, 116, 117, 118, 119}
+        },
+        {Frustum2({-10.3, 12.8}, {0.3, -1}, 0.5 * M_PI / 2.),
+         {22, 23, 24, 25, 26, 27, 28, 33, 34, 35, 36, 37, 38, 39, 40, 41,
+          44, 45, 46, 47, 48, 49, 50, 55, 56, 57, 58, 59, 60, 66, 67, 68, 
+          69, 70, 77, 78, 79, 80, 88, 89, 99}
+        },
+        {Frustum2({17.2, 19.45}, {-1, -0.1}, 0.5 * M_PI / 2.),
+         {5, 6, 7, 8, 9, 10, 17, 18, 19, 20, 21, 28, 29, 30, 31, 32, 40, 
+          41, 42, 43, 51, 52, 53, 54, 63, 64, 65, 74, 75, 76, 86, 87, 97, 
+          98, 109}
+        },
+    };
+    // clang-format on
+
+    for(size_t l=0;l<fr_exp.size();l++) {
+      const Frustum2& fr = fr_exp.at(l).first;
+      const std::set<size_t>& exp_idxs = fr_exp.at(l).second;
+      std::stringstream ss;
+      ss << "frust2d_test_" << l << ".svg";
+      os = make_svg(ss.str(), w, w);
+  
+      act_idxs.clear();
+
+      std::vector<Box> boxes;
+      boxes.reserve((n+1)*(n+1));
+      for(size_t i=0;i<=n;i++) {
+        for(size_t j=0;j<=n;j++) {
+          boxes.emplace_back(o, ActsVectorF<2>{minx + i*stepx, miny + j*stepy}, size);
+          std::stringstream st;
+          st << boxes.size()-1;
+
+          std::string color = "red";
+          if(boxes.back().intersect(fr)) {
+            color = "green";
+            act_idxs.insert(boxes.size()-1);
+          }
+
+          boxes.back().svg(os, w, w, unit, st.str(), color);
+        }
       }
+
+      //for(const auto& idx : act_idxs) {
+        //std::cout << idx << ", ";
+      //}
+      //std::cout << std::endl << std::endl;
+      BOOST_CHECK(act_idxs == exp_idxs);
+
+      fr.svg(os, w, w, maxx, unit);
+      os << "</svg>";
+
+      os.close();
     }
 
-    Frustum2 fr({0, 0}, {1, 0}, M_PI/2.);
-    fr.svg(os, w, w, 6, unit);
-    
-    os << "</svg>";
-
-    os.close();
   }
   
   BOOST_TEST_CONTEXT("3D - 3 Sides")
   {
+
+    obj_helper<float> helper;
 
     using Frustum3 = Frustum<float, 3, 3>;
     size_t n_vtx = 1;
@@ -470,6 +586,7 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
     }
     os.close();
     os = std::ofstream("frust3d-4s_angle.obj");
+
 
     n_vtx = 1;
     size_t n = 10;
