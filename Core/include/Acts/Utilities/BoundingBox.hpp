@@ -244,35 +244,26 @@ public:
   }
   
 
-  template <size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
-  std::ofstream& obj(std::ofstream& os, size_t& n_vtx, value_type far_distance = 10) const
+  template <typename helper_t, size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
+  void draw(helper_t& helper, value_type far_distance = 10) const
   {
-    //using angle_axis_t = Eigen::AngleAxis<value_type>;
     static_assert(DIM == 3, "OBJ is only supported in 3D");
+    static_assert(std::is_same<typename helper_t::value_type, value_type>::value, "not the same value type");
 
-    //auto draw_line = [&os, &n_vtx](const vertex_type& start,
-                                   //const vertex_type& end)
-    //{
-    
-      //os << "v " << start.x() << " " << start.y() << " " << start.z() << std::endl;
-      //os << "v " << end.x() << " " << end.y() << " " << end.z() << std::endl;
-
-      //os << "l " << n_vtx << " " << n_vtx+1 << std::endl;
-      //n_vtx += 2;
-    //};
-
-    auto draw_plane = [&os, &n_vtx](const std::vector<vertex_type>& vtxs)
+    auto draw_plane = [&](const std::vector<vertex_type>& vtxs)
     {
-      for(const auto& v : vtxs) {
-        os << "v " << v.x() << " " << v.y() << " " << v.z() << std::endl;
-      }
+      //for(const auto& v : vtxs) {
+        //os << "v " << v.x() << " " << v.y() << " " << v.z() << std::endl;
+      //}
 
-      os << "f";
-      for(size_t i=0;i<vtxs.size();i++) {
-        os << " " << n_vtx+i;
-      }
-      os << std::endl;
-      n_vtx += vtxs.size();
+      //os << "f";
+      //for(size_t i=0;i<vtxs.size();i++) {
+        //os << " " << n_vtx+i;
+      //}
+      //os << std::endl;
+      //n_vtx += vtxs.size();
+
+      helper.face(vtxs);
     };
     
 
@@ -345,11 +336,6 @@ public:
       size_t j = (i+1) % points.size();
       draw_plane({m_origin, points.at(i), points.at(j)});
     }
-
-
-
-
-    return os;
   }
 
   template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
@@ -907,7 +893,7 @@ public:
   }
   
   template <typename helper_t, size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
-  void draw(helper_t& helper) const 
+  void draw(helper_t& helper, std::array<int, 3> color = {120, 120, 120}) const 
   {
     static_assert(std::is_same<typename helper_t::value_type, value_type>::value, "not the same value type");
     static_assert(DIM == 3, "PLY output only supported in 3D");
@@ -959,7 +945,7 @@ public:
     };
 
     auto write = [&](const face_t& face) {
-      helper.face(face);
+      helper.face(face, color);
     };
 
     write(min_x);
