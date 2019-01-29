@@ -19,6 +19,147 @@
 
 namespace Acts {
 
+template <typename T>
+struct ply_helper
+{
+  using value_type = T;
+  using vertex_type = ActsVector<value_type, 3>;
+
+  using face_type = std::vector<size_t>;
+  using color_type = std::array<int, 3>;
+
+
+  void vertex(const vertex_type& vtx, color_type color = {120, 120, 120})
+  {
+    m_vertices.emplace_back(vtx, color);
+  }
+
+  template <typename coll_t>
+  void face(const coll_t& vtxs, color_type color = {120, 120, 120}) {
+  
+    static_assert(std::is_same<typename coll_t::value_type, vertex_type>::value, "not a collection of vertex_type");
+
+    face_type idxs;
+    idxs.reserve(vtxs.size());
+    for(const vertex_type& vtx : vtxs) {
+      vertex(vtx, color);
+      idxs.push_back(m_vertices.size()-1);
+    }
+    m_faces.push_back(std::move(idxs));
+  }
+
+  void write(std::ostream& os) const
+  {
+    os << "ply\n";
+    os << "format ascii 1.0\n";
+    os << "element vertex " << m_vertices.size() << "\n";
+    os << "property float x\n";
+    os << "property float y\n";
+    os << "property float z\n";
+    os << "property uchar red\n";
+    os << "property uchar green\n";
+    os << "property uchar blue\n";
+    os << "element face " << m_faces.size() << "\n";
+    os << "property list uchar int vertex_index\n";
+    os << "end_header\n";
+
+    for(const std::pair<vertex_type, color_type>& vtx : m_vertices) {
+      os << vtx.first.x() << " " << vtx.first.y() << " " << vtx.first.z() << " ";
+      os << vtx.second[0] << " " << vtx.second[1] << " " << vtx.second[2] << "\n";
+    }
+
+    for(const face_type& fc : m_faces) {
+      os << fc.size();
+      for(size_t i=0;i<fc.size();i++) {
+        os << " " << fc[i];
+      }
+      os << "\n";
+    }
+  }
+
+  void clear()
+  {
+    m_vertices.clear();
+    m_faces.clear();
+  }
+
+private:
+  std::vector<std::pair<vertex_type, color_type>> m_vertices;
+  std::vector<face_type> m_faces;
+};
+
+template <typename T>
+std::ostream& operator <<(std::ostream& os, const ply_helper<T>& ply)
+{
+  ply.write(os);
+  return os;
+}
+
+template <typename T>
+struct obj_helper
+{
+  using value_type = T;
+  using vertex_type = ActsVector<value_type, 3>;
+
+  using face_type = std::vector<size_t>;
+  // unsupported
+  using color_type = std::array<int, 3>;
+
+  void vertex(const vertex_type& vtx, color_type color = {120, 120, 120})
+  {
+    (void)color;
+    m_vertices.push_back(vtx);
+  }
+
+  template <typename coll_t>
+  void face(const coll_t& vtxs, color_type color = {120, 120, 120})
+  {
+    (void)color;
+    static_assert(std::is_same<typename coll_t::value_type, vertex_type>::value, "not a collection of vertex_type");
+
+    face_type idxs;
+    idxs.reserve(vtxs.size());
+    for(const vertex_type& vtx : vtxs) {
+      vertex(vtx);
+      idxs.push_back(m_vertices.size()-1);
+    }
+    m_faces.push_back(std::move(idxs));
+  }
+
+  void write(std::ostream& os) const
+  {
+    for(const vertex_type& vtx : m_vertices) {
+      os << "v " << vtx.x() << " " << vtx.y() << " " << vtx.z() << "\n";
+    }
+
+    for(const face_type& fc : m_faces) {
+      os << "f";
+      for(size_t i=0;i<fc.size();i++) {
+        os << " " << fc[i]+1;
+      }
+      os << "\n";
+    }
+  }
+  
+  void clear()
+  {
+    m_vertices.clear();
+    m_faces.clear();
+  }
+
+private:
+  std::vector<vertex_type> m_vertices;
+  std::vector<face_type> m_faces;
+};
+
+template <typename T>
+std::ostream& operator <<(std::ostream& os, const obj_helper<T>& obj)
+{
+  obj.write(os);
+  return os;
+}
+
+
 template <typename value_t, size_t DIM, size_t SIDES>
 class Frustum
 {
@@ -101,6 +242,7 @@ public:
     }
 
   }
+  
 
   template <size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
   std::ofstream& obj(std::ofstream& os, size_t& n_vtx, value_type far_distance = 10) const
@@ -310,6 +452,17 @@ public:
 
     return os;
 
+  }
+
+  const vertex_type& origin() const
+  {
+    return m_origin;
+  }
+
+  const std::array<vertex_type, SIDES+1>&
+  normals() const
+  {
+    return m_normals;
   }
 
 private:
@@ -562,6 +715,42 @@ public:
     return tmin < tmax && tmax > 0.0;// ((tmin > 0.0 && tmax > 0.0) || (tmin < 0.0 && tmax > 0.0));
   }
 
+  template <size_t sides>
+  bool
+  intersect(const Frustum<value_type, DIM, sides>& fr) const
+  {
+    //std::cout << __FUNCTION__ << std::endl;
+    //std::cout << "sides: " << sides << std::endl;
+
+    const auto&             normals = fr.normals();
+    const vertex_array_type vmin    = m_vmin - fr.origin();
+    const vertex_array_type vmax    = m_vmax - fr.origin();
+
+    //std::cout << "vmin: " << vmin.transpose() << "\nvmax: " << vmax.transpose()
+              //<< std::endl;
+
+    vertex_type p_vtx;
+    // for loop, we could eliminate this, probably,
+    // but sides+1 is known at compile time, so the compiler
+    // will most likely unroll the loop
+    for (size_t i = 0; i < sides + 1; i++) {
+      const vertex_type& normal = normals[i];
+
+      p_vtx = (normal.array() < 0).template cast<float>() * vmin
+          + (normal.array() >= 0).template cast<float>() * vmax;
+      //std::cout << p_vtx.transpose() << std::endl;
+
+      if (p_vtx.dot(normal) < 0) {
+        // p vertex is outside on this plane, box must be outside
+        return false;
+      }
+    }
+
+    // If we get here, no p-vertex was outside, so box intersects or is
+    // contained. We don't care, so report 'intsersect'
+    return true;
+  }
+
 private:
 
   void setSkip(self_t* skip) {
@@ -716,9 +905,80 @@ public:
     write(max_z);
 
   }
+  
+  template <typename helper_t, size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
+  void draw(helper_t& helper) const 
+  {
+    static_assert(std::is_same<typename helper_t::value_type, value_type>::value, "not the same value type");
+    static_assert(DIM == 3, "PLY output only supported in 3D");
+
+    using face_t = std::array<vertex_type, 4>;
+    const vertex_type& vmin = m_vmin;
+    const vertex_type& vmax = m_vmax;
+
+    face_t min_x = {
+      vertex_type(vmin.x(), vmin.y(), vmin.z()),
+      vertex_type(vmin.x(), vmax.y(), vmin.z()),
+      vertex_type(vmin.x(), vmax.y(), vmax.z()),
+      vertex_type(vmin.x(), vmin.y(), vmax.z())
+    };
+    
+    face_t max_x = {
+      vertex_type(vmax.x(), vmin.y(), vmin.z()),
+      vertex_type(vmax.x(), vmax.y(), vmin.z()),
+      vertex_type(vmax.x(), vmax.y(), vmax.z()),
+      vertex_type(vmax.x(), vmin.y(), vmax.z())
+    };
+    
+    face_t min_y = {
+      vertex_type(vmin.x(), vmin.y(), vmin.z()),
+      vertex_type(vmax.x(), vmin.y(), vmin.z()),
+      vertex_type(vmax.x(), vmin.y(), vmax.z()),
+      vertex_type(vmin.x(), vmin.y(), vmax.z())
+    };
+
+    face_t max_y = {
+      vertex_type(vmin.x(), vmax.y(), vmin.z()),
+      vertex_type(vmax.x(), vmax.y(), vmin.z()),
+      vertex_type(vmax.x(), vmax.y(), vmax.z()),
+      vertex_type(vmin.x(), vmax.y(), vmax.z())
+    };
+
+    face_t min_z = {
+      vertex_type(vmin.x(), vmin.y(), vmin.z()),
+      vertex_type(vmax.x(), vmin.y(), vmin.z()),
+      vertex_type(vmax.x(), vmax.y(), vmin.z()),
+      vertex_type(vmin.x(), vmax.y(), vmin.z())
+    };
+
+    face_t max_z = {
+      vertex_type(vmin.x(), vmin.y(), vmax.z()),
+      vertex_type(vmax.x(), vmin.y(), vmax.z()),
+      vertex_type(vmax.x(), vmax.y(), vmax.z()),
+      vertex_type(vmin.x(), vmax.y(), vmax.z())
+    };
+
+    auto write = [&](const face_t& face) {
+      helper.face(face);
+    };
+
+    write(min_x);
+    write(max_x);
+    write(min_y);
+    write(max_y);
+    write(min_z);
+    write(max_z);
+
+  }
 
   template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
-  std::ofstream& svg(std::ofstream& os, value_type w, value_type h, value_type unit = 10, std::string label = "") const
+  std::ofstream&
+  svg(std::ofstream& os,
+      value_type     w,
+      value_type     h,
+      value_type     unit  = 10,
+      std::string    label = "",
+      std::string    fillcolor = "grey") const
   {
     static_assert(DIM == 2, "SVG is only supported in 2D");
 
@@ -732,23 +992,23 @@ public:
     trf.scale(unit);
 
 
-    auto draw_line = [&](const vertex_type& left_, 
-                           const vertex_type& right_,
-                           std::string color, 
-                           size_t width) {
+    //auto draw_line = [&](const vertex_type& left_, 
+                           //const vertex_type& right_,
+                           //std::string color, 
+                           //size_t width) {
 
-      vertex_type left = trf*left_;
-      vertex_type right = trf*right_;
-      os << "<line ";
+      //vertex_type left = trf*left_;
+      //vertex_type right = trf*right_;
+      //os << "<line ";
 
-      os << "x1=\"" << left.x() << "\" ";
-      os << "y1=\"" << left.y() << "\" "; 
-      os << "x2=\"" << right.x() << "\" ";
-      os << "y2=\"" << right.y() << "\" ";
+      //os << "x1=\"" << left.x() << "\" ";
+      //os << "y1=\"" << left.y() << "\" "; 
+      //os << "x2=\"" << right.x() << "\" ";
+      //os << "y2=\"" << right.y() << "\" ";
 
-      os <<" stroke=\"" << color << "\" stroke-width=\"" << width << "\"/>\n";
+      //os <<" stroke=\"" << color << "\" stroke-width=\"" << width << "\"/>\n";
 
-    };
+    //};
 
     auto draw_point = [&](const vertex_type& p_, std::string color, size_t r) {
       vertex_type p = trf*p_;
@@ -784,7 +1044,7 @@ public:
       //{m_vmax.x(), m_vmin.y()}
     //};
 
-    draw_rect(m_center, m_width, "blue");
+    draw_rect(m_center, m_width, fillcolor);
     draw_point(m_vmin, "black", 2);
     draw_point(m_vmax, "black", 2);
     draw_text(m_center, label, "white", 10);
