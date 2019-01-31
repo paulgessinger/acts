@@ -1031,6 +1031,54 @@ BOOST_AUTO_TEST_CASE(frustum_intersect)
       BOOST_CHECK(act_idxs == exp_idxs);
     }
   }
+
+  BOOST_TEST_CONTEXT("3D - 5 Sides") {
+    using Frustum = Frustum<float, 3, 5>;
+    using Box = AxisAlignedBoundingBox<Object, float, 3>;
+    Box::Size size(ActsVectorF<3>(2, 2, 2));
+
+    Object o;
+
+    ply_helper<float> ply;
+
+    Frustum fr({0, 0, 0}, {0, 0, 1}, M_PI/8.);
+    fr.draw(ply, 10);
+
+    Box bb(o, {0, 0, 10}, size);
+    bb.draw(ply);
+
+    BOOST_CHECK(bb.intersect(fr));
+
+    std::ofstream os("frust3d-5s.ply");
+    os << ply << std::flush;
+    os.close();
+  }
+  
+  BOOST_TEST_CONTEXT("3D - 10 Sides") {
+    using Frustum = Frustum<float, 3, 10>;
+    using Box = AxisAlignedBoundingBox<Object, float, 3>;
+    using vec3 = ActsVectorF<3>;
+    Box::Size size(vec3(2, 2, 2));
+
+    Object o;
+
+    ply_helper<float> ply;
+
+    //Frustum fr({0, 0, 0}, {0, 0, 1}, M_PI/8.);
+    vec3 pos = {-12.4205, 29.3578, 44.6207};
+    vec3 dir = {-0.656862, 0.48138, 0.58035};
+    Frustum fr(pos, dir, 0.972419);
+    fr.draw(ply, 10);
+
+    Box bb(o, pos+dir*10, size);
+    bb.draw(ply);
+
+    BOOST_CHECK(bb.intersect(fr));
+
+    std::ofstream os("frust3d-10s.ply");
+    os << ply << std::flush;
+    os.close();
+  }
 }
 
 
