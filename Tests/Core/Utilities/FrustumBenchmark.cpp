@@ -22,6 +22,7 @@ namespace Test {
   struct Object
   {
     using id_t = std::tuple<size_t, size_t, size_t>;
+    Object(id_t id_) : id(id_) {}
     id_t id;
   };
 
@@ -36,7 +37,7 @@ namespace Test {
   }
 
   template <size_t sides>
-  std::tuple<size_t, double, std::vector<Object::id_t>>
+  std::tuple<size_t, double, std::vector<std::set<Object::id_t>>>
   bench_frustum(int octree_depth)
   {
     std::cout << "Bench frustum: sides: " << sides << " octd: " << octree_depth << std::endl;
@@ -55,14 +56,18 @@ namespace Test {
     boxes.reserve((n+1)*(n+1)*(n+1));
     std::vector<Box*> prims;
     prims.reserve((n+1)*(n+1)*(n+1));
+    std::vector<std::unique_ptr<Object>> objects;
 
     for (size_t i = 0; i <= n; i++) {
       for (size_t j = 0; j <= n; j++) {
         for (size_t k = 0; k <= n; k++) {
           ActsVectorF<3> pos(min + i * step, min + j * step, min + k * step);
           //boxes.emplace_back(o, pos, size);
-          Object o{{i, j, k}};
-          boxes.push_back(std::make_unique<Box>(o, pos, size));
+          //Object o{{i, j, k}};
+          //Object o;
+          //o.id = {i, j, k};
+          objects.push_back(std::make_unique<Object>(std::make_tuple(i ,j, k)));
+          boxes.push_back(std::make_unique<Box>(*objects.back(), pos, size));
           //boxes.back()->draw(ply);
           prims.push_back(boxes.back().get());
         }
@@ -96,7 +101,9 @@ namespace Test {
     std::uniform_real_distribution<real_t> dir_dist(-1, 1);
     std::uniform_real_distribution<real_t> angle_dist(0.1*M_PI, M_PI/2.*0.9);
 
-    size_t n_frust = 1e6;
+    size_t n_frust = 1e4;
+
+    std::cout << "Generating " << n_frust << " frustums" << std::endl;
 
 
     std::vector<Frustum, Eigen::aligned_allocator<Frustum>> frustums;
@@ -137,6 +144,7 @@ namespace Test {
     os.close();
 
 
+    std::cout << "begin intersect timing" << std::endl;
     clock::time_point begin = clock::now();
 
     //size_t n_ix = frustums.size() * boxes.size();
@@ -148,20 +156,20 @@ namespace Test {
       //}
     //}
 
-    // accumulate results idxs from all frustums,
-    // they should be the same as the frustums are always
-    // the same!
-    std::vector<Object::id_t> result;
+    std::vector<std::set<Object::id_t>> result;
 
     for(const Frustum& fr : frustums) {
       const Box* lnode = top_node;
+      std::set<Object::id_t> hits;
       do {
         n_ix++;
         if (lnode->intersect(fr)) {
 
           if (lnode->hasEntity()) {
             // found primitive
-            result.push_back(lnode->entity()->id);
+            hits.insert(lnode->entity()->id);
+            auto id = lnode->entity()->id;
+            //std::cout << "intersect prim: idx: (" << std::get<0>(id) << ", " << std::get<1>(id) << ", " << std::get<2>(id) << ")" << std::endl;
             //std::cout << "intersect prim: " << lnode << " -> " << lnode->getSkip() << std::endl;
             lnode = lnode->getSkip();
           } else {
@@ -176,6 +184,8 @@ namespace Test {
 
         //if(n_intersects > 80) throw std::runtime_error("");
       } while (lnode != nullptr);
+
+      result.push_back(std::move(hits));
     }
 
     clock::time_point end = clock::now();
@@ -196,8 +206,8 @@ namespace Test {
 int
 main()
 {
-  using res_t = std::tuple<size_t, double>;
-  using id_t = std::tuple<size_t, size_t, size_t>;
+  using oid_t = std::tuple<size_t, size_t, size_t>;
+  //using res_t = std::tuple<size_t, double, id_t>;
 
 
   // Tested with sides = 10, NaN / inf behavior!
@@ -234,19 +244,48 @@ main()
   std::vector<int> octree_depths = {0, 1, 2, 3, 4, 5};
   size_t n_ix;
   double diff;
-  std::vector<id_t> hits;
+  std::vector<std::set<oid_t>> hits;
   
   // get ref
   std::tie(n_ix, diff, hits) = Acts::Test::bench_frustum<n_sides>(-1);
 
-  std::vector<id_t> ref = hits;
-  std::cout << "n hits ref: " << ref.size() << std::endl;
+  std::vector<std::set<oid_t>> ref = hits;
+  //std::cout << "n hits ref: " << ref.size() << std::endl;
+
+  auto print = [](const auto& tup) {
+    std::cout << "(" << std::get<0>(tup) << ", " << std::get<1>(tup) << ", " << std::get<2>(tup) << ")";
+  };
 
   for(int octree_depth : octree_depths) {
     std::tie(n_ix, diff, hits) = Acts::Test::bench_frustum<n_sides>(octree_depth);
 
     std::cout << "n hits: " << hits.size() << std::endl;
-    ASSERT(ref.size() == hits.size());
+    //ASSERT(ref.size() == hits.size());
+
+    for(size_t i=0;i<ref.size();i++) {
+      std::set<oid_t>& ref_set = ref[i];
+      std::set<oid_t>& act_set = hits[i];
+      if(ref_set != act_set) {
+        std::cout << "mismatch at idx " << i << ":" << std::endl;
+        //print(ref[i]);
+        //std::cout << " ";
+        //print(hits[i]);
+        //std::cout << std::endl;
+        
+        std::set<oid_t> diff;
+        std::set_difference(ref_set.begin(), ref_set.end(), act_set.begin(), act_set.end(),
+            std::inserter(diff, diff.end()));
+
+        std::cout << "in ref but not in act" << std::endl;
+        for(oid_t id : diff) {
+          print(id);
+          std::cout << std::endl;
+        }
+
+        abort();
+      }
+
+    }
 
     os << octree_depth << "," << n_ix << "," << diff << "\n";
   }
