@@ -737,18 +737,18 @@ public:
     return true;
   }
 
-private:
+public:
 
-  void setSkip(self_t* skip) {
+  void setSkip(self_t* skip)
+  {
     // set next on this
     m_skip = skip;
-    // find last child and set its next
+    // find last child and set its skip
     if(m_right_child != nullptr) {
       m_right_child->setSkip(skip);
     }
   }
 
-public:
 
   const self_t* getLeftChild() const
   {
