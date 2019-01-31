@@ -13,9 +13,11 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
 #include <Eigen/Dense>
+#include <Eigen/StdVector>
 #pragma GCC diagnostic pop
 #else
 #include <Eigen/Dense>
+#include <Eigen/StdVector>
 #endif
 
 #include "Acts/Utilities/Units.hpp"
@@ -133,3 +135,5 @@ enum AxisDefs : int {
 };
 
 }  // namespace Acts
+
+EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Matrix<double, 3, 1>)
