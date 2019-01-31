@@ -99,7 +99,7 @@ namespace Test {
     size_t n_frust = 1e6;
 
 
-    std::vector<Frustum> frustums;
+    std::vector<Frustum, Eigen::aligned_allocator<Frustum>> frustums;
     frustums.reserve(n_frust);
 
     for(size_t i=0;i<n_frust;i++) {

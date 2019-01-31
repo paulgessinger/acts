@@ -458,10 +458,9 @@ private:
   // need one more for direction we're facing
   std::array<vertex_type, SIDES+1> m_normals;
 
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
-
-
-
 
 template <typename value_t, size_t DIM>
 class Ray 
@@ -508,6 +507,8 @@ private:
   vertex_type m_origin;
   vertex_type m_dir;
   vertex_array_type m_idir;
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 template <typename U, size_t V>
@@ -1059,6 +1060,8 @@ private:
   self_t* m_left_child{nullptr};
   self_t* m_right_child{nullptr};
   self_t* m_skip{nullptr};
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 
