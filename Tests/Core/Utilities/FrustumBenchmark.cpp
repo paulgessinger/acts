@@ -10,11 +10,19 @@
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 
+#define ASSERT(condition) \
+  if(!(condition)) {\
+    std::cerr << "Assertion failed in line #" << __LINE__ << std::endl; \
+    abort(); \
+  }
+
 namespace Acts {
 namespace Test {
 
   struct Object
   {
+    using id_t = std::tuple<size_t, size_t, size_t>;
+    id_t id;
   };
 
   using real_t = float;
@@ -28,8 +36,8 @@ namespace Test {
   }
 
   template <size_t sides>
-  std::tuple<size_t, double>
-  bench_frustum(size_t octree_depth)
+  std::tuple<size_t, double, std::vector<Object::id_t>>
+  bench_frustum(int octree_depth)
   {
     std::cout << "Bench frustum: sides: " << sides << " octd: " << octree_depth << std::endl;
     using Frustum = Frustum<real_t, 3, sides>;
@@ -41,7 +49,6 @@ namespace Test {
     
     ply_helper<real_t> ply;
 
-    Object o;
     Box::Size size(ActsVectorF<3>(2, 2, 2));
 
     std::vector<std::unique_ptr<Box>> boxes;
@@ -54,6 +61,7 @@ namespace Test {
         for (size_t k = 0; k <= n; k++) {
           ActsVectorF<3> pos(min + i * step, min + j * step, min + k * step);
           //boxes.emplace_back(o, pos, size);
+          Object o{{i, j, k}};
           boxes.push_back(std::make_unique<Box>(o, pos, size));
           //boxes.back()->draw(ply);
           prims.push_back(boxes.back().get());
@@ -68,7 +76,21 @@ namespace Test {
       //prims.push_back(&bb);
     //}
 
-    Box* top_node = make_octree(boxes, prims, octree_depth);
+    Box* top_node = nullptr;
+
+    if(octree_depth >= 0) {
+      top_node = make_octree(boxes, prims, octree_depth);
+    }
+    else {
+      // no octree, just link all boxes sequentially
+      for(size_t i=1;i<prims.size();i++) {
+        prims.at(i-1)->setSkip(prims.at(i));
+      }
+      top_node = prims.front();
+    }
+
+
+
     std::mt19937 rng(42);
     std::uniform_real_distribution<real_t> pos_dist(min*1.5, max*1.5);
     std::uniform_real_distribution<real_t> dir_dist(-1, 1);
@@ -126,8 +148,12 @@ namespace Test {
       //}
     //}
 
+    // accumulate results idxs from all frustums,
+    // they should be the same as the frustums are always
+    // the same!
+    std::vector<Object::id_t> result;
+
     for(const Frustum& fr : frustums) {
-      std::vector<const Box*> result;
       const Box* lnode = top_node;
       do {
         n_ix++;
@@ -135,7 +161,7 @@ namespace Test {
 
           if (lnode->hasEntity()) {
             // found primitive
-            result.push_back(lnode);
+            result.push_back(lnode->entity()->id);
             //std::cout << "intersect prim: " << lnode << " -> " << lnode->getSkip() << std::endl;
             lnode = lnode->getSkip();
           } else {
@@ -161,7 +187,7 @@ namespace Test {
     std::cout << "=> " << ix_per_sec << " intersects per second" << std::endl;
 
 
-    return {n_ix, diff};
+    return {n_ix, diff, result};
   }
 
 }  // namespace Test
@@ -171,8 +197,8 @@ int
 main()
 {
   using res_t = std::tuple<size_t, double>;
+  using id_t = std::tuple<size_t, size_t, size_t>;
 
-  std::vector<std::pair<size_t, res_t>> results;
 
   // Tested with sides = 10, NaN / inf behavior!
   
@@ -200,14 +226,28 @@ main()
     //sides++;
   //}
   //os.close();
+
+  constexpr size_t n_sides = 9;
   
   std::ofstream os("octree_fr.csv");
   os << "octd,nix,time\n";
-  std::vector<size_t> octree_depths = {0, 1, 2, 3, 4, 5};
-  for(size_t octree_depth : octree_depths) {
-    size_t n_ix;
-    double diff;
-    std::tie(n_ix, diff) = Acts::Test::bench_frustum<9>(octree_depth);
+  std::vector<int> octree_depths = {0, 1, 2, 3, 4, 5};
+  size_t n_ix;
+  double diff;
+  std::vector<id_t> hits;
+  
+  // get ref
+  std::tie(n_ix, diff, hits) = Acts::Test::bench_frustum<n_sides>(-1);
+
+  std::vector<id_t> ref = hits;
+  std::cout << "n hits ref: " << ref.size() << std::endl;
+
+  for(int octree_depth : octree_depths) {
+    std::tie(n_ix, diff, hits) = Acts::Test::bench_frustum<n_sides>(octree_depth);
+
+    std::cout << "n hits: " << hits.size() << std::endl;
+    ASSERT(ref.size() == hits.size());
+
     os << octree_depth << "," << n_ix << "," << diff << "\n";
   }
   os.close();
