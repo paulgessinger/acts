@@ -1061,6 +1061,94 @@ private:
   self_t* m_skip{nullptr};
 };
 
+
+
+template <typename box_t>
+box_t* 
+make_octree(std::vector<std::unique_ptr<box_t>>& store,
+                        const std::vector<box_t*>& prims,
+                        size_t max_depth = 1,
+                        typename box_t::value_type envelope1 = 0)
+{
+  static_assert(box_t::dim == 3, "Octree can only be created in 3D");
+
+  using vertex_type = typename box_t::vertex_type;
+  using vertex_array_type = typename box_t::vertex_array_type;
+
+  vertex_array_type envelope(vertex_array_type::Constant(envelope1));
+
+  std::function<box_t*(const std::vector<box_t*>&, size_t)> oct;
+  
+  oct = [&store, &max_depth, &oct, &envelope] (const std::vector<box_t*>& lprims, size_t depth) -> box_t* {
+
+    if(lprims.size() == 1) {
+      // just return
+      return lprims.front();
+    }
+    
+    if (depth >= max_depth) {
+      // just wrap them all up
+      auto bb = std::make_unique<box_t>(lprims, envelope);
+      store.push_back(std::move(bb));
+      return store.back().get();
+    }
+
+    std::array<std::vector<box_t*>, 8> octants;
+    // calc center of boxes
+    vertex_type vmin, vmax;
+    std::tie(vmin, vmax) = box_t::wrap(lprims);
+    vertex_type glob_ctr = (vmin + vmax)/2.;
+
+    for(auto* box : lprims) {
+      vertex_type ctr = box->center() - glob_ctr;
+      if(ctr.x() < 0 && ctr.y() < 0 && ctr.z() < 0) {octants[0].push_back(box);continue;}
+      if(ctr.x() > 0 && ctr.y() < 0 && ctr.z() < 0) {octants[1].push_back(box);continue;}
+      if(ctr.x() < 0 && ctr.y() > 0 && ctr.z() < 0) {octants[2].push_back(box);continue;}
+      if(ctr.x() > 0 && ctr.y() > 0 && ctr.z() < 0) {octants[3].push_back(box);continue;}
+
+      if(ctr.x() < 0 && ctr.y() < 0 && ctr.z() > 0) {octants[4].push_back(box);continue;}
+      if(ctr.x() > 0 && ctr.y() < 0 && ctr.z() > 0) {octants[5].push_back(box);continue;}
+      if(ctr.x() < 0 && ctr.y() > 0 && ctr.z() > 0) {octants[6].push_back(box);continue;}
+      if(ctr.x() > 0 && ctr.y() > 0 && ctr.z() > 0) {octants[7].push_back(box);continue;}
+
+      // not in any quadrant (numerics probably)
+      octants[0].push_back(box);
+    }
+
+    std::vector<box_t*> sub_octs;
+    for(const auto& sub_prims : octants) {
+      if (sub_prims.size() <= 8) {
+        if(sub_prims.size() < 1) {
+           // done
+        }
+        else if(sub_prims.size() == 1) {
+          sub_octs.push_back(sub_prims.front());
+        }
+        else {
+          store.push_back(std::make_unique<box_t>(sub_prims, envelope));
+          sub_octs.push_back(store.back().get());
+        }
+      } 
+      else {
+        sub_octs.push_back(oct(sub_prims, depth+1));
+      }
+    }
+
+    if(sub_octs.size() == 1) {
+      return sub_octs.front();
+    }
+
+    //std::cout << "sub_octs.size() = " << sub_octs.size() << std::endl;
+    auto bb = std::make_unique<box_t>(sub_octs, envelope);
+    store.push_back(std::move(bb));
+    return store.back().get();
+  };
+
+  box_t* top = oct(prims, 0);
+  return top;
+}
+
+
 template <typename T, typename U, size_t V>
 std::ostream& operator<<(std::ostream& os, const AxisAlignedBoundingBox<T, U, V>& box) 
 {
