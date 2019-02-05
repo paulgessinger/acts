@@ -217,8 +217,28 @@ BOOST_AUTO_TEST_CASE(intersect_rays)
     BOOST_TEST(bb.intersect(ray));
   }
 
+  BOOST_TEST_CONTEXT("3D visualize")
+  {
+    using vertex_type3 = ObjectBBox::vertex_type;
+    Object o;
+
+    // lets make sure it also works in 3d
+    ObjectBBox bb3(o, {-1, -1, -1}, {1, 1, 1});
+    Ray<float, 3> ray3({0, 0, -2}, {0, 0, 1});
+    BOOST_TEST(bb3.intersect(ray3));
+
+    ply_helper<float> ply;
+
+    ray3.draw(ply);
+    std::ofstream os("ray3d.ply");
+    os << ply << std::flush;
+    os.close();
+  }
+
   BOOST_TEST_CONTEXT("3D")
   {
+
+
     using vertex_type3 = ObjectBBox::vertex_type;
     Object o;
 

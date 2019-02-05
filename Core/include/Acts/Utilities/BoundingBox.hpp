@@ -48,6 +48,14 @@ struct ply_helper
     m_faces.push_back(std::move(idxs));
   }
 
+  void line(const vertex_type& a, const vertex_type& b, color_type color = {120, 120, 120}) {
+    vertex(a, color);
+    size_t idx_a = m_vertices.size()-1;
+    vertex(b, color);
+    size_t idx_b = m_vertices.size()-1;
+    m_edges.emplace_back(std::make_pair(std::make_pair(idx_a, idx_b), color));
+  }
+
   void write(std::ostream& os) const
   {
     os << "ply\n";
@@ -61,6 +69,12 @@ struct ply_helper
     os << "property uchar blue\n";
     os << "element face " << m_faces.size() << "\n";
     os << "property list uchar int vertex_index\n";
+    os << "element edge " << m_edges.size() << "\n";
+    os << "property int vertex1\n";
+    os << "property int vertex2\n";
+    os << "property uchar red\n";
+    os << "property uchar green\n";
+    os << "property uchar blue\n";
     os << "end_header\n";
 
     for(const std::pair<vertex_type, color_type>& vtx : m_vertices) {
@@ -75,17 +89,25 @@ struct ply_helper
       }
       os << "\n";
     }
+
+    for(const std::pair<std::pair<size_t, size_t>, color_type>& edge : m_edges) {
+      std::pair<size_t, size_t> idxs = edge.first;
+      os << idxs.first << " " << idxs.second << " ";
+      os << edge.second[0] << " " << edge.second[1] << " " << edge.second[2] << "\n";
+    }
   }
 
   void clear()
   {
     m_vertices.clear();
     m_faces.clear();
+    m_edges.clear();
   }
 
 private:
   std::vector<std::pair<vertex_type, color_type>> m_vertices;
   std::vector<face_type> m_faces;
+  std::vector<std::pair<std::pair<size_t, size_t>, color_type>> m_edges;
 };
 
 template <typename T>
@@ -502,6 +524,16 @@ public:
 
     return os;
   }
+  
+  template <typename helper_t, size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
+  void draw(helper_t& helper, value_type far_distance = 10) const
+  {
+    static_assert(DIM == 3, "OBJ is only supported in 3D");
+    static_assert(std::is_same<typename helper_t::value_type, value_type>::value, "not the same value type");
+
+    helper.line(m_origin, m_origin + m_dir*far_distance);
+
+  }
 
 private:
   vertex_type m_origin;
@@ -722,6 +754,11 @@ public:
     // will most likely unroll the loop
     for (size_t i = 0; i < sides + 1; i++) {
       const vertex_type& normal = normals[i];
+
+      //for (size_t j=0;j<DIM;j++) {
+        //p_vtx[j] = normal[j] < 0 ? vmin[j] : vmax[j];
+        //std::cout << p_vtx[j] << std::endl;
+      //}
 
       p_vtx = (normal.array() < 0).template cast<float>() * vmin
           + (normal.array() >= 0).template cast<float>() * vmax;
