@@ -96,6 +96,11 @@ public:
   double
   halflengthY() const;
 
+  const Vector2D&
+  min() const;
+  const Vector2D&
+  max() const;
+
 private:
   Vector2D m_min;
   Vector2D m_max;
@@ -117,6 +122,18 @@ inline SurfaceBounds::BoundsType
 RectangleBounds::type() const
 {
   return SurfaceBounds::Rectangle;
+}
+
+inline const Vector2D&
+RectangleBounds::min() const
+{
+  return m_min;
+}
+
+inline const Vector2D&
+RectangleBounds::max() const
+{
+  return m_max;
 }
 
 }  // namespace Acts
