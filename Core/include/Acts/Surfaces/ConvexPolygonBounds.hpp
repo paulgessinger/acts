@@ -68,6 +68,9 @@ public:
   virtual variant_data
   toVariantData() const final;
 
+  bool 
+  convex() const;
+
 private:
   vertex_array    m_vertices;
   RectangleBounds m_boundingBox;

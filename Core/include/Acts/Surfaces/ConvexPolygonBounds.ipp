@@ -14,15 +14,15 @@ Acts::ConvexPolygonBounds<N>::ConvexPolygonBounds(
   : m_vertices(), m_boundingBox(makeBoundingBox(vertices))
 {
   assert(vertices.size() == N);
-  for (size_t i = 0; i < N; i++) {
-    m_vertices[i] = vertices[i];
-  }
+  for (size_t i = 0; i < N; i++) { m_vertices[i] = vertices[i]; }
+  assert(convex());
 }
 
 template <int N>
 Acts::ConvexPolygonBounds<N>::ConvexPolygonBounds(const vertex_array& vertices)
   : m_vertices(vertices), m_boundingBox(makeBoundingBox(vertices))
 {
+  assert(convex());
 }
 
 template <int N>
@@ -62,7 +62,7 @@ bool
 Acts::ConvexPolygonBounds<N>::inside(const Acts::Vector2D&      lpos,
                                      const Acts::BoundaryCheck& bcheck) const
 {
-  return true;
+  return bcheck.isInside(lpos, m_vertices);
 }
 
 template <int N>
@@ -70,7 +70,7 @@ double
 Acts::ConvexPolygonBounds<N>::distanceToBoundary(
     const Acts::Vector2D& lpos) const
 {
-  return 42.;
+  return BoundaryCheck(true).distance(lpos, m_vertices);
 }
 
 template <int N>
@@ -101,9 +101,7 @@ Acts::ConvexPolygonBounds<N>::toVariantData() const
   payload["sides"] = N;
 
   variant_vector vertices;
-  for (const auto& vtx : m_vertices) {
-    vertices.push_back(to_variant(vtx));
-  }
+  for (const auto& vtx : m_vertices) { vertices.push_back(to_variant(vtx)); }
 
   payload["vertices"] = vertices;
 
@@ -122,17 +120,50 @@ Acts::ConvexPolygonBounds<N>::boundingBox() const
 }
 
 template <int N>
+bool
+Acts::ConvexPolygonBounds<N>::convex() const
+{
+  for (size_t i = 0; i < N; i++) {
+    size_t          j = (i + 1) % N;
+    const Vector2D& a = m_vertices[i];
+    const Vector2D& b = m_vertices[j];
+
+    const Vector2D ab     = b - a;
+    const Vector2D normal = Vector2D(ab.y(), -ab.x()).normalized();
+
+    bool first = true;
+    bool ref;
+    // loop over all other vertices
+    for (size_t k = 0; k < N; k++) {
+      if (k == i || k == j) { continue; }
+
+      const Vector2D& c   = m_vertices[k];
+      double          dot = normal.dot(c - a);
+
+      if (first) {
+        ref   = std::signbit(dot);
+        first = false;
+        continue;
+      }
+
+      if (std::signbit(dot) != ref) { return false; }
+    }
+  }
+  return true;
+}
+
+template <int N>
 std::ostream&
 Acts::ConvexPolygonBounds<N>::dump(std::ostream& sl) const
 {
   sl << "Acts::ConvexPolygonBounds<" << num_vertices << ">: vertices: [x, y]\n";
   for (size_t i = 0; i < m_vertices.size(); i++) {
     const auto& vtx = m_vertices[i];
-    sl << "[" << vtx.x() << ", " << vtx.y() << "]";
     if (i > 0) {
       sl << ",";
+      sl << "\n";
     }
-    sl << "\n";
+    sl << "[" << vtx.x() << ", " << vtx.y() << "]";
   }
   return sl;
 }
