@@ -17,7 +17,7 @@
 
 namespace Acts {
 
-class ConvexPolygonBoundsBase : public PlanarBounds 
+class ConvexPolygonBoundsBase : public PlanarBounds
 {
 public:
   /// Output Method for std::ostream
@@ -30,11 +30,18 @@ public:
   /// @return The representation
   variant_data
   toVariantData() const final;
-  
+
+  std::vector<TDD_real_t>
+  valueStore() const final;
+
 protected:
   template <typename coll_t>
   static RectangleBounds
   makeBoundingBox(const coll_t& vertices);
+
+  template <typename coll_t>
+  static bool
+  convex_impl(const coll_t& vertices);
 };
 
 template <int N>
@@ -71,9 +78,6 @@ public:
   std::vector<Vector2D>
   vertices() const final;
 
-  std::vector<TDD_real_t>
-  valueStore() const final;
-
   // Bounding box representation
   const RectangleBounds&
   boundingBox() const final;
@@ -84,7 +88,6 @@ public:
 private:
   vertex_array    m_vertices;
   RectangleBounds m_boundingBox;
-
 };
 
 constexpr int PolygonDynamic = -1;
@@ -105,31 +108,27 @@ public:
   BoundsType
   type() const final;
 
- bool
- inside(const Vector2D& lpos, const BoundaryCheck& bcheck) const final;
+  bool
+  inside(const Vector2D& lpos, const BoundaryCheck& bcheck) const final;
 
- double
- distanceToBoundary(const Vector2D& lpos) const final;
+  double
+  distanceToBoundary(const Vector2D& lpos) const final;
 
- /// Return the vertices - or, the points of the extremas
- std::vector<Vector2D>
- vertices() const final;
+  /// Return the vertices - or, the points of the extremas
+  std::vector<Vector2D>
+  vertices() const final;
 
- std::vector<TDD_real_t>
- valueStore() const final;
+  /// Bounding box representation
+  const RectangleBounds&
+  boundingBox() const final;
 
- /// Bounding box representation
- const RectangleBounds&
- boundingBox() const final;
+  bool
+  convex() const;
 
- bool
- convex() const;
 private:
   std::vector<Vector2D> m_vertices;
-  RectangleBounds m_boundingBox;
+  RectangleBounds       m_boundingBox;
 };
-
-
 
 }  // namespace
 
