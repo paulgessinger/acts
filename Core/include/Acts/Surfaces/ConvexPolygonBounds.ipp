@@ -8,6 +8,62 @@
 
 #include "Acts/Utilities/VariantData.hpp"
 
+std::ostream&
+Acts::ConvexPolygonBoundsBase::dump(std::ostream& sl) const
+{
+  std::vector<Vector2D> vtxs = vertices();
+  sl << "Acts::ConvexPolygonBounds<" << vtxs.size() << ">: vertices: [x, y]\n";
+  for (size_t i = 0; i < vtxs.size(); i++) {
+    const auto& vtx = vtxs[i];
+    if (i > 0) {
+      sl << ",";
+      sl << "\n";
+    }
+    sl << "[" << vtx.x() << ", " << vtx.y() << "]";
+  }
+  return sl;
+}
+
+template <typename coll_t>
+Acts::RectangleBounds
+Acts::ConvexPolygonBoundsBase::makeBoundingBox(const coll_t& vertices)
+{
+  Vector2D vmax, vmin;
+  vmax = vertices[0];
+  vmin = vertices[0];
+
+  for (size_t i = 1; i < vertices.size(); i++) {
+    vmax = vmax.cwiseMax(vertices[i]);
+    vmin = vmin.cwiseMin(vertices[i]);
+  }
+
+  return {vmin, vmax};
+}
+
+Acts::variant_data
+Acts::ConvexPolygonBoundsBase::toVariantData() const
+{
+  std::vector<Vector2D> vtxs = {};//vertices();
+  using namespace std::string_literals;
+  variant_map payload;
+  payload["sides"] = vtxs.size();
+
+  //variant_vector var_vertices;
+  //for (const auto& vtx : vtxs) { var_vertices.push_back(to_variant(vtx)); }
+
+  //payload["vertices"] = var_vertices;
+
+  variant_map data;
+  data["type"]    = "ConvexPolygonBounds";
+  //data["payload"] = payload;
+
+  return data;
+}
+
+
+
+
+
 template <int N>
 Acts::ConvexPolygonBounds<N>::ConvexPolygonBounds(
     const std::vector<Acts::Vector2D>& vertices)
@@ -23,24 +79,6 @@ Acts::ConvexPolygonBounds<N>::ConvexPolygonBounds(const vertex_array& vertices)
   : m_vertices(vertices), m_boundingBox(makeBoundingBox(vertices))
 {
   assert(convex());
-}
-
-template <int N>
-template <typename coll_t>
-Acts::RectangleBounds
-Acts::ConvexPolygonBounds<N>::makeBoundingBox(const coll_t& vertices)
-{
-  assert(vertices.size() == N);
-  Vector2D vmax, vmin;
-  vmax = vertices[0];
-  vmin = vertices[0];
-
-  for (size_t i = 1; i < N; i++) {
-    vmax = vmax.cwiseMax(vertices[i]);
-    vmin = vmin.cwiseMin(vertices[i]);
-  }
-
-  return {vmin, vmax};
 }
 
 template <int N>
@@ -92,25 +130,6 @@ Acts::ConvexPolygonBounds<N>::valueStore() const
   return values;
 }
 
-template <int N>
-Acts::variant_data
-Acts::ConvexPolygonBounds<N>::toVariantData() const
-{
-  using namespace std::string_literals;
-  variant_map payload;
-  payload["sides"] = N;
-
-  variant_vector vertices;
-  for (const auto& vtx : m_vertices) { vertices.push_back(to_variant(vtx)); }
-
-  payload["vertices"] = vertices;
-
-  variant_map data;
-  data["type"]    = "ConvexPolygonBounds";
-  data["payload"] = payload;
-
-  return data;
-}
 
 template <int N>
 const Acts::RectangleBounds&
@@ -152,18 +171,62 @@ Acts::ConvexPolygonBounds<N>::convex() const
   return true;
 }
 
-template <int N>
-std::ostream&
-Acts::ConvexPolygonBounds<N>::dump(std::ostream& sl) const
+
+
+
+
+
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::ConvexPolygonBounds(
+    const std::vector<Vector2D>& vertices)
+  : m_vertices(vertices),
+    m_boundingBox(makeBoundingBox(vertices))
 {
-  sl << "Acts::ConvexPolygonBounds<" << num_vertices << ">: vertices: [x, y]\n";
-  for (size_t i = 0; i < m_vertices.size(); i++) {
-    const auto& vtx = m_vertices[i];
-    if (i > 0) {
-      sl << ",";
-      sl << "\n";
-    }
-    sl << "[" << vtx.x() << ", " << vtx.y() << "]";
-  }
-  return sl;
+
+}
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>*
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::clone() const
+{
+  return new Acts::ConvexPolygonBounds<Acts::PolygonDynamic>(*this);
+}
+
+Acts::SurfaceBounds::BoundsType
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::type() const
+{ 
+  return SurfaceBounds::ConvexPolygon;
+}
+
+bool
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::inside(const Acts::Vector2D& lpos, const Acts::BoundaryCheck& bcheck) const
+{
+  return true;
+}
+
+double
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::distanceToBoundary(const Acts::Vector2D& lpos) const
+{
+  return 42.;
+}
+
+std::vector<Acts::Vector2D>
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::vertices() const
+{
+  return {};
+}
+
+std::vector<TDD_real_t>
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::valueStore() const
+{
+  return {};
+}
+
+const Acts::RectangleBounds&
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::boundingBox() const
+{
+  return m_boundingBox;
+}
+
+bool
+Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::convex() const
+{
+  return true;
 }

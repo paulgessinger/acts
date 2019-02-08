@@ -58,7 +58,6 @@ namespace Test {
     
   }
 
-
   BOOST_AUTO_TEST_CASE(construction_test)
   {
 
@@ -67,9 +66,11 @@ namespace Test {
     // triangle
     vertices = {{0, 0}, {1, 0}, {0.5, 1}};
     poly<3> triangle(vertices);
-    std::cout << triangle << std::endl;
-    std::cout << triangle.boundingBox() << std::endl;
-    
+  
+    RectangleBounds bb = triangle.boundingBox();
+    BOOST_CHECK_EQUAL(bb.min(), Vector2D(0, 0));
+    BOOST_CHECK_EQUAL(bb.max(), Vector2D(1., 1));
+
     BoundaryCheck bc(true);
 
     BOOST_CHECK(triangle.inside({0.2, 0.2}, bc));
@@ -86,17 +87,52 @@ namespace Test {
     vertices = {{0, 0}, {1, 0}, {0.9, 1.2}, {0.5, 1}};
     poly<4> quad(vertices);
 
+    bb = quad.boundingBox();
+    BOOST_CHECK_EQUAL(bb.min(), Vector2D(0, 0));
+    BOOST_CHECK_EQUAL(bb.max(), Vector2D(1, 1.2));
+
     BOOST_CHECK(quad.inside({0.2, 0.2}, bc));
     BOOST_CHECK(!quad.inside({0.4, 0.9}, bc));
     BOOST_CHECK(quad.inside({0.8, 0.8}, bc));
     BOOST_CHECK(!quad.inside({0.3, -0.2}, bc));
 
-    CHECK_CLOSE_ABS(quad.distanceToBoundary({0.2, 0.2}), 0.089442, 1e-6);
+    CHECK_CLOSE_ABS(quad.distanceToBoundary({0.2, 0.2}), -0.089442, 1e-6);
     CHECK_CLOSE_ABS(quad.distanceToBoundary({0.4, 0.9}), 0.044721, 1e-6);
-    CHECK_CLOSE_ABS(quad.distanceToBoundary({0.8, 0.8}), 0.132872, 1e-6);
+    CHECK_CLOSE_ABS(quad.distanceToBoundary({0.8, 0.8}), -0.132872, 1e-6);
     CHECK_CLOSE_ABS(quad.distanceToBoundary({0.3, -0.2}), 0.2, 1e-6);
 
   }
+
+  BOOST_AUTO_TEST_CASE(construction_test_dynamic)
+  {
+    using poly = ConvexPolygonBounds<PolygonDynamic>;
+    
+    std::vector<vec2> vertices;
+
+    // triangle
+    vertices = {{0, 0}, {1, 0}, {0.5, 1}};
+    poly triangle(vertices);
+
+    RectangleBounds bb = triangle.boundingBox();
+    BOOST_CHECK_EQUAL(bb.min(), Vector2D(0, 0));
+    BOOST_CHECK_EQUAL(bb.max(), Vector2D(1., 1));
+
+    BoundaryCheck bc(true);
+
+    BOOST_CHECK(triangle.inside({0.2, 0.2}, bc));
+    BOOST_CHECK(!triangle.inside({0.4, 0.9}, bc));
+    BOOST_CHECK(!triangle.inside({0.8, 0.8}, bc));
+    BOOST_CHECK(!triangle.inside({0.3, -0.2}, bc));
+
+    CHECK_CLOSE_ABS(triangle.distanceToBoundary({0.2, 0.2}), -0.0894427, 1e-6);
+    CHECK_CLOSE_ABS(triangle.distanceToBoundary({0.4, 0.9}), 0.0447213, 1e-6);
+    CHECK_CLOSE_ABS(triangle.distanceToBoundary({0.8, 0.8}), 0.1788854, 1e-6);
+    CHECK_CLOSE_ABS(triangle.distanceToBoundary({0.3, -0.2}), 0.2, 1e-6);
+
+
+    
+  }
+
   BOOST_AUTO_TEST_SUITE_END()
 }
 }
