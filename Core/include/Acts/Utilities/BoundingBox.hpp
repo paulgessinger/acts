@@ -180,8 +180,14 @@ std::ostream&
 operator<<(std::ostream& os, const AxisAlignedBoundingBox<T, U, V>& box);
 
 // default type and dim
+template <typename T, typename value_t>
+using AABB3 = AxisAlignedBoundingBox<T, value_t, 3>;
+
 template <typename T>
-using AABB = AxisAlignedBoundingBox<T, float, 3>;
+using AABB3F = AABB3<T, float>;
+
+template <typename T>
+using AABB3D = AABB3<T, double>;
 
 }  // namespace Acts
 
