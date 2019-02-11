@@ -62,10 +62,35 @@ public:
   virtual std::ostream&
   dump(std::ostream& sl) const;
 
+  template <typename helper_t>
+    void
+    draw(helper_t& helper) const;
+
 private:
   std::array<Vector3D, 8> m_vertices;
   // which vertices go with which normal (this is an implementation detail)
   //static constexpr std::array<size_t, 6> s_planeVertexIndices = {0, 4, 0, 1, 2, 1};
   std::array<Vector3D, 6> m_normals;
 };
+}
+
+template <typename helper_t>
+void
+Acts::GenericCuboidVolumeBounds::draw(helper_t& helper) const
+{
+  auto draw_face
+    = [&](const auto& a, const auto& b, const auto& c, const auto& d) {
+      helper.face(std::vector<Vector3D>({a, b, c, d}));
+    };
+  
+
+  for(const auto& vtx : m_vertices) {
+    helper.vertex(vtx);
+  }
+  draw_face(m_vertices[0], m_vertices[1], m_vertices[2], m_vertices[3]);
+  draw_face(m_vertices[4], m_vertices[5], m_vertices[6], m_vertices[7]);
+  draw_face(m_vertices[0], m_vertices[3], m_vertices[7], m_vertices[4]);
+  draw_face(m_vertices[1], m_vertices[2], m_vertices[6], m_vertices[5]);
+  draw_face(m_vertices[2], m_vertices[3], m_vertices[7], m_vertices[6]);
+  draw_face(m_vertices[1], m_vertices[0], m_vertices[4], m_vertices[5]);
 }
