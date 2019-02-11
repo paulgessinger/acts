@@ -267,3 +267,22 @@ Acts::DoubleTrapezoidVolumeBounds::dump(std::ostream& sl) const
 {
   return dumpT<std::ostream>(sl);
 }
+
+Acts::AABB3F<Acts::Volume>
+Acts::DoubleTrapezoidVolumeBounds::boundingBox(const Transform3D* trf) const
+{
+  float halex = std::max(minHalflengthX(), std::min(medHalflengthX(), maxHalflengthX()));
+  Vector3F vmin(-halex, -halflengthY1()*2, -halflengthZ());
+  Vector3F vmax(halex, halflengthY2()*2, halflengthZ());
+  
+  Transform3F transform = Transform3F::Identity();
+  if(trf != nullptr) {
+    transform = (*trf).cast<float>();
+  }
+
+  vmin = transform * vmin;
+  vmax = transform * vmax;
+
+  return {nullptr, vmin, vmax};
+
+}

@@ -14,6 +14,7 @@
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Utilities/GeometryObject.hpp"
 #include "Acts/Utilities/GeometryStatics.hpp"
+#include "Acts/Utilities/BoundingBox.hpp"
 
 namespace Acts {
 
@@ -71,6 +72,9 @@ public:
   /// returns the volumeBounds()
   const VolumeBounds&
   volumeBounds() const;
+
+  AABB3F<Volume>
+  boundingBox() const;
 
   /// Inside() method for checks
   ///

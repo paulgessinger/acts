@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2016-2018 Acts project team
+// Copyright (C) 2016-2019 Acts project team
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,7 @@
 #include <iostream>
 #include <utility>
 #include "Acts/Volumes/VolumeBounds.hpp"
+#include "Acts/Utilities/BoundingBox.hpp"
 
 Acts::Volume::Volume()
   : GeometryObject()
@@ -97,4 +98,10 @@ Acts::operator<<(std::ostream& sl, const Acts::Volume& vol)
 {
   sl << "Voluem with " << vol.volumeBounds() << std::endl;
   return sl;
+}
+
+Acts::AABB3F<Acts::Volume>
+Acts::Volume::boundingBox() const
+{
+  return m_volumeBounds->boundingBox(m_transform.get());
 }

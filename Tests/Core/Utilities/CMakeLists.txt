@@ -68,8 +68,8 @@ add_executable (BoundingBoxTest BoundingBoxTest.cpp)
 target_link_libraries (BoundingBoxTest PRIVATE ActsCore)
 add_test (NAME BoundingBoxTest COMMAND BoundingBoxTest)
 
-add_executable (BoundingBoxBenchmark BoundingBoxBenchmark.cpp)
-target_link_libraries (BoundingBoxBenchmark PRIVATE ActsCore)
+#add_executable (BoundingBoxBenchmark BoundingBoxBenchmark.cpp)
+#target_link_libraries (BoundingBoxBenchmark PRIVATE ActsCore)
 
 add_executable (FrustumBenchmark FrustumBenchmark.cpp)
 target_link_libraries (FrustumBenchmark PRIVATE ActsCore)

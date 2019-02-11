@@ -13,6 +13,7 @@
 
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Volumes/VolumeBounds.hpp"
+#include "Acts/Utilities/BoundingBox.hpp"
 
 namespace Acts {
 
@@ -56,6 +57,9 @@ public:
   virtual std::vector<std::shared_ptr<const Surface>>
   decomposeToSurfaces(std::shared_ptr<const Transform3D> transform) const;
 
+  AABB3F<Volume>
+  boundingBox(const Transform3D* trf = nullptr) const final;
+
   /// Output Method for std::ostream, to be overloaded by child classes
   ///
   /// @param sl is the output stream to be dumped into
@@ -64,7 +68,7 @@ public:
 
   template <typename helper_t>
   void
-  draw(helper_t& helper) const;
+  draw(helper_t& helper, const Transform3D* transform = nullptr) const;
 
 private:
   std::array<Vector3D, 8> m_vertices;
@@ -77,15 +81,17 @@ private:
 
 template <typename helper_t>
 void
-Acts::GenericCuboidVolumeBounds::draw(helper_t& helper) const
+Acts::GenericCuboidVolumeBounds::draw(helper_t& helper, const Transform3D* transform) const
 {
+  Transform3D trf = transform != nullptr ? *transform : Transform3D::Identity();
+
   auto draw_face
       = [&](const auto& a, const auto& b, const auto& c, const auto& d) {
-          helper.face(std::vector<Vector3D>({a, b, c, d}));
+          helper.face(std::vector<Vector3D>({trf*a, trf*b, trf*c, trf*d}));
         };
 
   for (const auto& vtx : m_vertices) {
-    helper.vertex(vtx);
+    helper.vertex(trf*vtx);
   }
   draw_face(m_vertices[0], m_vertices[1], m_vertices[2], m_vertices[3]);
   draw_face(m_vertices[4], m_vertices[5], m_vertices[6], m_vertices[7]);
