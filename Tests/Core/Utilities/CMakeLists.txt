@@ -70,8 +70,14 @@ add_test (NAME BoundingBoxTest COMMAND BoundingBoxTest)
 
 add_executable (BoundingBoxBenchmark BoundingBoxBenchmark.cpp)
 target_link_libraries (BoundingBoxBenchmark PRIVATE ActsCore)
-#add_test (NAME BoundingBoxBenchmark COMMAND BoundingBoxBenchmark)
 
 add_executable (FrustumBenchmark FrustumBenchmark.cpp)
 target_link_libraries (FrustumBenchmark PRIVATE ActsCore)
 
+add_executable (FrustumTest FrustumTest.cpp)
+target_link_libraries (FrustumTest PRIVATE ActsCore ActsTestsCommonHelpers)
+add_test(NAME FrustumTest COMMAND FrustumTest)
+
+add_executable (RayTest RayTest.cpp)
+target_link_libraries (RayTest PRIVATE ActsCore ActsTestsCommonHelpers)
+add_test(NAME RayTest COMMAND RayTest)
