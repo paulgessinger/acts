@@ -9,6 +9,7 @@
 
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
 
 namespace {
 struct Object
@@ -334,11 +335,11 @@ main()
       p3 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_min;
       p4 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_min;
 
-      ply.vertex(p1);
-      ply.vertex(p2);
-      ply.vertex(p3);
-      ply.vertex(p4);
-      ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
+      // ply.vertex(p1);
+      // ply.vertex(p2);
+      // ply.vertex(p3);
+      // ply.vertex(p4);
+      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
 
       // outer face
       r_min = std::tan(theta_min) * z_max;
@@ -349,23 +350,28 @@ main()
       p7 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_max;
       p8 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_max;
 
-      ply.vertex(p5);
-      ply.vertex(p6);
-      ply.vertex(p7);
-      ply.vertex(p8);
-      ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+      // ply.vertex(p5);
+      // ply.vertex(p6);
+      // ply.vertex(p7);
+      // ply.vertex(p8);
+      // ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
 
-      // top face
-      ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+      //// top face
+      // ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
 
-      // bottom face
-      ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+      //// bottom face
+      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
 
-      // left face
-      ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+      //// left face
+      // ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
 
-      // right face
-      ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+      //// right face
+      // ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+
+      std::array<Acts::Vector3D, 8> vertices
+          = {{p2, p1, p5, p6, p3, p4, p8, p7}};
+      Acts::GenericCuboidVolumeBounds vol(vertices);
+      vol.draw(ply);
 
     };
 
@@ -400,11 +406,11 @@ main()
       p3 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_max;
       p4 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_min;
 
-      ply.vertex(p1);
-      ply.vertex(p2);
-      ply.vertex(p3);
-      ply.vertex(p4);
-      ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
+      // ply.vertex(p1);
+      // ply.vertex(p2);
+      // ply.vertex(p3);
+      // ply.vertex(p4);
+      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
 
       // outer face
       z_min = r_max / std::tan(theta_min);
@@ -415,19 +421,24 @@ main()
       p7 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_max;
       p8 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_min;
 
-      ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+      // ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
 
-      // top face
-      ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+      //// top face
+      // ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
 
-      // bottom face
-      ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+      //// bottom face
+      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
 
-      // left face
-      ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+      //// left face
+      // ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
 
-      // right face
-      ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+      //// right face
+      // ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+
+      std::array<Acts::Vector3D, 8> vertices
+          = {{p2, p1, p5, p6, p3, p4, p8, p7}};
+      Acts::GenericCuboidVolumeBounds vol(vertices);
+      vol.draw(ply);
 
     };
 
@@ -456,7 +467,7 @@ main()
       p3 << x_max, y_max, z_min;
       p4 << x_max, y_min, z_min;
 
-      ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
+      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
 
       // outer face
       p5 << x_min, y_min, z_max;
@@ -464,20 +475,24 @@ main()
       p7 << x_max, y_max, z_max;
       p8 << x_max, y_min, z_max;
 
-      ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+      // ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
 
-      // top face
-      ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+      //// top face
+      // ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
 
-      // bottom face
-      ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+      //// bottom face
+      // ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
 
-      // left face
-      ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+      //// left face
+      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
 
-      // right face
-      ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+      //// right face
+      // ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
 
+      std::array<Acts::Vector3D, 8> vertices
+          = {{p1, p2, p3, p4, p5, p6, p7, p8}};
+      Acts::GenericCuboidVolumeBounds vol(vertices);
+      vol.draw(ply);
     };
 
     Acts::ply_helper<double> ply_lar;
@@ -542,6 +557,7 @@ main()
       case 17:
         dz *= scale;
         build_endcap(*ply, r, z, dz, eta_raw, deta, phi_raw, dphi);
+        goto endloop;
         break;
       case 0:
       case 1:
