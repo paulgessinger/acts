@@ -91,7 +91,6 @@ namespace Test {
     CHECK_CLOSE_ABS(rect.min(), Vector2D(-halfX, -halfY), 1e-6);
     CHECK_CLOSE_ABS(rect.max(), Vector2D(halfX, halfY), 1e-6);
 
-
     const std::vector<Vector2D> coords
         = {{10., -5.}, {10., 5.}, {-10., 5.}, {-10., -5.}};
     // equality, ensure ordering is ok
