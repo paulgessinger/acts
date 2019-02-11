@@ -62,10 +62,7 @@ Acts::RectangleBounds::vertices() const
 {
   // counter-clockwise starting from bottom-right corner
   return {
-      {m_max.x(), m_min.y()},
-      m_max,
-      {m_min.x(), m_max.y()},
-      m_min,
+      {m_max.x(), m_min.y()}, m_max, {m_min.x(), m_max.y()}, m_min,
   };
 }
 
