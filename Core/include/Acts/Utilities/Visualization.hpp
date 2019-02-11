@@ -142,11 +142,9 @@ struct obj_helper
   }
 
   void
-  line(const vertex_type& /*a*/,
-       const vertex_type& /*b*/,
-       color_type         /*color*/)
+  line(const vertex_type& /*a*/, const vertex_type& /*b*/, color_type /*color*/)
   {
-  // not implemented
+    // not implemented
   }
 
   template <typename coll_t>
@@ -193,4 +191,13 @@ private:
   std::vector<vertex_type> m_vertices;
   std::vector<face_type>   m_faces;
 };
+
+template <typename T>
+std::ostream&
+operator<<(std::ostream& os, const obj_helper<T>& obj)
+{
+  obj.write(os);
+  return os;
 }
+
+}  // namespace Acts
