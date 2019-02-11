@@ -16,6 +16,7 @@
 
 #include "Acts/Tests/CommonHelpers/FloatComparisons.hpp"
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Utilities/Visualization.hpp"
 #include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
 
 namespace Acts {
@@ -39,8 +40,34 @@ namespace Test {
       GenericCuboidVolumeBounds cubo(vertices);
 
       BOOST_CHECK(cubo.inside({0.5, 0.5, 0.5}));
+      BOOST_CHECK(cubo.inside({1.5, 0.5, 0.5}));
+      BOOST_CHECK(!cubo.inside({2.5, 0.5, 0.5}));
+      BOOST_CHECK(!cubo.inside({0.5, 1.5, 0.5}));
+      BOOST_CHECK(!cubo.inside({0.5, 0.5, 1.5}));
+      BOOST_CHECK(!cubo.inside({-0.5, 0.5, 0.5}));
 
     }
+    
+  BOOST_AUTO_TEST_CASE(ply_test) {
+      std::array<Vector3D, 8> vertices;
+      vertices = {{
+        {0, 0, 0},
+        {2, 0, 0},
+        {2, 1, 0},
+        {0, 1, 0},
+        {0, 0, 1},
+        {2, 0, 1},
+        {2, 1, 1},
+        {0, 1, 1}
+      }};
+      GenericCuboidVolumeBounds cubo(vertices);
+      ply_helper<double> ply;
+      cubo.draw(ply);
+
+      std::ofstream os("cuboid.ply");
+      os << ply << std::flush;
+      os.close();
+  }
   
   BOOST_AUTO_TEST_SUITE_END()
 }

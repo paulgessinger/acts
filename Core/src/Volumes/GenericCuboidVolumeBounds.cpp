@@ -27,7 +27,7 @@ Acts::GenericCuboidVolumeBounds::GenericCuboidVolumeBounds(
 
   cog *= 0.125;  // 1/8.
 
-  std::cout << "cog: " << cog.transpose() << std::endl;
+  //std::cout << "cog: " << cog.transpose() << std::endl;
 
   size_t idx = 0;
 
@@ -37,8 +37,8 @@ Acts::GenericCuboidVolumeBounds::GenericCuboidVolumeBounds(
           const Vector3D ab = b - a, ac = c - a;
           Vector3D       normal = ab.cross(ac).normalized();
 
-          std::cout << "normal: " << normal.transpose() << std::endl;
-          std::cout << (cog - d).dot(normal) << std::endl;
+          //std::cout << "normal: " << normal.transpose() << std::endl;
+          //std::cout << (cog - d).dot(normal) << std::endl;
           if ((cog - d).dot(normal) < 0) {
             // normal points outwards, flip normal
             normal *= -1.;
@@ -50,12 +50,12 @@ Acts::GenericCuboidVolumeBounds::GenericCuboidVolumeBounds(
           m_normals[idx] = normal;
           idx++;
 
-          std::cout << "a: " << a.transpose() << std::endl;
-          std::cout << "b: " << b.transpose() << std::endl;
-          std::cout << "c: " << c.transpose() << std::endl;
-          std::cout << "d: " << d.transpose() << std::endl;
-          std::cout << "normal: " << normal.transpose() << std::endl;
-          std::cout << std::endl;
+          //std::cout << "a: " << a.transpose() << std::endl;
+          //std::cout << "b: " << b.transpose() << std::endl;
+          //std::cout << "c: " << c.transpose() << std::endl;
+          //std::cout << "d: " << d.transpose() << std::endl;
+          //std::cout << "normal: " << normal.transpose() << std::endl;
+          //std::cout << std::endl;
         };
 
   // handle faces
@@ -80,11 +80,7 @@ Acts::GenericCuboidVolumeBounds::inside(const Acts::Vector3D& gpos,
   constexpr std::array<size_t, 6> vtxs = {0, 4, 0, 1, 2, 1};
   // needs to be on same side, get ref
   bool ref = (gpos-m_vertices[vtxs[0]]).dot(m_normals[0]) > 0;
-  std::cout << "ref: " << ref << std::endl;
   for(size_t i=1;i<6;i++) {
-    std::cout << (gpos-m_vertices[vtxs[i]]).transpose() << std::endl;
-    std::cout << m_normals[i].transpose() << std::endl;
-    std::cout << ((gpos-m_vertices[vtxs[i]]).dot(m_normals[i]) > 0) << std::endl;
     if(((gpos-m_vertices[vtxs[i]]).dot(m_normals[i]) > 0) != ref) {
       return false;
     }
