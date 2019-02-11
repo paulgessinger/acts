@@ -92,7 +92,22 @@ std::vector<std::shared_ptr<const Acts::Surface>>
 Acts::GenericCuboidVolumeBounds::decomposeToSurfaces(
     std::shared_ptr<const Acts::Transform3D> transform) const
 {
-  return {};
+  std::vector<std::shared_ptr<const Acts::Surface>> surfaces;
+  
+  auto make_surface = [&](const auto& a, const auto& b, const auto& c, const auto& d) {
+    
+    // calculate centroid of these points
+    Vector3D ctrd = (a+b+c+d)/4.;
+    // create normal
+
+  };
+
+  make_surface(m_vertices[0], m_vertices[1], m_vertices[2], m_vertices[3]);
+  make_surface(m_vertices[4], m_vertices[5], m_vertices[6], m_vertices[7]);
+  make_surface(m_vertices[0], m_vertices[3], m_vertices[7], m_vertices[4]);
+  make_surface(m_vertices[1], m_vertices[2], m_vertices[6], m_vertices[5]);
+  make_surface(m_vertices[2], m_vertices[3], m_vertices[7], m_vertices[6]);
+  make_surface(m_vertices[1], m_vertices[0], m_vertices[4], m_vertices[5]);
 }
 
 std::ostream&
@@ -106,4 +121,33 @@ Acts::GenericCuboidVolumeBounds::dump(std::ostream& sl) const
     sl << "[" << m_vertices[i].transpose() << "]";
   }
   return sl;
+}
+
+Acts::AABB3F<Acts::Volume>
+Acts::GenericCuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
+{
+  Vector3F vmin, vmax;
+  
+
+  Transform3F transform = Transform3F::Identity();
+  if(trf != nullptr) {
+    transform = (*trf).cast<float>();
+  }
+
+  vmin = transform*m_vertices[0].cast<float>();
+  vmax = transform*m_vertices[0].cast<float>();
+  std::cout << vmin.transpose() << " | " << vmax.transpose() << std::endl;
+
+  for(size_t i=1;i<8;i++) {
+    Vector3F vtx = transform*m_vertices[i].cast<float>();
+    vmin = vmin.cwiseMin(vtx);
+    vmax = vmax.cwiseMax(vtx);
+    std::cout << vtx.transpose() << std::endl;
+    std::cout << vmin.transpose() << " | " << vmax.transpose() << std::endl;
+  }
+  
+  //vmin = transform * vmin;
+  //vmax = transform * vmax;
+
+  return {nullptr, vmin, vmax};
 }

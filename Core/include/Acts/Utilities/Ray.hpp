@@ -57,6 +57,14 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
+template <typename T, size_t D>
+std::ostream&
+operator<<(std::ostream& os, const Ray<T, D>& ray)
+{
+  ray.dump(os);
+  return os;
+}
+
 using Ray3F = Ray<float, 3>;
 using Ray3D = Ray<double, 3>;
 

@@ -8,10 +8,10 @@
 
 template <typename entity_t, typename value_t, size_t DIM>
 Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::AxisAlignedBoundingBox(
-    const entity_t&    entity,
+    const entity_t*    entity,
     const vertex_type& vmin,
     const vertex_type& vmax)
-  : m_entity(&entity)
+  : m_entity(entity)
   , m_vmin(vmin)
   , m_vmax(vmax)
   , m_center((vmin + vmax) / 2.)
@@ -22,10 +22,10 @@ Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::AxisAlignedBoundingBox(
 
 template <typename entity_t, typename value_t, size_t DIM>
 Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::AxisAlignedBoundingBox(
-    const entity_t&    entity,
+    const entity_t*    entity,
     const vertex_type& center,
     const Size&        size)
-  : m_entity(&entity)
+  : m_entity(entity)
   , m_vmin(center - size.get() * 0.5)
   , m_vmax(center + size.get() * 0.5)
   , m_center(center)
@@ -372,9 +372,9 @@ Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::draw(
 
 template <typename entity_t, typename value_t, size_t DIM>
 template <size_t D, std::enable_if_t<D == 2, int>>
-std::ofstream&
+std::ostream&
 Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::svg(
-    std::ofstream& os,
+    std::ostream& os,
     value_type     w,
     value_type     h,
     value_type     unit,

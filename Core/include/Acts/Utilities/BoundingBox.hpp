@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <ostream>
 #include <limits>
 #include <tuple>
 #include <vector>
@@ -65,13 +66,11 @@ public:
 
   static const size_t dim = DIM;
 
-  // if we construct this with an entity, the entity can not be null
-  AxisAlignedBoundingBox(const entity_t&    entity,
+  AxisAlignedBoundingBox(const entity_t*    entity,
                          const vertex_type& vmin,
                          const vertex_type& vmax);
 
-  // if we construct this with an entity, the entity can not be null
-  AxisAlignedBoundingBox(const entity_t&    entity,
+  AxisAlignedBoundingBox(const entity_t*    entity,
                          const vertex_type& center,
                          const Size&        size);
 
@@ -144,8 +143,8 @@ public:
   draw(helper_t& helper, std::array<int, 3> color = {120, 120, 120}) const;
 
   template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
-  std::ofstream&
-  svg(std::ofstream& os,
+  std::ostream&
+  svg(std::ostream& os,
       value_type     w,
       value_type     h,
       value_type     unit      = 10,

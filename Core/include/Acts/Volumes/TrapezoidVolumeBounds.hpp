@@ -13,6 +13,7 @@
 #pragma once
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Volumes/VolumeBounds.hpp"
+#include "Acts/Utilities/BoundingBox.hpp"
 
 namespace Acts {
 
@@ -121,6 +122,9 @@ public:
   std::vector<std::shared_ptr<const Surface>>
   decomposeToSurfaces(
       std::shared_ptr<const Transform3D> transformPtr) const override;
+
+  AABB3F<Volume>
+  boundingBox(const Transform3D* trf = nullptr) const final;
 
   /// This method returns the minimal halflength in local x
   double

@@ -18,6 +18,7 @@
 #include "Acts/Surfaces/RectangleBounds.hpp"
 #include "Acts/Surfaces/TrapezoidBounds.hpp"
 #include "Acts/Utilities/GeometryStatics.hpp"
+#include "Acts/Utilities/BoundingBox.hpp"
 
 Acts::TrapezoidVolumeBounds::TrapezoidVolumeBounds()
   : VolumeBounds(), m_valueStore(bv_length, 0.)
@@ -232,4 +233,23 @@ std::ostream&
 Acts::TrapezoidVolumeBounds::toStream(std::ostream& sl) const
 {
   return dumpT<std::ostream>(sl);
+}
+
+Acts::AABB3F<Acts::Volume>
+Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
+{
+  float halex = std::max(maxHalflengthX(), minHalflengthX());
+  Vector3F vmin(-halex, -halflengthY(), -halflengthZ());
+  Vector3F vmax(halex, halflengthY(), halflengthZ());
+  
+  Transform3F transform = Transform3F::Identity();
+  if(trf != nullptr) {
+    transform = (*trf).cast<float>();
+  }
+
+  vmin = transform * vmin;
+  vmax = transform * vmax;
+
+  return {nullptr, vmin, vmax};
+
 }

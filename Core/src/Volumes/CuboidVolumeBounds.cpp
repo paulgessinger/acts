@@ -16,6 +16,7 @@
 #include "Acts/Surfaces/PlaneSurface.hpp"
 #include "Acts/Surfaces/RectangleBounds.hpp"
 #include "Acts/Surfaces/Surface.hpp"
+#include "Acts/Utilities/BoundingBox.hpp"
 
 Acts::CuboidVolumeBounds::CuboidVolumeBounds()
   : VolumeBounds(), m_valueStore(bv_length, 0.)
@@ -149,4 +150,22 @@ std::ostream&
 Acts::CuboidVolumeBounds::toStream(std::ostream& sl) const
 {
   return dumpT(sl);
+}
+
+Acts::AABB3F<Acts::Volume>
+Acts::CuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
+{
+  Vector3F vmin(-halflengthX(), -halflengthY(), -halflengthZ());
+  Vector3F vmax(halflengthX(), halflengthY(), halflengthZ());
+  
+  Transform3F transform = Transform3F::Identity();
+  if(trf != nullptr) {
+    transform = (*trf).cast<float>();
+  }
+
+  vmin = transform * vmin;
+  vmax = transform * vmax;
+
+  return {nullptr, vmin, vmax};
+
 }

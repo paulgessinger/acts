@@ -169,6 +169,195 @@ namespace Test {
 }  // namespace Test
 }  // namespace Acts
 
+double
+eta_to_theta(double eta)
+{
+  return 2 * std::atan(std::exp(-eta));
+}
+
+template <typename helper_t>
+void
+build_endcap(helper_t&  ply,
+             double r,
+             double z,
+             double dz,
+             double eta,
+             double deta,
+             double phi,
+             double dphi)
+{
+  std::cout << "build endcap" << std::endl;
+
+  double eta_max   = eta + deta * 0.5;
+  double eta_min   = eta - deta * 0.5;
+  double theta_max = eta_to_theta(eta_max);
+  double theta_min = eta_to_theta(eta_min);
+  double phi_max   = phi + dphi * 0.5;
+  double phi_min   = phi - dphi * 0.5;
+  double z_min     = z - dz;
+  double z_max     = z + dz;
+
+  double         r_min, r_max;
+  Acts::Vector3D p1, p2, p3, p4, p5, p6, p7, p8;
+
+  // inner face
+  r_min = std::tan(theta_min) * z_min;
+  r_max = std::tan(theta_max) * z_min;
+
+  p1 << r_min * std::cos(phi_min), r_min * std::sin(phi_min), z_min;
+  p2 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_min;
+  p3 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_min;
+  p4 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_min;
+
+  ply.vertex(p1);
+  ply.vertex(p2);
+  ply.vertex(p3);
+  ply.vertex(p4);
+  ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
+
+  // outer face
+  r_min = std::tan(theta_min) * z_max;
+  r_max = std::tan(theta_max) * z_max;
+
+  p5 << r_min * std::cos(phi_min), r_min * std::sin(phi_min), z_max;
+  p6 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_max;
+  p7 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_max;
+  p8 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_max;
+
+  ply.vertex(p5);
+  ply.vertex(p6);
+  ply.vertex(p7);
+  ply.vertex(p8);
+  ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+
+  // top face
+  ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+
+  // bottom face
+  ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+
+  // left face
+  ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+
+  // right face
+  ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+}
+
+template <typename helper_t>
+void
+build_barrel(helper_t&  ply,
+             double r,
+             double dr,
+             double z,
+             double eta,
+             double deta,
+             double phi,
+             double dphi)
+{
+  std::cout << "build barrel" << std::endl;
+  double eta_max   = eta + deta * 0.5;
+  double eta_min   = eta - deta * 0.5;
+  double theta_max = eta_to_theta(eta_max);
+  double theta_min = eta_to_theta(eta_min);
+  double phi_max   = phi + dphi * 0.5;
+  double phi_min   = phi - dphi * 0.5;
+
+  double r_min = r - dr;
+  double r_max = r + dr;
+
+  double         z_min, z_max;
+  Acts::Vector3D p1, p2, p3, p4, p5, p6, p7, p8;
+
+  // inner face
+  z_min = r_min / std::tan(theta_min);
+  z_max = r_min / std::tan(theta_max);
+
+  p1 << r_min * std::cos(phi_min), r_min * std::sin(phi_min), z_min;
+  p2 << r_min * std::cos(phi_min), r_min * std::sin(phi_min), z_max;
+  p3 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_max;
+  p4 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_min;
+
+  ply.vertex(p1);
+  ply.vertex(p2);
+  ply.vertex(p3);
+  ply.vertex(p4);
+  ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
+
+  // outer face
+  z_min = r_max / std::tan(theta_min);
+  z_max = r_max / std::tan(theta_max);
+
+  p5 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_min;
+  p6 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_max;
+  p7 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_max;
+  p8 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_min;
+
+  ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+
+  // top face
+  ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+
+  // bottom face
+  ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+
+  // left face
+  ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+
+  // right face
+  ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+}
+
+template <typename helper_t>
+void
+build_box(helper_t&  ply,
+          double x,
+          double dx,
+          double y,
+          double dy,
+          double z,
+          double dz)
+{
+  std::cout << "build box" << std::endl;
+
+  double x_min, x_max, y_min, y_max, z_min, z_max;
+  x_min = x - dx;
+  x_max = x + dx;
+  y_min = y - dy;
+  y_max = y + dy;
+  z_min = z - dz;
+  z_max = z + dz;
+
+  Acts::Vector3D p1, p2, p3, p4, p5, p6, p7, p8;
+
+  // inner face
+  p1 << x_min, y_min, z_min;
+  p2 << x_min, y_max, z_min;
+  p3 << x_max, y_max, z_min;
+  p4 << x_max, y_min, z_min;
+
+  ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
+
+  // outer face
+  p5 << x_min, y_min, z_max;
+  p6 << x_min, y_max, z_max;
+  p7 << x_max, y_max, z_max;
+  p8 << x_max, y_min, z_max;
+
+  ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+
+  // top face
+  ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+
+  // bottom face
+  ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+
+  // left face
+  ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+
+  // right face
+  ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+};
+
 int
 main()
 {
@@ -290,8 +479,12 @@ main()
     std::ifstream is("../output_geo.csv");
     std::string   line("");
     size_t        idx = 0;
-    //,x,y,z,r,phi_raw,eta_raw,dphi,deta,dr,dx,dy,dz,calosample
 
+    Acts::ply_helper<double> ply_lar;
+    Acts::ply_helper<double> ply_tile;
+    Acts::ply_helper<double> ply_fcal;
+
+    //,x,y,z,r,phi_raw,eta_raw,dphi,deta,dr,dx,dy,dz,calosample
     size_t row;
     float  x, y, z, r, phi_raw, eta_raw, dphi, deta, dr, dx, dy, dz;
     size_t calosample;
@@ -300,204 +493,6 @@ main()
 
     // strip header row
     std::getline(is, line);
-
-    auto eta_to_theta
-        = [](double eta) { return 2 * std::atan(std::exp(-eta)); };
-
-    auto build_endcap = [&eta_to_theta](auto&  ply,
-                                        double r,
-                                        double z,
-                                        double dz,
-                                        double eta,
-                                        double deta,
-                                        double phi,
-                                        double dphi) {
-      std::cout << "build endcap" << std::endl;
-
-      double eta_max   = eta + deta * 0.5;
-      double eta_min   = eta - deta * 0.5;
-      double theta_max = eta_to_theta(eta_max);
-      double theta_min = eta_to_theta(eta_min);
-      double phi_max   = phi + dphi * 0.5;
-      double phi_min   = phi - dphi * 0.5;
-      double z_min     = z - dz;
-      double z_max     = z + dz;
-
-      double         r_min, r_max;
-      Acts::Vector3D p1, p2, p3, p4, p5, p6, p7, p8;
-
-      // inner face
-      r_min = std::tan(theta_min) * z_min;
-      r_max = std::tan(theta_max) * z_min;
-
-      p1 << r_min * std::cos(phi_min), r_min * std::sin(phi_min), z_min;
-      p2 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_min;
-      p3 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_min;
-      p4 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_min;
-
-      // ply.vertex(p1);
-      // ply.vertex(p2);
-      // ply.vertex(p3);
-      // ply.vertex(p4);
-      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
-
-      // outer face
-      r_min = std::tan(theta_min) * z_max;
-      r_max = std::tan(theta_max) * z_max;
-
-      p5 << r_min * std::cos(phi_min), r_min * std::sin(phi_min), z_max;
-      p6 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_max;
-      p7 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_max;
-      p8 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_max;
-
-      // ply.vertex(p5);
-      // ply.vertex(p6);
-      // ply.vertex(p7);
-      // ply.vertex(p8);
-      // ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
-
-      //// top face
-      // ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
-
-      //// bottom face
-      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
-
-      //// left face
-      // ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
-
-      //// right face
-      // ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
-
-      std::array<Acts::Vector3D, 8> vertices
-          = {{p2, p1, p5, p6, p3, p4, p8, p7}};
-      Acts::GenericCuboidVolumeBounds vol(vertices);
-      vol.draw(ply);
-
-    };
-
-    auto build_barrel = [&eta_to_theta](auto&  ply,
-                                        double r,
-                                        double dr,
-                                        double z,
-                                        double eta,
-                                        double deta,
-                                        double phi,
-                                        double dphi) {
-      std::cout << "build barrel" << std::endl;
-      double eta_max   = eta + deta * 0.5;
-      double eta_min   = eta - deta * 0.5;
-      double theta_max = eta_to_theta(eta_max);
-      double theta_min = eta_to_theta(eta_min);
-      double phi_max   = phi + dphi * 0.5;
-      double phi_min   = phi - dphi * 0.5;
-
-      double r_min = r - dr;
-      double r_max = r + dr;
-
-      double         z_min, z_max;
-      Acts::Vector3D p1, p2, p3, p4, p5, p6, p7, p8;
-
-      // inner face
-      z_min = r_min / std::tan(theta_min);
-      z_max = r_min / std::tan(theta_max);
-
-      p1 << r_min * std::cos(phi_min), r_min * std::sin(phi_min), z_min;
-      p2 << r_min * std::cos(phi_min), r_min * std::sin(phi_min), z_max;
-      p3 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_max;
-      p4 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_min;
-
-      // ply.vertex(p1);
-      // ply.vertex(p2);
-      // ply.vertex(p3);
-      // ply.vertex(p4);
-      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
-
-      // outer face
-      z_min = r_max / std::tan(theta_min);
-      z_max = r_max / std::tan(theta_max);
-
-      p5 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_min;
-      p6 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_max;
-      p7 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_max;
-      p8 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_min;
-
-      // ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
-
-      //// top face
-      // ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
-
-      //// bottom face
-      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
-
-      //// left face
-      // ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
-
-      //// right face
-      // ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
-
-      std::array<Acts::Vector3D, 8> vertices
-          = {{p2, p1, p5, p6, p3, p4, p8, p7}};
-      Acts::GenericCuboidVolumeBounds vol(vertices);
-      vol.draw(ply);
-
-    };
-
-    auto build_box = [](auto&  ply,
-                        double x,
-                        double dx,
-                        double y,
-                        double dy,
-                        double z,
-                        double dz) {
-      std::cout << "build box" << std::endl;
-
-      double x_min, x_max, y_min, y_max, z_min, z_max;
-      x_min = x - dx;
-      x_max = x + dx;
-      y_min = y - dy;
-      y_max = y + dy;
-      z_min = z - dz;
-      z_max = z + dz;
-
-      Acts::Vector3D p1, p2, p3, p4, p5, p6, p7, p8;
-
-      // inner face
-      p1 << x_min, y_min, z_min;
-      p2 << x_min, y_max, z_min;
-      p3 << x_max, y_max, z_min;
-      p4 << x_max, y_min, z_min;
-
-      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
-
-      // outer face
-      p5 << x_min, y_min, z_max;
-      p6 << x_min, y_max, z_max;
-      p7 << x_max, y_max, z_max;
-      p8 << x_max, y_min, z_max;
-
-      // ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
-
-      //// top face
-      // ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
-
-      //// bottom face
-      // ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
-
-      //// left face
-      // ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
-
-      //// right face
-      // ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
-
-      std::array<Acts::Vector3D, 8> vertices
-          = {{p1, p2, p3, p4, p5, p6, p7, p8}};
-      Acts::GenericCuboidVolumeBounds vol(vertices);
-      vol.draw(ply);
-    };
-
-    Acts::ply_helper<double> ply_lar;
-    Acts::ply_helper<double> ply_tile;
-    Acts::ply_helper<double> ply_fcal;
 
     while (std::getline(is, line)) {
       std::istringstream iss(line);
