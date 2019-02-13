@@ -92,9 +92,8 @@ public:
   ///
   /// @param transformPtr is the transfrom of the volume
   std::vector<std::shared_ptr<const Surface>>
-  decomposeToSurfaces(
-      std::shared_ptr<const Transform3D> transformPtr) const override;
-  
+  decomposeToSurfaces(const Transform3D* transformPtr) const override;
+
   AABB3F<Volume>
   boundingBox(const Transform3D* trf = nullptr) const final;
 

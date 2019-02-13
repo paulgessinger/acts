@@ -90,17 +90,19 @@ Acts::GenericCuboidVolumeBounds::inside(const Acts::Vector3D& gpos,
 
 std::vector<std::shared_ptr<const Acts::Surface>>
 Acts::GenericCuboidVolumeBounds::decomposeToSurfaces(
-    std::shared_ptr<const Acts::Transform3D> transform) const
+    const Acts::Transform3D* transform) const
 {
   std::vector<std::shared_ptr<const Acts::Surface>> surfaces;
-  
-  auto make_surface = [&](const auto& a, const auto& b, const auto& c, const auto& d) {
-    
-    // calculate centroid of these points
-    Vector3D ctrd = (a+b+c+d)/4.;
-    // create normal
 
-  };
+  auto make_surface
+      = [&](const auto& a, const auto& b, const auto& c, const auto& d) {
+
+          // calculate centroid of these points
+          Vector3D ctrd = (a + b + c + d) / 4.;
+          // create normal
+          // @TODO: implement this
+
+        };
 
   make_surface(m_vertices[0], m_vertices[1], m_vertices[2], m_vertices[3]);
   make_surface(m_vertices[4], m_vertices[5], m_vertices[6], m_vertices[7]);
