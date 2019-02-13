@@ -60,6 +60,7 @@ public:
   using vertex_array_type = Eigen::Array<value_t, DIM, 1>;
   using entity_type       = entity_t;
   using value_type        = value_t;
+  using transform_type    = Eigen::Transform<value_type, DIM, Eigen::Affine>;
 
   /// Strong type to select the correct constructor
   using Size = NamedType<vertex_type, struct SizeParameter>;
@@ -136,22 +137,38 @@ public:
   std::ostream&
   dump(std::ostream& os) const;
 
+  void
+  transform(const transform_type& trf);
+
+  self_t
+  transformed(const transform_type& trf) const;
+
   template <typename helper_t,
             size_t D = DIM,
             std::enable_if_t<D == 3, int> = 0>
   void
-  draw(helper_t& helper, std::array<int, 3> color = {120, 120, 120}) const;
+  draw(helper_t& helper,
+       std::array<int, 3> color = {120, 120, 120},
+       const transform_type& trf = transform_type::Identity()) const;
 
   template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
   std::ostream&
   svg(std::ostream& os,
-      value_type     w,
-      value_type     h,
-      value_type     unit      = 10,
-      std::string    label     = "",
-      std::string    fillcolor = "grey") const;
+      value_type    w,
+      value_type    h,
+      value_type    unit      = 10,
+      std::string   label     = "",
+      std::string   fillcolor = "grey") const;
 
 private:
+  template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
+  std::pair<vertex_type, vertex_type>
+  transformVertices(const transform_type& trf) const;
+
+  template <size_t D = DIM, std::enable_if_t<D == 3, int> = 0>
+  std::pair<vertex_type, vertex_type>
+  transformVertices(const transform_type& trf) const;
+
   const entity_t*   m_entity;
   vertex_type       m_vmin;
   vertex_type       m_vmax;
