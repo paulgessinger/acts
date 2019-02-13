@@ -157,15 +157,7 @@ Acts::CuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
 {
   Vector3F vmin(-halflengthX(), -halflengthY(), -halflengthZ());
   Vector3F vmax(halflengthX(), halflengthY(), halflengthZ());
-  
-  Transform3F transform = Transform3F::Identity();
-  if(trf != nullptr) {
-    transform = (*trf).cast<float>();
-  }
 
-  vmin = transform * vmin;
-  vmax = transform * vmax;
-
-  return {nullptr, vmin, vmax};
-
+  Acts::AABB3F<Acts::Volume> box(nullptr, vmin, vmax);
+  return trf == nullptr ? box : box.transformed((*trf).cast<float>());
 }

@@ -239,18 +239,37 @@ Acts::TrapezoidVolumeBounds::toStream(std::ostream& sl) const
 Acts::AABB3F<Acts::Volume>
 Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
 {
-  float halex = std::max(maxHalflengthX(), minHalflengthX());
-  Vector3F vmin(-halex, -halflengthY(), -halflengthZ());
-  Vector3F vmax(halex, halflengthY(), halflengthZ());
-  
+  // float    halex = std::max(maxHalflengthX(), minHalflengthX());
+  // Vector3F vmin(-halex, -halflengthY(), -halflengthZ());
+  // Vector3F vmax(halex, halflengthY(), halflengthZ());
+
+  float minx  = minHalflengthX();
+  float maxx  = maxHalflengthX();
+  float haley = halflengthY();
+  float halez = halflengthZ();
+
+  std::array<Vector3F, 8> vertices = {{{-minx, -haley, -halez},
+                                       {+minx, -haley, -halez},
+                                       {-maxx, +haley, -halez},
+                                       {+maxx, +haley, -halez},
+                                       {-minx, -haley, +halez},
+                                       {+minx, -haley, +halez},
+                                       {-maxx, +haley, +halez},
+                                       {+maxx, +haley, +halez}}};
+
   Transform3F transform = Transform3F::Identity();
-  if(trf != nullptr) {
+  if (trf != nullptr) {
     transform = (*trf).cast<float>();
   }
 
-  vmin = transform * vmin;
-  vmax = transform * vmax;
+  Vector3F vmin = transform * vertices[0];
+  Vector3F vmax = transform * vertices[0];
+
+  for (size_t i = 1; i < 8; i++) {
+    const Vector3F vtx = transform * vertices[i];
+    vmin               = vmin.cwiseMin(vtx);
+    vmax               = vmax.cwiseMax(vtx);
+  }
 
   return {nullptr, vmin, vmax};
-
 }
