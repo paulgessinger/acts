@@ -105,6 +105,7 @@ Acts::TrapezoidVolumeBounds::decomposeToSurfaces(
       transform * Translation3D(Vector3D(0., 0., halflengthZ())));
   rSurfaces.push_back(Surface::makeShared<PlaneSurface>(
       std::shared_ptr<const Transform3D>(tTransform), xytBounds));
+
   // face surfaces yz
   // transmute cyclical
   //   (3) - at point A, attached to alpha opening angle
@@ -112,7 +113,6 @@ Acts::TrapezoidVolumeBounds::decomposeToSurfaces(
   RotationMatrix3D alphaZRotation
       = (s_idRotation * AngleAxis3D(alpha() - 0.5 * M_PI, Vector3D(0., 0., 1.)))
             .toRotationMatrix();
-  // CLHEP::HepRotation  alphaRotation(alphaZRotation*trapezoidRotation);
   RotationMatrix3D faceAlphaRotation;
   faceAlphaRotation.col(0) = alphaZRotation.col(1);
   faceAlphaRotation.col(1) = -alphaZRotation.col(2);
@@ -124,17 +124,17 @@ Acts::TrapezoidVolumeBounds::decomposeToSurfaces(
   Vector3D faceAlphaPosition0(
       -0.5 * (minHalflengthX() + maxHalflengthX()), 0., 0.);
   Vector3D faceAlphaPosition = transform * faceAlphaPosition0;
-  tTransform = new Transform3D((trapezoidRotation * faceAlphaRotation)
-                               * Translation3D(faceAlphaPosition));
+  tTransform                 = new Transform3D(Translation3D(faceAlphaPosition)
+                               * (trapezoidRotation * faceAlphaRotation));
   rSurfaces.push_back(Surface::makeShared<PlaneSurface>(
       std::shared_ptr<const Transform3D>(tTransform), faceAlphaBounds));
+
   //   (4) - at point B, attached to beta opening angle
   Vector3D         B(minHalflengthX(), -halflengthY(), trapezoidCenter.z());
   RotationMatrix3D betaZRotation
       = (s_idRotation
          * AngleAxis3D(-(beta() - 0.5 * M_PI), Vector3D(0., 0., 1.)))
             .toRotationMatrix();
-  // CLHEP::HepRotation  betaRotation(betaZRotation*trapezoidRotation);
   RotationMatrix3D faceBetaRotation;
   faceBetaRotation.col(0) = betaZRotation.col(1);
   faceBetaRotation.col(1) = betaZRotation.col(2);
@@ -145,10 +145,11 @@ Acts::TrapezoidVolumeBounds::decomposeToSurfaces(
   Vector3D faceBetaPosition0(
       0.5 * (minHalflengthX() + maxHalflengthX()), 0., 0.);
   Vector3D faceBetaPosition = transform * faceBetaPosition0;
-  tTransform = new Transform3D(trapezoidRotation * faceBetaRotation
-                               * Translation3D(faceBetaPosition));
+  tTransform                = new Transform3D(Translation3D(faceBetaPosition)
+                               * (trapezoidRotation * faceBetaRotation));
   rSurfaces.push_back(Surface::makeShared<PlaneSurface>(
       std::shared_ptr<const Transform3D>(tTransform), faceBetaBounds));
+
   // face surfaces zx
   //   (5) - at negative local x
   tTransform
