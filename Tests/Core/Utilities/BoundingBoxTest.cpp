@@ -19,6 +19,7 @@
 #include <random>
 #include <set>
 
+#include "Acts/Tests/CommonHelpers/FloatComparisons.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Utilities/Frustum.hpp"
@@ -31,7 +32,45 @@ namespace Test {
   {
   };
 
-  using ObjectBBox = Acts::AABB<Object>;
+  using ObjectBBox = Acts::AABB3F<Object>;
+
+  BOOST_AUTO_TEST_CASE(box_construction)
+  {
+    BOOST_TEST_CONTEXT("2D")
+    {
+      Object o;
+      using Box = Acts::AxisAlignedBoundingBox<Object, float, 2>;
+      Box bb(&o, {-1, -1}, {2, 2});
+
+      typename Box::transform_type rot;
+      rot        = Eigen::Rotation2D<float>(M_PI / 7.);
+      Box bb_rot = bb.transformed(rot);
+
+      CHECK_CLOSE_ABS(bb_rot.min(), Vector2F(-1.76874, -1.33485), 1e-4);
+      CHECK_CLOSE_ABS(bb_rot.max(), Vector2F(2.23582, 2.66971), 1e-4);
+    }
+
+    BOOST_TEST_CONTEXT("3D")
+    {
+      Object o;
+      using Box = Acts::AxisAlignedBoundingBox<Object, float, 3>;
+      Box bb(&o, {-1, -1, -1}, {2, 2, 2});
+
+      typename Box::transform_type rot;
+      rot        = AngleAxis3F(M_PI / 3., Vector3F::UnitZ());
+      Box bb_rot = bb.transformed(rot);
+
+      CHECK_CLOSE_ABS(bb_rot.min(), Vector3F(-2.23205, -1.36603, -1), 1e-4);
+      CHECK_CLOSE_ABS(bb_rot.max(), Vector3F(1.86603, 2.73205, 2), 1e-4);
+
+      rot *= AngleAxis3F(M_PI / 5., Vector3F(1, 1, 0).normalized());
+      Box bb_rot2 = bb.transformed(rot);
+
+      CHECK_CLOSE_ABS(
+          bb_rot2.min(), Vector3F(-2.40848, -1.51816, -2.0559), 1e-4);
+      CHECK_CLOSE_ABS(bb_rot2.max(), Vector3F(2.61021, 3.03631, 2.86491), 1e-4);
+    }
+  }
 
   BOOST_AUTO_TEST_CASE(intersect_points)
   {

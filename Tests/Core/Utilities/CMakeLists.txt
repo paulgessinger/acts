@@ -73,7 +73,7 @@ target_link_libraries (TypeTraitsTest PRIVATE ActsCore ActsTestsCommonHelpers)
 add_test (NAME TypeTraitsTest COMMAND TypeTraitsTest)
 
 add_executable (BoundingBoxTest BoundingBoxTest.cpp)
-target_link_libraries (BoundingBoxTest PRIVATE ActsCore)
+target_link_libraries (BoundingBoxTest PRIVATE ActsCore ActsTestsCommonHelpers)
 add_test (NAME BoundingBoxTest COMMAND BoundingBoxTest)
 
 #add_executable (BoundingBoxBenchmark BoundingBoxBenchmark.cpp)
