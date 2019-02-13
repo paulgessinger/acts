@@ -65,7 +65,7 @@ add_test (NAME BFieldMapUtilsTest COMMAND BFieldMapUtilsTests)
 acts_add_test_to_cdash_project (PROJECT ACore TEST BFieldMapUtilsTest TARGETS BFieldMapUtilsTests)
 
 add_executable (BoundingBoxTest BoundingBoxTest.cpp)
-target_link_libraries (BoundingBoxTest PRIVATE ActsCore)
+target_link_libraries (BoundingBoxTest PRIVATE ActsCore ActsTestsCommonHelpers)
 add_test (NAME BoundingBoxTest COMMAND BoundingBoxTest)
 
 #add_executable (BoundingBoxBenchmark BoundingBoxBenchmark.cpp)
