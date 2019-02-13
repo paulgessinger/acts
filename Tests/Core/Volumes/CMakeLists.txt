@@ -8,3 +8,13 @@ add_executable (GenericCuboidVolumeBoundsTest GenericCuboidVolumeBoundsTest.cpp)
 target_include_directories (GenericCuboidVolumeBoundsTest PRIVATE ${Boost_INCLUDE_DIRS})
 target_link_libraries (GenericCuboidVolumeBoundsTest PRIVATE ActsCore ActsTestsCommonHelpers)
 add_test(NAME GenericCuboidVolumeBoundsTest COMMAND GenericCuboidVolumeBoundsTest)
+
+add_executable (TrapezoidVolumeBoundsTest TrapezoidVolumeBoundsTest.cpp)
+target_include_directories (TrapezoidVolumeBoundsTest PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries (TrapezoidVolumeBoundsTest PRIVATE ActsCore ActsTestsCommonHelpers)
+add_test(NAME TrapezoidVolumeBoundsTest COMMAND TrapezoidVolumeBoundsTest)
+
+add_executable (DoubleTrapezoidVolumeBoundsTest DoubleTrapezoidVolumeBoundsTest.cpp)
+target_include_directories (DoubleTrapezoidVolumeBoundsTest PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries (DoubleTrapezoidVolumeBoundsTest PRIVATE ActsCore ActsTestsCommonHelpers)
+add_test(NAME DoubleTrapezoidVolumeBoundsTest COMMAND DoubleTrapezoidVolumeBoundsTest)
