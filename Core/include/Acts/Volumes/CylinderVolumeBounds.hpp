@@ -134,9 +134,8 @@ public:
   /// situated
   /// @note this surface is a factory method, the volume handles the memory
   std::vector<std::shared_ptr<const Surface>>
-  decomposeToSurfaces(
-      std::shared_ptr<const Transform3D> transformPtr) const override;
-  
+  decomposeToSurfaces(const Transform3D* transformPtr) const override;
+
   AABB3F<Volume>
   boundingBox(const Transform3D* trf = nullptr) const final;
 

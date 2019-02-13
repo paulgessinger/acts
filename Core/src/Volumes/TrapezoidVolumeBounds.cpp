@@ -78,12 +78,12 @@ Acts::TrapezoidVolumeBounds::operator=(const TrapezoidVolumeBounds& trabo)
 
 std::vector<std::shared_ptr<const Acts::Surface>>
 Acts::TrapezoidVolumeBounds::decomposeToSurfaces(
-    std::shared_ptr<const Transform3D> transformPtr) const
+    const Transform3D* transformPtr) const
 {
   std::vector<std::shared_ptr<const Surface>> rSurfaces;
 
-  Transform3D transform = (transformPtr == nullptr) ? Transform3D::Identity()
-                                                    : (*transformPtr.get());
+  Transform3D transform
+      = (transformPtr == nullptr) ? Transform3D::Identity() : (*transformPtr);
   const Transform3D* tTransform = nullptr;
   // face surfaces xy
   RotationMatrix3D trapezoidRotation(transform.rotation());

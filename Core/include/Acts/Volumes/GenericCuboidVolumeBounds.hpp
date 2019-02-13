@@ -55,7 +55,7 @@ public:
   ///
   /// @return a vector of surfaces bounding this volume
   virtual std::vector<std::shared_ptr<const Surface>>
-  decomposeToSurfaces(std::shared_ptr<const Transform3D> transform) const;
+  decomposeToSurfaces(const Transform3D* transform) const;
 
   AABB3F<Volume>
   boundingBox(const Transform3D* trf = nullptr) const final;
