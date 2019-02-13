@@ -129,27 +129,20 @@ Acts::AABB3F<Acts::Volume>
 Acts::GenericCuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
 {
   Vector3F vmin, vmax;
-  
 
   Transform3F transform = Transform3F::Identity();
-  if(trf != nullptr) {
+  if (trf != nullptr) {
     transform = (*trf).cast<float>();
   }
 
-  vmin = transform*m_vertices[0].cast<float>();
-  vmax = transform*m_vertices[0].cast<float>();
-  std::cout << vmin.transpose() << " | " << vmax.transpose() << std::endl;
+  vmin = transform * m_vertices[0].cast<float>();
+  vmax = transform * m_vertices[0].cast<float>();
 
-  for(size_t i=1;i<8;i++) {
-    Vector3F vtx = transform*m_vertices[i].cast<float>();
-    vmin = vmin.cwiseMin(vtx);
-    vmax = vmax.cwiseMax(vtx);
-    std::cout << vtx.transpose() << std::endl;
-    std::cout << vmin.transpose() << " | " << vmax.transpose() << std::endl;
+  for (size_t i = 1; i < 8; i++) {
+    Vector3F vtx = transform * m_vertices[i].cast<float>();
+    vmin         = vmin.cwiseMin(vtx);
+    vmax         = vmax.cwiseMax(vtx);
   }
-  
-  //vmin = transform * vmin;
-  //vmax = transform * vmax;
 
   return {nullptr, vmin, vmax};
 }

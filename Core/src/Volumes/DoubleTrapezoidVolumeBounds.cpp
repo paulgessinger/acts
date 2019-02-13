@@ -271,18 +271,41 @@ Acts::DoubleTrapezoidVolumeBounds::dump(std::ostream& sl) const
 Acts::AABB3F<Acts::Volume>
 Acts::DoubleTrapezoidVolumeBounds::boundingBox(const Transform3D* trf) const
 {
-  float halex = std::max(minHalflengthX(), std::min(medHalflengthX(), maxHalflengthX()));
-  Vector3F vmin(-halex, -halflengthY1()*2, -halflengthZ());
-  Vector3F vmax(halex, halflengthY2()*2, halflengthZ());
-  
+  float minx   = minHalflengthX();
+  float medx   = medHalflengthX();
+  float maxx   = maxHalflengthX();
+  float haley1 = 2 * halflengthY1();
+  float haley2 = 2 * halflengthY2();
+  float halez  = halflengthZ();
+
+  std::array<Vector3F, 12> vertices = {{
+      {-minx, -haley1, -halez},
+      {+minx, -haley1, -halez},
+      {+medx, 0, -halez},
+      {-medx, 0, -halez},
+      {-maxx, +haley2, -halez},
+      {+maxx, +haley2, -halez},
+      {-minx, -haley1, +halez},
+      {+minx, -haley1, +halez},
+      {+medx, 0, +halez},
+      {-medx, 0, +halez},
+      {-maxx, +haley2, +halez},
+      {+maxx, +haley2, +halez},
+  }};
+
   Transform3F transform = Transform3F::Identity();
-  if(trf != nullptr) {
+  if (trf != nullptr) {
     transform = (*trf).cast<float>();
   }
 
-  vmin = transform * vmin;
-  vmax = transform * vmax;
+  Vector3F vmin = transform * vertices[0];
+  Vector3F vmax = transform * vertices[0];
+
+  for (size_t i = 1; i < 12; i++) {
+    const Vector3F vtx = transform * vertices[i];
+    vmin               = vmin.cwiseMin(vtx);
+    vmax               = vmax.cwiseMax(vtx);
+  }
 
   return {nullptr, vmin, vmax};
-
 }

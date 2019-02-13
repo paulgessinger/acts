@@ -183,37 +183,23 @@ Acts::CylinderVolumeBounds::boundingBox(const Transform3D* trf) const
   float xmax, xmin, ymax, ymin;
   xmax = outerRadius();
 
-  if(halfPhiSector() > M_PI/2.) {
+  if (halfPhiSector() > M_PI / 2.) {
     // more than half
     ymax = outerRadius();
     ymin = -outerRadius();
     xmin = outerRadius() * std::cos(halfPhiSector());
-  }
-  else {
+  } else {
     // less than half
     ymax = outerRadius() * std::sin(halfPhiSector());
-    ymin = -ymax; 
+    ymin = -ymax;
     // in this case, xmin is given by the inner radius
     xmin = innerRadius() * std::cos(halfPhiSector());
   }
 
-  //// xmin depends on halfPhiSector
-  //// It is pi by default (full cylinder)
-  //xmin = outerRadius() * std::cos(halfPhiSector());
-  //ymin = outerRadius() * std::sin(halfPhiSector());
-
   Vector3F vmin(xmin, ymin, -halflengthZ());
   Vector3F vmax(xmax, ymax, halflengthZ());
 
-  Transform3F transform = Transform3F::Identity();
-  if(trf != nullptr) {
-    transform = (*trf).cast<float>();
-  }
-
-  vmin = transform * vmin;
-  vmax = transform * vmax;
-
-  return {nullptr, vmin.cwiseMin(vmax), vmin.cwiseMax(vmax)};
+  // this is probably not perfect, but at least conservative
+  Acts::AABB3F<Acts::Volume> box{nullptr, vmin, vmax};
+  return trf == nullptr ? box : box.transformed((*trf).cast<float>());
 }
-
-
