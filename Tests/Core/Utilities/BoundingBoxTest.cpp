@@ -38,7 +38,7 @@ namespace Test {
     using vertex_type = ObjectBBox::vertex_type;
 
     Object      o;
-    ObjectBBox  bb(o, {0, 0, 0}, {1, 1, 1});
+    ObjectBBox  bb(&o, {0, 0, 0}, {1, 1, 1});
     vertex_type p;
 
     p = {0.5, 0.5, 0.5};
@@ -90,7 +90,7 @@ namespace Test {
       using Box = AxisAlignedBoundingBox<Object, float, 2>;
 
       Object o;
-      Box    bb(o, {-1, -1}, {1, 1});
+      Box    bb(&o, {-1, -1}, {1, 1});
 
       // ray in positive x direction
 
@@ -230,11 +230,10 @@ namespace Test {
 
     BOOST_TEST_CONTEXT("3D visualize")
     {
-      using vertex_type3 = ObjectBBox::vertex_type;
       Object o;
 
       // lets make sure it also works in 3d
-      ObjectBBox bb3(o, {-1, -1, -1}, {1, 1, 1});
+      ObjectBBox bb3(&o, {-1, -1, -1}, {1, 1, 1});
       Ray<float, 3> ray3({0, 0, -2}, {0, 0, 1});
       BOOST_TEST(bb3.intersect(ray3));
 
@@ -253,7 +252,7 @@ namespace Test {
       Object o;
 
       // lets make sure it also works in 3d
-      ObjectBBox bb3(o, {-1, -1, -1}, {1, 1, 1});
+      ObjectBBox bb3(&o, {-1, -1, -1}, {1, 1, 1});
       Ray<float, 3> ray3({0, 0, -2}, {0, 0, 1});
       BOOST_TEST(bb3.intersect(ray3));
 
@@ -486,7 +485,7 @@ namespace Test {
         for (size_t i = 0; i <= n; i++) {
           for (size_t j = 0; j <= n; j++) {
             boxes.emplace_back(
-                o, ActsVectorF<2>{minx + i * stepx, miny + j * stepy}, size);
+                &o, ActsVectorF<2>{minx + i * stepx, miny + j * stepy}, size);
             std::stringstream st;
             st << boxes.size() - 1;
 
@@ -792,7 +791,7 @@ namespace Test {
             for (size_t k = 0; k <= n; k++) {
               ActsVectorF<3> pos(
                   min + i * step, min + j * step, min + k * step);
-              Box bb(o, pos, size);
+              Box bb(&o, pos, size);
 
               std::array<int, 3> color = {255, 0, 0};
 
@@ -1067,7 +1066,7 @@ namespace Test {
             for (size_t k = 0; k <= n; k++) {
               ActsVectorF<3> pos(
                   min + i * step, min + j * step, min + k * step);
-              Box bb(o, pos, size);
+              Box bb(&o, pos, size);
 
               std::array<int, 3> color = {255, 0, 0};
 
@@ -1102,7 +1101,7 @@ namespace Test {
       Frustum fr({0, 0, 0}, {0, 0, 1}, M_PI / 8.);
       fr.draw(ply, 10);
 
-      Box bb(o, {0, 0, 10}, size);
+      Box bb(&o, {0, 0, 10}, size);
       bb.draw(ply);
 
       BOOST_CHECK(bb.intersect(fr));
@@ -1129,7 +1128,7 @@ namespace Test {
       Frustum fr(pos, dir, 0.972419);
       fr.draw(ply, 10);
 
-      Box bb(o, pos + dir * 10, size);
+      Box bb(&o, pos + dir * 10, size);
       bb.draw(ply);
 
       BOOST_CHECK(bb.intersect(fr));
