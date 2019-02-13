@@ -316,58 +316,137 @@ Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::dump(
 }
 
 template <typename entity_t, typename value_t, size_t DIM>
+template <size_t D, std::enable_if_t<D == 3, int>>
+std::pair<
+    typename Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::vertex_type,
+    typename Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::vertex_type>
+Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::transformVertices(
+    const transform_type& trf) const
+{
+  // we need to enumerate all the vertices, transform,
+  // and then recalculate min and max
+
+  std::array<vertex_type, 8> vertices({{
+      {m_vmin.x(), m_vmin.y(), m_vmin.z()},
+      {m_vmin.x(), m_vmax.y(), m_vmin.z()},
+      {m_vmax.x(), m_vmax.y(), m_vmin.z()},
+      {m_vmax.x(), m_vmin.y(), m_vmin.z()},
+      {m_vmin.x(), m_vmin.y(), m_vmax.z()},
+      {m_vmin.x(), m_vmax.y(), m_vmax.z()},
+      {m_vmax.x(), m_vmax.y(), m_vmax.z()},
+      {m_vmax.x(), m_vmin.y(), m_vmax.z()},
+  }});
+
+  vertex_type vmin = trf * vertices[0];
+  vertex_type vmax = trf * vertices[0];
+
+  for (size_t i = 1; i < 8; i++) {
+    const vertex_type vtx = trf * vertices[i];
+    vmin                  = vmin.cwiseMin(vtx);
+    vmax                  = vmax.cwiseMax(vtx);
+  }
+
+  return {vmin, vmax};
+}
+
+template <typename entity_t, typename value_t, size_t DIM>
+template <size_t D, std::enable_if_t<D == 2, int>>
+std::pair<
+    typename Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::vertex_type,
+    typename Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::vertex_type>
+Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::transformVertices(
+    const transform_type& trf) const
+{
+  // we need to enumerate all the vertices, transform,
+  // and then recalculate min and max
+
+  std::array<vertex_type, 4> vertices({{{m_vmin.x(), m_vmin.y()},
+                                        {m_vmin.x(), m_vmax.y()},
+                                        {m_vmax.x(), m_vmax.y()},
+                                        {m_vmax.x(), m_vmin.y()}}});
+
+  vertex_type vmin = trf * vertices[0];
+  vertex_type vmax = trf * vertices[0];
+
+  for (size_t i = 1; i < 4; i++) {
+    const vertex_type vtx = trf * vertices[i];
+    vmin                  = vmin.cwiseMin(vtx);
+    vmax                  = vmax.cwiseMax(vtx);
+  }
+
+  return {vmin, vmax};
+}
+
+template <typename entity_t, typename value_t, size_t DIM>
+void
+Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::transform(
+    const transform_type& trf)
+{
+  std::tie(m_vmin, m_vmax) = transformVertices(trf);
+}
+
+template <typename entity_t, typename value_t, size_t DIM>
+Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>
+Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::transformed(
+    const transform_type& trf) const
+{
+  vertex_type vmin, vmax;
+  std::tie(vmin, vmax) = transformVertices(trf);
+  return self_t(m_entity, vmin, vmax);
+}
+
+template <typename entity_t, typename value_t, size_t DIM>
 template <typename helper_t, size_t D, std::enable_if_t<D == 3, int>>
 void
 Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::draw(
     helper_t& helper,
-    std::array<int, 3> color) const
+    std::array<int, 3> color,
+    const transform_type& trf) const
 {
   static_assert(std::is_same<typename helper_t::value_type, value_type>::value,
                 "not the same value type");
   static_assert(DIM == 3, "PLY output only supported in 3D");
 
-  using face_t            = std::array<vertex_type, 4>;
   const vertex_type& vmin = m_vmin;
   const vertex_type& vmax = m_vmax;
 
-  face_t min_x = {vertex_type(vmin.x(), vmin.y(), vmin.z()),
-                  vertex_type(vmin.x(), vmax.y(), vmin.z()),
-                  vertex_type(vmin.x(), vmax.y(), vmax.z()),
-                  vertex_type(vmin.x(), vmin.y(), vmax.z())};
+  auto write = [&](const vertex_type& a,
+                   const vertex_type& b,
+                   const vertex_type& c,
+                   const vertex_type& d) {
+    helper.face(std::vector<vertex_type>({trf * a, trf * b, trf * c, trf * d}),
+                color);
+  };
 
-  face_t max_x = {vertex_type(vmax.x(), vmin.y(), vmin.z()),
-                  vertex_type(vmax.x(), vmax.y(), vmin.z()),
-                  vertex_type(vmax.x(), vmax.y(), vmax.z()),
-                  vertex_type(vmax.x(), vmin.y(), vmax.z())};
+  write({vmin.x(), vmin.y(), vmin.z()},
+        {vmin.x(), vmax.y(), vmin.z()},
+        {vmin.x(), vmax.y(), vmax.z()},
+        {vmin.x(), vmin.y(), vmax.z()});
 
-  face_t min_y = {vertex_type(vmin.x(), vmin.y(), vmin.z()),
-                  vertex_type(vmax.x(), vmin.y(), vmin.z()),
-                  vertex_type(vmax.x(), vmin.y(), vmax.z()),
-                  vertex_type(vmin.x(), vmin.y(), vmax.z())};
+  write({vmax.x(), vmin.y(), vmin.z()},
+        {vmax.x(), vmax.y(), vmin.z()},
+        {vmax.x(), vmax.y(), vmax.z()},
+        {vmax.x(), vmin.y(), vmax.z()});
 
-  face_t max_y = {vertex_type(vmin.x(), vmax.y(), vmin.z()),
-                  vertex_type(vmax.x(), vmax.y(), vmin.z()),
-                  vertex_type(vmax.x(), vmax.y(), vmax.z()),
-                  vertex_type(vmin.x(), vmax.y(), vmax.z())};
+  write({vmin.x(), vmin.y(), vmin.z()},
+        {vmax.x(), vmin.y(), vmin.z()},
+        {vmax.x(), vmin.y(), vmax.z()},
+        {vmin.x(), vmin.y(), vmax.z()});
 
-  face_t min_z = {vertex_type(vmin.x(), vmin.y(), vmin.z()),
-                  vertex_type(vmax.x(), vmin.y(), vmin.z()),
-                  vertex_type(vmax.x(), vmax.y(), vmin.z()),
-                  vertex_type(vmin.x(), vmax.y(), vmin.z())};
+  write({vmin.x(), vmax.y(), vmin.z()},
+        {vmax.x(), vmax.y(), vmin.z()},
+        {vmax.x(), vmax.y(), vmax.z()},
+        {vmin.x(), vmax.y(), vmax.z()});
 
-  face_t max_z = {vertex_type(vmin.x(), vmin.y(), vmax.z()),
-                  vertex_type(vmax.x(), vmin.y(), vmax.z()),
-                  vertex_type(vmax.x(), vmax.y(), vmax.z()),
-                  vertex_type(vmin.x(), vmax.y(), vmax.z())};
+  write({vmin.x(), vmin.y(), vmin.z()},
+        {vmax.x(), vmin.y(), vmin.z()},
+        {vmax.x(), vmax.y(), vmin.z()},
+        {vmin.x(), vmax.y(), vmin.z()});
 
-  auto write = [&](const face_t& face) { helper.face(face, color); };
-
-  write(min_x);
-  write(max_x);
-  write(min_y);
-  write(max_y);
-  write(min_z);
-  write(max_z);
+  write({vmin.x(), vmin.y(), vmax.z()},
+        {vmax.x(), vmin.y(), vmax.z()},
+        {vmax.x(), vmax.y(), vmax.z()},
+        {vmin.x(), vmax.y(), vmax.z()});
 }
 
 template <typename entity_t, typename value_t, size_t DIM>
@@ -375,11 +454,11 @@ template <size_t D, std::enable_if_t<D == 2, int>>
 std::ostream&
 Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::svg(
     std::ostream& os,
-    value_type     w,
-    value_type     h,
-    value_type     unit,
-    std::string    label,
-    std::string    fillcolor) const
+    value_type    w,
+    value_type    h,
+    value_type    unit,
+    std::string   label,
+    std::string   fillcolor) const
 {
   static_assert(DIM == 2, "SVG is only supported in 2D");
 
