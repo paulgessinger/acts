@@ -65,7 +65,7 @@ namespace Test {
         = std::const_pointer_cast<const Transform3D>(mutableTransformPtr);
     // get the boundary surfaces
     std::vector<std::shared_ptr<const Acts::Surface>> boundarySurfaces
-        = cylBounds.decomposeToSurfaces(transformPtr);
+        = cylBounds.decomposeToSurfaces(transformPtr.get());
     // Test
 
     // check if difference is halfZ - sign and direction independent
