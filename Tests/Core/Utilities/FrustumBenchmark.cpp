@@ -177,14 +177,14 @@ eta_to_theta(double eta)
 
 template <typename helper_t>
 void
-build_endcap(helper_t&  ply,
-             double r,
-             double z,
-             double dz,
-             double eta,
-             double deta,
-             double phi,
-             double dphi)
+build_endcap(helper_t& ply,
+             double    r,
+             double    z,
+             double    dz,
+             double    eta,
+             double    deta,
+             double    phi,
+             double    dphi)
 {
   std::cout << "build endcap" << std::endl;
 
@@ -245,14 +245,14 @@ build_endcap(helper_t&  ply,
 
 template <typename helper_t>
 void
-build_barrel(helper_t&  ply,
-             double r,
-             double dr,
-             double z,
-             double eta,
-             double deta,
-             double phi,
-             double dphi)
+build_barrel(helper_t& ply,
+             double    r,
+             double    dr,
+             double    z,
+             double    eta,
+             double    deta,
+             double    phi,
+             double    dphi)
 {
   std::cout << "build barrel" << std::endl;
   double eta_max   = eta + deta * 0.5;
@@ -309,13 +309,13 @@ build_barrel(helper_t&  ply,
 
 template <typename helper_t>
 void
-build_box(helper_t&  ply,
-          double x,
-          double dx,
-          double y,
-          double dy,
-          double z,
-          double dz)
+build_box(helper_t& ply,
+          double    x,
+          double    dx,
+          double    y,
+          double    dy,
+          double    z,
+          double    dz)
 {
   std::cout << "build box" << std::endl;
 
@@ -459,7 +459,8 @@ main()
           // o.id = {i, j, k};
           entities.push_back(std::make_unique<Object>(idx));
           idx++;
-          boxes.push_back(std::make_unique<Box>(*entities.back(), pos, size));
+          boxes.push_back(
+              std::make_unique<Box>(entities.back().get(), pos, size));
           // boxes.back()->draw(ply);
         }
       }
