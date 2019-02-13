@@ -117,7 +117,7 @@ namespace Test {
 
   BOOST_AUTO_TEST_CASE(bounding_box_creation)
   {
-    float tol = 1e-6;
+    float tol = 1e-4;
 
     CylinderVolumeBounds cvb(5, 10);
     auto                 bb = cvb.boundingBox();
@@ -156,6 +156,12 @@ namespace Test {
     CHECK_CLOSE_ABS(bb.min(),
                     Vector3F(-8 * std::sin(angle), 5 * std::cos(angle), -13),
                     tol);
+
+    rot = AngleAxis3D(M_PI / 2., Vector3D(-2, 4, 5).normalized());
+    bb  = cvb.boundingBox(&rot);
+    BOOST_CHECK_EQUAL(bb.entity(), nullptr);
+    CHECK_CLOSE_ABS(bb.max(), Vector3F(8.40007, 15.2828, 3.88911), tol);
+    CHECK_CLOSE_ABS(bb.min(), Vector3F(-7.27834, -8.12028, -14.2182), tol);
   }
 
   BOOST_AUTO_TEST_SUITE_END()
