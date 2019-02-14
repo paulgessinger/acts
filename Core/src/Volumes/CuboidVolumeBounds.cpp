@@ -153,11 +153,12 @@ Acts::CuboidVolumeBounds::dump(std::ostream& sl) const
 }
 
 Acts::AABB3F<Acts::Volume>
-Acts::CuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
+Acts::CuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
+                                      const Vector3F&          envelope) const
 {
   Vector3F vmin(-halflengthX(), -halflengthY(), -halflengthZ());
   Vector3F vmax(halflengthX(), halflengthY(), halflengthZ());
 
-  Acts::AABB3F<Acts::Volume> box(nullptr, vmin, vmax);
+  Acts::AABB3F<Acts::Volume> box(nullptr, vmin - envelope, vmax + envelope);
   return trf == nullptr ? box : box.transformed((*trf).cast<float>());
 }

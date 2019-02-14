@@ -123,7 +123,8 @@ public:
   decomposeToSurfaces(const Transform3D* transformPtr) const override;
 
   AABB3F<Volume>
-  boundingBox(const Transform3D* trf = nullptr) const final;
+  boundingBox(const Transform3D* trf      = nullptr,
+              const Vector3F&    envelope = {0, 0, 0}) const final;
 
   /// This method returns the minimal halflength in local x
   double

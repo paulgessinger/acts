@@ -96,12 +96,15 @@ Acts::Volume::inside(const Acts::Vector3D& gpos, double tol) const
 std::ostream&
 Acts::operator<<(std::ostream& sl, const Acts::Volume& vol)
 {
-  sl << "Voluem with " << vol.volumeBounds() << std::endl;
+  sl << "Volume with " << vol.volumeBounds() << std::endl;
   return sl;
 }
 
 Acts::AABB3F<Acts::Volume>
-Acts::Volume::boundingBox() const
+Acts::Volume::boundingBox(const Vector3F& envelope) const
 {
-  return m_volumeBounds->boundingBox(m_transform.get());
+  Acts::AABB3F<Acts::Volume> box
+      = m_volumeBounds->boundingBox(m_transform.get(), envelope);
+  box.setEntity(this);
+  return box;
 }

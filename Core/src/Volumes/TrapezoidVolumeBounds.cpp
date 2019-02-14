@@ -237,7 +237,8 @@ Acts::TrapezoidVolumeBounds::dump(std::ostream& sl) const
 }
 
 Acts::AABB3F<Acts::Volume>
-Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
+Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
+                                         const Vector3F& envelope) const
 {
   // float    halex = std::max(maxHalflengthX(), minHalflengthX());
   // Vector3F vmin(-halex, -halflengthY(), -halflengthZ());
@@ -271,5 +272,5 @@ Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf) const
     vmax               = vmax.cwiseMax(vtx);
   }
 
-  return {nullptr, vmin, vmax};
+  return {nullptr, vmin - envelope, vmax + envelope};
 }

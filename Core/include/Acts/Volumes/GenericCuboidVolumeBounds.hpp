@@ -58,7 +58,8 @@ public:
   decomposeToSurfaces(const Transform3D* transform) const;
 
   AABB3F<Volume>
-  boundingBox(const Transform3D* trf = nullptr) const final;
+  boundingBox(const Transform3D* trf      = nullptr,
+              const Vector3F&    envelope = {0, 0, 0}) const final;
 
   /// Output Method for std::ostream, to be overloaded by child classes
   ///
@@ -91,9 +92,6 @@ Acts::GenericCuboidVolumeBounds::draw(helper_t&          helper,
     helper.face(std::vector<Vector3D>({trf * a, trf * b, trf * c, trf * d}));
   };
 
-  for (const auto& vtx : m_vertices) {
-    helper.vertex(trf * vtx);
-  }
   draw_face(m_vertices[0], m_vertices[1], m_vertices[2], m_vertices[3]);
   draw_face(m_vertices[4], m_vertices[5], m_vertices[6], m_vertices[7]);
   draw_face(m_vertices[0], m_vertices[3], m_vertices[7], m_vertices[4]);
