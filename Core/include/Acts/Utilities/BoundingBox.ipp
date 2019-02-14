@@ -256,6 +256,14 @@ Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::entity() const
 }
 
 template <typename entity_t, typename value_t, size_t DIM>
+void
+Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::setEntity(
+    const entity_t* entity)
+{
+  m_entity = entity;
+}
+
+template <typename entity_t, typename value_t, size_t DIM>
 const typename Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::
     vertex_type&
     Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::center() const
@@ -403,8 +411,6 @@ Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::draw(
     std::array<int, 3> color,
     const transform_type& trf) const
 {
-  static_assert(std::is_same<typename helper_t::value_type, value_type>::value,
-                "not the same value type");
   static_assert(DIM == 3, "PLY output only supported in 3D");
 
   const vertex_type& vmin = m_vmin;

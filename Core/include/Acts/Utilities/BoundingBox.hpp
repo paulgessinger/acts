@@ -67,6 +67,8 @@ public:
 
   static const size_t dim = DIM;
 
+  AxisAlignedBoundingBox(const self_t& other) = default;
+
   AxisAlignedBoundingBox(const entity_t*    entity,
                          const vertex_type& vmin,
                          const vertex_type& vmax);
@@ -124,6 +126,9 @@ public:
 
   const entity_t*
   entity() const;
+
+  void
+  setEntity(const entity_t* entity);
 
   const vertex_type&
   center() const;
