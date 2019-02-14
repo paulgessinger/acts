@@ -17,8 +17,8 @@
 #include "Acts/Surfaces/PlaneSurface.hpp"
 #include "Acts/Surfaces/RectangleBounds.hpp"
 #include "Acts/Surfaces/TrapezoidBounds.hpp"
-#include "Acts/Utilities/GeometryStatics.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
+#include "Acts/Utilities/GeometryStatics.hpp"
 
 Acts::TrapezoidVolumeBounds::TrapezoidVolumeBounds()
   : VolumeBounds(), m_valueStore(bv_length, 0.)

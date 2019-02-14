@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
-#include <ostream>
 #include <limits>
+#include <ostream>
 #include <tuple>
 #include <vector>
 #include "Acts/Utilities/Definitions.hpp"

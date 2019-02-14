@@ -11,11 +11,11 @@
 ///////////////////////////////////////////////////////////////////
 #pragma once
 #include <memory>
+#include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Utilities/GeometryContext.hpp"
 #include "Acts/Utilities/GeometryObject.hpp"
 #include "Acts/Utilities/GeometryStatics.hpp"
-#include "Acts/Utilities/BoundingBox.hpp"
 
 namespace Acts {
 
