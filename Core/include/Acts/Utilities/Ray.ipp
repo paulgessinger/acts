@@ -47,7 +47,7 @@ Acts::Ray<value_t, DIM>::draw(helper_t& helper, value_type far_distance) const
   static_assert(std::is_same<typename helper_t::value_type, value_type>::value,
                 "not the same value type");
 
-  helper.line(m_origin, m_origin + m_dir * far_distance);
+  helper.line(m_origin, (m_origin + m_dir * far_distance).eval());
 }
 
 template <typename U, size_t V>
