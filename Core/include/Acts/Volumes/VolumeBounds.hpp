@@ -73,7 +73,8 @@ public:
   decomposeToSurfaces(const Transform3D* transform) const = 0;
 
   virtual AABB3F<Volume>
-  boundingBox(const Transform3D* trf = nullptr) const = 0;
+  boundingBox(const Transform3D* trf      = nullptr,
+              const Vector3F&    envelope = {0, 0, 0}) const = 0;
 
   /// Binning offset - overloaded for some R-binning types
   ///

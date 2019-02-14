@@ -75,7 +75,7 @@ public:
   volumeBounds() const;
 
   AABB3F<Volume>
-  boundingBox() const;
+  boundingBox(const Vector3F& envelope = {0, 0, 0}) const;
 
   /// Inside() method for checks
   ///
