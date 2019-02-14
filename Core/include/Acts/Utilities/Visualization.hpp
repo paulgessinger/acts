@@ -21,10 +21,11 @@ struct ply_helper
   using face_type  = std::vector<size_t>;
   using color_type = std::array<int, 3>;
 
+  template <typename V>
   void
-  vertex(const vertex_type& vtx, color_type color = {120, 120, 120})
+  vertex(const V& vtx, color_type color = {120, 120, 120})
   {
-    m_vertices.emplace_back(vtx, color);
+    m_vertices.emplace_back(vtx.template cast<value_type>(), color);
   }
 
   template <typename coll_t>
@@ -32,22 +33,23 @@ struct ply_helper
   face(const coll_t& vtxs, color_type color = {120, 120, 120})
   {
 
-    static_assert(std::is_same<typename coll_t::value_type, vertex_type>::value,
-                  "not a collection of vertex_type");
+    // static_assert(std::is_same<typename coll_t::value_type,
+    // vertex_type>::value, "not a collection of vertex_type");
 
     face_type idxs;
     idxs.reserve(vtxs.size());
-    for (const vertex_type& vtx : vtxs) {
+    for (const auto& vtx : vtxs) {
       vertex(vtx, color);
       idxs.push_back(m_vertices.size() - 1);
     }
     m_faces.push_back(std::move(idxs));
   }
 
+  template <typename Derived>
   void
-  line(const vertex_type& a,
-       const vertex_type& b,
-       color_type         color = {120, 120, 120})
+  line(const Eigen::MatrixBase<Derived>& a,
+       const Eigen::MatrixBase<Derived>& b,
+       color_type                        color = {120, 120, 120})
   {
     vertex(a, color);
     size_t idx_a = m_vertices.size() - 1;
@@ -134,11 +136,12 @@ struct obj_helper
   // unsupported
   using color_type = std::array<int, 3>;
 
+  template <typename V>
   void
-  vertex(const vertex_type& vtx, color_type color = {120, 120, 120})
+  vertex(const V& vtx, color_type color = {120, 120, 120})
   {
     (void)color;
-    m_vertices.push_back(vtx);
+    m_vertices.push_back(vtx.template cast<value_type>());
   }
 
   void
