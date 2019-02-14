@@ -24,7 +24,6 @@
 // Acts include(s)
 #include "Definitions.hpp"
 
-
 #ifndef ACTS_BIT_CODING
 #define ACTS_BIT_CODING 1
 #if (__GNUC__ >= 4)
@@ -64,8 +63,7 @@ namespace detail {
 
   template <class Default,
             class AlwaysVoid,
-            template <class...>
-            class Op,
+            template <class...> class Op,
             class... Args>
   struct detector
   {

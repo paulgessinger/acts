@@ -11,9 +11,9 @@
 #include <array>
 #include <ostream>
 
+#include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Volumes/VolumeBounds.hpp"
-#include "Acts/Utilities/BoundingBox.hpp"
 
 namespace Acts {
 
@@ -81,17 +81,18 @@ private:
 
 template <typename helper_t>
 void
-Acts::GenericCuboidVolumeBounds::draw(helper_t& helper, const Transform3D* transform) const
+Acts::GenericCuboidVolumeBounds::draw(helper_t&          helper,
+                                      const Transform3D* transform) const
 {
   Transform3D trf = transform != nullptr ? *transform : Transform3D::Identity();
 
-  auto draw_face
-      = [&](const auto& a, const auto& b, const auto& c, const auto& d) {
-          helper.face(std::vector<Vector3D>({trf*a, trf*b, trf*c, trf*d}));
-        };
+  auto draw_face = [&](
+      const auto& a, const auto& b, const auto& c, const auto& d) {
+    helper.face(std::vector<Vector3D>({trf * a, trf * b, trf * c, trf * d}));
+  };
 
   for (const auto& vtx : m_vertices) {
-    helper.vertex(trf*vtx);
+    helper.vertex(trf * vtx);
   }
   draw_face(m_vertices[0], m_vertices[1], m_vertices[2], m_vertices[3]);
   draw_face(m_vertices[4], m_vertices[5], m_vertices[6], m_vertices[7]);

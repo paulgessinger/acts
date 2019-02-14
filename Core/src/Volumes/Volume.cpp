@@ -13,8 +13,8 @@
 #include "Acts/Volumes/Volume.hpp"
 #include <iostream>
 #include <utility>
-#include "Acts/Volumes/VolumeBounds.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
+#include "Acts/Volumes/VolumeBounds.hpp"
 
 Acts::Volume::Volume()
   : GeometryObject()

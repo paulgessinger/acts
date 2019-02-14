@@ -12,9 +12,9 @@
 
 #pragma once
 #include <cmath>
+#include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Volumes/VolumeBounds.hpp"
-#include "Acts/Utilities/BoundingBox.hpp"
 
 namespace Acts {
 
