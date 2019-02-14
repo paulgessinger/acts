@@ -10,14 +10,18 @@
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
+#include "Acts/Volumes/Volume.hpp"
 
 namespace {
 struct Object
 {
   using id_t = size_t;
-  Object(id_t id_) : id(id_) {}
-  id_t        id;
+  Object(id_t         id_) : id(id_) {}
+  id_t                id;
+  const Acts::Volume* volume;
 };
+
+using oid_t = size_t;
 
 using real_t = float;
 using vec_t  = Acts::ActsVector<real_t, 3>;
@@ -56,6 +60,7 @@ namespace Test {
 
     std::vector<Box*>                 prims;
     std::vector<std::unique_ptr<Box>> boxes;
+    std::cout << "Build geometry" << std::endl;
     boxes = boxFactory();
 
     for (auto& box : boxes) {
@@ -176,7 +181,7 @@ eta_to_theta(double eta)
 }
 
 template <typename helper_t>
-void
+Acts::Volume
 build_endcap(helper_t& ply,
              double    r,
              double    z,
@@ -186,11 +191,12 @@ build_endcap(helper_t& ply,
              double    phi,
              double    dphi)
 {
-  std::cout << "build endcap" << std::endl;
+  // std::cout << "build endcap" << std::endl;
 
   double eta_max   = eta + deta * 0.5;
   double eta_min   = eta - deta * 0.5;
   double theta_max = eta_to_theta(eta_max);
+  double theta     = eta_to_theta(eta);
   double theta_min = eta_to_theta(eta_min);
   double phi_max   = phi + dphi * 0.5;
   double phi_min   = phi - dphi * 0.5;
@@ -209,12 +215,6 @@ build_endcap(helper_t& ply,
   p3 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_min;
   p4 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_min;
 
-  ply.vertex(p1);
-  ply.vertex(p2);
-  ply.vertex(p3);
-  ply.vertex(p4);
-  ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
-
   // outer face
   r_min = std::tan(theta_min) * z_max;
   r_max = std::tan(theta_max) * z_max;
@@ -224,27 +224,39 @@ build_endcap(helper_t& ply,
   p7 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_max;
   p8 << r_max * std::cos(phi_min), r_max * std::sin(phi_min), z_max;
 
-  ply.vertex(p5);
-  ply.vertex(p6);
-  ply.vertex(p7);
-  ply.vertex(p8);
-  ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+  double         r_mid = std::tan(theta) * z_min;
+  Acts::Vector3D center;
+  center.x() = r_mid * std::cos(phi);
+  center.y() = r_mid * std::sin(phi);
+  center.z() = z;
 
-  // top face
-  ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+  Acts::Transform3D glob2vol = Acts::Transform3D::Identity();
+  glob2vol *= Acts::AngleAxis3D(-phi, Acts::Vector3D::UnitZ());
+  glob2vol *= Acts::AngleAxis3D(
+      -theta, Acts::Vector3D::UnitZ().cross(center).normalized());
+  glob2vol
+      *= Acts::Translation3D(-(p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8) / 8.);
 
-  // bottom face
-  ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+  p1 = glob2vol * p1;
+  p2 = glob2vol * p2;
+  p3 = glob2vol * p3;
+  p4 = glob2vol * p4;
+  p5 = glob2vol * p5;
+  p6 = glob2vol * p6;
+  p7 = glob2vol * p7;
+  p8 = glob2vol * p8;
 
-  // left face
-  ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+  auto globalToLocal = std::make_shared<Acts::Transform3D>(glob2vol.inverse());
 
-  // right face
-  ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+  auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
+      std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
+  Acts::Volume vol(std::move(globalToLocal), std::move(cubo));
+
+  return vol;
 }
 
 template <typename helper_t>
-void
+Acts::Volume
 build_barrel(helper_t& ply,
              double    r,
              double    dr,
@@ -254,9 +266,10 @@ build_barrel(helper_t& ply,
              double    phi,
              double    dphi)
 {
-  std::cout << "build barrel" << std::endl;
+  // std::cout << "build barrel" << std::endl;
   double eta_max   = eta + deta * 0.5;
   double eta_min   = eta - deta * 0.5;
+  double theta     = eta_to_theta(eta);
   double theta_max = eta_to_theta(eta_max);
   double theta_min = eta_to_theta(eta_min);
   double phi_max   = phi + dphi * 0.5;
@@ -277,12 +290,6 @@ build_barrel(helper_t& ply,
   p3 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_max;
   p4 << r_min * std::cos(phi_max), r_min * std::sin(phi_max), z_min;
 
-  ply.vertex(p1);
-  ply.vertex(p2);
-  ply.vertex(p3);
-  ply.vertex(p4);
-  ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
-
   // outer face
   z_min = r_max / std::tan(theta_min);
   z_max = r_max / std::tan(theta_max);
@@ -292,23 +299,39 @@ build_barrel(helper_t& ply,
   p7 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_max;
   p8 << r_max * std::cos(phi_max), r_max * std::sin(phi_max), z_min;
 
-  ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+  Acts::Vector3D center;
+  center.x() = r * std::cos(phi);
+  center.y() = r * std::sin(phi);
+  center.z() = r / std::tan(theta);
 
-  // top face
-  ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+  Acts::Transform3D glob2vol = Acts::Transform3D::Identity();
+  glob2vol *= Acts::AngleAxis3D(-phi, Acts::Vector3D::UnitZ());
+  glob2vol *= Acts::AngleAxis3D(
+      -theta, Acts::Vector3D::UnitZ().cross(center).normalized());
+  glob2vol
+      *= Acts::Translation3D(-(p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8) / 8.);
 
-  // bottom face
-  ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+  p1 = glob2vol * p1;
+  p2 = glob2vol * p2;
+  p3 = glob2vol * p3;
+  p4 = glob2vol * p4;
+  p5 = glob2vol * p5;
+  p6 = glob2vol * p6;
+  p7 = glob2vol * p7;
+  p8 = glob2vol * p8;
 
-  // left face
-  ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+  auto globalToLocal = std::make_shared<Acts::Transform3D>(glob2vol.inverse());
 
-  // right face
-  ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+  auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
+      std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
+
+  Acts::Volume vol(std::move(globalToLocal), std::move(cubo));
+
+  return vol;
 }
 
 template <typename helper_t>
-void
+Acts::Volume
 build_box(helper_t& ply,
           double    x,
           double    dx,
@@ -317,7 +340,7 @@ build_box(helper_t& ply,
           double    z,
           double    dz)
 {
-  std::cout << "build box" << std::endl;
+  // std::cout << "build box" << std::endl;
 
   double x_min, x_max, y_min, y_max, z_min, z_max;
   x_min = x - dx;
@@ -335,33 +358,107 @@ build_box(helper_t& ply,
   p3 << x_max, y_max, z_min;
   p4 << x_max, y_min, z_min;
 
-  ply.face(std::vector<Acts::Vector3D>({p1, p2, p3, p4}));
-
   // outer face
   p5 << x_min, y_min, z_max;
   p6 << x_min, y_max, z_max;
   p7 << x_max, y_max, z_max;
   p8 << x_max, y_min, z_max;
 
-  ply.face(std::vector<Acts::Vector3D>({p5, p6, p7, p8}));
+  Acts::Transform3D glob2vol = Acts::Transform3D::Identity();
+  glob2vol
+      *= Acts::Translation3D(-(p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8) / 8.);
 
-  // top face
-  ply.face(std::vector<Acts::Vector3D>({p2, p3, p7, p6}));
+  p1 = glob2vol * p1;
+  p2 = glob2vol * p2;
+  p3 = glob2vol * p3;
+  p4 = glob2vol * p4;
+  p5 = glob2vol * p5;
+  p6 = glob2vol * p6;
+  p7 = glob2vol * p7;
+  p8 = glob2vol * p8;
 
-  // bottom face
-  ply.face(std::vector<Acts::Vector3D>({p1, p4, p8, p5}));
+  auto globalToLocal = std::make_shared<Acts::Transform3D>(glob2vol.inverse());
 
-  // left face
-  ply.face(std::vector<Acts::Vector3D>({p1, p2, p6, p5}));
+  auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
+      std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
+  Acts::Volume vol(std::move(globalToLocal), std::move(cubo));
 
-  // right face
-  ply.face(std::vector<Acts::Vector3D>({p3, p4, p8, p7}));
+  return vol;
 };
+
+template <typename object_t>
+void
+do_octree_scan(size_t                                             n_tests,
+               std::function<std::vector<std::unique_ptr<Box>>()> boxFactory,
+               std::function<object_t()>                          objectFactory)
+{
+  std::vector<int> octree_depths = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  size_t           n_ix;
+  double           diff;
+  std::vector<std::set<oid_t>> hits;
+  std::cout << "Generating " << n_tests << " test objects" << std::endl;
+
+  std::vector<object_t, Eigen::aligned_allocator<object_t>> objects;
+  objects.reserve(n_tests);
+
+  for (size_t i = 0; i < n_tests; i++) {
+
+    // objects.emplace_back(pos, dir, angle);
+    objects.push_back(objectFactory());
+    if (i < 50) {
+      // frustums.back().draw(ply);
+    }
+  }
+
+  // get ref
+  std::tie(n_ix, diff, hits)
+      = Acts::Test::bench_frustum<object_t>(-1, boxFactory, objects);
+  std::vector<std::set<oid_t>> ref = hits;
+
+  std::ofstream os("octree_fr.csv");
+  os << "octd,ntests,nix,time\n";
+  os << -1 << "," << n_tests << "," << n_ix << "," << diff << "\n";
+
+  auto print = [](const auto& tup) {
+    std::cout << "(" << std::get<0>(tup) << ", " << std::get<1>(tup) << ", "
+              << std::get<2>(tup) << ")";
+  };
+
+  for (int octree_depth : octree_depths) {
+    std::tie(n_ix, diff, hits) = Acts::Test::bench_frustum<object_t>(
+        octree_depth, boxFactory, objects);
+
+    for (size_t i = 0; i < ref.size(); i++) {
+      std::set<oid_t>& ref_set = ref[i];
+      std::set<oid_t>& act_set = hits[i];
+      if (ref_set != act_set) {
+        std::cout << "mismatch at idx " << i << ":" << std::endl;
+
+        std::set<oid_t> diff;
+        std::set_difference(ref_set.begin(),
+                            ref_set.end(),
+                            act_set.begin(),
+                            act_set.end(),
+                            std::inserter(diff, diff.end()));
+
+        std::cout << "in ref but not in act" << std::endl;
+        for (oid_t id : diff) {
+          std::cout << id;
+          std::cout << std::endl;
+        }
+
+        abort();
+      }
+    }
+
+    os << octree_depth << "," << n_tests << "," << n_ix << "," << diff << "\n";
+  }
+  os.close();
+}
 
 int
 main()
 {
-  using oid_t = size_t;
   // using res_t = std::tuple<size_t, double, id_t>;
 
   // std::vector<std::pair<size_t, res_t>> results;
@@ -397,20 +494,19 @@ main()
   using Frustum            = Acts::Frustum<real_t, 3, n_sides>;
   using Ray                = Acts::Ray<real_t, 3>;
 
-  std::vector<int> octree_depths = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  size_t           n_ix;
-  double           diff;
-  std::vector<std::set<oid_t>> hits;
-
-  size_t n_tests = 1e4;
-
   std::mt19937 rng(42);
 
   std::uniform_real_distribution<real_t> dir_dist(-1, 1);
   // std::uniform_real_distribution<real_t> angle_dist(0.1 * M_PI,
   // M_PI / 4. * 0.9);
 
-  auto frustFactory = [&](real_t min, real_t max, real_t angle) {
+  size_t n    = 59;
+  real_t min  = -10;
+  real_t max  = 10;
+  real_t step = (max - min) / real_t(n);
+
+  real_t angle        = M_PI / 2.;
+  auto   frustFactory = [&]() {
     std::uniform_real_distribution<real_t> pos_dist(min * 1.5, max * 1.5);
     vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
     vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
@@ -424,18 +520,13 @@ main()
     return Frustum(pos, dir, angle);
   };
 
-  auto rayFactory = [&](real_t min, real_t max) {
+  auto rayFactory = [&]() {
     std::uniform_real_distribution<real_t> pos_dist(min * 1.5, max * 1.5);
     vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
     vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
     dir.normalize();
     return Ray(pos, dir);
   };
-
-  size_t n    = 59;
-  real_t min  = -200;
-  real_t max  = 200;
-  real_t step = (max - min) / real_t(n);
 
   std::vector<std::unique_ptr<Object>> entities;
   auto                                 gridBoxFactory = [&]() {
@@ -469,7 +560,8 @@ main()
     return boxes;
   };
 
-  auto atlasCaloFactory = [&]() {
+  std::vector<std::unique_ptr<Acts::Volume>> cells;
+  auto                                       atlasCaloFactory = [&]() {
     min = 1e10;
     max = -1e10;
 
@@ -552,8 +644,8 @@ main()
       case 10:
       case 17:
         dz *= scale;
-        build_endcap(*ply, r, z, dz, eta_raw, deta, phi_raw, dphi);
-        goto endloop;
+        cells.push_back(std::make_unique<Acts::Volume>(
+            build_endcap(*ply, r, z, dz, eta_raw, deta, phi_raw, dphi)));
         break;
       case 0:
       case 1:
@@ -568,7 +660,8 @@ main()
       case 19:
       case 20:
         dr *= scale;
-        build_barrel(*ply, r, dr, z, eta_raw, deta, phi_raw, dphi);
+        cells.push_back(std::make_unique<Acts::Volume>(
+            build_barrel(*ply, r, dr, z, eta_raw, deta, phi_raw, dphi)));
         break;
       case 21:
       case 22:
@@ -577,13 +670,27 @@ main()
         dx *= scale;
         dy *= scale;
         // dz *= scale;
-        build_box(*ply, x, dx, y, dy, z, dz);
+        cells.push_back(std::make_unique<Acts::Volume>(
+            build_box(*ply, x, dx, y, dy, z, dz)));
         break;
       default:
         std::stringstream ss;
         ss << "Unkown calo sample " << calosample;
         std::runtime_error(ss.str());
       }
+
+      // cells.back().boundingBox({0.1, 0.1, 0.1}).draw(*ply);
+      // need to copy box again, because we use our custom object here
+      // @TODO: change this
+
+      auto vbox = cells.back()->boundingBox({0.1, 0.1, 0.1});
+
+      entities.push_back(std::make_unique<Object>(idx));
+      entities.back()->volume = cells.back().get();
+      boxes.push_back(
+          std::make_unique<Box>(entities.back().get(), vbox.min(), vbox.max()));
+      // boxes.push_back(std::make_unique<Box>(cells.back().boundingBox({0.1,
+      // 0.1, 0.1})));
 
       // std::cout << x << " " << y << " " << z << " " << r << " " << phi_raw <<
       // " ";
@@ -610,8 +717,6 @@ main()
       idx++;
     }
 
-  endloop:
-
     std::ofstream os("lar.ply");
     os << ply_lar << std::flush;
     os.close();
@@ -627,80 +732,76 @@ main()
     return boxes;
   };
 
-  atlasCaloFactory();
+  // auto boxFactory = gridBoxFactory
+  auto boxFactory    = atlasCaloFactory;
+  auto objectFactory = rayFactory;
+  using object_t     = Ray;
+  // auto objectFactory = frustFactory;
+  // using object_t     = Frustum;
 
-  /*
-    //auto boxFactory = gridBoxFactory
-    auto boxFactory = atlasCaloFactory;
+  size_t n_tests = 1e4;
+  // do_octree_scan<object_t>(n_tests, boxFactory, objectFactory);
 
-     //auto objectFactory = rayFactory;
-     //using object_t = Ray;
-    auto objectFactory = frustFactory;
-    using object_t     = Frustum;
+  Ray               ray   = rayFactory();
+  auto              boxes = boxFactory();
+  std::vector<Box*> prims;
+  for (auto& box : boxes) {
+    prims.push_back(box.get());
+  }
+  Box* top_node = nullptr;
+  top_node      = make_octree(boxes, prims, 6);
 
-    std::cout << "Generating " << n_tests << " test objects" << std::endl;
+  Acts::ply_helper<float> ply;
 
-    std::vector<object_t, Eigen::aligned_allocator<object_t>> objects;
-    objects.reserve(n_tests);
+  auto intersections = [&](const auto& obj, const Box* top) {
+    const Box*              lnode = top;
+    std::vector<const Box*> hits;
+    do {
+      if (lnode->intersect(obj)) {
 
-    real_t angle = M_PI/2.;
-
-    for (size_t i = 0; i < n_tests; i++) {
-
-      // objects.emplace_back(pos, dir, angle);
-      objects.push_back(objectFactory(min, max, angle));
-      if (i < 50) {
-        // frustums.back().draw(ply);
-      }
-    }
-
-    // get ref
-    std::tie(n_ix, diff, hits)
-        = Acts::Test::bench_frustum<object_t>(-1, boxFactory, objects);
-    std::vector<std::set<oid_t>> ref = hits;
-
-    std::ofstream os("octree_fr.csv");
-    os << "octd,ntests,angle,nix,time\n";
-    os << -1 << "," << n_tests << "," << angle << "," << n_ix << "," << diff <<
-    "\n";
-
-    auto print = [](const auto& tup) {
-      std::cout << "(" << std::get<0>(tup) << ", " << std::get<1>(tup) << ", "
-                << std::get<2>(tup) << ")";
-    };
-
-    for (int octree_depth : octree_depths) {
-      std::tie(n_ix, diff, hits) = Acts::Test::bench_frustum<object_t>(
-          octree_depth, boxFactory, objects);
-
-      for (size_t i = 0; i < ref.size(); i++) {
-        std::set<oid_t>& ref_set = ref[i];
-        std::set<oid_t>& act_set = hits[i];
-        if (ref_set != act_set) {
-          std::cout << "mismatch at idx " << i << ":" << std::endl;
-
-          std::set<oid_t> diff;
-          std::set_difference(ref_set.begin(),
-                              ref_set.end(),
-                              act_set.begin(),
-                              act_set.end(),
-                              std::inserter(diff, diff.end()));
-
-          std::cout << "in ref but not in act" << std::endl;
-          for (oid_t id : diff) {
-            std::cout << id;
-            std::cout << std::endl;
-          }
-
-          abort();
+        if (lnode->hasEntity()) {
+          // found primitive
+          hits.push_back(lnode);
+          lnode = lnode->getSkip();
+        } else {
+          // go over children
+          lnode = lnode->getLeftChild();
         }
+      } else {
+        lnode = lnode->getSkip();
       }
+    } while (lnode != nullptr);
+    return hits;
+  };
 
-      os << octree_depth << "," << n_tests << "," << angle << "," << n_ix << ","
-    << diff << "\n";
-    }
-    os.close();
-    */
+  auto hits = intersections(ray, top_node);
+
+  for (const auto& box : hits) {
+    box->draw(ply);
+  }
+
+  std::ofstream os("boxes.ply");
+  os << ply;
+  os.close();
+  ply.clear();
+
+  for (const auto& box : hits) {
+    const Acts::Volume* vol;
+    vol      = box->entity()->volume;
+    auto vbo = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
+        &vol->volumeBounds());
+    // std::cout << *vol << std::endl;
+    vbo->draw(ply, &vol->transform());
+  }
+  os = std::ofstream("cells.ply");
+  os << ply;
+  os.close();
+
+  ply.clear();
+  ray.draw(ply, 10000);
+  os = std::ofstream("rays.ply");
+  os << ply;
+  os.close();
 
   return 0;
 }
