@@ -7,9 +7,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
-#include "Acts/Surfaces/Surface.hpp"
-#include "Acts/Surfaces/PlaneSurface.hpp"
 #include "Acts/Surfaces/ConvexPolygonBounds.hpp"
+#include "Acts/Surfaces/PlaneSurface.hpp"
+#include "Acts/Surfaces/Surface.hpp"
+#include "Acts/Utilities/ThrowAssert.hpp"
 
 #include <array>
 #include <ostream>
@@ -30,8 +31,6 @@ Acts::GenericCuboidVolumeBounds::GenericCuboidVolumeBounds(
 
   cog *= 0.125;  // 1/8.
 
-  // std::cout << "cog: " << cog.transpose() << std::endl;
-
   size_t idx = 0;
 
   auto handle_face
@@ -40,9 +39,7 @@ Acts::GenericCuboidVolumeBounds::GenericCuboidVolumeBounds(
           const Vector3D ab = b - a, ac = c - a;
           Vector3D       normal = ab.cross(ac).normalized();
 
-          // std::cout << "normal: " << normal.transpose() << std::endl;
-          // std::cout << (cog - d).dot(normal) << std::endl;
-          if ((cog - d).dot(normal) < 0) {
+          if ((cog - a).dot(normal) < 0) {
             // normal points outwards, flip normal
             normal *= -1.;
           }
@@ -50,15 +47,12 @@ Acts::GenericCuboidVolumeBounds::GenericCuboidVolumeBounds(
           // get rid of -0 values if present
           normal += Vector3D::Zero();
 
+          // check if d is on the surface
+          throw_assert((std::abs((a - d).dot(normal)) < 1e-6),
+                       "Four points do not lie on the same plane!");
+
           m_normals[idx] = normal;
           idx++;
-
-          // std::cout << "a: " << a.transpose() << std::endl;
-          // std::cout << "b: " << b.transpose() << std::endl;
-          // std::cout << "c: " << c.transpose() << std::endl;
-          // std::cout << "d: " << d.transpose() << std::endl;
-          // std::cout << "normal: " << normal.transpose() << std::endl;
-          // std::cout << std::endl;
         };
 
   // handle faces
@@ -112,51 +106,58 @@ Acts::GenericCuboidVolumeBounds::decomposeToSurfaces(
 
   cog *= 0.125;  // 1/8.
 
-  auto make_surface =
-      [&](const auto& a, const auto& b, const auto& c, const auto& d) {
+  auto make_surface = [&](
+      const auto& a, const auto& b, const auto& c, const auto& d) {
+    // calculate centroid of these points
+    Vector3D ctrd = (a + b + c + d) / 4.;
+    // create normal
+    const Vector3D ab = b - a, ac = c - a;
+    Vector3D       normal = ab.cross(ac).normalized();
 
-        // calculate centroid of these points
-        //Vector3D ctrd = (a + b + c + d) / 4.;
-        // create normal
-        const Vector3D ab = b - a, ac = c - a;
-        Vector3D       normal = ab.cross(ac).normalized();
+    if ((cog - d).dot(normal) > 0) {
+      // normal points inwards, flip normal
+      normal *= -1.;
+    }
+    // get rid of -0 values if present
+    normal += Vector3D::Zero();
 
-        if ((cog - d).dot(normal) > 0) {
-          // normal points inwards, flip normal
-          normal *= -1.;
-        }
-        // get rid of -0 values if present
-        normal += Vector3D::Zero();
+    // normal should point away from volume center now
 
-        // normal should point away from volume center now
+    // build transform from z unit to normal
+    // z is normal in local coordinates
+    // Volume local to surface local
+    Transform3D vol2srf;
+    vol2srf = (Eigen::Quaternion<double>().setFromTwoVectors(
+        normal, Vector3D::UnitZ()));
 
-        // build transform from z unit to normal
-        // z is normal in local coordinates
-        // Volume local to surface local
-        Transform3D vol2srf;
-        vol2srf = (Eigen::Quaternion<double>().setFromTwoVectors(
-            normal, Vector3D::UnitZ()));
+    vol2srf = vol2srf * Translation3D(-ctrd);
+    // if(transform != nullptr) {
+    // vol2srf =  vol2srf * (*transform).inverse();
+    //}
 
-        // vol2srf = Translation3D(ctrd);
+    // now calculate position of vertices in surface local frame
+    Vector3D a_l, b_l, c_l, d_l;
+    a_l = vol2srf * a;
+    b_l = vol2srf * b;
+    c_l = vol2srf * c;
+    d_l = vol2srf * d;
 
-        // now calculate position of vertices in surface local frame
-        Vector3D a_l, b_l, c_l, d_l;
-        a_l = vol2srf * a;
-        b_l = vol2srf * b;
-        c_l = vol2srf * c;
-        d_l = vol2srf * d;
+    std::vector<Vector2D> vertices({{a_l.x(), a_l.y()},
+                                    {b_l.x(), b_l.y()},
+                                    {c_l.x(), c_l.y()},
+                                    {d_l.x(), d_l.y()}});
 
-        std::vector<Vector2D> vertices({{a_l.x(), a_l.y()},
-                                        {b_l.x(), b_l.y()},
-                                        {c_l.x(), c_l.y()},
-                                        {d_l.x(), d_l.y()}});
+    auto polyBounds = std::make_shared<const ConvexPolygonBounds<4>>(vertices);
 
-        auto polyBounds = std::make_shared<const ConvexPolygonBounds<4>>(vertices);
-        auto srf        = Surface::makeShared<PlaneSurface>(
-            std::make_shared<Transform3D>(vol2srf), polyBounds);
+    auto srfTrf = std::make_shared<Transform3D>(vol2srf.inverse());
+    if (transform != nullptr) {
+      *srfTrf = (*transform) * (*srfTrf);
+    }
 
-        surfaces.push_back(std::move(srf));
-      };
+    auto srf = Surface::makeShared<PlaneSurface>(std::move(srfTrf), polyBounds);
+
+    surfaces.push_back(std::move(srf));
+  };
 
   make_surface(m_vertices[0], m_vertices[1], m_vertices[2], m_vertices[3]);
   make_surface(m_vertices[4], m_vertices[5], m_vertices[6], m_vertices[7]);
