@@ -18,6 +18,8 @@
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Utilities/Visualization.hpp"
 #include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
+#include "Acts/Surfaces/PlanarBounds.hpp"
+#include "Acts/Surfaces/Surface.hpp"
 
 namespace Acts {
 namespace Test {
@@ -44,6 +46,51 @@ namespace Test {
     BOOST_CHECK(!cubo.inside({0.5, 1.5, 0.5}));
     BOOST_CHECK(!cubo.inside({0.5, 0.5, 1.5}));
     BOOST_CHECK(!cubo.inside({-0.5, 0.5, 0.5}));
+
+    BOOST_CHECK(!cubo.inside({2.2, 1, 1}, 0.1));
+    BOOST_CHECK(cubo.inside({2.2, 1, 1}, 0.21));
+    BOOST_CHECK(cubo.inside({2.2, 1, 1}, 0.3));
+
+  }
+
+  BOOST_AUTO_TEST_CASE(decomposeToSurfaces)
+  {
+
+    std::array<Vector3D, 8> vertices;
+    vertices = {{{0, 0, 0},
+                 {2, 0, 0},
+                 {2, 1, 0},
+                 {0, 1, 0},
+                 {0, 0, 1},
+                 {2, 0, 1},
+                 {2, 1, 1},
+                 {0, 1, 1}}};
+    GenericCuboidVolumeBounds cubo(vertices);
+
+    ply_helper<double> ply;
+    cubo.draw(ply);
+
+    std::ofstream os("deco_direct.ply");
+    os << ply;
+    os.close();
+    ply.clear();
+
+    auto surfaces = cubo.decomposeToSurfaces(nullptr);
+    for(const auto& srf : surfaces) {
+      auto pbounds = dynamic_cast<const PlanarBounds*>(&srf->bounds());
+      std::vector<Vector3D> vertices;
+      for (const auto& vtx : pbounds->vertices()) {
+        Vector3D glob;
+        srf->localToGlobal(vtx, {}, glob);
+        vertices.push_back(glob);
+      }
+      ply.face(vertices);
+    }
+
+    os = std::ofstream("deco_decomp.ply");
+    os << ply;
+    os.close();
+
   }
 
   BOOST_AUTO_TEST_CASE(ply_test)
