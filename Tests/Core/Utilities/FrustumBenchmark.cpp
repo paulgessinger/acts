@@ -7,8 +7,10 @@
 #include <random>
 #include <set>
 
+#include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Volumes/AbstractVolume.hpp"
 #include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
 #include "Acts/Volumes/Volume.hpp"
 
@@ -16,9 +18,9 @@ namespace {
 struct Object
 {
   using id_t = size_t;
-  Object(id_t         id_) : id(id_) {}
-  id_t                id;
-  const Acts::Volume* volume;
+  Object(id_t                 id_) : id(id_) {}
+  id_t                        id;
+  const Acts::AbstractVolume* volume;
 };
 
 using oid_t = size_t;
@@ -181,7 +183,7 @@ eta_to_theta(double eta)
 }
 
 template <typename helper_t>
-Acts::Volume
+Acts::AbstractVolume
 build_endcap(helper_t& ply,
              double    r,
              double    z,
@@ -250,13 +252,13 @@ build_endcap(helper_t& ply,
 
   auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
       std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
-  Acts::Volume vol(std::move(globalToLocal), std::move(cubo));
+  Acts::AbstractVolume vol(std::move(globalToLocal), std::move(cubo));
 
   return vol;
 }
 
 template <typename helper_t>
-Acts::Volume
+Acts::AbstractVolume
 build_barrel(helper_t& ply,
              double    r,
              double    dr,
@@ -325,13 +327,13 @@ build_barrel(helper_t& ply,
   auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
       std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
 
-  Acts::Volume vol(std::move(globalToLocal), std::move(cubo));
+  Acts::AbstractVolume vol(std::move(globalToLocal), std::move(cubo));
 
   return vol;
 }
 
 template <typename helper_t>
-Acts::Volume
+Acts::AbstractVolume
 build_box(helper_t& ply,
           double    x,
           double    dx,
@@ -381,7 +383,7 @@ build_box(helper_t& ply,
 
   auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
       std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
-  Acts::Volume vol(std::move(globalToLocal), std::move(cubo));
+  Acts::AbstractVolume vol(std::move(globalToLocal), std::move(cubo));
 
   return vol;
 };
@@ -496,7 +498,6 @@ main()
 
   std::mt19937 rng(42);
 
-  std::uniform_real_distribution<real_t> dir_dist(-1, 1);
   // std::uniform_real_distribution<real_t> angle_dist(0.1 * M_PI,
   // M_PI / 4. * 0.9);
 
@@ -505,9 +506,8 @@ main()
   real_t max  = 10;
   real_t step = (max - min) / real_t(n);
 
-  real_t angle        = M_PI / 2.;
-  auto   frustFactory = [&]() {
-    std::uniform_real_distribution<real_t> pos_dist(min * 1.5, max * 1.5);
+  real_t angle      = M_PI / 2.;
+  auto frustFactory = [&](auto& pos_dist, auto& dir_dist) {
     vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
     vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
     dir.normalize();
@@ -520,8 +520,7 @@ main()
     return Frustum(pos, dir, angle);
   };
 
-  auto rayFactory = [&]() {
-    std::uniform_real_distribution<real_t> pos_dist(min * 1.5, max * 1.5);
+  auto rayFactory = [&](auto& pos_dist, auto& dir_dist) {
     vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
     vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
     dir.normalize();
@@ -560,8 +559,8 @@ main()
     return boxes;
   };
 
-  std::vector<std::unique_ptr<Acts::Volume>> cells;
-  auto                                       atlasCaloFactory = [&]() {
+  std::vector<std::unique_ptr<Acts::AbstractVolume>> cells;
+  auto                                               atlasCaloFactory = [&]() {
     min = 1e10;
     max = -1e10;
 
@@ -644,7 +643,7 @@ main()
       case 10:
       case 17:
         dz *= scale;
-        cells.push_back(std::make_unique<Acts::Volume>(
+        cells.push_back(std::make_unique<Acts::AbstractVolume>(
             build_endcap(*ply, r, z, dz, eta_raw, deta, phi_raw, dphi)));
         break;
       case 0:
@@ -660,7 +659,7 @@ main()
       case 19:
       case 20:
         dr *= scale;
-        cells.push_back(std::make_unique<Acts::Volume>(
+        cells.push_back(std::make_unique<Acts::AbstractVolume>(
             build_barrel(*ply, r, dr, z, eta_raw, deta, phi_raw, dphi)));
         break;
       case 21:
@@ -670,7 +669,7 @@ main()
         dx *= scale;
         dy *= scale;
         // dz *= scale;
-        cells.push_back(std::make_unique<Acts::Volume>(
+        cells.push_back(std::make_unique<Acts::AbstractVolume>(
             build_box(*ply, x, dx, y, dy, z, dz)));
         break;
       default:
@@ -742,7 +741,9 @@ main()
   size_t n_tests = 1e4;
   // do_octree_scan<object_t>(n_tests, boxFactory, objectFactory);
 
-  Ray               ray   = rayFactory();
+  std::uniform_real_distribution<real_t> dir_dist(-1, 1);
+  std::uniform_real_distribution<real_t> pos_dist(0., 0.);
+
   auto              boxes = boxFactory();
   std::vector<Box*> prims;
   for (auto& box : boxes) {
@@ -774,33 +775,90 @@ main()
     return hits;
   };
 
-  auto hits = intersections(ray, top_node);
+  // for (const auto& box : hits) { box->draw(ply); }
 
-  for (const auto& box : hits) {
-    box->draw(ply);
+  // std::ofstream os("boxes.ply");
+  // os << ply;
+  // os.close();
+  // ply.clear();
+
+  size_t nrays = 1e6;
+
+  std::ofstream os("ray_efficiency.csv");
+  os << "n,eta,phi,boxes,obb,cells\n";
+
+  std::uniform_real_distribution<float> eta_dist(-5, 5);
+  std::uniform_real_distribution<float> phi_dist(-M_PI, M_PI);
+  for (size_t i = 0; i < nrays; i++) {
+    float eta = eta_dist(rng);
+    float phi = phi_dist(rng);
+
+    float          theta = 2 * std::atan(std::exp(-eta));
+    Acts::Vector3F dir;
+    dir << std::cos(phi), std::sin(phi), 1. / std::tan(theta);
+    dir.normalize();
+
+    // std::cout << "eta phi: " << eta << ", " << phi << std::endl;
+    // std::cout << dir.transpose() << std::endl;
+    // std::cout << Acts::VectorHelpers::phi(dir) << std::endl;
+    // std::cout << Acts::VectorHelpers::eta(dir) << std::endl;
+
+    Ray ray({0, 0, 0}, dir);
+
+    auto hits = intersections(ray, top_node);
+
+    size_t boxes_hit = 0;
+    size_t cells_hit = 0;
+    size_t obb_hit   = 0;
+    for (const auto& box : hits) {
+      const Acts::AbstractVolume* vol;
+      vol      = box->entity()->volume;
+      auto vbo = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
+          &vol->volumeBounds());
+      // std::cout << *vol << std::endl;
+
+      boxes_hit++;
+
+      auto obb = vol->orientedBoundingBox();
+      // do we hit the obb?
+      if (obb.intersect(
+              ray.transformed(vol->transform().inverse().cast<float>()))) {
+        obb_hit++;
+      }
+
+      // check if we actually hit it
+      auto surfaces = vol->boundarySurfaces();
+      for (const auto& boundarySurface : surfaces) {
+        auto& srf = boundarySurface->surfaceRepresentation();
+        auto ix = srf.intersectionEstimate(ray.origin().template cast<double>(),
+                                           ray.dir().template cast<double>(),
+                                           Acts::forward,
+                                           true);
+
+        if (ix) {
+          // std::cout << "valid surface intersect" << std::endl;
+          cells_hit++;
+          // vbo->draw(ply, &vol->transform());
+          break;  // no need to test other boundary surfaces
+        }
+      }
+    }
+
+    os << i << "," << eta << "," << phi << "," << boxes_hit << "," << obb_hit
+       << "," << cells_hit << "\n";
+
+    // std::cout << "boxes hit: " << boxes_hit << " cells_hit: " << cells_hit
+    //<< std::endl;
+    // os = std::ofstream("cells.ply");
+    // os << ply;
+    // os.close();
+
+    // ply.clear();
+    // ray.draw(ply, 10000);
+    // os = std::ofstream("rays.ply");
+    // os << ply;
+    // os.close();
   }
-
-  std::ofstream os("boxes.ply");
-  os << ply;
-  os.close();
-  ply.clear();
-
-  for (const auto& box : hits) {
-    const Acts::Volume* vol;
-    vol      = box->entity()->volume;
-    auto vbo = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
-        &vol->volumeBounds());
-    // std::cout << *vol << std::endl;
-    vbo->draw(ply, &vol->transform());
-  }
-  os = std::ofstream("cells.ply");
-  os << ply;
-  os.close();
-
-  ply.clear();
-  ray.draw(ply, 10000);
-  os = std::ofstream("rays.ply");
-  os << ply;
   os.close();
 
   return 0;

@@ -76,6 +76,9 @@ public:
   AABB3F<Volume>
   boundingBox(const Vector3F& envelope = {0, 0, 0}) const;
 
+  AABB3F<Volume>
+  orientedBoundingBox(const Vector3F& envelope = {0, 0, 0}) const;
+
   /// Inside() method for checks
   ///
   /// @param gpos is the position to be checked
