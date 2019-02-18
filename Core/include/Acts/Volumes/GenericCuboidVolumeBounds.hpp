@@ -69,7 +69,8 @@ public:
 
   template <typename helper_t>
   void
-  draw(helper_t& helper, const Transform3D* transform = nullptr) const;
+  draw(helper_t&          helper,
+       const Transform3D& transform = Transform3D::Identity()) const;
 
 private:
   std::array<Vector3D, 8> m_vertices;
@@ -83,14 +84,13 @@ private:
 template <typename helper_t>
 void
 Acts::GenericCuboidVolumeBounds::draw(helper_t&          helper,
-                                      const Transform3D* transform) const
+                                      const Transform3D& transform) const
 {
-  Transform3D trf = transform != nullptr ? *transform : Transform3D::Identity();
-
-  auto draw_face = [&](
-      const auto& a, const auto& b, const auto& c, const auto& d) {
-    helper.face(std::vector<Vector3D>({trf * a, trf * b, trf * c, trf * d}));
-  };
+  auto draw_face
+      = [&](const auto& a, const auto& b, const auto& c, const auto& d) {
+          helper.face(std::vector<Vector3D>(
+              {transform * a, transform * b, transform * c, transform * d}));
+        };
 
   draw_face(m_vertices[0], m_vertices[1], m_vertices[2], m_vertices[3]);
   draw_face(m_vertices[4], m_vertices[5], m_vertices[6], m_vertices[7]);

@@ -24,6 +24,9 @@
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Utilities/Frustum.hpp"
 #include "Acts/Utilities/Ray.hpp"
+#include "Acts/Utilities/Visualization.hpp"
+#include "Acts/Volumes/AbstractVolume.hpp"
+#include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
 
 namespace Acts {
 namespace Test {
@@ -377,6 +380,78 @@ namespace Test {
       ray3 = {{0, 0, 0}, {0, 0, -1}};
       BOOST_TEST(bb3.intersect(ray3));
     }
+  }
+
+  BOOST_AUTO_TEST_CASE(ray_obb_intersect)
+  {
+    using Ray = Ray<float, 3>;
+
+    std::array<Vector3D, 8> vertices;
+    vertices = {{{0, 0, 0},
+                 {2, 0, 0.4},
+                 {2, 1, 0.4},
+                 {0, 1, 0},
+                 {0, 0, 1},
+                 {1.8, 0, 1},
+                 {1.8, 1, 1},
+                 {0, 1, 1}}};
+    auto cubo = std::make_shared<GenericCuboidVolumeBounds>(vertices);
+    auto trf  = std::make_shared<Transform3D>();
+    *trf      = Translation3D(Vector3D(0, 8, -5))
+        * AngleAxis3D(M_PI / 3., Vector3D(1, -3, 9).normalized());
+
+    AbstractVolume vol(trf, cubo);
+
+    ply_helper<double> ply;
+
+    Transform3D trl   = Transform3D::Identity();
+    trl.translation() = trf->translation();
+
+    cubo->draw(ply);
+    auto bb = vol.boundingBox();
+
+    auto obb = vol.orientedBoundingBox({0.1, 0.1, 0.1});
+    obb.draw(ply, {200, 0, 0});
+
+    // std::ofstream os("obb.ply");
+    // os << ply;
+    // os.close();
+    // os = std::ofstream("obb_rays.ply");
+    ply.clear();
+
+    Vector3D origin(10, -20, 6);
+    Vector3D centroid;
+
+    for (const auto& vtx_ : vertices) {
+      Vector3D vtx = *trf * vtx_;
+      centroid += vtx;
+    }
+
+    // approximately the centroid
+    centroid *= 0.125;
+
+    // shoot rays to the corner points of the cuboid
+    for (const auto& vtx_ : vertices) {
+      Vector3D vtx = *trf * vtx_;
+
+      // this ray goes straight to the actual vertex, this should
+      // definitely intersect the OBB
+      Ray ray(origin.cast<float>(), (vtx - origin).normalized().cast<float>());
+      ray = ray.transformed(trf->inverse().cast<float>());
+      BOOST_CHECK(obb.intersect(ray));
+      ray.draw(ply, (vtx - origin).norm());
+
+      // now shift the target point away from the centroid
+      // this should definitely NOT intersect the OBB
+      vtx += (vtx - centroid);
+      ray = Ray(origin.cast<float>(),
+                (vtx - origin).normalized().cast<float>());
+      ray = ray.transformed(trf->inverse().cast<float>());
+      BOOST_CHECK(!obb.intersect(ray));
+      ray.draw(ply, (vtx - origin).norm());
+    }
+    // os << ply;
+    // os.close();
   }
 
   BOOST_AUTO_TEST_CASE(frustum_intersect)

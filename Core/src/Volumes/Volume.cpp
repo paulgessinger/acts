@@ -14,6 +14,7 @@
 #include <iostream>
 #include <utility>
 #include "Acts/Utilities/BoundingBox.hpp"
+#include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Volumes/VolumeBounds.hpp"
 
 Acts::Volume::Volume()
@@ -106,6 +107,17 @@ Acts::Volume::boundingBox(const Vector3F& envelope) const
 {
   Acts::AABB3F<Acts::Volume> box
       = m_volumeBounds->boundingBox(m_transform.get(), envelope);
+  box.setEntity(this);
+  return box;
+}
+
+Acts::AABB3F<Acts::Volume>
+Acts::Volume::orientedBoundingBox(const Vector3F& envelope) const
+{
+  std::unique_ptr<Transform3D> trl
+      = std::make_unique<Transform3D>(Transform3D::Identity());
+  Acts::AABB3F<Acts::Volume> box
+      = m_volumeBounds->boundingBox(trl.get(), envelope);
   box.setEntity(this);
   return box;
 }

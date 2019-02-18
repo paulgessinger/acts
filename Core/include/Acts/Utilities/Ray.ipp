@@ -38,14 +38,19 @@ Acts::Ray<value_t, DIM>::dump(std::ostream& os) const
   return os;
 }
 
+template <typename value_t, size_t DIM>
+Acts::Ray<value_t, DIM>
+Acts::Ray<value_t, DIM>::transformed(const transform_type& trf) const
+{
+  return Ray<value_t, DIM>(trf * m_origin, trf.rotation() * m_dir);
+}
+
 template <typename value_t, size_t  DIM>
 template <typename helper_t, size_t D, std::enable_if_t<D == 3, int>>
 void
 Acts::Ray<value_t, DIM>::draw(helper_t& helper, value_type far_distance) const
 {
   static_assert(DIM == 3, "OBJ is only supported in 3D");
-  static_assert(std::is_same<typename helper_t::value_type, value_type>::value,
-                "not the same value type");
 
   helper.line(m_origin, (m_origin + m_dir * far_distance).eval());
 }
