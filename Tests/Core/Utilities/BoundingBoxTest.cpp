@@ -468,33 +468,31 @@ namespace Test {
 
       using Frustum2 = Frustum<float, 2, 2>;
 
+      std::ofstream os;
+
+      float  w = 1000;
+      size_t n = 10;
+
       // BEGIN VISUAL PARAMETER TEST
 
-      // std::ofstream os("frust2d.svg");
-      float w = 1000;
-      // os << "<?xml version=\"1.0\" standalone=\"no\"?>\n";
-      // os << "<svg width=\"" << w << "\" height=\"" << w << "\"
-      // version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n";
-      std::ofstream os = make_svg("frust2d.svg", w, w);
+      // float  min = -20, max = 20;
+      // os = make_svg("frust2d.svg", w, w);
 
-      size_t n   = 10;
-      float  min = -20, max = 20;
-      float  step = (max - min) / float(n);
+      // float  step = (max - min) / float(n);
+      // for (size_t i = 0; i <= n; i++) {
+      // for (size_t j = 0; j <= n; j++) {
+      // ActsVectorF<2> dir    = {1, 0};
+      // ActsVectorF<2> origin = {min + step * i, min + step * j};
+      // origin.x() *= 1.10;  // visual
+      // Eigen::Rotation2D<float> rot(2 * M_PI / float(n) * i);
+      // float                    angle = 0.5 * M_PI / n * j;
+      // Frustum2                 fr(origin, rot * dir, angle);
+      // fr.svg(os, w, w, 2);
+      //}
+      //}
 
-      for (size_t i = 0; i <= n; i++) {
-        for (size_t j = 0; j <= n; j++) {
-          ActsVectorF<2> dir    = {1, 0};
-          ActsVectorF<2> origin = {min + step * i, min + step * j};
-          origin.x() *= 1.10;  // visual
-          Eigen::Rotation2D<float> rot(2 * M_PI / float(n) * i);
-          float                    angle = 0.5 * M_PI / n * j;
-          Frustum2                 fr(origin, rot * dir, angle);
-          fr.svg(os, w, w, 2);
-        }
-      }
-
-      os << "</svg>";
-      os.close();
+      // os << "</svg>";
+      // os.close();
 
       // END VISUAL PARAMETER TEST
 
@@ -630,67 +628,69 @@ namespace Test {
     BOOST_TEST_CONTEXT("3D - 3 Sides")
     {
 
-      // BEGIN VISUAL PARAMETER TEST
-
       using Frustum3 = Frustum<float, 3, 3>;
-      size_t n_vtx   = 1;
-      // Frustum3 fr({2, 0, 0}, {1, 0, 1}, {0, 1, 0}, 1*M_PI/4.);
-      auto make = [&](double angle, ActsVectorF<3> origin, std::ofstream& os) {
-        helper.clear();
-        float    far = 1;
-        Frustum3 fr(origin, {0, 0, 1}, angle);
-        fr.draw(helper, far);
-        fr = Frustum3(origin, {0, 0, -1}, angle);
-        fr.draw(helper, far);
-        fr = Frustum3(origin, {1, 0, 0}, angle);
-        fr.draw(helper, far);
-        fr = Frustum3(origin, {-1, 0, 0}, angle);
-        fr.draw(helper, far);
-
-        fr = Frustum3(origin, {0, 1, 0}, angle);
-        fr.draw(helper, far);
-        fr = Frustum3(origin, {0, -1, 0}, angle);
-        fr.draw(helper, far);
-
-        os << helper << std::flush;
-
-        helper.clear();
-      };
-
-      std::ofstream os("frust3d_dir.ply");
+      std::ofstream os;
+      size_t        n   = 10;
       size_t        s   = 5;
       double        min = -10, max = 10;
       double        step = (max - min) / double(s);
-      for (size_t i = 0; i <= s; i++) {
-        for (size_t j = 0; j <= s; j++) {
-          for (size_t k = 0; k <= s; k++) {
-            ActsVectorF<3> origin(
-                min + i * step, min + j * step, min + k * step);
-            // std::cout << origin.transpose() << std::endl;
-            make(M_PI / 4., origin, os);
-          }
-        }
-      }
-      os.close();
 
-      os = std::ofstream("frust3D_angle.ply");
-      helper.clear();
-      n_vtx             = 1;
-      size_t          n = 10;
-      Eigen::Affine3f rot;
-      for (size_t i = 0; i <= n; i++) {
-        ActsVectorF<3> origin(i * 4, 0, 0);
-        rot = Eigen::AngleAxisf(M_PI / float(n) * i, ActsVectorF<3>::UnitY());
-        float          angle = (M_PI / 2.) / float(n) * (1 + i);
-        ActsVectorF<3> dir(1, 0, 0);
-        Frustum3       fr(origin, rot * dir, angle);
-        fr.draw(helper, 2);
-      }
+      // BEGIN VISUAL PARAMETER TEST
 
-      os << helper << std::flush;
-      os.close();
+      // size_t n_vtx   = 1;
+      // auto make = [&](double angle, ActsVectorF<3> origin, std::ofstream& os)
+      // {
+      // helper.clear();
+      // float    far = 1;
+      // Frustum3 fr(origin, {0, 0, 1}, angle);
+      // fr.draw(helper, far);
+      // fr = Frustum3(origin, {0, 0, -1}, angle);
+      // fr.draw(helper, far);
+      // fr = Frustum3(origin, {1, 0, 0}, angle);
+      // fr.draw(helper, far);
+      // fr = Frustum3(origin, {-1, 0, 0}, angle);
+      // fr.draw(helper, far);
 
-      // END VISUAL PARAMETER TEST
+      // fr = Frustum3(origin, {0, 1, 0}, angle);
+      // fr.draw(helper, far);
+      // fr = Frustum3(origin, {0, -1, 0}, angle);
+      // fr.draw(helper, far);
+
+      // os << helper << std::flush;
+
+      // helper.clear();
+      //};
+
+      // os = std::ofstreams("frust3d_dir.ply");
+      // for (size_t i = 0; i <= s; i++) {
+      // for (size_t j = 0; j <= s; j++) {
+      // for (size_t k = 0; k <= s; k++) {
+      // ActsVectorF<3> origin(
+      // min + i * step, min + j * step, min + k * step);
+      //// std::cout << origin.transpose() << std::endl;
+      // make(M_PI / 4., origin, os);
+      //}
+      //}
+      //}
+      // os.close();
+
+      // os = std::ofstream("frust3D_angle.ply");
+      // helper.clear();
+      // n_vtx             = 1;
+      // Eigen::Affine3f rot;
+      // for (size_t i = 0; i <= n; i++) {
+      // ActsVectorF<3> origin(i * 4, 0, 0);
+      // rot = Eigen::AngleAxisf(M_PI / float(n) * i, ActsVectorF<3>::UnitY());
+      // float          angle = (M_PI / 2.) / float(n) * (1 + i);
+      // ActsVectorF<3> dir(1, 0, 0);
+      // Frustum3       fr(origin, rot * dir, angle);
+      // fr.draw(helper, 2);
+      //}
+
+      // os << helper << std::flush;
+      // os.close();
+
+      //// END VISUAL PARAMETER TEST
 
       std::set<size_t> act_idxs;
 
@@ -929,59 +929,61 @@ namespace Test {
 
     BOOST_TEST_CONTEXT("3D - 4 Sides")
     {
+      using Frustum34   = Frustum<float, 3, 4>;
+      size_t        n   = 10;
+      double        min = -10, max = 10;
+      size_t        s    = 5;
+      double        step = (max - min) / double(s);
+      std::ofstream os;
 
       // BEGIN VISUAL PARAMETER TEST
 
-      using Frustum34 = Frustum<float, 3, 4>;
-      size_t n_vtx    = 1;
+      // size_t n_vtx    = 1;
 
-      helper.clear();
-      std::ofstream os("frust3d-4s_dir.ply");
+      // helper.clear();
+      // os = std::ofstream("frust3d-4s_dir.ply");
 
-      size_t s   = 5;
-      double min = -10, max = 10;
-      double step  = (max - min) / double(s);
-      double angle = M_PI / 4.;
-      for (size_t i = 0; i <= s; i++) {
-        for (size_t j = 0; j <= s; j++) {
-          for (size_t k = 0; k <= s; k++) {
-            ActsVectorF<3> origin(
-                min + i * step, min + j * step, min + k * step);
-            ActsVectorF<3> dir(1, 0, 0);
+      // double angle = M_PI / 4.;
+      // for (size_t i = 0; i <= s; i++) {
+      // for (size_t j = 0; j <= s; j++) {
+      // for (size_t k = 0; k <= s; k++) {
+      // ActsVectorF<3> origin(
+      // min + i * step, min + j * step, min + k * step);
+      // ActsVectorF<3> dir(1, 0, 0);
 
-            Eigen::Affine3f rot;
-            rot = Eigen::AngleAxisf(M_PI / float(s) * i,
-                                    ActsVectorF<3>::UnitX())
-                * Eigen::AngleAxisf(M_PI / float(s) * j,
-                                    ActsVectorF<3>::UnitY())
-                * Eigen::AngleAxisf(M_PI / float(s) * k,
-                                    ActsVectorF<3>::UnitZ());
+      // Eigen::Affine3f rot;
+      // rot = Eigen::AngleAxisf(M_PI / float(s) * i,
+      // ActsVectorF<3>::UnitX())
+      //* Eigen::AngleAxisf(M_PI / float(s) * j,
+      // ActsVectorF<3>::UnitY())
+      //* Eigen::AngleAxisf(M_PI / float(s) * k,
+      // ActsVectorF<3>::UnitZ());
 
-            Frustum34 fr(origin, rot * dir, angle);
-            fr.draw(helper, 1);
-          }
-        }
-      }
+      // Frustum34 fr(origin, rot * dir, angle);
+      // fr.draw(helper, 1);
+      //}
+      //}
+      //}
 
-      os << helper << std::flush;
-      os.close();
-      os = std::ofstream("frust3d-4s_angle.ply");
-      helper.clear();
+      // os << helper << std::flush;
+      // os.close();
+      // os = std::ofstream("frust3d-4s_angle.ply");
+      // helper.clear();
 
-      n_vtx    = 1;
-      size_t n = 10;
-      for (size_t i = 0; i <= n; i++) {
-        ActsVectorF<3>  origin(i * 4, 0, 0);
-        Eigen::Affine3f rot;
-        rot   = Eigen::AngleAxisf(M_PI / float(n) * i, ActsVectorF<3>::UnitY());
-        angle = (M_PI / 2.) / float(n) * (1 + i);
-        ActsVectorF<3> dir(1, 0, 0);
-        Frustum34      fr(origin, rot * dir, angle);
-        fr.draw(helper, 2);
-      }
+      // n_vtx    = 1;
+      // for (size_t i = 0; i <= n; i++) {
+      // ActsVectorF<3>  origin(i * 4, 0, 0);
+      // Eigen::Affine3f rot;
+      // rot   = Eigen::AngleAxisf(M_PI / float(n) * i,
+      // ActsVectorF<3>::UnitY());
+      // angle = (M_PI / 2.) / float(n) * (1 + i);
+      // ActsVectorF<3> dir(1, 0, 0);
+      // Frustum34      fr(origin, rot * dir, angle);
+      // fr.draw(helper, 2);
+      //}
 
-      os << helper << std::flush;
-      os.close();
+      // os << helper << std::flush;
+      // os.close();
 
       // END VISUAL PARAMETER TEST
 
