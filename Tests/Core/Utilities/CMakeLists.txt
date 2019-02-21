@@ -89,3 +89,6 @@ add_test(NAME FrustumTest COMMAND FrustumTest)
 add_executable (RayTest RayTest.cpp)
 target_link_libraries (RayTest PRIVATE ActsCore ActsTestsCommonHelpers)
 add_test(NAME RayTest COMMAND RayTest)
+
+add_executable (BVHNavigationTest BVHNavigationTest.cpp)
+target_link_libraries (BVHNavigationTest PRIVATE ActsCore)
