@@ -32,6 +32,8 @@ using VolumeBoundsPtr = std::shared_ptr<const VolumeBounds>;
 class Volume : public virtual GeometryObject
 {
 public:
+  using BoundingBox = AABB3F<Volume>;
+
   ///  Default constructor
   Volume();
 
@@ -73,10 +75,10 @@ public:
   const VolumeBounds&
   volumeBounds() const;
 
-  AABB3F<Volume>
+  BoundingBox
   boundingBox(const Vector3F& envelope = {0, 0, 0}) const;
 
-  AABB3F<Volume>
+  BoundingBox
   orientedBoundingBox(const Vector3F& envelope = {0, 0, 0}) const;
 
   /// Inside() method for checks
