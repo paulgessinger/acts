@@ -19,6 +19,7 @@ public:
   using value_type        = value_t;
   using vertex_type       = ActsVector<value_t, DIM>;
   using vertex_array_type = Eigen::Array<value_t, DIM, 1>;
+  using transform_type    = Eigen::Transform<value_t, DIM, Eigen::Affine>;
 
   Ray(const vertex_type& origin, const vertex_type& dir);
 
@@ -39,11 +40,14 @@ public:
     return m_idir;
   }
 
+  Ray<value_t, DIM>
+  transformed(const transform_type& trf) const;
+
   std::ostream&
   dump(std::ostream& os) const;
 
   template <typename helper_t,
-            size_t D = DIM,
+            size_t D                      = DIM,
             std::enable_if_t<D == 3, int> = 0>
   void
   draw(helper_t& helper, value_type far_distance = 10) const;
