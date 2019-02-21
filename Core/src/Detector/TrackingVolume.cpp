@@ -77,6 +77,29 @@ Acts::TrackingVolume::TrackingVolume(
   interlinkLayers();
 }
 
+// constructor for arguments
+Acts::TrackingVolume::TrackingVolume(
+    std::shared_ptr<const Transform3D>                htrans,
+    VolumeBoundsPtr                                   volbounds,
+    std::vector<std::unique_ptr<Volume::BoundingBox>> boxStore,
+    const Volume::BoundingBox*                        top,
+    std::shared_ptr<const Material>                   matprop,
+    const std::string&                                volumeName)
+  : Volume(std::move(htrans), std::move(volbounds))
+  , m_material(std::move(matprop))
+  , m_name(volumeName)
+  , m_bvhTop(top)
+{
+  createBoundarySurfaces();
+  // interlinkLayers();
+  // we take a copy of the unique box pointers, but we want to
+  // store them as consts.
+  for (auto& uptr : boxStore) {
+    m_boundingBoxes.push_back(
+        std::unique_ptr<Volume::BoundingBox>(uptr.release()));
+  }
+}
+
 Acts::TrackingVolume::~TrackingVolume()
 {
   delete m_glueVolumeDescriptor;
@@ -231,15 +254,15 @@ Acts::TrackingVolume::glueTrackingVolume(
     const std::shared_ptr<TrackingVolume>& neighbor,
     BoundarySurfaceFace                    bsfNeighbor)
 {
-  // find the connection of the two tracking volumes : binR returns the center
-  // except for cylindrical volumes
+  // find the connection of the two tracking volumes : binR returns the
+  // center except for cylindrical volumes
   Vector3D bPosition(binningPosition(binR));
   Vector3D distance = Vector3D(neighbor->binningPosition(binR) - bPosition);
   // glue to the face
   std::shared_ptr<const BoundarySurfaceT<TrackingVolume>> bSurfaceMine
       = boundarySurfaces().at(bsfMine);
-  // @todo - complex glueing could be possible with actual intersection for the
-  // normal vector
+  // @todo - complex glueing could be possible with actual intersection for
+  // the normal vector
   Vector3D normal = bSurfaceMine->surfaceRepresentation().normal(bPosition);
   // estimate the orientation
   BoundaryOrientation bOrientation
@@ -264,8 +287,8 @@ Acts::TrackingVolume::glueTrackingVolumes(
     const std::shared_ptr<TrackingVolumeArray>& neighbors,
     BoundarySurfaceFace                         bsfNeighbor)
 {
-  // find the connection of the two tracking volumes : binR returns the center
-  // except for cylindrical volumes
+  // find the connection of the two tracking volumes : binR returns the
+  // center except for cylindrical volumes
   std::shared_ptr<const TrackingVolume> nRefVolume
       = neighbors->arrayObjects().at(0);
   // get the distance
@@ -274,8 +297,8 @@ Acts::TrackingVolume::glueTrackingVolumes(
   // take the normal at the binning positio
   std::shared_ptr<const BoundarySurfaceT<TrackingVolume>> bSurfaceMine
       = boundarySurfaces().at(bsfMine);
-  // @todo - complex glueing could be possible with actual intersection for the
-  // normal vector
+  // @todo - complex glueing could be possible with actual intersection for
+  // the normal vector
   Vector3D normal = bSurfaceMine->surfaceRepresentation().normal(bPosition);
   // estimate the orientation
   BoundaryOrientation bOrientation
@@ -335,8 +358,10 @@ Acts::TrackingVolume::synchronizeLayers(double envelope) const
     for (auto& clayIter : m_confinedLayers->arrayObjects()) {
       if (clayIter) {
         // @todo implement syncrhonize layer
-        //  if (clayIter->surfaceRepresentation().type() == Surface::Cylinder &&
-        //  !(center().isApprox(clayIter->surfaceRepresentation().center())) )
+        //  if (clayIter->surfaceRepresentation().type() ==
+        //  Surface::Cylinder &&
+        //  !(center().isApprox(clayIter->surfaceRepresentation().center()))
+        //  )
         //      clayIter->resizeAndRepositionLayer(volumeBounds(),center(),envelope);
         //  else
         //      clayIter->resizeLayer(volumeBounds(),envelope);
@@ -348,9 +373,9 @@ Acts::TrackingVolume::synchronizeLayers(double envelope) const
 
   // case b : container volume -> step down
   if (m_confinedVolumes) {
-    // msgstream << MSG::VERBOSE << "  ---> no confined layers, working on " <<
-    // m_confinedVolumes->arrayObjects().size() << " confined volumes." <<
-    // endreq;
+    // msgstream << MSG::VERBOSE << "  ---> no confined layers, working on "
+    // << m_confinedVolumes->arrayObjects().size() << " confined volumes."
+    // << endreq;
     for (auto& cVolumesIter : m_confinedVolumes->arrayObjects()) {
       cVolumesIter->synchronizeLayers(envelope);
     }
@@ -450,13 +475,14 @@ Acts::TrackingVolume::closeGeometry(
   //     if (volumesIter) closeGeometry(*volumesIter, &tvol, ++cCounter);
   // }
   //
-  // // should detached tracking volumes be part of the tracking geometry ? */
-  // auto confinedDetachedVolumes = tvol.confinedDetachedVolumes();
-  // if (!confinedDetachedVolumes.empty()) {
+  // // should detached tracking volumes be part of the tracking geometry ?
+  // */ auto confinedDetachedVolumes = tvol.confinedDetachedVolumes(); if
+  // (!confinedDetachedVolumes.empty()) {
   //   for (auto& volumesIter : confinedDetachedVolumes)
   //     if (volumesIter
   //         && tvol.inside(volumesIter->trackingVolume()->center(), 0.))
-  //       closeGeometry(*(volumesIter->trackingVolume()), &tvol, ++cCounter);
+  //       closeGeometry(*(volumesIter->trackingVolume()), &tvol,
+  //       ++cCounter);
   // }
   //
 }

@@ -47,7 +47,7 @@ public:
   dump(std::ostream& os) const;
 
   template <typename helper_t,
-            size_t D                      = DIM,
+            size_t D = DIM,
             std::enable_if_t<D == 3, int> = 0>
   void
   draw(helper_t& helper, value_type far_distance = 10) const;
