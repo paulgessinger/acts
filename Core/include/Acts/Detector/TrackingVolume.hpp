@@ -19,9 +19,11 @@
 #include "Acts/Surfaces/BoundaryCheck.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/BinnedArray.hpp"
+#include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Utilities/GeometryContext.hpp"
 #include "Acts/Utilities/GeometrySignature.hpp"
+#include "Acts/Utilities/Ray.hpp"
 #include "Acts/Volumes/BoundarySurfaceT.hpp"
 #include "Acts/Volumes/Volume.hpp"
 
@@ -80,7 +82,7 @@ public:
   /// Destructor
   ~TrackingVolume() override;
 
-  /// Factory constructor for a conatiner TrackingVolume
+  /// Factory constructor for a container TrackingVolume
   /// - by definition a Vacuum volume
   ///
   /// @param htrans is the global 3D transform to position the volume in space
@@ -99,6 +101,22 @@ public:
     return MutableTrackingVolumePtr(new TrackingVolume(std::move(htrans),
                                                        std::move(volumeBounds),
                                                        containedVolumes,
+                                                       volumeName));
+  }
+
+  static MutableTrackingVolumePtr
+  create(std::shared_ptr<const Transform3D>                htrans,
+         VolumeBoundsPtr                                   volbounds,
+         std::vector<std::unique_ptr<Volume::BoundingBox>> boxStore,
+         const Volume::BoundingBox*                        top,
+         std::shared_ptr<const Material>                   matprop,
+         const std::string& volumeName = "undefined")
+  {
+    return MutableTrackingVolumePtr(new TrackingVolume(std::move(htrans),
+                                                       std::move(volbounds),
+                                                       std::move(boxStore),
+                                                       top,
+                                                       std::move(matprop),
                                                        volumeName));
   }
 
@@ -232,6 +250,46 @@ public:
                        const options_t&       options,
                        const corrector_t&     corrfnc = corrector_t(),
                        const sorter_t&        sorter  = sorter_t()) const;
+
+  template <typename options_t,
+            typename corrector_t = VoidIntersectionCorrector>
+  std::vector<SurfaceIntersection>
+  compatibleSurfacesFromHierarchy(const Vector3D& position,
+                                  const Vector3D& momentum,
+                                  const options_t& /*options*/,
+                                  const corrector_t& /*corrfnc*/
+                                  = corrector_t()) const
+  {
+    // direction will be normalized by Ray
+    Ray3F ray(position.cast<float>(), momentum.cast<float>());
+
+    const Volume::BoundingBox* lnode = m_bvhTop;
+    std::vector<const Volume*> hits;
+    do {
+      if (lnode->intersect(ray)) {
+
+        if (lnode->hasEntity()) {
+          // found primitive
+          // check obb to limit false positivies
+          const Volume* vol = lnode->entity();
+          auto          obb = vol->orientedBoundingBox();
+          if (obb.intersect(
+                  ray.transformed(vol->transform().inverse().cast<float>()))) {
+            hits.push_back(vol);
+          }
+          // we skip in any case, whether we actually hit the OBB or not
+          lnode = lnode->getSkip();
+        } else {
+          // go over children
+          lnode = lnode->getLeftChild();
+        }
+      } else {
+        lnode = lnode->getSkip();
+      }
+    } while (lnode != nullptr);
+    // return hits;
+    return {};
+  }
 
   /// Return the associated sub Volume, returns THIS if no subVolume exists
   ///
@@ -383,6 +441,13 @@ protected:
       = nullptr,
       const std::string& volumeName = "undefined");
 
+  TrackingVolume(std::shared_ptr<const Transform3D>                htrans,
+                 VolumeBoundsPtr                                   volbounds,
+                 std::vector<std::unique_ptr<Volume::BoundingBox>> boxStore,
+                 const Volume::BoundingBox*                        top,
+                 std::shared_ptr<const Material>                   matprop,
+                 const std::string& volumeName = "undefined");
+
   /// Constructor for a full equipped Tracking Volume
   ///
   /// @param htrans is the global 3D transform to position the volume in space
@@ -464,6 +529,10 @@ private:
 
   /// color code for displaying
   unsigned int m_colorCode{20};
+
+  /// Bounding VOlume Hierarchy (BVH)
+  std::vector<std::unique_ptr<const Volume::BoundingBox>> m_boundingBoxes;
+  const Volume::BoundingBox*                              m_bvhTop;
 };
 
 inline const std::string&
