@@ -255,17 +255,30 @@ public:
   template <typename options_t,
             typename corrector_t = VoidIntersectionCorrector>
   std::vector<SurfaceIntersection>
-  compatibleSurfacesFromHierarchy(const Vector3D& position,
-                                  const Vector3D& momentum,
-                                  const options_t& /*options*/,
-                                  const corrector_t& /*corrfnc*/
+  compatibleSurfacesFromHierarchy(const Vector3D&    position,
+                                  const Vector3D&    momentum,
+                                  const options_t&   options,
+                                  const corrector_t& corrfnc
                                   = corrector_t()) const
   {
+    std::vector<SurfaceIntersection> sIntersections;
+    sIntersections.reserve(20);  // arbitrary
+
+    if (m_bvhTop == nullptr || !options.navDir) {
+      return sIntersections;
+    }
+
+    Vector3F dir = momentum.cast<float>();
+    if (options.navDir == backward) {
+      dir *= -1;
+    }
+
     // direction will be normalized by Ray
-    Ray3F ray(position.cast<float>(), momentum.cast<float>());
+    Ray3F ray(position.cast<float>(), dir);
 
     const Volume::BoundingBox* lnode = m_bvhTop;
     std::vector<const Volume*> hits;
+    hits.reserve(20);  // arbitrary
     do {
       if (lnode->intersect(ray)) {
 
@@ -274,8 +287,7 @@ public:
           // check obb to limit false positivies
           const Volume* vol = lnode->entity();
           auto          obb = vol->orientedBoundingBox();
-          if (obb.intersect(
-                  ray.transformed(vol->transform().inverse().cast<float>()))) {
+          if (obb.intersect(ray.transformed(vol->itransform().cast<float>()))) {
             hits.push_back(vol);
           }
           // we skip in any case, whether we actually hit the OBB or not
@@ -288,8 +300,33 @@ public:
         lnode = lnode->getSkip();
       }
     } while (lnode != nullptr);
-    // return hits;
-    return {};
+
+    // have cells, decompose to surfaces
+    for (const Volume* vol : hits) {
+      const AbstractVolume* avol = dynamic_cast<const AbstractVolume*>(vol);
+      const std::
+          vector<std::shared_ptr<const BoundarySurfaceT<AbstractVolume>>>&
+              boundarySurfaces
+          = avol->boundarySurfaces();
+      for (const auto& bs : boundarySurfaces) {
+        const Surface&      srf = bs->surfaceRepresentation();
+        SurfaceIntersection sfi = srf.surfaceIntersectionEstimate(
+            position, momentum, options, corrfnc);
+
+        if (sfi) {
+          sIntersections.push_back(std::move(sfi));
+        }
+      }
+    }
+
+    // sort according to the path length
+    if (options.navDir == forward) {
+      std::sort(sIntersections.begin(), sIntersections.end());
+    } else {
+      std::sort(sIntersections.begin(), sIntersections.end(), std::greater<>());
+    }
+
+    return sIntersections;
   }
 
   /// Return the associated sub Volume, returns THIS if no subVolume exists
