@@ -68,6 +68,9 @@ public:
   const Transform3D&
   transform() const;
 
+  const Transform3D&
+  itransform() const;
+
   /// returns the center of the volume
   const Vector3D&
   center() const;
@@ -104,6 +107,7 @@ public:
 
 protected:
   std::shared_ptr<const Transform3D> m_transform;
+  Transform3D                        m_itransform;
   Vector3D                           m_center;
   VolumeBoundsPtr                    m_volumeBounds;
 };
@@ -115,6 +119,12 @@ Volume::transform() const
     return (*(m_transform.get()));
   }
   return Acts::s_idTransform;
+}
+
+inline const Transform3D&
+Volume::itransform() const
+{
+  return m_itransform;
 }
 
 inline const Vector3D&
