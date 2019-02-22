@@ -22,6 +22,7 @@ Acts::Volume::Volume()
   , m_transform(nullptr)
   , m_center(s_origin)
   , m_volumeBounds(nullptr)
+  , m_orientedBoundingBox(BoundingBox(this, {0, 0, 0}, {0, 0, 0}))
 {
 }
 
@@ -32,6 +33,7 @@ Acts::Volume::Volume(const std::shared_ptr<const Transform3D>& htrans,
   , m_itransform(m_transform->inverse())
   , m_center(s_origin)
   , m_volumeBounds(std::move(volbounds))
+  , m_orientedBoundingBox(m_volumeBounds->boundingBox(nullptr, {0, 0, 0}, this))
 {
   if (htrans) {
     m_center = htrans->translation();
@@ -44,6 +46,7 @@ Acts::Volume::Volume(const Volume& vol, const Transform3D* shift)
   , m_itransform(m_transform->inverse())
   , m_center(s_origin)
   , m_volumeBounds(vol.m_volumeBounds)
+  , m_orientedBoundingBox(m_volumeBounds->boundingBox(nullptr, {0, 0, 0}, this))
 {
   // apply the shift if it exists
   if (shift != nullptr) {
@@ -114,13 +117,8 @@ Acts::Volume::boundingBox(const Vector3F& envelope) const
   return box;
 }
 
-Acts::AABB3F<Acts::Volume>
-Acts::Volume::orientedBoundingBox(const Vector3F& envelope) const
+const Acts::Volume::BoundingBox&
+Acts::Volume::orientedBoundingBox() const
 {
-  std::unique_ptr<Transform3D> trl
-      = std::make_unique<Transform3D>(Transform3D::Identity());
-  Acts::AABB3F<Acts::Volume> box
-      = m_volumeBounds->boundingBox(trl.get(), envelope);
-  box.setEntity(this);
-  return box;
+  return m_orientedBoundingBox;
 }
