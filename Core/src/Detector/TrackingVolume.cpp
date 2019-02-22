@@ -458,6 +458,29 @@ Acts::TrackingVolume::closeGeometry(
         mutableLayerPtr->closeGeometry(layerID);
       }
     }
+    else if(m_bvhTop != nullptr) {
+      geo_id_value isurface = 0;
+      const Volume::BoundingBox* node = m_bvhTop;
+      do {
+        if (node->hasEntity()) {
+          // found cell
+          const AbstractVolume* avol = dynamic_cast<const AbstractVolume*>(node->entity());
+          const auto bndSrf = avol->boundarySurfaces();
+          for(const auto& bnd : bndSrf) {
+            const auto& srf = bnd->surfaceRepresentation();
+            Surface* mutableSurfcePtr = const_cast<Surface*>(&srf);
+            GeometryID geoID = volumeID;
+            geoID.add(++isurface, GeometryID::sensitive_mask);
+            mutableSurfcePtr->assignGeoID(geoID);
+          }
+          node = node->getSkip();
+        }
+        else {
+          node = node->getLeftChild();
+        }
+      } while(node != nullptr);
+
+    }
   } else {
     // B) this is a container volume, go through sub volume
     // do the loop
