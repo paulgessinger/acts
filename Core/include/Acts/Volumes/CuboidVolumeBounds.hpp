@@ -14,6 +14,7 @@
 #include <cmath>
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Volumes/Volume.hpp"
 #include "Acts/Volumes/VolumeBounds.hpp"
 
 namespace Acts {
@@ -94,7 +95,7 @@ public:
   std::vector<std::shared_ptr<const Surface>>
   decomposeToSurfaces(const Transform3D* transformPtr) const override;
 
-  AABB3F<Volume>
+  Volume::BoundingBox
   boundingBox(const Transform3D* trf      = nullptr,
               const Vector3F&    envelope = {0, 0, 0}) const final;
 

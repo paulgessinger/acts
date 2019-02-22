@@ -102,7 +102,7 @@ Acts::operator<<(std::ostream& sl, const Acts::Volume& vol)
   return sl;
 }
 
-Acts::AABB3F<Acts::Volume>
+Acts::Volume::BoundingBox
 Acts::Volume::boundingBox(const Vector3F& envelope) const
 {
   Acts::AABB3F<Acts::Volume> box

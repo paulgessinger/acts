@@ -16,6 +16,7 @@
 #include <ostream>
 
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Volumes/Volume.hpp"
 
 Acts::GenericCuboidVolumeBounds::GenericCuboidVolumeBounds(
     const std::array<Acts::Vector3D, 8>& vertices)
@@ -182,7 +183,7 @@ Acts::GenericCuboidVolumeBounds::dump(std::ostream& sl) const
   return sl;
 }
 
-Acts::AABB3F<Acts::Volume>
+Acts::Volume::BoundingBox
 Acts::GenericCuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
                                              const Vector3F& envelope) const
 {

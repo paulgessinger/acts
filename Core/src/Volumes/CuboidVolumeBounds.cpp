@@ -152,7 +152,7 @@ Acts::CuboidVolumeBounds::toStream(std::ostream& sl) const
   return dumpT(sl);
 }
 
-Acts::AABB3F<Acts::Volume>
+Acts::Volume::BoundingBox
 Acts::CuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
                                       const Vector3F&          envelope) const
 {
