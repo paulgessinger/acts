@@ -1,10 +1,13 @@
 #include <array>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <random>
 #include <string>
 #include <vector>
 
+#include "Acts/Extrapolator/Navigator.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Helpers.hpp"
 #include "Acts/Utilities/Ray.hpp"
@@ -15,6 +18,10 @@
 #include "Acts/Volumes/Volume.hpp"
 
 #include "Acts/Detector/TrackingVolume.hpp"
+
+namespace {
+using clock = std::chrono::steady_clock;
+}
 
 double
 eta_to_theta(double eta)
@@ -349,11 +356,25 @@ atlasCaloFactory(std::string input_file)
 };
 
 int
-main()
+main(int argc, char* argv[])
 {
+  
+  size_t         n_rays = 1e6;
+
+  if (argc < 2) {
+    std::cerr << "Provide filename for geo building" << std::endl;
+    return 1;
+  }
+
+  std::string filename = argv[1];
+  if (argc > 2) {
+    n_rays = std::stoi(argv[2]);
+  }
+
+  std::cout << "Reading from: " << filename << std::endl;
   std::cout << "Build calo geometry..." << std::flush;
   std::vector<std::unique_ptr<Acts::AbstractVolume>> cells;
-  cells = atlasCaloFactory("../output_geo.csv");
+  cells = atlasCaloFactory(filename);
   std::cout << " => done!" << std::endl;
 
   // draw calo geometry
@@ -368,34 +389,34 @@ main()
   // os.close();
 
   using Box = Acts::AxisAlignedBoundingBox<Acts::Volume, float, 3>;
-  using Ray = Acts::Ray<float, 3>;
+  // using Ray = Acts::Ray<float, 3>;
 
-  auto intersections = [](const auto& obj, const Box* top) {
-    const Box*              lnode = top;
-    std::vector<const Box*> hits;
-    do {
-      if (lnode->intersect(obj)) {
+  // auto intersections = [](const auto& obj, const Box* top) {
+  // const Box*              lnode = top;
+  // std::vector<const Box*> hits;
+  // do {
+  // if (lnode->intersect(obj)) {
 
-        if (lnode->hasEntity()) {
-          // found primitive
-          // check obb to limit false positivies
-          auto obb = lnode->entity()->orientedBoundingBox();
-          if (obb.intersect(obj.transformed(
-                  lnode->entity()->transform().inverse().cast<float>()))) {
-            hits.push_back(lnode);
-          }
-          // we skip in any case, whether we actually hit the OBB or not
-          lnode = lnode->getSkip();
-        } else {
-          // go over children
-          lnode = lnode->getLeftChild();
-        }
-      } else {
-        lnode = lnode->getSkip();
-      }
-    } while (lnode != nullptr);
-    return hits;
-  };
+  // if (lnode->hasEntity()) {
+  //// found primitive
+  //// check obb to limit false positivies
+  // auto obb = lnode->entity()->orientedBoundingBox();
+  // if (obb.intersect(obj.transformed(
+  // lnode->entity()->transform().inverse().cast<float>()))) {
+  // hits.push_back(lnode);
+  //}
+  //// we skip in any case, whether we actually hit the OBB or not
+  // lnode = lnode->getSkip();
+  //} else {
+  //// go over children
+  // lnode = lnode->getLeftChild();
+  //}
+  //} else {
+  // lnode = lnode->getSkip();
+  //}
+  //} while (lnode != nullptr);
+  // return hits;
+  //};
 
   // create BVH for the calo geo
   std::vector<std::unique_ptr<Box>> boxStore;
@@ -443,7 +464,67 @@ main()
                                      nullptr,  // no material
                                      "calo");
 
-  Ray ray({0, 0, 0}, {1, 1, 1});
+  Acts::Vector3D origin(0, 0, 0);
+
+  std::cout << "Testing " << n_rays << " rays..." << std::flush;
+
+  Acts::ply_helper<double> ply;
+
+  std::mt19937                           rng(42);
+  std::uniform_real_distribution<double> eta_dist(-5, 5);
+  std::uniform_real_distribution<double> phi_dist(-M_PI, M_PI);
+  std::vector<Acts::Vector3D>            dirs;
+  dirs.reserve(n_rays);
+  for (size_t i = 0; i < n_rays; i++) {
+    double         eta   = eta_dist(rng);
+    double         phi   = phi_dist(rng);
+    double         theta = 2 * std::atan(std::exp(-eta));
+    Acts::Vector3D dir;
+    dir << std::cos(phi), std::sin(phi), 1. / std::tan(theta);
+    dir.normalize();
+    dirs.push_back(std::move(dir));
+  }
+
+  // std::ofstream os("compatibleSurfacesFromHierarchy_ray.ply");
+
+  clock::time_point start = clock::now();
+  for (size_t i = 0; i < n_rays; i++) {
+
+    const auto& dir = dirs[i];
+    // ply.line(origin, (origin + dir * 10000).eval());
+    // os << ply;
+    // ply.clear();
+
+    Acts::NavigationOptions<Acts::Surface> opt(Acts::forward, true);
+    auto sfis = tv->compatibleSurfacesFromHierarchy(origin, dir, opt);
+    // for (const auto& sfi : sfis) {
+    // const auto* pb
+    //= dynamic_cast<const Acts::PlanarBounds*>(&sfi.object->bounds());
+    // std::vector<Acts::Vector3D> vvtx;
+    // for (const auto& vtx : pb->vertices()) {
+    // Acts::Vector3D glob;
+    // sfi.object->localToGlobal(vtx, {}, glob);
+    // vvtx.push_back(glob);
+    //}
+    // ply.face(vvtx);
+    // std::cout << "SRFIX: at:" << sfi.intersection.pathLength;
+    // std::cout << " with: " << *sfi.object << std::endl;
+    //}
+  }
+
+  // os = std::ofstream("compatibleSurfacesFromHierarchy_surf.ply");
+  // os << ply;
+  // os.close();
+
+  clock::time_point end = clock::now();
+  double            duration
+      = std::chrono::duration_cast<std::chrono::microseconds>(end - start)
+            .count();
+  std::cout << "=> done in " << duration * 1e-6 << "s !" << std::endl;
+
+  double t_per_ray = duration / n_rays;
+  std::cout << " => time per ray: " << t_per_ray << "us" << std::endl;
+
   // auto hits = intersections(ray, top);
 
   // Acts::ply_helper<float> ply;
