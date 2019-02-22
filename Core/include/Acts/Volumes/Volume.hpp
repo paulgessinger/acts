@@ -82,8 +82,8 @@ public:
   BoundingBox
   boundingBox(const Vector3F& envelope = {0, 0, 0}) const;
 
-  BoundingBox
-  orientedBoundingBox(const Vector3F& envelope = {0, 0, 0}) const;
+  const BoundingBox&
+  orientedBoundingBox() const;
 
   /// Inside() method for checks
   ///
@@ -110,6 +110,7 @@ protected:
   Transform3D                        m_itransform;
   Vector3D                           m_center;
   VolumeBoundsPtr                    m_volumeBounds;
+  BoundingBox                        m_orientedBoundingBox;
 };
 
 inline const Transform3D&
