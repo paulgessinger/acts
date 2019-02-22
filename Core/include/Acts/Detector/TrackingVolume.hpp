@@ -425,6 +425,9 @@ public:
   GlueVolumesDescriptor&
   glueVolumesDescriptor();
 
+  bool
+  hasBVH() const;
+
   /// Sign the volume - the geometry builder has to do that
   ///
   /// @param geosign is the volume signature
@@ -630,6 +633,12 @@ inline void
 TrackingVolume::setMotherVolume(const TrackingVolume* mvol)
 {
   m_motherVolume = mvol;
+}
+
+inline bool
+TrackingVolume::hasBVH() const
+{
+  return m_bvhTop != nullptr;
 }
 
 #include "detail/TrackingVolume.ipp"

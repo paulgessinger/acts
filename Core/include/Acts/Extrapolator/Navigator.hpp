@@ -237,9 +237,7 @@ public:
   status(propagator_state_t& state, const stepper_t& stepper) const
   {
     // Check if the navigator is inactive
-    if (inactive(state, stepper)) {
-      return;
-    }
+    if (inactive(state, stepper)) { return; }
 
     // Set the navigation stage
     state.navigation.navigationStage = Stage::undefined;
@@ -271,7 +269,14 @@ public:
         });
         if (++state.navigation.navSurfaceIter
             == state.navigation.navSurfaces.end()) {
-          ++state.navigation.navLayerIter;
+          // this was the last surface, check if we have layers
+          if (!state.navigation.navLayers.empty()) {
+            ++state.navigation.navLayerIter;
+          } else {
+            // no layers, go to boundary
+            state.navigation.navigationStage = Stage::boundaryTarget;
+            return;
+          }
         }
       }
       // Set the navigation stage to surface target
@@ -304,7 +309,7 @@ public:
                       state.navigation.navBoundaries,
                       state.navigation.navBoundaryIter)) {
       debugLog(state,
-               [&] { return std::string("Stauts: in boundary handling."); });
+               [&] { return std::string("Status: in boundary handling."); });
 
       // Are we on the boundary - then overwrite the stage
       if (state.navigation.currentSurface != nullptr) {
@@ -379,9 +384,7 @@ public:
   target(propagator_state_t& state, const stepper_t& stepper) const
   {
     // Check if the navigator is inactive
-    if (inactive(state, stepper)) {
-      return;
-    }
+    if (inactive(state, stepper)) { return; }
 
     // Call the navigation helper prior to actual navigation
     debugLog(state, [&] { return std::string("Entering navigator::target."); });
@@ -529,9 +532,7 @@ private:
          const navigation_iter_t& navIter) const
   {
     // No surfaces, status check will be done on layer
-    if (navSurfaces.empty() or navIter == navSurfaces.end()) {
-      return false;
-    }
+    if (navSurfaces.empty() or navIter == navSurfaces.end()) { return false; }
     // Take the current surface
     auto surface = navIter->representation;
     // Check if we are at a surface
@@ -579,9 +580,7 @@ private:
                  const corrector_t&  navCorr) const
   {
 
-    if (state.navigation.navigationBreak) {
-      return false;
-    }
+    if (state.navigation.navigationBreak) { return false; }
 
     // Make sure resolve Surfaces is called on the start layer
     if (state.navigation.startLayer
@@ -710,15 +709,40 @@ private:
                const corrector_t&  navCorr) const
   {
 
-    if (state.navigation.navigationBreak) {
-      return false;
-    }
+    if (state.navigation.navigationBreak) { return false; }
 
     // if there are no layers, go back to the navigator (not stepper yet)
     if (state.navigation.navLayers.empty()) {
       debugLog(state, [&] {
         return std::string("No layers present, resolve volume first.");
       });
+
+      // check if current volume has BVH, or layers
+      if (state.navigation.currentVolume->hasBVH()) {
+        // has hierarchy, use that, skip layer resolution
+        NavigationOptions<Surface> navOpts(state.stepping.navDir,
+                                           true,
+                                           resolveSensitive,
+                                           resolveMaterial,
+                                           resolvePassive,
+                                           nullptr,
+                                           state.navigation.targetSurface);
+        state.navigation.navSurfaces
+            = state.navigation.currentVolume->compatibleSurfacesFromHierarchy(
+                stepper.position(state.stepping),
+                stepper.direction(state.stepping),
+                navOpts,
+                navCorr);
+        state.navigation.navSurfaceIter = state.navigation.navSurfaces.begin();
+        state.navigation.navLayers      = {};
+        state.navigation.navLayerIter   = state.navigation.navLayers.end();
+        updateStep(state,
+                   navCorr,
+                   state.navigation.navSurfaceIter->intersection.pathLength,
+                   true);
+        return true;
+      }
+
       if (resolveLayers(state, stepper, navCorr)) {
         // The layer resolving worked
         return true;
@@ -821,9 +845,7 @@ private:
                    const stepper_t&    stepper,
                    const corrector_t&  navCorr) const
   {
-    if (state.navigation.navigationBreak) {
-      return false;
-    }
+    if (state.navigation.navigationBreak) { return false; }
 
     if (!state.navigation.currentVolume) {
       debugLog(state, [&] {
@@ -855,6 +877,13 @@ private:
     if (state.navigation.navBoundaries.empty()) {
       // Exclude the current surface in case it's a boundary
       navOpts.startObject = state.navigation.currentSurface;
+      debugLog(state, [&] {
+        std::stringstream ss;
+        ss << "Try to find boundaries, we are at: "
+           << stepper.position(state.stepping).transpose()
+           << ", dir: " << stepper.direction(state.stepping).transpose();
+        return ss.str();
+      });
       // Evaluate the boundary surfaces
       state.navigation.navBoundaries
           = state.navigation.currentVolume->compatibleBoundaries(
@@ -1236,9 +1265,7 @@ private:
   inactive(propagator_state_t& state, const stepper_t& stepper) const
   {
     // Void behavior in case no tracking geometry is present
-    if (!trackingGeometry) {
-      return true;
-    }
+    if (!trackingGeometry) { return true; }
     // turn the navigator into void when you are intructed to do nothing
     if (!resolveSensitive && !resolveMaterial && !resolvePassive) {
       return true;

@@ -18,6 +18,14 @@
 #include "Acts/Volumes/Volume.hpp"
 
 #include "Acts/Detector/TrackingVolume.hpp"
+#include "Acts/EventData/TrackParameters.hpp"
+#include "Acts/MagneticField/ConstantBField.hpp"
+#include "Acts/Propagator/ActionList.hpp"
+#include "Acts/Propagator/EigenStepper.hpp"
+#include "Acts/Propagator/Propagator.hpp"
+#include "Acts/Propagator/detail/ConstrainedStep.hpp"
+#include "Acts/Propagator/detail/DebugOutputActor.hpp"
+#include "Acts/Propagator/detail/StandardAborters.hpp"
 
 namespace {
 using clock = std::chrono::steady_clock;
@@ -275,9 +283,7 @@ atlasCaloFactory(std::string input_file)
     iss >> calosample;
 
     scale = 1.;
-    if (calosample >= 12 && calosample <= 20) {
-      scale = 0.5;
-    }
+    if (calosample >= 12 && calosample <= 20) { scale = 0.5; }
 
     // Acts::ply_helper<double>* ply;
     // if (calosample <= 11) {
@@ -358,8 +364,8 @@ atlasCaloFactory(std::string input_file)
 int
 main(int argc, char* argv[])
 {
-  
-  size_t         n_rays = 1e6;
+
+  size_t n_rays = 1e6;
 
   if (argc < 2) {
     std::cerr << "Provide filename for geo building" << std::endl;
@@ -367,9 +373,7 @@ main(int argc, char* argv[])
   }
 
   std::string filename = argv[1];
-  if (argc > 2) {
-    n_rays = std::stoi(argv[2]);
-  }
+  if (argc > 2) { n_rays = std::stoi(argv[2]); }
 
   std::cout << "Reading from: " << filename << std::endl;
   std::cout << "Build calo geometry..." << std::flush;
@@ -452,9 +456,15 @@ main(int argc, char* argv[])
       = std::make_shared<Acts::Transform3D>(Acts::Transform3D::Identity());
 
   // the cylinder volume bounds for the TV need to wrap around all the bounding
-  // boxe assuming this is symmetric right now
-  double halez   = (zmin + zmax) / 2.;
+  // box assuming this is symmetric right now
+
+  std::cout << "minr: " << rmin << " maxr: " << rmax << " zmin: " << zmin
+            << " zmax: " << zmax << std::endl;
+  double halez   = (zmax - zmin) / 2.;
+  std::cout << "halez: " << halez << std::endl;
   auto cylVolBds = std::make_shared<Acts::CylinderVolumeBounds>(0, rmax, halez);
+  cylVolBds->dump(std::cout);
+
 
   std::shared_ptr<Acts::TrackingVolume> tv
       = Acts::TrackingVolume::create(std::move(tvTrf),
@@ -464,9 +474,11 @@ main(int argc, char* argv[])
                                      nullptr,  // no material
                                      "calo");
 
+  auto tg = std::make_shared<Acts::TrackingGeometry>(tv);
+
   Acts::Vector3D origin(0, 0, 0);
 
-  std::cout << "Testing " << n_rays << " rays..." << std::flush;
+  std::cout << "Testing " << n_rays << " rays..." << std::endl;
 
   Acts::ply_helper<double> ply;
 
@@ -485,18 +497,47 @@ main(int argc, char* argv[])
     dirs.push_back(std::move(dir));
   }
 
+  using BField_type       = Acts::ConstantBField;
+  using EigenStepper_type = Acts::EigenStepper<BField_type>;
+  using EigenPropagatorType
+      = Acts::Propagator<EigenStepper_type, Acts::Navigator>;
+
+  BField_type         bField(0, 0, 0);
+  EigenStepper_type   stepper(bField);
+  Acts::Navigator     navigator(tg);
+  EigenPropagatorType propagator(std::move(stepper), navigator);
+
+  using DebugOutput     = Acts::detail::DebugOutputActor;
+  using ActionList      = Acts::ActionList<DebugOutput>;
+  using AbortConditions = Acts::AbortList<>;
+
+  // setup propagation options
+
   // std::ofstream os("compatibleSurfacesFromHierarchy_ray.ply");
 
   clock::time_point start = clock::now();
   for (size_t i = 0; i < n_rays; i++) {
 
     const auto& dir = dirs[i];
+    double      mom = 50 * Acts::units::_GeV;
+
+    Acts::CurvilinearParameters start(nullptr, origin, dir * mom, +1);
+
+    Acts::PropagatorOptions<ActionList, AbortConditions> options;
+    options.debug     = true;
+    options.pathLimit = 20 * Acts::units::_m;
+
+    const auto& result = propagator.propagate(start, options);
+
+    const auto debugString
+        = result.template get<DebugOutput::result_type>().debugString;
+    std::cout << debugString << std::endl;
     // ply.line(origin, (origin + dir * 10000).eval());
     // os << ply;
     // ply.clear();
 
-    Acts::NavigationOptions<Acts::Surface> opt(Acts::forward, true);
-    auto sfis = tv->compatibleSurfacesFromHierarchy(origin, dir, opt);
+    // Acts::NavigationOptions<Acts::Surface> opt(Acts::forward, true);
+    // auto sfis = tv->compatibleSurfacesFromHierarchy(origin, dir, opt);
     // for (const auto& sfi : sfis) {
     // const auto* pb
     //= dynamic_cast<const Acts::PlanarBounds*>(&sfi.object->bounds());
