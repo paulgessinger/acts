@@ -177,7 +177,7 @@ Acts::CylinderVolumeBounds::dump(std::ostream& sl) const
   return dumpT<std::ostream>(sl);
 }
 
-Acts::AABB3F<Acts::Volume>
+Acts::Volume::BoundingBox
 Acts::CylinderVolumeBounds::boundingBox(const Transform3D* trf,
                                         const Vector3F&    envelope) const
 {

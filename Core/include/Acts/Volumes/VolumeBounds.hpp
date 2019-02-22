@@ -17,6 +17,7 @@
 #include "Acts/Utilities/BinningType.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Volumes/Volume.hpp"
 
 namespace Acts {
 
@@ -72,7 +73,7 @@ public:
   virtual std::vector<std::shared_ptr<const Surface>>
   decomposeToSurfaces(const Transform3D* transform) const = 0;
 
-  virtual AABB3F<Volume>
+  virtual Volume::BoundingBox
   boundingBox(const Transform3D* trf      = nullptr,
               const Vector3F&    envelope = {0, 0, 0}) const = 0;
 
