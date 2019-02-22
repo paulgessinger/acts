@@ -410,7 +410,7 @@ namespace Test {
     cubo->draw(ply);
     auto bb = vol.boundingBox();
 
-    auto obb = vol.orientedBoundingBox({0.1, 0.1, 0.1});
+    auto obb = vol.orientedBoundingBox();
     obb.draw(ply, {200, 0, 0});
 
     // std::ofstream os("obb.ply");

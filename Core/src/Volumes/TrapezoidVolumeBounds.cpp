@@ -238,7 +238,8 @@ Acts::TrapezoidVolumeBounds::toStream(std::ostream& sl) const
 
 Acts::Volume::BoundingBox
 Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
-                                         const Vector3F& envelope) const
+                                         const Vector3F&          envelope,
+                                         const Volume*            entity) const
 {
   // float    halex = std::max(maxHalflengthX(), minHalflengthX());
   // Vector3F vmin(-halex, -halflengthY(), -halflengthZ());
@@ -272,5 +273,5 @@ Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
     vmax               = vmax.cwiseMax(vtx);
   }
 
-  return {nullptr, vmin - envelope, vmax + envelope};
+  return {entity, vmin - envelope, vmax + envelope};
 }

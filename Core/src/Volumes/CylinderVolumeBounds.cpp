@@ -201,7 +201,8 @@ Acts::CylinderVolumeBounds::toStream(std::ostream& sl) const
 
 Acts::Volume::BoundingBox
 Acts::CylinderVolumeBounds::boundingBox(const Transform3D* trf,
-                                        const Vector3F&    envelope) const
+                                        const Vector3F&    envelope,
+                                        const Volume*      entity) const
 {
   float xmax, xmin, ymax, ymin;
   xmax = outerRadius();
@@ -223,6 +224,6 @@ Acts::CylinderVolumeBounds::boundingBox(const Transform3D* trf,
   Vector3F vmax(xmax, ymax, halflengthZ());
 
   // this is probably not perfect, but at least conservative
-  Acts::AABB3F<Acts::Volume> box{nullptr, vmin - envelope, vmax + envelope};
+  Acts::AABB3F<Acts::Volume> box{entity, vmin - envelope, vmax + envelope};
   return trf == nullptr ? box : box.transformed((*trf).cast<float>());
 }
