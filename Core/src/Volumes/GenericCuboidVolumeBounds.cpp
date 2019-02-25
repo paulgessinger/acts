@@ -192,7 +192,7 @@ Acts::GenericCuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
 
   Transform3D transform = Transform3D::Identity();
   if (trf != nullptr) {
-    transform = *trf; 
+    transform = *trf;
   }
 
   vmin = transform * m_vertices[0];

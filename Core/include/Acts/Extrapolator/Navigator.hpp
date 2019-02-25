@@ -237,7 +237,9 @@ public:
   status(propagator_state_t& state, const stepper_t& stepper) const
   {
     // Check if the navigator is inactive
-    if (inactive(state, stepper)) { return; }
+    if (inactive(state, stepper)) {
+      return;
+    }
 
     // Set the navigation stage
     state.navigation.navigationStage = Stage::undefined;
@@ -384,7 +386,9 @@ public:
   target(propagator_state_t& state, const stepper_t& stepper) const
   {
     // Check if the navigator is inactive
-    if (inactive(state, stepper)) { return; }
+    if (inactive(state, stepper)) {
+      return;
+    }
 
     // Call the navigation helper prior to actual navigation
     debugLog(state, [&] { return std::string("Entering navigator::target."); });
@@ -532,7 +536,9 @@ private:
          const navigation_iter_t& navIter) const
   {
     // No surfaces, status check will be done on layer
-    if (navSurfaces.empty() or navIter == navSurfaces.end()) { return false; }
+    if (navSurfaces.empty() or navIter == navSurfaces.end()) {
+      return false;
+    }
     // Take the current surface
     auto surface = navIter->representation;
     // Check if we are at a surface
@@ -580,7 +586,9 @@ private:
                  const corrector_t&  navCorr) const
   {
 
-    if (state.navigation.navigationBreak) { return false; }
+    if (state.navigation.navigationBreak) {
+      return false;
+    }
 
     // Make sure resolve Surfaces is called on the start layer
     if (state.navigation.startLayer
@@ -709,7 +717,9 @@ private:
                const corrector_t&  navCorr) const
   {
 
-    if (state.navigation.navigationBreak) { return false; }
+    if (state.navigation.navigationBreak) {
+      return false;
+    }
 
     // if there are no layers, go back to the navigator (not stepper yet)
     if (state.navigation.navLayers.empty()) {
@@ -845,7 +855,9 @@ private:
                    const stepper_t&    stepper,
                    const corrector_t&  navCorr) const
   {
-    if (state.navigation.navigationBreak) { return false; }
+    if (state.navigation.navigationBreak) {
+      return false;
+    }
 
     if (!state.navigation.currentVolume) {
       debugLog(state, [&] {
@@ -1265,7 +1277,9 @@ private:
   inactive(propagator_state_t& state, const stepper_t& stepper) const
   {
     // Void behavior in case no tracking geometry is present
-    if (!trackingGeometry) { return true; }
+    if (!trackingGeometry) {
+      return true;
+    }
     // turn the navigator into void when you are intructed to do nothing
     if (!resolveSensitive && !resolveMaterial && !resolvePassive) {
       return true;

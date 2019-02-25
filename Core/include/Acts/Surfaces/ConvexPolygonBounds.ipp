@@ -6,8 +6,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#include "Acts/Utilities/VariantData.hpp"
 #include "Acts/Utilities/ThrowAssert.hpp"
+#include "Acts/Utilities/VariantData.hpp"
 
 std::ostream&
 Acts::ConvexPolygonBoundsBase::dump(std::ostream& sl) const
@@ -120,7 +120,8 @@ Acts::ConvexPolygonBounds<N>::ConvexPolygonBounds(
     const std::vector<Acts::Vector2D>& vertices)
   : m_vertices(), m_boundingBox(makeBoundingBox(vertices))
 {
-  throw_assert(vertices.size() == N, "Size and number of given vertices do not match.");
+  throw_assert(vertices.size() == N,
+               "Size and number of given vertices do not match.");
   for (size_t i = 0; i < N; i++) {
     m_vertices[i] = vertices[i];
   }
