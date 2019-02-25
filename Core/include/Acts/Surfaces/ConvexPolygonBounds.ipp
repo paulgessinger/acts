@@ -7,6 +7,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include "Acts/Utilities/VariantData.hpp"
+#include "Acts/Utilities/ThrowAssert.hpp"
 
 std::ostream&
 Acts::ConvexPolygonBoundsBase::dump(std::ostream& sl) const
@@ -119,18 +120,18 @@ Acts::ConvexPolygonBounds<N>::ConvexPolygonBounds(
     const std::vector<Acts::Vector2D>& vertices)
   : m_vertices(), m_boundingBox(makeBoundingBox(vertices))
 {
-  assert(vertices.size() == N);
+  throw_assert(vertices.size() == N, "Size and number of given vertices do not match.");
   for (size_t i = 0; i < N; i++) {
     m_vertices[i] = vertices[i];
   }
-  assert(convex());
+  throw_assert(convex(), "Given vertices do not form convex hull.");
 }
 
 template <int N>
 Acts::ConvexPolygonBounds<N>::ConvexPolygonBounds(const vertex_array& vertices)
   : m_vertices(vertices), m_boundingBox(makeBoundingBox(vertices))
 {
-  assert(convex());
+  throw_assert(convex(), "Given vertices do not form convex hull.");
 }
 
 template <int N>
