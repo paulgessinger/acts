@@ -35,22 +35,22 @@ namespace Test {
     TrapezoidVolumeBounds tvb(5, 10, 8, 4);
 
     auto bb = tvb.boundingBox();
-    CHECK_CLOSE_ABS(bb.max(), Vector3F(10, 8, 4), tol);
-    CHECK_CLOSE_ABS(bb.min(), Vector3F(-10, -8, -4), tol);
+    CHECK_CLOSE_ABS(bb.max(), Vector3D(10, 8, 4), tol);
+    CHECK_CLOSE_ABS(bb.min(), Vector3D(-10, -8, -4), tol);
 
     Transform3D trf;
 
     trf = Translation3D(Vector3D(0, 30, 20));
 
     bb = tvb.boundingBox(&trf);
-    CHECK_CLOSE_ABS(bb.max(), Vector3F(10, 38, 24), tol);
-    CHECK_CLOSE_ABS(bb.min(), Vector3F(-10, 22, 16), tol);
+    CHECK_CLOSE_ABS(bb.max(), Vector3D(10, 38, 24), tol);
+    CHECK_CLOSE_ABS(bb.min(), Vector3D(-10, 22, 16), tol);
 
     trf = AngleAxis3D(M_PI / 2., Vector3D(-2, 4, 5).normalized());
 
     bb = tvb.boundingBox(&trf);
-    CHECK_CLOSE_ABS(bb.max(), Vector3F(9.32577, 11.4906, 11.5777), tol);
-    CHECK_CLOSE_ABS(bb.min(), Vector3F(-9.77021, -8.65268, -9.23688), tol);
+    CHECK_CLOSE_ABS(bb.max(), Vector3D(9.32577, 11.4906, 11.5777), tol);
+    CHECK_CLOSE_ABS(bb.min(), Vector3D(-9.77021, -8.65268, -9.23688), tol);
   }
 
   BOOST_AUTO_TEST_SUITE_END()

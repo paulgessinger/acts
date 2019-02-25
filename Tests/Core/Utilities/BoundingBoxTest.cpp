@@ -384,7 +384,7 @@ namespace Test {
 
   BOOST_AUTO_TEST_CASE(ray_obb_intersect)
   {
-    using Ray = Ray<float, 3>;
+    using Ray = Ray<double, 3>;
 
     std::array<Vector3D, 8> vertices;
     vertices = {{{0, 0, 0},
@@ -408,7 +408,6 @@ namespace Test {
     trl.translation() = trf->translation();
 
     cubo->draw(ply);
-    auto bb = vol.boundingBox();
 
     auto obb = vol.orientedBoundingBox();
     obb.draw(ply, {200, 0, 0});
@@ -436,17 +435,17 @@ namespace Test {
 
       // this ray goes straight to the actual vertex, this should
       // definitely intersect the OBB
-      Ray ray(origin.cast<float>(), (vtx - origin).normalized().cast<float>());
-      ray = ray.transformed(trf->inverse().cast<float>());
+      Ray ray(origin, (vtx - origin).normalized());
+      ray = ray.transformed(trf->inverse());
       BOOST_CHECK(obb.intersect(ray));
       ray.draw(ply, (vtx - origin).norm());
 
       // now shift the target point away from the centroid
       // this should definitely NOT intersect the OBB
       vtx += (vtx - centroid);
-      ray = Ray(origin.cast<float>(),
-                (vtx - origin).normalized().cast<float>());
-      ray = ray.transformed(trf->inverse().cast<float>());
+      ray = Ray(origin,
+                (vtx - origin).normalized());
+      ray = ray.transformed(trf->inverse());
       BOOST_CHECK(!obb.intersect(ray));
       ray.draw(ply, (vtx - origin).norm());
     }

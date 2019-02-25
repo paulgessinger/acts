@@ -32,7 +32,7 @@ using VolumeBoundsPtr = std::shared_ptr<const VolumeBounds>;
 class Volume : public virtual GeometryObject
 {
 public:
-  using BoundingBox = AABB3F<Volume>;
+  using BoundingBox = AABB3D<Volume>;
 
   ///  Default constructor
   Volume();
@@ -79,7 +79,7 @@ public:
   volumeBounds() const;
 
   BoundingBox
-  boundingBox(const Vector3F& envelope = {0, 0, 0}) const;
+  boundingBox(const Vector3D& envelope = {0, 0, 0}) const;
 
   const BoundingBox&
   orientedBoundingBox() const;

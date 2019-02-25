@@ -179,10 +179,10 @@ Acts::CylinderVolumeBounds::dump(std::ostream& sl) const
 
 Acts::Volume::BoundingBox
 Acts::CylinderVolumeBounds::boundingBox(const Transform3D* trf,
-                                        const Vector3F&    envelope,
+                                        const Vector3D&    envelope,
                                         const Volume*      entity) const
 {
-  float xmax, xmin, ymax, ymin;
+  double xmax, xmin, ymax, ymin;
   xmax = outerRadius();
 
   if (halfPhiSector() > M_PI / 2.) {
@@ -198,10 +198,10 @@ Acts::CylinderVolumeBounds::boundingBox(const Transform3D* trf,
     xmin = innerRadius() * std::cos(halfPhiSector());
   }
 
-  Vector3F vmin(xmin, ymin, -halflengthZ());
-  Vector3F vmax(xmax, ymax, halflengthZ());
+  Vector3D vmin(xmin, ymin, -halflengthZ());
+  Vector3D vmax(xmax, ymax, halflengthZ());
 
   // this is probably not perfect, but at least conservative
-  Acts::AABB3F<Acts::Volume> box{entity, vmin - envelope, vmax + envelope};
-  return trf == nullptr ? box : box.transformed((*trf).cast<float>());
+  Volume::BoundingBox box{entity, vmin - envelope, vmax + envelope};
+  return trf == nullptr ? box : box.transformed(*trf);
 }
