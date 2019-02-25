@@ -524,14 +524,14 @@ main(int argc, char* argv[])
     Acts::CurvilinearParameters start(nullptr, origin, dir * mom, +1);
 
     Acts::PropagatorOptions<ActionList, AbortConditions> options;
-    options.debug     = true;
+    options.debug     = false;
     options.pathLimit = 20 * Acts::units::_m;
 
     const auto& result = propagator.propagate(start, options);
 
     const auto debugString
         = result.template get<DebugOutput::result_type>().debugString;
-    std::cout << debugString << std::endl;
+    //std::cout << debugString << std::endl;
     // ply.line(origin, (origin + dir * 10000).eval());
     // os << ply;
     // ply.clear();
