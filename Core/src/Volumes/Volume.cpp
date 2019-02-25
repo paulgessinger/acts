@@ -33,7 +33,8 @@ Acts::Volume::Volume(const std::shared_ptr<const Transform3D>& htrans,
   , m_itransform(m_transform ? m_transform->inverse() : Transform3D::Identity())
   , m_center(s_origin)
   , m_volumeBounds(std::move(volbounds))
-  , m_orientedBoundingBox(m_volumeBounds->boundingBox(nullptr, {0.05, 0.05, 0.05}, this))
+  , m_orientedBoundingBox(
+        m_volumeBounds->boundingBox(nullptr, {0.05, 0.05, 0.05}, this))
 {
   if (htrans) {
     m_center = htrans->translation();
@@ -46,7 +47,8 @@ Acts::Volume::Volume(const Volume& vol, const Transform3D* shift)
   , m_itransform(m_transform ? m_transform->inverse() : Transform3D::Identity())
   , m_center(s_origin)
   , m_volumeBounds(vol.m_volumeBounds)
-  , m_orientedBoundingBox(m_volumeBounds->boundingBox(nullptr, {0.05, 0.05, 0.05}, this))
+  , m_orientedBoundingBox(
+        m_volumeBounds->boundingBox(nullptr, {0.05, 0.05, 0.05}, this))
 {
   // apply the shift if it exists
   if (shift != nullptr) {
@@ -111,8 +113,7 @@ Acts::operator<<(std::ostream& sl, const Acts::Volume& vol)
 Acts::Volume::BoundingBox
 Acts::Volume::boundingBox(const Vector3D& envelope) const
 {
-  BoundingBox  box
-      = m_volumeBounds->boundingBox(m_transform.get(), envelope);
+  BoundingBox box = m_volumeBounds->boundingBox(m_transform.get(), envelope);
   box.setEntity(this);
   return box;
 }

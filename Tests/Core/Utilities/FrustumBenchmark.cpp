@@ -821,8 +821,7 @@ main()
 
       auto obb = vol->orientedBoundingBox();
       // do we hit the obb?
-      if (obb.intersect(
-              ray.transformed(vol->transform().inverse()))) {
+      if (obb.intersect(ray.transformed(vol->transform().inverse()))) {
         obb_hit++;
       }
 

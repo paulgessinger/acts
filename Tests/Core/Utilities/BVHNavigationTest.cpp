@@ -283,7 +283,9 @@ atlasCaloFactory(std::string input_file)
     iss >> calosample;
 
     scale = 1.;
-    if (calosample >= 12 && calosample <= 20) { scale = 0.5; }
+    if (calosample >= 12 && calosample <= 20) {
+      scale = 0.5;
+    }
 
     // Acts::ply_helper<double>* ply;
     // if (calosample <= 11) {
@@ -373,7 +375,9 @@ main(int argc, char* argv[])
   }
 
   std::string filename = argv[1];
-  if (argc > 2) { n_rays = std::stoi(argv[2]); }
+  if (argc > 2) {
+    n_rays = std::stoi(argv[2]);
+  }
 
   std::cout << "Reading from: " << filename << std::endl;
   std::cout << "Build calo geometry..." << std::flush;
@@ -460,11 +464,10 @@ main(int argc, char* argv[])
 
   std::cout << "minr: " << rmin << " maxr: " << rmax << " zmin: " << zmin
             << " zmax: " << zmax << std::endl;
-  double halez   = (zmax - zmin) / 2.;
+  double halez = (zmax - zmin) / 2.;
   std::cout << "halez: " << halez << std::endl;
   auto cylVolBds = std::make_shared<Acts::CylinderVolumeBounds>(0, rmax, halez);
   cylVolBds->dump(std::cout);
-
 
   std::shared_ptr<Acts::TrackingVolume> tv
       = Acts::TrackingVolume::create(std::move(tvTrf),
@@ -531,7 +534,7 @@ main(int argc, char* argv[])
 
     const auto debugString
         = result.template get<DebugOutput::result_type>().debugString;
-    //std::cout << debugString << std::endl;
+    // std::cout << debugString << std::endl;
     // ply.line(origin, (origin + dir * 10000).eval());
     // os << ply;
     // ply.clear();

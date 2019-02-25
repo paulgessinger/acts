@@ -457,29 +457,27 @@ Acts::TrackingVolume::closeGeometry(
         auto mutableLayerPtr = std::const_pointer_cast<Layer>(layerPtr);
         mutableLayerPtr->closeGeometry(layerID);
       }
-    }
-    else if(m_bvhTop != nullptr) {
-      geo_id_value isurface = 0;
-      const Volume::BoundingBox* node = m_bvhTop;
+    } else if (m_bvhTop != nullptr) {
+      geo_id_value               isurface = 0;
+      const Volume::BoundingBox* node     = m_bvhTop;
       do {
         if (node->hasEntity()) {
           // found cell
-          const AbstractVolume* avol = dynamic_cast<const AbstractVolume*>(node->entity());
+          const AbstractVolume* avol
+              = dynamic_cast<const AbstractVolume*>(node->entity());
           const auto bndSrf = avol->boundarySurfaces();
-          for(const auto& bnd : bndSrf) {
-            const auto& srf = bnd->surfaceRepresentation();
-            Surface* mutableSurfcePtr = const_cast<Surface*>(&srf);
-            GeometryID geoID = volumeID;
+          for (const auto& bnd : bndSrf) {
+            const auto& srf              = bnd->surfaceRepresentation();
+            Surface*    mutableSurfcePtr = const_cast<Surface*>(&srf);
+            GeometryID  geoID            = volumeID;
             geoID.add(++isurface, GeometryID::sensitive_mask);
             mutableSurfcePtr->assignGeoID(geoID);
           }
           node = node->getSkip();
-        }
-        else {
+        } else {
           node = node->getLeftChild();
         }
-      } while(node != nullptr);
-
+      } while (node != nullptr);
     }
   } else {
     // B) this is a container volume, go through sub volume

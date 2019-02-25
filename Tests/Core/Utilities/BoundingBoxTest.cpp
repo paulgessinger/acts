@@ -443,8 +443,7 @@ namespace Test {
       // now shift the target point away from the centroid
       // this should definitely NOT intersect the OBB
       vtx += (vtx - centroid);
-      ray = Ray(origin,
-                (vtx - origin).normalized());
+      ray = Ray(origin, (vtx - origin).normalized());
       ray = ray.transformed(trf->inverse());
       BOOST_CHECK(!obb.intersect(ray));
       ray.draw(ply, (vtx - origin).norm());
