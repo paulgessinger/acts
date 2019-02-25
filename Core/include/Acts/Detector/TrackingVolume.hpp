@@ -267,13 +267,13 @@ public:
       return sIntersections;
     }
 
-    Vector3F dir = momentum.cast<float>();
+    Vector3D dir = momentum;
     if (options.navDir == backward) {
       dir *= -1;
     }
 
     // direction will be normalized by Ray
-    Ray3F ray(position.cast<float>(), dir);
+    Ray3D ray(position, dir);
 
     const Volume::BoundingBox* lnode = m_bvhTop;
     std::vector<const Volume*> hits;
@@ -286,7 +286,7 @@ public:
           // check obb to limit false positivies
           const Volume* vol = lnode->entity();
           auto          obb = vol->orientedBoundingBox();
-          if (obb.intersect(ray.transformed(vol->itransform().cast<float>()))) {
+          if (obb.intersect(ray.transformed(vol->itransform()))) {
             hits.push_back(vol);
           }
           // we skip in any case, whether we actually hit the OBB or not

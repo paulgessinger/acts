@@ -25,7 +25,7 @@ struct Object
 
 using oid_t = size_t;
 
-using real_t = float;
+using real_t = double;
 using vec_t  = Acts::ActsVector<real_t, 3>;
 using Box    = Acts::AxisAlignedBoundingBox<Object, real_t, 3>;
 using clock  = std::chrono::steady_clock;
@@ -529,7 +529,7 @@ main()
 
   std::vector<std::unique_ptr<Object>> entities;
   auto                                 gridBoxFactory = [&]() {
-    Box::Size size(Acts::ActsVectorF<3>(2, 2, 2));
+    Box::Size size(Acts::ActsVectorD<3>(2, 2, 2));
 
     std::vector<std::unique_ptr<Box>> boxes;
     boxes.reserve((n + 1) * (n + 1) * (n + 1));
@@ -541,7 +541,7 @@ main()
     for (size_t i = 0; i <= n; i++) {
       for (size_t j = 0; j <= n; j++) {
         for (size_t k = 0; k <= n; k++) {
-          Acts::ActsVectorF<3> pos(
+          Acts::ActsVectorD<3> pos(
               min + i * step, min + j * step, min + k * step);
           // boxes.emplace_back(o, pos, size);
           // Object o{{i, j, k}};
@@ -565,7 +565,7 @@ main()
     max = -1e10;
 
     float                             l = 100;
-    Box::Size                         size(Acts::ActsVectorF<3>(l, l, l));
+    Box::Size                         size(Acts::ActsVectorD<3>(l, l, l));
     std::vector<std::unique_ptr<Box>> boxes;
 
     std::ifstream is("../output_geo.csv");
@@ -794,7 +794,7 @@ main()
     float phi = phi_dist(rng);
 
     float          theta = 2 * std::atan(std::exp(-eta));
-    Acts::Vector3F dir;
+    Acts::Vector3D dir;
     dir << std::cos(phi), std::sin(phi), 1. / std::tan(theta);
     dir.normalize();
 
@@ -822,7 +822,7 @@ main()
       auto obb = vol->orientedBoundingBox();
       // do we hit the obb?
       if (obb.intersect(
-              ray.transformed(vol->transform().inverse().cast<float>()))) {
+              ray.transformed(vol->transform().inverse()))) {
         obb_hit++;
       }
 

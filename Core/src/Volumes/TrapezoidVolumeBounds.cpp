@@ -238,19 +238,15 @@ Acts::TrapezoidVolumeBounds::toStream(std::ostream& sl) const
 
 Acts::Volume::BoundingBox
 Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
-                                         const Vector3F&          envelope,
+                                         const Vector3D&          envelope,
                                          const Volume*            entity) const
 {
-  // float    halex = std::max(maxHalflengthX(), minHalflengthX());
-  // Vector3F vmin(-halex, -halflengthY(), -halflengthZ());
-  // Vector3F vmax(halex, halflengthY(), halflengthZ());
+  double minx  = minHalflengthX();
+  double maxx  = maxHalflengthX();
+  double haley = halflengthY();
+  double halez = halflengthZ();
 
-  float minx  = minHalflengthX();
-  float maxx  = maxHalflengthX();
-  float haley = halflengthY();
-  float halez = halflengthZ();
-
-  std::array<Vector3F, 8> vertices = {{{-minx, -haley, -halez},
+  std::array<Vector3D, 8> vertices = {{{-minx, -haley, -halez},
                                        {+minx, -haley, -halez},
                                        {-maxx, +haley, -halez},
                                        {+maxx, +haley, -halez},
@@ -259,16 +255,16 @@ Acts::TrapezoidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
                                        {-maxx, +haley, +halez},
                                        {+maxx, +haley, +halez}}};
 
-  Transform3F transform = Transform3F::Identity();
+  Transform3D transform = Transform3D::Identity();
   if (trf != nullptr) {
-    transform = (*trf).cast<float>();
+    transform = *trf;
   }
 
-  Vector3F vmin = transform * vertices[0];
-  Vector3F vmax = transform * vertices[0];
+  Vector3D vmin = transform * vertices[0];
+  Vector3D vmax = transform * vertices[0];
 
   for (size_t i = 1; i < 8; i++) {
-    const Vector3F vtx = transform * vertices[i];
+    const Vector3D vtx = transform * vertices[i];
     vmin               = vmin.cwiseMin(vtx);
     vmax               = vmax.cwiseMax(vtx);
   }

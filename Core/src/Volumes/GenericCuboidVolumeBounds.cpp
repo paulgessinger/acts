@@ -185,21 +185,21 @@ Acts::GenericCuboidVolumeBounds::dump(std::ostream& sl) const
 
 Acts::Volume::BoundingBox
 Acts::GenericCuboidVolumeBounds::boundingBox(const Acts::Transform3D* trf,
-                                             const Vector3F&          envelope,
+                                             const Vector3D&          envelope,
                                              const Volume* entity) const
 {
-  Vector3F vmin, vmax;
+  Vector3D vmin, vmax;
 
-  Transform3F transform = Transform3F::Identity();
+  Transform3D transform = Transform3D::Identity();
   if (trf != nullptr) {
-    transform = (*trf).cast<float>();
+    transform = *trf; 
   }
 
-  vmin = transform * m_vertices[0].cast<float>();
-  vmax = transform * m_vertices[0].cast<float>();
+  vmin = transform * m_vertices[0];
+  vmax = transform * m_vertices[0];
 
   for (size_t i = 1; i < 8; i++) {
-    Vector3F vtx = transform * m_vertices[i].cast<float>();
+    Vector3D vtx = transform * m_vertices[i];
     vmin         = vmin.cwiseMin(vtx);
     vmax         = vmax.cwiseMax(vtx);
   }

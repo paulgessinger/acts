@@ -392,7 +392,7 @@ main(int argc, char* argv[])
   // os << ply;
   // os.close();
 
-  using Box = Acts::AxisAlignedBoundingBox<Acts::Volume, float, 3>;
+  using Box = Acts::Volume::BoundingBox;
   // using Ray = Acts::Ray<float, 3>;
 
   // auto intersections = [](const auto& obj, const Box* top) {

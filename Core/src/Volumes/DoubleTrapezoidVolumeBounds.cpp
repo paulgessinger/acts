@@ -270,7 +270,7 @@ Acts::DoubleTrapezoidVolumeBounds::toStream(std::ostream& sl) const
 
 Acts::Volume::BoundingBox
 Acts::DoubleTrapezoidVolumeBounds::boundingBox(const Transform3D* trf,
-                                               const Vector3F&    envelope,
+                                               const Vector3D&    envelope,
                                                const Volume*      entity) const
 {
   float minx   = minHalflengthX();
@@ -280,7 +280,7 @@ Acts::DoubleTrapezoidVolumeBounds::boundingBox(const Transform3D* trf,
   float haley2 = 2 * halflengthY2();
   float halez  = halflengthZ();
 
-  std::array<Vector3F, 12> vertices = {{
+  std::array<Vector3D, 12> vertices = {{
       {-minx, -haley1, -halez},
       {+minx, -haley1, -halez},
       {+medx, 0, -halez},
@@ -295,16 +295,16 @@ Acts::DoubleTrapezoidVolumeBounds::boundingBox(const Transform3D* trf,
       {+maxx, +haley2, +halez},
   }};
 
-  Transform3F transform = Transform3F::Identity();
+  Transform3D transform = Transform3D::Identity();
   if (trf != nullptr) {
-    transform = (*trf).cast<float>();
+    transform = *trf;
   }
 
-  Vector3F vmin = transform * vertices[0];
-  Vector3F vmax = transform * vertices[0];
+  Vector3D vmin = transform * vertices[0];
+  Vector3D vmax = transform * vertices[0];
 
   for (size_t i = 1; i < 12; i++) {
-    const Vector3F vtx = transform * vertices[i];
+    const Vector3D vtx = transform * vertices[i];
     vmin               = vmin.cwiseMin(vtx);
     vmax               = vmax.cwiseMax(vtx);
   }

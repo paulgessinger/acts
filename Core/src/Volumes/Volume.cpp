@@ -110,9 +110,9 @@ Acts::operator<<(std::ostream& sl, const Acts::Volume& vol)
 }
 
 Acts::Volume::BoundingBox
-Acts::Volume::boundingBox(const Vector3F& envelope) const
+Acts::Volume::boundingBox(const Vector3D& envelope) const
 {
-  Acts::AABB3F<Acts::Volume> box
+  BoundingBox  box
       = m_volumeBounds->boundingBox(m_transform.get(), envelope);
   box.setEntity(this);
   return box;
