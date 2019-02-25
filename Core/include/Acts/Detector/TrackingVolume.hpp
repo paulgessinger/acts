@@ -572,7 +572,7 @@ private:
 
   /// Bounding VOlume Hierarchy (BVH)
   std::vector<std::unique_ptr<const Volume::BoundingBox>> m_boundingBoxes;
-  const Volume::BoundingBox*                              m_bvhTop;
+  const Volume::BoundingBox*                              m_bvhTop{nullptr};
 };
 
 inline const std::string&
