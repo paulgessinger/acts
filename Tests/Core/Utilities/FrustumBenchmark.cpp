@@ -251,7 +251,7 @@ build_endcap(helper_t& ply,
   auto globalToLocal = std::make_shared<Acts::Transform3D>(glob2vol.inverse());
 
   auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
-      std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
+      std::array<Acts::Vector3D, 8>({{p1, p2, p3, p4, p5, p6, p7, p8}}));
   Acts::AbstractVolume vol(std::move(globalToLocal), std::move(cubo));
 
   return vol;
@@ -325,7 +325,7 @@ build_barrel(helper_t& ply,
   auto globalToLocal = std::make_shared<Acts::Transform3D>(glob2vol.inverse());
 
   auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
-      std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
+      std::array<Acts::Vector3D, 8>({{p1, p2, p3, p4, p5, p6, p7, p8}}));
 
   Acts::AbstractVolume vol(std::move(globalToLocal), std::move(cubo));
 
@@ -382,7 +382,7 @@ build_box(helper_t& ply,
   auto globalToLocal = std::make_shared<Acts::Transform3D>(glob2vol.inverse());
 
   auto cubo = std::make_shared<Acts::GenericCuboidVolumeBounds>(
-      std::array<Acts::Vector3D, 8>({p1, p2, p3, p4, p5, p6, p7, p8}));
+      std::array<Acts::Vector3D, 8>({{p1, p2, p3, p4, p5, p6, p7, p8}}));
   Acts::AbstractVolume vol(std::move(globalToLocal), std::move(cubo));
 
   return vol;
