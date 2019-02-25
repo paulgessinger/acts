@@ -251,7 +251,6 @@ template <typename entity_t, typename value_t, size_t DIM>
 const entity_t*
 Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::entity() const
 {
-  assert(m_entity != nullptr);
   return m_entity;
 }
 

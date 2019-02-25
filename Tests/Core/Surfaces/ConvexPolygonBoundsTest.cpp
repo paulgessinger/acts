@@ -31,30 +31,43 @@ namespace Test {
   {
     std::vector<vec2> vertices;
     vertices = {{0, 0}, {1, 0}, {0.2, 0.2}, {0, 1}};
-    poly<4> quad(vertices);
-    BOOST_CHECK(!quad.convex());
+    {
+      BOOST_CHECK_THROW(poly<4> quad(vertices), AssertionFailureException);
+    }
 
     vertices = {{0, 0}, {1, 0}, {0.8, 0.8}, {0, 1}};
-    quad     = {vertices};
-    BOOST_CHECK(quad.convex());
+    {
+      // wrong number of vertices
+      BOOST_CHECK_THROW(poly<3> trip{vertices}, AssertionFailureException);
+    }
+    {
+      poly<4> quad = {vertices};
+      BOOST_CHECK(quad.convex());
+    }
 
     // this one is self intersecting
     vertices = {{0, 0}, {1, 0}, {0.5, 1}, {0.9, 1.2}};
-    quad     = {vertices};
-    BOOST_CHECK(!quad.convex());
+    {
+      BOOST_CHECK_THROW(poly<4> quad{vertices}, AssertionFailureException);
+    }
 
     // this one is not
     vertices = {{0, 0}, {1, 0}, {0.9, 1.2}, {0.5, 1}};
-    quad     = {vertices};
-    BOOST_CHECK(quad.convex());
+    {
+      poly<4> quad = {vertices};
+      BOOST_CHECK(quad.convex());
+    }
 
     vertices = {{0, 0}, {1, 0}, {0.8, 0.5}, {1, 1}, {0, 1}};
-    poly<5> pent(vertices);
-    BOOST_CHECK(!pent.convex());
+    {
+      BOOST_CHECK_THROW(poly<5> pent(vertices), AssertionFailureException);
+    }
 
     vertices = {{0, 0}, {1, 0}, {1.1, 0.5}, {1, 1}, {0, 1}};
-    pent     = {vertices};
-    BOOST_CHECK(pent.convex());
+    {
+      poly<5> pent{vertices};
+      BOOST_CHECK(pent.convex());
+    }
   }
 
   BOOST_AUTO_TEST_CASE(construction_test)
