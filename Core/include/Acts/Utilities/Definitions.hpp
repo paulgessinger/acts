@@ -143,5 +143,3 @@ enum AxisDefs : int {
 };
 
 }  // namespace Acts
-
-//EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Matrix<double, 3, 1>)

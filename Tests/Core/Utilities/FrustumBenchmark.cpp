@@ -1,3 +1,11 @@
+// This file is part of the Acts project.
+//
+// Copyright (C) 2019 Acts project team
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 #include <chrono>
 #include <fstream>
 #include <iomanip>
@@ -137,7 +145,7 @@ namespace Test {
           if (lnode->hasEntity()) {
             // found primitive
             // hits.insert(lnode->entity()->id);
-            auto id = lnode->entity()->id;
+            // auto id = lnode->entity()->id;
             // std::cout << "intersect prim: idx: (" << std::get<0>(id) << ", "
             // << std::get<1>(id) << ", " << std::get<2>(id) << ")" <<
             // std::endl;
@@ -182,16 +190,15 @@ eta_to_theta(double eta)
   return 2 * std::atan(std::exp(-eta));
 }
 
-template <typename helper_t>
 Acts::AbstractVolume
-build_endcap(helper_t& ply,
-             double    r,
-             double    z,
-             double    dz,
-             double    eta,
-             double    deta,
-             double    phi,
-             double    dphi)
+build_endcap(
+
+    double z,
+    double dz,
+    double eta,
+    double deta,
+    double phi,
+    double dphi)
 {
   // std::cout << "build endcap" << std::endl;
 
@@ -257,16 +264,13 @@ build_endcap(helper_t& ply,
   return vol;
 }
 
-template <typename helper_t>
 Acts::AbstractVolume
-build_barrel(helper_t& ply,
-             double    r,
-             double    dr,
-             double    z,
-             double    eta,
-             double    deta,
-             double    phi,
-             double    dphi)
+build_barrel(double r,
+             double dr,
+             double eta,
+             double deta,
+             double phi,
+             double dphi)
 {
   // std::cout << "build barrel" << std::endl;
   double eta_max   = eta + deta * 0.5;
@@ -332,15 +336,8 @@ build_barrel(helper_t& ply,
   return vol;
 }
 
-template <typename helper_t>
 Acts::AbstractVolume
-build_box(helper_t& ply,
-          double    x,
-          double    dx,
-          double    y,
-          double    dy,
-          double    z,
-          double    dz)
+build_box(double x, double dx, double y, double dy, double z, double dz)
 {
   // std::cout << "build box" << std::endl;
 
@@ -436,15 +433,15 @@ do_octree_scan(size_t                                             n_tests,
       if (ref_set != act_set) {
         std::cout << "mismatch at idx " << i << ":" << std::endl;
 
-        std::set<oid_t> diff;
+        std::set<oid_t> diff_;
         std::set_difference(ref_set.begin(),
                             ref_set.end(),
                             act_set.begin(),
                             act_set.end(),
-                            std::inserter(diff, diff.end()));
+                            std::inserter(diff_, diff_.end()));
 
         std::cout << "in ref but not in act" << std::endl;
-        for (oid_t id : diff) {
+        for (oid_t id : diff_) {
           std::cout << id;
           std::cout << std::endl;
         }
@@ -519,6 +516,7 @@ main()
 
     return Frustum(pos, dir, angle);
   };
+  (void)frustFactory;
 
   auto rayFactory = [&](auto& pos_dist, auto& dir_dist) {
     vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
@@ -526,6 +524,7 @@ main()
     dir.normalize();
     return Ray(pos, dir);
   };
+  (void)rayFactory;
 
   std::vector<std::unique_ptr<Object>> entities;
   auto                                 gridBoxFactory = [&]() {
@@ -558,6 +557,7 @@ main()
 
     return boxes;
   };
+  (void)gridBoxFactory;
 
   std::vector<std::unique_ptr<Acts::AbstractVolume>> cells;
   auto                                               atlasCaloFactory = [&]() {
@@ -644,7 +644,7 @@ main()
       case 17:
         dz *= scale;
         cells.push_back(std::make_unique<Acts::AbstractVolume>(
-            build_endcap(*ply, r, z, dz, eta_raw, deta, phi_raw, dphi)));
+            build_endcap(z, dz, eta_raw, deta, phi_raw, dphi)));
         break;
       case 0:
       case 1:
@@ -660,7 +660,7 @@ main()
       case 20:
         dr *= scale;
         cells.push_back(std::make_unique<Acts::AbstractVolume>(
-            build_barrel(*ply, r, dr, z, eta_raw, deta, phi_raw, dphi)));
+            build_barrel(r, dr, eta_raw, deta, phi_raw, dphi)));
         break;
       case 21:
       case 22:
@@ -670,7 +670,7 @@ main()
         dy *= scale;
         // dz *= scale;
         cells.push_back(std::make_unique<Acts::AbstractVolume>(
-            build_box(*ply, x, dx, y, dy, z, dz)));
+            build_box(x, dx, y, dy, z, dz)));
         break;
       default:
         std::stringstream ss;
@@ -732,13 +732,13 @@ main()
   };
 
   // auto boxFactory = gridBoxFactory
-  auto boxFactory    = atlasCaloFactory;
-  auto objectFactory = rayFactory;
-  using object_t     = Ray;
+  auto boxFactory = atlasCaloFactory;
+  // auto objectFactory = rayFactory;
+  // using object_t     = Ray;
   // auto objectFactory = frustFactory;
   // using object_t     = Frustum;
 
-  size_t n_tests = 1e4;
+  // size_t n_tests = 1e4;
   // do_octree_scan<object_t>(n_tests, boxFactory, objectFactory);
 
   std::uniform_real_distribution<real_t> dir_dist(-1, 1);
@@ -812,9 +812,9 @@ main()
     size_t obb_hit   = 0;
     for (const auto& box : hits) {
       const Acts::AbstractVolume* vol;
-      vol      = box->entity()->volume;
-      auto vbo = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
-          &vol->volumeBounds());
+      vol = box->entity()->volume;
+      // auto vbo = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
+      //&vol->volumeBounds());
       // std::cout << *vol << std::endl;
 
       boxes_hit++;
