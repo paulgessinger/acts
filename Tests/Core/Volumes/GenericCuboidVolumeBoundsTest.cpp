@@ -66,8 +66,8 @@ namespace Test {
                  {0, 1, 1}}};
     GenericCuboidVolumeBounds cubo(vertices);
 
-    auto is_in = [](const auto& tvtx, const auto& vertices) {
-      for (const auto& vtx : vertices) {
+    auto is_in = [](const auto& tvtx, const auto& vertices_) {
+      for (const auto& vtx : vertices_) {
         if (checkCloseAbs(vtx, tvtx, 1e-9)) {
           return true;
         }

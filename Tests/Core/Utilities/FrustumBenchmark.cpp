@@ -383,7 +383,7 @@ build_box(double x, double dx, double y, double dy, double z, double dz)
   Acts::AbstractVolume vol(std::move(globalToLocal), std::move(cubo));
 
   return vol;
-};
+}
 
 template <typename object_t>
 void
@@ -624,14 +624,14 @@ main()
         scale = 0.5;
       }
 
-      Acts::ply_helper<double>* ply;
-      if (calosample <= 11) {
-        ply = &ply_lar;
-      } else if (calosample <= 20) {
-        ply = &ply_tile;
-      } else {
-        ply = &ply_fcal;
-      }
+      //Acts::ply_helper<double>* ply;
+      //if (calosample <= 11) {
+        //ply = &ply_lar;
+      //} else if (calosample <= 20) {
+        //ply = &ply_tile;
+      //} else {
+        //ply = &ply_fcal;
+      //}
 
       switch (calosample) {
       case 4:
