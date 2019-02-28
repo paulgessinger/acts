@@ -18,3 +18,8 @@ add_executable (DoubleTrapezoidVolumeBoundsTest DoubleTrapezoidVolumeBoundsTest.
 target_include_directories (DoubleTrapezoidVolumeBoundsTest PRIVATE ${Boost_INCLUDE_DIRS})
 target_link_libraries (DoubleTrapezoidVolumeBoundsTest PRIVATE ActsCore ActsTestsCommonHelpers)
 add_test(NAME DoubleTrapezoidVolumeBoundsTest COMMAND DoubleTrapezoidVolumeBoundsTest)
+
+add_executable (CutoutCylinderVolumeBoundsTest CutoutCylinderVolumeBoundsTest.cpp)
+target_include_directories (CutoutCylinderVolumeBoundsTest PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries (CutoutCylinderVolumeBoundsTest PRIVATE ActsCore ActsTestsCommonHelpers)
+add_test(NAME CutoutCylinderVolumeBoundsTest COMMAND CutoutCylinderVolumeBoundsTest)
