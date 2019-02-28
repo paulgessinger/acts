@@ -234,7 +234,7 @@ build_box(double x, double dx, double y, double dy, double z, double dz)
   Acts::AbstractVolume vol(std::move(globalToLocal), std::move(cubo));
 
   return vol;
-};
+}
 
 std::vector<std::unique_ptr<Acts::AbstractVolume>>
 atlasCaloFactory(std::string input_file)
@@ -369,7 +369,7 @@ atlasCaloFactory(std::string input_file)
   // os.close();
 
   return cells;
-};
+}
 
 int
 main(int argc, char* argv[])
@@ -532,13 +532,13 @@ main(int argc, char* argv[])
     const auto& dir = dirs[i];
     double      mom = 50 * Acts::units::_GeV;
 
-    Acts::CurvilinearParameters start(nullptr, origin, dir * mom, +1);
+    Acts::CurvilinearParameters startPar(nullptr, origin, dir * mom, +1);
 
     Acts::PropagatorOptions<ActionList, AbortConditions> options;
     options.debug     = false;
     options.pathLimit = 20 * Acts::units::_m;
 
-    const auto& result = propagator.propagate(start, options);
+    const auto& result = propagator.propagate(startPar, options);
 
     const auto debugString
         = result.template get<DebugOutput::result_type>().debugString;
