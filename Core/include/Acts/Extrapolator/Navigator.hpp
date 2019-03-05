@@ -744,14 +744,27 @@ private:
                 stepper.direction(state.stepping),
                 navOpts,
                 navCorr);
-        state.navigation.navSurfaceIter = state.navigation.navSurfaces.begin();
-        state.navigation.navLayers      = {};
-        state.navigation.navLayerIter   = state.navigation.navLayers.end();
-        updateStep(state,
-                   navCorr,
-                   state.navigation.navSurfaceIter->intersection.pathLength,
-                   true);
-        return true;
+        if (!state.navigation.navSurfaces.empty()) {
+          // did we find any surfaces?
+
+          // are we on the first surface?
+          if (state.navigation.currentSurface == nullptr
+              || state.navigation.currentSurface
+                  != state.navigation.navSurfaces.front().object) {
+
+            // we are not, go on
+
+            state.navigation.navSurfaceIter
+                = state.navigation.navSurfaces.begin();
+            state.navigation.navLayers    = {};
+            state.navigation.navLayerIter = state.navigation.navLayers.end();
+            updateStep(state,
+                       navCorr,
+                       state.navigation.navSurfaceIter->intersection.pathLength,
+                       true);
+            return true;
+          }
+        }
       }
 
       if (resolveLayers(state, stepper, navCorr)) {
