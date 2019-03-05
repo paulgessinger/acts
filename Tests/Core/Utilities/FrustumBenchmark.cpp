@@ -624,13 +624,13 @@ main()
         scale = 0.5;
       }
 
-      //Acts::ply_helper<double>* ply;
-      //if (calosample <= 11) {
-        //ply = &ply_lar;
+      // Acts::ply_helper<double>* ply;
+      // if (calosample <= 11) {
+      // ply = &ply_lar;
       //} else if (calosample <= 20) {
-        //ply = &ply_tile;
+      // ply = &ply_tile;
       //} else {
-        //ply = &ply_fcal;
+      // ply = &ply_fcal;
       //}
 
       switch (calosample) {
