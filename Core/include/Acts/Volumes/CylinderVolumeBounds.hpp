@@ -12,6 +12,8 @@
 
 #pragma once
 #include <cmath>
+#include "Acts/Surfaces/CylinderSurface.hpp"
+#include "Acts/Surfaces/DiscSurface.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 #include "Acts/Utilities/Helpers.hpp"
@@ -182,6 +184,11 @@ public:
   std::ostream&
   dump(std::ostream& sl) const override;
 
+  template <typename helper_t>
+  void
+  draw(helper_t&          helper,
+       const Transform3D& transform = Transform3D::Identity()) const;
+
 private:
   /// templated dumpT method
   template <class T>
@@ -215,6 +222,24 @@ private:
   /// @todo unify the numerical stability checks
   static const double s_numericalStable;
 };
+
+template <typename helper_t>
+void
+Acts::CylinderVolumeBounds::draw(helper_t&          helper,
+                                 const Transform3D& transform) const
+{
+  std::vector<std::shared_ptr<const Acts::Surface>> surfaces
+      = decomposeToSurfaces(&transform);
+  for (const auto& srf : surfaces) {
+    auto cyl  = dynamic_cast<const CylinderSurface*>(srf.get());
+    auto disc = dynamic_cast<const DiscSurface*>(srf.get());
+    if (cyl != nullptr) {
+      cyl->polyhedronRepresentation(50).draw(helper);
+    } else {
+      disc->polyhedronRepresentation(50).draw(helper);
+    }
+  }
+}
 
 inline CylinderVolumeBounds*
 CylinderVolumeBounds::clone() const

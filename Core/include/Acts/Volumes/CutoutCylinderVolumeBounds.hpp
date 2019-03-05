@@ -51,6 +51,36 @@ public:
   draw(helper_t&          helper,
        const Transform3D& transform = Transform3D::Identity()) const;
 
+  double
+  rMin() const
+  {
+    return m_rmin;
+  }
+
+  double
+  rMed() const
+  {
+    return m_rmed;
+  }
+
+  double
+  rMax() const
+  {
+    return m_rmax;
+  }
+
+  double
+  dZ1() const
+  {
+    return m_dz1;
+  }
+
+  double
+  dZ2() const
+  {
+    return m_dz2;
+  }
+
 private:
   double m_rmin;
   double m_rmed;
