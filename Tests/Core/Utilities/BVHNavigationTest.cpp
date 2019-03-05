@@ -21,6 +21,7 @@
 #include "Acts/Utilities/Ray.hpp"
 #include "Acts/Utilities/Visualization.hpp"
 #include "Acts/Volumes/AbstractVolume.hpp"
+#include "Acts/Volumes/CutoutCylinderVolumeBounds.hpp"
 #include "Acts/Volumes/CylinderVolumeBounds.hpp"
 #include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
 #include "Acts/Volumes/Volume.hpp"
@@ -34,6 +35,14 @@
 #include "Acts/Propagator/detail/ConstrainedStep.hpp"
 #include "Acts/Propagator/detail/DebugOutputActor.hpp"
 #include "Acts/Propagator/detail/StandardAborters.hpp"
+#include "Acts/Propagator/detail/SteppingLogger.hpp"
+#include "Acts/Surfaces/CylinderSurface.hpp"
+#include "Acts/Surfaces/DiscSurface.hpp"
+#include "Acts/Surfaces/PolyhedronRepresentation.hpp"
+#include "Acts/Tools/TrackingVolumeArrayCreator.hpp"
+#include "Acts/Utilities/BinnedArrayXD.hpp"
+
+using namespace Acts::VectorHelpers;
 
 namespace {
 using clock = std::chrono::steady_clock;
@@ -312,6 +321,7 @@ atlasCaloFactory(std::string input_file)
     case 8:
     case 9:
     case 10:
+    case 11:
     case 17:
       dz *= scale;
       cells.push_back(std::make_unique<Acts::AbstractVolume>(
@@ -336,7 +346,7 @@ atlasCaloFactory(std::string input_file)
     case 21:
     case 22:
     case 23:
-      scale = 0.5;
+      scale = 1.;
       dx *= scale;
       dy *= scale;
       // dz *= scale;
@@ -437,69 +447,316 @@ main(int argc, char* argv[])
   // create BVH for the calo geo
   std::vector<std::unique_ptr<Box>> boxStore;
   std::vector<Box*>                 prims;
-
-  double zmin = std::numeric_limits<double>::max();
-  double zmax = std::numeric_limits<double>::lowest();
-  double rmin = std::numeric_limits<double>::max();
-  double rmax = -1;
   for (const auto& cell : cells) {
     boxStore.push_back(
         std::make_unique<Box>(cell->boundingBox({0.1, 0.1, 0.1})));
     prims.push_back(boxStore.back().get());
-
-    Acts::Vector3D vmin = boxStore.back()->min().cast<double>();
-    Acts::Vector3D vmax = boxStore.back()->max().cast<double>();
-
-    zmin = std::min(zmin, vmin.z());
-    zmin = std::min(zmin, vmax.z());
-    zmax = std::max(zmax, vmin.z());
-    zmax = std::max(zmax, vmax.z());
-
-    rmin = std::min(rmin, Acts::VectorHelpers::perp(vmin));
-    rmin = std::min(rmin, Acts::VectorHelpers::perp(vmax));
-    rmax = std::max(rmax, Acts::VectorHelpers::perp(vmin));
-    rmax = std::max(rmax, Acts::VectorHelpers::perp(vmax));
   }
 
+  // CYLINDER VOLUME BOUNDS
+
+  // double zmin = std::numeric_limits<double>::max();
+  // double zmax = std::numeric_limits<double>::lowest();
+  // double rmin = std::numeric_limits<double>::max();
+  // double rmax = -1;
+  // for (const auto& box : boxStore) {
+  // Acts::Vector3D vmin = box->min().cast<double>();
+  // Acts::Vector3D vmax = box->max().cast<double>();
+
+  // zmin = std::min(zmin, vmin.z());
+  // zmin = std::min(zmin, vmax.z());
+  // zmax = std::max(zmax, vmin.z());
+  // zmax = std::max(zmax, vmax.z());
+
+  // rmin = std::min(rmin, Acts::VectorHelpers::perp(vmin));
+  // rmin = std::min(rmin, Acts::VectorHelpers::perp(vmax));
+  // rmax = std::max(rmax, Acts::VectorHelpers::perp(vmin));
+  // rmax = std::max(rmax, Acts::VectorHelpers::perp(vmax));
+  //}
+  //// the cylinder volume bounds for the TV need to wrap around all the
+  //// bounding box assuming this is symmetric right now
+
+  // double halez = (zmax - zmin) / 2.;
+  // rmin         = 0;
+  // auto volBds  = std::make_shared<Acts::CylinderVolumeBounds>(
+  // rmin, rmax + 10, halez + 10);
+  // volBds->dump(std::cout);
+
+  // CUTOUT CYLINDER VOLUME BOUNDS
+  double rmin_at_center = std::numeric_limits<double>::max();
+  double rmin_at_choke  = std::numeric_limits<double>::max();
+  double rmax           = std::numeric_limits<double>::lowest();
+  double zmin           = std::numeric_limits<double>::max();
+  double zmax           = std::numeric_limits<double>::lowest();
+  for (const auto& box : boxStore) {
+    Acts::Vector3D vmin = box->min().cast<double>();
+    Acts::Vector3D vmax = box->max().cast<double>();
+
+    double vrmin = perp(vmin);
+    double vrmax = perp(vmax);
+
+    rmin_at_choke = std::min(rmin_at_choke, std::min(vrmin, vrmax));
+
+    rmax = std::max(rmax, std::max(vrmin, vrmax));
+    zmin = std::min(zmin, std::min(vmin.z(), vmax.z()));
+    zmax = std::max(zmax, std::max(vmin.z(), vmax.z()));
+
+    if (std::abs(vmin.z()) < 100) {
+      rmin_at_center = std::min(vrmin, rmin_at_center);
+    }
+    if (std::abs(vmax.z()) < 100) {
+      rmin_at_center = std::min(vrmax, rmin_at_center);
+    }
+  }
+
+  double cutout_zmin_abs = std::numeric_limits<double>::max();
+  // double cutout_zmax_abs = std::numeric_limits<double>::lowest();
+  for (const auto& box : boxStore) {
+    Acts::Vector3D vmin  = box->min().cast<double>();
+    Acts::Vector3D vmax  = box->max().cast<double>();
+    double         vrmin = perp(vmin);
+    double         vrmax = perp(vmax);
+
+    if (vrmin < rmin_at_center * 0.9) {
+      cutout_zmin_abs = std::min(cutout_zmin_abs, std::abs(vmin.z()));
+      // cutout_zmax_abs = std::max(cutout_zmax_abs, std::abs(vmin.z()));
+    }
+    if (vrmax < rmin_at_center * 0.9) {
+      cutout_zmin_abs = std::min(cutout_zmin_abs, std::abs(vmax.z()));
+      // cutout_zmax_abs = std::max(cutout_zmax_abs, std::abs(vmax.z()));
+    }
+  }
+
+  double dz1 = (zmax - zmin) / 2.;
+  // double dz2 = (cutout_zmax_abs - cutout_zmin_abs) / 2.;
+  double dz2 = cutout_zmin_abs;
+
+  std::cout << "rmin_at_center: " << rmin_at_center
+            << " rmin at choke: " << rmin_at_choke;
+  std::cout << " rmax: " << rmax << " zmin: " << zmin << " zmax: " << zmax;
+  std::cout << " coutout_zmin_abs: " << cutout_zmin_abs << std::endl;
+
+  std::shared_ptr<Acts::CutoutCylinderVolumeBounds> volBds = nullptr;
+  volBds = std::make_shared<Acts::CutoutCylinderVolumeBounds>(
+      rmin_at_choke, rmin_at_center, rmax, dz1, dz2);
+  std::cout << *volBds << std::endl;
+
+  for (const auto& srf : volBds->decomposeToSurfaces(nullptr)) {
+    std::cout << "NORMAL: " << srf->normal().transpose() << " ";
+    std::cout << "CTR: " << srf->center().transpose() << std::endl;
+  }
+
+  // return 0;
+
+  // this cylinder vol bounds should fit right inside the cutout
+  auto innerCylCtrBds
+      = std::make_shared<Acts::CylinderVolumeBounds>(0, rmin_at_center, dz2);
+
+  auto innerCyl = Acts::TrackingVolume::create(
+      std::make_shared<const Acts::Transform3D>(Acts::Transform3D::Identity()),
+      innerCylCtrBds,
+      nullptr,
+      "ID");
+
+  auto chokeCylBds = std::make_shared<Acts::CylinderVolumeBounds>(
+      0, rmin_at_choke, (dz1 - dz2) / 2.);
+
+  double chokePosZ = dz2 + (dz1 - dz2) / 2.;  // mid point of choke cylinder
+
+  auto posChokeVol = Acts::TrackingVolume::create(
+      std::make_shared<const Acts::Transform3D>(
+          Acts::Translation3D(Acts::Vector3D::UnitZ() * chokePosZ)),
+      chokeCylBds,
+      nullptr,
+      "calo_choke_pos");
+
+  auto negChokeVol = Acts::TrackingVolume::create(
+      std::make_shared<const Acts::Transform3D>(
+          Acts::Translation3D(Acts::Vector3D::UnitZ() * -1 * chokePosZ)),
+      chokeCylBds,
+      nullptr,
+      "calo_choke_neg");
+
+  Acts::ply_helper<double> ply;
+  std::ofstream            os("cyl.ply");
+  innerCylCtrBds->draw(ply);
+  chokeCylBds->draw(ply, posChokeVol->transform());
+  chokeCylBds->draw(ply, negChokeVol->transform());
+  os << ply;
+  os.close();
+
   Box* top;
-  top = Acts::make_octree(boxStore, prims, 6, 0.1);
+  top = Acts::make_octree(boxStore, prims, 1, 0.1);
   // tracking volume needs to store the box store, and the top vol
   auto tvTrf
       = std::make_shared<Acts::Transform3D>(Acts::Transform3D::Identity());
 
-  // the cylinder volume bounds for the TV need to wrap around all the bounding
-  // box assuming this is symmetric right now
-
-  std::cout << "minr: " << rmin << " maxr: " << rmax << " zmin: " << zmin
-            << " zmax: " << zmax << std::endl;
-  double halez = (zmax - zmin) / 2.;
-  std::cout << "halez: " << halez << std::endl;
-  auto cylVolBds = std::make_shared<Acts::CylinderVolumeBounds>(0, rmax, halez);
-  cylVolBds->dump(std::cout);
-
   std::shared_ptr<Acts::TrackingVolume> tv
       = Acts::TrackingVolume::create(std::move(tvTrf),
-                                     cylVolBds,
+                                     volBds,
                                      std::move(boxStore),
                                      top,
                                      nullptr,  // no material
                                      "calo");
 
-  auto tg = std::make_shared<Acts::TrackingGeometry>(tv);
+  tv->glueTrackingVolume(Acts::tubeInnerCover, innerCyl, Acts::tubeOuterCover);
+  tv->glueTrackingVolume(Acts::index7, posChokeVol, Acts::tubeOuterCover);
+  tv->glueTrackingVolume(Acts::index6, negChokeVol, Acts::tubeOuterCover);
+
+  // create binutility for ID to Calo
+  std::vector<float> rBoundaries   = {0, float(rmin_at_choke), float(rmax)};
+  auto               binUtilityPos = std::make_unique<const Acts::BinUtility>(
+      rBoundaries, Acts::open, Acts::binR);
+  auto binUtilityNeg = std::make_unique<const Acts::BinUtility>(
+      rBoundaries, Acts::open, Acts::binR);
+
+  Acts::Vector3D caloBinPos(
+      volBds->rMin() + (volBds->rMed() - volBds->rMin()) / 2., 0, 0);
+
+  std::vector<Acts::TrackingVolumeOrderPosition> tVolOrderedPos;
+  tVolOrderedPos.push_back(std::make_pair(tv, caloBinPos));
+  tVolOrderedPos.push_back(std::make_pair(
+      posChokeVol, Acts::Vector3D(rmin_at_choke / 2., 0, -chokePosZ)));
+
+  std::vector<Acts::TrackingVolumeOrderPosition> tVolOrderedNeg;
+  tVolOrderedNeg.push_back(std::make_pair(tv, caloBinPos));
+  tVolOrderedNeg.push_back(std::make_pair(
+      negChokeVol, Acts::Vector3D(rmin_at_choke / 2., 0, -chokePosZ)));
+
+  auto tVolArrPos
+      = std::make_shared<const Acts::BinnedArrayXD<Acts::TrackingVolumePtr>>(
+          tVolOrderedPos, std::move(binUtilityPos));
+  auto tVolArrNeg
+      = std::make_shared<const Acts::BinnedArrayXD<Acts::TrackingVolumePtr>>(
+          tVolOrderedNeg, std::move(binUtilityNeg));
+
+  using bnd_srf_t = Acts::BoundarySurfaceT<Acts::TrackingVolume>;
+  // now attach those to the ID volume
+  std::const_pointer_cast<bnd_srf_t>(
+      innerCyl->boundarySurfaces().at(Acts::positiveFaceXY))
+      ->attachVolumeArray(tVolArrPos, Acts::outsideVolume);
+  std::const_pointer_cast<bnd_srf_t>(
+      innerCyl->boundarySurfaces().at(Acts::negativeFaceXY))
+      ->attachVolumeArray(tVolArrNeg, Acts::outsideVolume);
+
+  // the calo volume needs to point in
+  std::const_pointer_cast<bnd_srf_t>(tv->boundarySurfaces().at(Acts::index5))
+      ->attachVolume(innerCyl, Acts::outsideVolume);
+  std::const_pointer_cast<bnd_srf_t>(tv->boundarySurfaces().at(Acts::index6))
+      ->attachVolume(innerCyl, Acts::outsideVolume);
+
+  std::const_pointer_cast<bnd_srf_t>(
+      posChokeVol->boundarySurfaces().at(Acts::negativeFaceXY))
+      ->attachVolume(innerCyl, Acts::outsideVolume);
+  std::const_pointer_cast<bnd_srf_t>(
+      negChokeVol->boundarySurfaces().at(Acts::positiveFaceXY))
+      ->attachVolume(innerCyl, Acts::outsideVolume);
+
+  // now we need to create a new container volume that contains everything
+
+  // create three pseudo container, that contain the neg and pos choke, and the
+  // center
+  auto posContainer = Acts::TrackingVolume::create(
+      std::make_shared<const Acts::Transform3D>(posChokeVol->transform()),
+      std::make_shared<Acts::CylinderVolumeBounds>(
+          0, volBds->rMax(), (volBds->dZ1() - volBds->dZ2()) / 2.),
+      tVolArrPos);
+  auto negContainer = Acts::TrackingVolume::create(
+      std::make_shared<const Acts::Transform3D>(negChokeVol->transform()),
+      std::make_shared<Acts::CylinderVolumeBounds>(
+          0, volBds->rMax(), (volBds->dZ1() - volBds->dZ2()) / 2.),
+      tVolArrNeg);
+
+  std::vector<Acts::TrackingVolumeOrderPosition> tVolOrderedCtr;
+  tVolOrderedCtr.push_back(
+      std::make_pair(innerCyl, Acts::Vector3D(volBds->rMed() / 2., 0, 0)));
+  tVolOrderedCtr.push_back(std::make_pair(
+      tv,
+      Acts::Vector3D(
+          volBds->rMed() + (volBds->rMax() - volBds->rMed()) / 2., 0, 0)));
+
+  std::vector<float> ctrBoundariesR
+      = {0, float(volBds->rMed()), float(volBds->rMax())};
+  auto binUtilityCtr = std::make_unique<const Acts::BinUtility>(
+      ctrBoundariesR, Acts::open, Acts::binR);
+
+  auto tVolArrCtr
+      = std::make_shared<const Acts::BinnedArrayXD<Acts::TrackingVolumePtr>>(
+          tVolOrderedCtr, std::move(binUtilityCtr));
+
+  auto ctrContainer = Acts::TrackingVolume::create(
+      std::make_shared<const Acts::Transform3D>(Acts::Transform3D::Identity()),
+      std::make_shared<Acts::CylinderVolumeBounds>(
+          0, volBds->rMax(), volBds->dZ2()),
+      tVolArrCtr);
+
+  // and now combine those together into another one
+  Acts::TrackingVolumeArrayCreator tvac;
+
+  auto mainContainer = Acts::TrackingVolume::create(
+      std::make_shared<const Acts::Transform3D>(Acts::Transform3D::Identity()),
+      std::make_shared<Acts::CylinderVolumeBounds>(
+          0, volBds->rMax(), volBds->dZ1()),
+      tvac.trackingVolumeArray({negContainer, ctrContainer, posContainer},
+                               Acts::binZ));
+
+  auto tg = std::make_shared<Acts::TrackingGeometry>(mainContainer);
+
+  // draw it!
+  // std::vector<std::shared_ptr<const Acts::Surface>> volBSrf
+  //= tv->volumeBounds().decomposeToSurfaces(&tv->transform());
+
+  // for (const auto& srf : volBSrf) {
+
+  // const Acts::CylinderSurface* cyl
+  //= dynamic_cast<const Acts::CylinderSurface*>(srf.get());
+  // const Acts::DiscSurface* disc
+  //= dynamic_cast<const Acts::DiscSurface*>(srf.get());
+  // Acts::PolyhedronRepresentation poly({}, {});
+  // if (cyl != nullptr) {
+  // poly = cyl->polyhedronRepresentation(50);
+  //} else if (disc != nullptr) {
+  // poly = disc->polyhedronRepresentation(50);
+  //} else {
+  // throw std::runtime_error("Incompatible surface");
+  //}
+
+  // poly.draw(ply);
+  //}
+
+  // outer
+  ply.clear();
+  os = std::ofstream("ccyl.ply");
+  volBds->draw(ply, tv->transform());
+  os << ply;
+  os.close();
+
+  // return 0;
+
+  // Acts::NavigationOptions<Acts::Surface> opt(Acts::forward, true);
+  // auto surfaces = tv->compatibleSurfacesFromHierarchy(
+  //{0, 0, 0}, Acts::Vector3D(0, 1500, 7000).normalized(), opt);
+
+  // std::cout << "FOUND " << surfaces.size() << " SURFACES" << std::endl;
+  // for(const auto& srf : surfaces) {
+  // std::cout << *srf.object << std::endl;
+  //}
 
   Acts::Vector3D origin(0, 0, 0);
 
   std::cout << "Testing " << n_rays << " rays..." << std::endl;
 
-  Acts::ply_helper<double> ply;
+  ply.clear();
 
   std::mt19937                           rng(42);
   std::uniform_real_distribution<double> eta_dist(-5, 5);
   std::uniform_real_distribution<double> phi_dist(-M_PI, M_PI);
+  std::uniform_real_distribution<double> z_dist(-100, 100);
   std::vector<Acts::Vector3D>            dirs;
   dirs.reserve(n_rays);
   for (size_t i = 0; i < n_rays; i++) {
-    double         eta   = eta_dist(rng);
+    double eta = eta_dist(rng);
+    // double         eta   = 2.0;
     double         phi   = phi_dist(rng);
     double         theta = 2 * std::atan(std::exp(-eta));
     Acts::Vector3D dir;
@@ -508,6 +765,7 @@ main(int argc, char* argv[])
     dirs.push_back(std::move(dir));
   }
 
+  using SteppingLogger    = Acts::detail::SteppingLogger;
   using BField_type       = Acts::ConstantBField;
   using EigenStepper_type = Acts::EigenStepper<BField_type>;
   using EigenPropagatorType
@@ -519,30 +777,37 @@ main(int argc, char* argv[])
   EigenPropagatorType propagator(std::move(stepper), navigator);
 
   using DebugOutput     = Acts::detail::DebugOutputActor;
-  using ActionList      = Acts::ActionList<DebugOutput>;
+  using ActionList      = Acts::ActionList<SteppingLogger, DebugOutput>;
   using AbortConditions = Acts::AbortList<>;
 
   // setup propagation options
 
   // std::ofstream os("compatibleSurfacesFromHierarchy_ray.ply");
+  bool debug = true;
+
+  std::ofstream step_os("propsteps.csv");
+  step_os << "step_x,step_y,step_z,step_r,vol_id,bnd_id,lay_id,app_id,sen_id\n";
 
   clock::time_point start = clock::now();
   for (size_t i = 0; i < n_rays; i++) {
-
     const auto& dir = dirs[i];
     double      mom = 50 * Acts::units::_GeV;
 
-    Acts::CurvilinearParameters startPar(nullptr, origin, dir * mom, +1);
+    // Acts::Vector3D zshift(0, 0, z_dist(rng));
+    Acts::Vector3D zshift(0, 0, 0);
+
+    Acts::CurvilinearParameters startPar(
+        nullptr, origin + zshift, dir * mom, +1);
 
     Acts::PropagatorOptions<ActionList, AbortConditions> options;
-    options.debug     = false;
+    options.debug     = debug;
     options.pathLimit = 20 * Acts::units::_m;
 
     const auto& result = propagator.propagate(startPar, options);
 
     const auto debugString
         = result.template get<DebugOutput::result_type>().debugString;
-    // std::cout << debugString << std::endl;
+    // if (debug) { std::cout << debugString << std::endl; }
     // ply.line(origin, (origin + dir * 10000).eval());
     // os << ply;
     // ply.clear();
@@ -562,6 +827,52 @@ main(int argc, char* argv[])
     // std::cout << "SRFIX: at:" << sfi.intersection.pathLength;
     // std::cout << " with: " << *sfi.object << std::endl;
     //}
+
+    // get the steps!
+    auto steppingResults
+        = result.template get<SteppingLogger::result_type>().steps;
+    using ag = Acts::GeometryID;
+
+    auto last = steppingResults.back();
+    if (last.position.z() < -7000 && perp(last.position) < 10000) {
+      // print and end
+      if (last.surface != nullptr) {
+        std::cout << *last.surface << std::endl;
+      }
+      std::cout << last.position.transpose() << std::endl;
+      std::cout << "DEBUG:" << std::endl;
+      std::cout << debugString << std::endl;
+      // break;
+    }
+
+    for (const auto& step : steppingResults) {
+      geo_id_value volumeID    = 0;
+      geo_id_value boundaryID  = 0;
+      geo_id_value layerID     = 0;
+      geo_id_value approachID  = 0;
+      geo_id_value sensitiveID = 0;
+      // get the identification from the surface first
+      if (step.surface) {
+        auto geoID  = step.surface->geoID();
+        sensitiveID = geoID.value(ag::sensitive_mask);
+        approachID  = geoID.value(ag::approach_mask);
+        layerID     = geoID.value(ag::layer_mask);
+        boundaryID  = geoID.value(ag::boundary_mask);
+        volumeID    = geoID.value(ag::volume_mask);
+      }
+      // a current volume overwrites the surface tagged one
+      if (step.volume) {
+        volumeID = step.volume->geoID().value(ag::volume_mask);
+      }
+      // now fill
+      step_os << step.position.x() << ",";
+      step_os << step.position.y() << ",";
+      step_os << step.position.z() << ",";
+      step_os << Acts::VectorHelpers::perp(step.position) << ",";
+
+      step_os << volumeID << "," << boundaryID << "," << layerID << ","
+              << approachID << "," << sensitiveID << "\n";
+    }
   }
 
   // os = std::ofstream("compatibleSurfacesFromHierarchy_surf.ply");
