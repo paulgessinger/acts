@@ -108,6 +108,7 @@ public:
   create(std::shared_ptr<const Transform3D>                htrans,
          VolumeBoundsPtr                                   volbounds,
          std::vector<std::unique_ptr<Volume::BoundingBox>> boxStore,
+         std::vector<std::unique_ptr<const Volume>>        descendants,
          const Volume::BoundingBox*                        top,
          std::shared_ptr<const Material>                   matprop,
          const std::string& volumeName = "undefined")
@@ -115,6 +116,7 @@ public:
     return MutableTrackingVolumePtr(new TrackingVolume(std::move(htrans),
                                                        std::move(volbounds),
                                                        std::move(boxStore),
+                                                       std::move(descendants),
                                                        top,
                                                        std::move(matprop),
                                                        volumeName));
@@ -484,6 +486,7 @@ protected:
   TrackingVolume(std::shared_ptr<const Transform3D>                htrans,
                  VolumeBoundsPtr                                   volbounds,
                  std::vector<std::unique_ptr<Volume::BoundingBox>> boxStore,
+                 std::vector<std::unique_ptr<const Volume>>        descendants,
                  const Volume::BoundingBox*                        top,
                  std::shared_ptr<const Material>                   matprop,
                  const std::string& volumeName = "undefined");
@@ -572,6 +575,7 @@ private:
 
   /// Bounding VOlume Hierarchy (BVH)
   std::vector<std::unique_ptr<const Volume::BoundingBox>> m_boundingBoxes;
+  std::vector<std::unique_ptr<const Volume>>              m_descendantVolumes;
   const Volume::BoundingBox*                              m_bvhTop{nullptr};
 };
 

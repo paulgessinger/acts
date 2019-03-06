@@ -69,12 +69,14 @@ Acts::TrackingVolume::TrackingVolume(
     std::shared_ptr<const Transform3D>                htrans,
     VolumeBoundsPtr                                   volbounds,
     std::vector<std::unique_ptr<Volume::BoundingBox>> boxStore,
+    std::vector<std::unique_ptr<const Volume>>        descendants,
     const Volume::BoundingBox*                        top,
     std::shared_ptr<const Material>                   matprop,
     const std::string&                                volumeName)
   : Volume(std::move(htrans), std::move(volbounds))
   , m_material(std::move(matprop))
   , m_name(volumeName)
+  , m_descendantVolumes(std::move(descendants))
   , m_bvhTop(top)
 {
   createBoundarySurfaces();
@@ -373,13 +375,12 @@ Acts::TrackingVolume::closeGeometry(
       }
     } else if (m_bvhTop != nullptr) {
       geo_id_value               isurface = 0;
-      const Volume::BoundingBox* node     = m_bvhTop;
-      do {
-        if (node->hasEntity()) {
-          // found cell
-          const AbstractVolume* avol
-              = dynamic_cast<const AbstractVolume*>(node->entity());
-          const auto bndSrf = avol->boundarySurfaces();
+      for(const auto& descVol : m_descendantVolumes) {
+        // attempt to cast to AbstractVolume, that's the only one we'll handle here
+        const AbstractVolume* avol
+              = dynamic_cast<const AbstractVolume*>(descVol.get());
+        if(avol != nullptr) {
+          const auto& bndSrf = avol->boundarySurfaces();
           for (const auto& bnd : bndSrf) {
             const auto& srf              = bnd->surfaceRepresentation();
             Surface*    mutableSurfcePtr = const_cast<Surface*>(&srf);
@@ -387,11 +388,8 @@ Acts::TrackingVolume::closeGeometry(
             geoID.add(++isurface, GeometryID::sensitive_mask);
             mutableSurfcePtr->assignGeoID(geoID);
           }
-          node = node->getSkip();
-        } else {
-          node = node->getLeftChild();
         }
-      } while (node != nullptr);
+      }
     }
   } else {
     // B) this is a container volume, go through sub volume
