@@ -737,21 +737,23 @@ private:
                                            resolvePassive,
                                            nullptr,
                                            state.navigation.targetSurface);
-        state.navigation.navSurfaces
+
+        auto protoNavSurfaces
             = state.navigation.currentVolume->compatibleSurfacesFromHierarchy(
                 stepper.position(state.stepping),
                 stepper.direction(state.stepping),
                 navOpts,
                 navCorr);
-        if (!state.navigation.navSurfaces.empty()) {
+        if (!protoNavSurfaces.empty()) {
           // did we find any surfaces?
 
           // are we on the first surface?
           if (state.navigation.currentSurface == nullptr
               || state.navigation.currentSurface
-                  != state.navigation.navSurfaces.front().object) {
+                  != protoNavSurfaces.front().object) {
 
             // we are not, go on
+            state.navigation.navSurfaces = std::move(protoNavSurfaces);
 
             state.navigation.navSurfaceIter
                 = state.navigation.navSurfaces.begin();
