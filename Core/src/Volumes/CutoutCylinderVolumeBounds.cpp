@@ -62,8 +62,14 @@ Acts::CutoutCylinderVolumeBounds::decomposeToSurfaces(
   } else {
     trf = std::make_shared<const Transform3D>(Transform3D::Identity());
   }
+  
+  if(m_rmin == 0.) {
+    surfaces.resize(6);  // exactly six surfaces (no choke inner cover)
+  }
+  else {
+    surfaces.resize(8);  // exactly eight surfaces
+  }
 
-  surfaces.resize(8);  // exactly eight surfaces
 
   // outer cylinder envelope
   auto outer = Surface::makeShared<CylinderSurface>(trf, m_rmax, m_dz1);
@@ -79,19 +85,21 @@ Acts::CutoutCylinderVolumeBounds::decomposeToSurfaces(
   double hlChoke = (m_dz1 - m_dz2) * 0.5;
   double zChoke  = m_dz2 + hlChoke;
 
-  auto posChokeTrf = std::make_shared<const Transform3D>(
-      *trf * Translation3D(Vector3D(0, 0, zChoke)));
-  auto posInner
-      = Surface::makeShared<CylinderSurface>(posChokeTrf, m_rmin, hlChoke);
-  // surfaces.push_back(posInner);
-  surfaces.at(index7) = posInner;
+  if(m_rmin > 0.) {
+    auto posChokeTrf = std::make_shared<const Transform3D>(
+        *trf * Translation3D(Vector3D(0, 0, zChoke)));
+    auto posInner
+        = Surface::makeShared<CylinderSurface>(posChokeTrf, m_rmin, hlChoke);
+    // surfaces.push_back(posInner);
+    surfaces.at(index7) = posInner;
 
-  auto negChokeTrf = std::make_shared<const Transform3D>(
-      *trf * Translation3D(Vector3D(0, 0, -zChoke)));
-  auto negInner
-      = Surface::makeShared<CylinderSurface>(negChokeTrf, m_rmin, hlChoke);
-  // surfaces.push_back(negInner);
-  surfaces.at(index6) = negInner;
+    auto negChokeTrf = std::make_shared<const Transform3D>(
+        *trf * Translation3D(Vector3D(0, 0, -zChoke)));
+    auto negInner
+        = Surface::makeShared<CylinderSurface>(negChokeTrf, m_rmin, hlChoke);
+    // surfaces.push_back(negInner);
+    surfaces.at(index6) = negInner;
+  }
 
   // outer disks
   auto posOutDiscTrf = std::make_shared<const Transform3D>(
