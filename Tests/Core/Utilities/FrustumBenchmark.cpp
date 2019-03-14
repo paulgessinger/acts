@@ -55,6 +55,7 @@ namespace Test {
     return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
   }
 
+
   template <typename T, typename coll_t>
   std::tuple<size_t, double, std::vector<std::set<Object::id_t>>>
   bench_frustum(int                                                octree_depth,
@@ -167,7 +168,7 @@ namespace Test {
         // if(n_intersects > 80) throw std::runtime_error("");
       } while (lnode != nullptr);
 
-      result.push_back(std::move(hits));
+      //result.push_back(std::move(hits));
     }
 
     clock::time_point end  = clock::now();
@@ -181,6 +182,34 @@ namespace Test {
     return {n_ix, diff, result};
   }
 
+  template <size_t S>
+  std::tuple<size_t, double>
+  frust_par_bench(
+      int                                                octd,
+      real_t angle,
+      size_t nObj,
+      std::function<std::vector<std::unique_ptr<Box>>()> boxFactory)
+  {
+    using Frustum            = Acts::Frustum<real_t, 3, S>;
+    std::vector<Frustum> objects;
+    objects.reserve(nObj);
+  
+    std::mt19937 rng;
+    std::uniform_real_distribution<real_t> dir_dist(-1, 1);
+    std::uniform_real_distribution<real_t> pos_dist(0., 0.);
+
+    for(size_t i=0;i<nObj;i++) {
+      vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
+      vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
+      dir.normalize();
+      objects.push_back(Frustum(pos, dir, angle));
+    }
+
+    auto [n_ix, dt, _h] = bench_frustum<Frustum>(octd, boxFactory, objects);
+
+    return {n_ix, dt};
+
+  }
 }  // namespace Test
 }  // namespace Acts
 
@@ -389,9 +418,10 @@ template <typename object_t>
 void
 do_octree_scan(size_t                                             n_tests,
                std::function<std::vector<std::unique_ptr<Box>>()> boxFactory,
-               std::function<object_t()>                          objectFactory)
+               std::function<object_t()>                          objectFactory,
+               std::string fname)
 {
-  std::vector<int> octree_depths = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  std::vector<int> octree_depths = {0, 1, 2, 3, 4, 5, 6, 7, 8/*, 9, 10*/};
   size_t           n_ix;
   double           diff;
   std::vector<std::set<oid_t>> hits;
@@ -414,9 +444,10 @@ do_octree_scan(size_t                                             n_tests,
       = Acts::Test::bench_frustum<object_t>(-1, boxFactory, objects);
   std::vector<std::set<oid_t>> ref = hits;
 
-  std::ofstream os("octree_fr.csv");
+  std::ofstream os(fname);
   os << "octd,ntests,nix,time\n";
   os << -1 << "," << n_tests << "," << n_ix << "," << diff << "\n";
+  os << std::flush;
 
   auto print = [](const auto& tup) {
     std::cout << "(" << std::get<0>(tup) << ", " << std::get<1>(tup) << ", "
@@ -451,6 +482,7 @@ do_octree_scan(size_t                                             n_tests,
     }
 
     os << octree_depth << "," << n_tests << "," << n_ix << "," << diff << "\n";
+    os << std::flush;
   }
   os.close();
 }
@@ -458,78 +490,15 @@ do_octree_scan(size_t                                             n_tests,
 int
 main()
 {
-  // using res_t = std::tuple<size_t, double, id_t>;
-
-  // std::vector<std::pair<size_t, res_t>> results;
-
-  // Tested with sides = 10, NaN / inf behavior!
-
-  // results = {
-  //{3, Acts::Test::bench_frustum<3>()},
-  //{8, Acts::Test::bench_frustum<8>()},
-  //{9, Acts::Test::bench_frustum<9>()},
-  //{10, Acts::Test::bench_frustum<10>()},
-  //{11, Acts::Test::bench_frustum<11>()},
-  //{16, Acts::Test::bench_frustum<16>()},
-  //{19, Acts::Test::bench_frustum<19>()},
-  //{20, Acts::Test::bench_frustum<20>()},
-  //{21, Acts::Test::bench_frustum<21>()},
-  //{100, Acts::Test::bench_frustum<100>()}
-  //};
-
-  // std::ofstream os("sides.csv");
-  // os << "sides,n_ix,diff\n";
-  // for(const auto& pr : results) {
-  // size_t sides = pr.first;
-  // size_t n_ix;
-  // double diff;
-  // std::tie(n_ix, diff) = pr.second;
-  // os << sides << "," << n_ix << "," << diff << "\n";
-  // sides++;
-  //}
-  // os.close();
-
-  constexpr size_t n_sides = 9;
-  using Frustum            = Acts::Frustum<real_t, 3, n_sides>;
-  using Ray                = Acts::Ray<real_t, 3>;
-
-  std::mt19937 rng(42);
-
-  // std::uniform_real_distribution<real_t> angle_dist(0.1 * M_PI,
-  // M_PI / 4. * 0.9);
-
   size_t n    = 59;
-  real_t min  = -10;
-  real_t max  = 10;
-  real_t step = (max - min) / real_t(n);
-
-  real_t angle      = M_PI / 2.;
-  auto frustFactory = [&](auto& pos_dist, auto& dir_dist) {
-    vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
-    vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
-    dir.normalize();
-    // real_t angle = angle_dist(rng);
-
-    // std::cout << "pos: " << pos.transpose() << std::endl;
-    // std::cout << "dir: " << dir.transpose() << std::endl;
-    // std::cout << "angle: " << angle << std::endl;
-
-    return Frustum(pos, dir, angle);
-  };
-  (void)frustFactory;
-
-  auto rayFactory = [&](auto& pos_dist, auto& dir_dist) {
-    vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
-    vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
-    dir.normalize();
-    return Ray(pos, dir);
-  };
-  (void)rayFactory;
+  real_t min = 1e10;
+  real_t max = -1e10;
 
   std::vector<std::unique_ptr<Object>> entities;
   auto                                 gridBoxFactory = [&]() {
     Box::Size size(Acts::ActsVectorD<3>(2, 2, 2));
 
+    real_t step = (max - min) / real_t(n);
     std::vector<std::unique_ptr<Box>> boxes;
     boxes.reserve((n + 1) * (n + 1) * (n + 1));
 
@@ -540,7 +509,7 @@ main()
     for (size_t i = 0; i <= n; i++) {
       for (size_t j = 0; j <= n; j++) {
         for (size_t k = 0; k <= n; k++) {
-          Acts::ActsVectorD<3> pos(
+          vec_t pos(
               min + i * step, min + j * step, min + k * step);
           // boxes.emplace_back(o, pos, size);
           // Object o{{i, j, k}};
@@ -561,8 +530,8 @@ main()
 
   std::vector<std::unique_ptr<Acts::AbstractVolume>> cells;
   auto                                               atlasCaloFactory = [&]() {
-    min = 1e10;
-    max = -1e10;
+    real_t min = 1e10;
+    real_t max = -1e10;
 
     float                             l = 100;
     Box::Size                         size(Acts::ActsVectorD<3>(l, l, l));
@@ -730,19 +699,131 @@ main()
 
     return boxes;
   };
+   using res_t = std::tuple<size_t, double>;
 
-  // auto boxFactory = gridBoxFactory
+   std::vector<std::pair<size_t, res_t>> results;
+
+  //using Frustum            = Acts::Frustum<real_t, 3, n_sides>;
+  using Ray                = Acts::Ray<real_t, 3>;
+  int octd = -1;
+  real_t angle = M_PI/6.;
+  size_t nObj = 1e3;
+  //auto boxFactory = gridBoxFactory;
   auto boxFactory = atlasCaloFactory;
-  // auto objectFactory = rayFactory;
-  // using object_t     = Ray;
-  // auto objectFactory = frustFactory;
-  // using object_t     = Frustum;
 
-  // size_t n_tests = 1e4;
-  // do_octree_scan<object_t>(n_tests, boxFactory, objectFactory);
+  //results = {
+    //{3,   Acts::Test::frust_par_bench<3  >(octd, angle, nObj, boxFactory)},
+    //{4,   Acts::Test::frust_par_bench<4  >(octd, angle, nObj, boxFactory)},
+    //{5,   Acts::Test::frust_par_bench<5  >(octd, angle, nObj, boxFactory)},
+    //{6,  Acts::Test::frust_par_bench<6 >(octd, angle, nObj, boxFactory)},
+    //{7,  Acts::Test::frust_par_bench<7 >(octd, angle, nObj, boxFactory)},
+    //{8,  Acts::Test::frust_par_bench<8 >(octd, angle, nObj, boxFactory)},
+    //{9,  Acts::Test::frust_par_bench<9 >(octd, angle, nObj, boxFactory)},
+    //{10,  Acts::Test::frust_par_bench<10 >(octd, angle, nObj, boxFactory)},
+    //{11,  Acts::Test::frust_par_bench<11 >(octd, angle, nObj, boxFactory)},
+    //{12, Acts::Test::frust_par_bench<12>(octd, angle, nObj, boxFactory)},
+    //{13, Acts::Test::frust_par_bench<13>(octd, angle, nObj, boxFactory)}
+  //};
+
+   //std::ofstream os("../sides.csv");
+   //os << "sides,n_ix,diff\n";
+   //for(const auto& pr : results) {
+   //size_t sides = pr.first;
+   //size_t n_ix;
+   //double diff;
+   //std::tie(n_ix, diff) = pr.second;
+   //os << sides << "," << n_ix << "," << diff << "\n";
+   //sides++;
+  //}
+   //os.close();
+
+
+  constexpr size_t n_sides = 4;
+  using Frustum            = Acts::Frustum<real_t, 3, n_sides>;
+  using Ray                = Acts::Ray<real_t, 3>;
+
+  std::mt19937 rng(42);
+
+  // std::uniform_real_distribution<real_t> angle_dist(0.1 * M_PI,
+  // M_PI / 4. * 0.9);
+
+  //real_t min  = -10;
+  //real_t max  = 10;
+  real_t step = (max - min) / real_t(n);
 
   std::uniform_real_distribution<real_t> dir_dist(-1, 1);
   std::uniform_real_distribution<real_t> pos_dist(0., 0.);
+
+  //real_t angle      = M_PI / 2.;
+  auto frustFactory = [&](/*auto& pos_dist, auto& dir_dist*/) {
+    vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
+    vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
+    dir.normalize();
+    // real_t angle = angle_dist(rng);
+
+    // std::cout << "pos: " << pos.transpose() << std::endl;
+    // std::cout << "dir: " << dir.transpose() << std::endl;
+    // std::cout << "angle: " << angle << std::endl;
+
+    return Frustum(pos, dir, angle);
+  };
+  (void)frustFactory;
+
+  auto rayFactory = [&](/*auto& pos_dist, auto& dir_dist*/) {
+    vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
+    vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
+    dir.normalize();
+    return Ray(pos, dir);
+  };
+  (void)rayFactory;
+
+
+  //auto boxFactory = gridBoxFactory;
+  //auto objectFactory = rayFactory;
+  //using object_t     = Ray;
+  auto objectFactory = frustFactory;
+  using object_t     = Frustum;
+
+  size_t n_tests = 1e3;
+  //do_octree_scan<object_t>(n_tests, boxFactory, objectFactory, "../rays_octree_scan.csv");
+
+  
+
+  std::vector<real_t> angles = {10., 8., 6., 4., 3., 2.};
+
+  for(const auto _angle : angles) {
+    angle = M_PI/_angle;
+    std::stringstream ss;
+    ss << "../pi/frust_octree_scan_pi_by_" << _angle << ".csv";
+    do_octree_scan<object_t>(n_tests, boxFactory, objectFactory, ss.str());
+  }
+
+
+  Acts::ply_helper<real_t> ply;
+
+  Acts::Frustum<real_t, 3, 4> fr1({0, 0, 0}, {0, 0, 1}, M_PI/8.);
+  fr1.draw(ply);
+  
+  Acts::Frustum<real_t, 3, 4> fr2({6.5, 0, 0}, {0, 0, 1}, M_PI/6.);
+  fr2.draw(ply);
+
+  Acts::Frustum<real_t, 3, 4> fr3({15, 0, 0}, {0, 0, 1}, M_PI/4.);
+  fr3.draw(ply);
+
+  Acts::Frustum<real_t, 3, 4> fr4({30, 0, 0}, {0, 0, 1}, M_PI/2.);
+  fr4.draw(ply);
+
+  std::ofstream sstr("../frust_angles.ply");
+  sstr << ply;
+  sstr.close();
+
+
+/*
+  return 0;
+
+
+  return 0;
+
 
   auto              boxes = boxFactory();
   std::vector<Box*> prims;
@@ -861,4 +942,5 @@ main()
   os.close();
 
   return 0;
+  */
 }

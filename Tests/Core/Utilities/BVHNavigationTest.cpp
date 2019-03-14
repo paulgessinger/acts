@@ -415,7 +415,64 @@ main(int argc, char* argv[])
   // os.close();
 
   using Box = Acts::Volume::BoundingBox;
-  // using Ray = Acts::Ray<float, 3>;
+  using Ray = Acts::Ray<double, 3>;
+
+  Ray ray({0, 0, 0}, {1, 2, 3});
+
+  Acts::ply_helper<double> ply_cells;
+  Acts::ply_helper<double> ply_cells_all;
+  Acts::ply_helper<double> ply_aabb;
+  Acts::ply_helper<double> ply_obb;
+
+  for(const auto& cell : cells) {
+    
+    // do we hit the bb?
+    auto bb = cell->boundingBox();
+    if(bb.intersect(ray)) {
+      auto vb = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(&cell->volumeBounds());
+      auto surfaces = vb->decomposeToSurfaces(&cell->transform());
+      bool is_hit = false;
+      for(const auto& srf : surfaces) {
+        Acts::NavigationOptions<Acts::Surface> no(Acts::forward, true);
+        if(srf->surfaceIntersectionEstimate(ray.origin(), ray.dir(), no)) {
+          is_hit = true;
+          vb->draw(ply_cells, cell->transform());
+          break;
+        }
+      }
+          
+      //std::cout << "hit" << std::endl;
+      if (!is_hit) {
+        vb->draw(ply_cells_all, cell->transform());
+      }
+      bb.draw(ply_aabb);
+
+      // draw obb
+      auto obb = cell->orientedBoundingBox();
+      if (obb.intersect(ray.transformed(cell->itransform()))) {
+        obb.draw(ply_obb, {120, 120, 120}, cell->transform());
+      }
+
+
+      
+    }
+
+  }
+
+
+  std::ofstream eff("../eff_cells.ply");
+  eff << ply_cells;
+  eff = std::ofstream("../eff_cells_all.ply");
+  eff << ply_cells_all;
+  eff = std::ofstream("../eff_aabb.ply");
+  eff << ply_aabb;
+  eff = std::ofstream("../eff_obb.ply");
+  eff << ply_obb;
+
+  ply_cells.clear();
+  ray.draw(ply_cells, 10000);
+  eff = std::ofstream("../eff_ray.ply");
+  eff << ply_cells;
 
   // auto intersections = [](const auto& obj, const Box* top) {
   // const Box*              lnode = top;
@@ -443,6 +500,8 @@ main(int argc, char* argv[])
   //} while (lnode != nullptr);
   // return hits;
   //};
+  
+  return 0;
 
   // create BVH for the calo geo
   std::vector<std::unique_ptr<Box>> boxStore;
@@ -591,10 +650,17 @@ main(int argc, char* argv[])
   auto tvTrf
       = std::make_shared<Acts::Transform3D>(Acts::Transform3D::Identity());
 
+  // repack cells
+  std::vector<std::unique_ptr<const Acts::Volume>> cells_vol;
+  cells_vol.reserve(cells.size());
+  for(auto& cell : cells) {
+    cells_vol.push_back(std::unique_ptr<const Acts::Volume>(cell.release()));
+  }
   std::shared_ptr<Acts::TrackingVolume> tv
       = Acts::TrackingVolume::create(std::move(tvTrf),
                                      volBds,
                                      std::move(boxStore),
+                                     std::move(cells_vol),
                                      top,
                                      nullptr,  // no material
                                      "calo");
