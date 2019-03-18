@@ -19,14 +19,15 @@ class Frustum
 {
   using translation_t = Eigen::Translation<value_t, DIM>;
 
+  static constexpr size_t n_normals = SIDES+1;
 public:
   using transform_type = Eigen::Transform<value_t, DIM, Eigen::Affine>;
   using value_type        = value_t;
   using vertex_type       = ActsVector<value_t, DIM>;
   using vertex_array_type = Eigen::Array<value_t, DIM, 1>;
 
-  static const size_t dim   = DIM;
-  static const size_t sides = SIDES;
+  static constexpr size_t dim   = DIM;
+  static constexpr size_t sides = SIDES;
 
   template <size_t D = DIM, std::enable_if_t<D == 2, int> = 0>
   Frustum(const vertex_type& origin,
@@ -70,7 +71,16 @@ public:
     return m_normals;
   }
 
+  Frustum<value_t, DIM, SIDES>
+  transformed(const transform_type& trf) const;
+
 private:
+  // private constructor with pre-calculated normals
+  Frustum(const vertex_type& origin, std::array<vertex_type, SIDES + 1> normals)
+    : m_origin(origin), m_normals(std::move(normals))
+  {
+  }
+
   vertex_type m_origin;
   // need one more for direction we're facing
   std::array<vertex_type, SIDES + 1> m_normals;

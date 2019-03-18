@@ -112,7 +112,7 @@ Acts::Frustum<value_t, DIM, SIDES>::draw(helper_t& helper,
   };
 
   // skip i=0 <=> pseudo-near
-  for (size_t i = 1; i < m_normals.size(); i++) {
+  for (size_t i = 1; i < n_normals; i++) {
     const auto ixLine = ixPlanePlane(
         far_normal, far_center, m_normals[i], vertex_type::Zero());
     planeFarIXs.at(i - 1) = ixLine;
@@ -120,8 +120,8 @@ Acts::Frustum<value_t, DIM, SIDES>::draw(helper_t& helper,
 
   std::array<vertex_type, SIDES> points;
 
-  for (size_t i = 0; i < planeFarIXs.size(); i++) {
-    size_t            j  = (i + 1) % planeFarIXs.size();
+  for (size_t i = 0; i < std::size(planeFarIXs); i++) {
+    size_t            j  = (i + 1) % std::size(planeFarIXs);
     const auto&       l1 = planeFarIXs.at(i);
     const auto&       l2 = planeFarIXs.at(j);
     const vertex_type ix
@@ -129,8 +129,8 @@ Acts::Frustum<value_t, DIM, SIDES>::draw(helper_t& helper,
     points.at(i) = ix;
   }
 
-  for (size_t i = 0; i < points.size(); i++) {
-    size_t j = (i + 1) % points.size();
+  for (size_t i = 0; i < std::size(points); i++) {
+    size_t j = (i + 1) % std::size(points);
     helper.face(
         std::vector<vertex_type>({m_origin, points.at(i), points.at(j)}));
   }
@@ -211,7 +211,7 @@ Acts::Frustum<value_t, DIM, SIDES>::svg(std::ostream& os,
 
   std::array<vertex_type, 2> points;
 
-  for (size_t i = 1; i < m_normals.size(); i++) {
+  for (size_t i = 1; i < n_normals; i++) {
     vertex_type plane_dir(m_normals[i].y(), -m_normals[i].x());
 
     const vertex_type ix = ixLineLine(far_point, far_dir, {0, 0}, plane_dir);
@@ -228,4 +228,18 @@ Acts::Frustum<value_t, DIM, SIDES>::svg(std::ostream& os,
   draw_point(m_origin, "green", 5);
 
   return os;
+}
+
+template <typename value_t, size_t DIM, size_t SIDES>
+Acts::Frustum<value_t, DIM, SIDES>
+Acts::Frustum<value_t, DIM, SIDES>::transformed(const transform_type& trf) const
+{
+  const auto& rot = trf.rotation();
+
+  std::array<vertex_type, n_normals> new_normals;
+  for (size_t i = 0; i < n_normals; i++) {
+    new_normals[i] = rot * m_normals[i];
+  }
+
+  return Frustum<value_t, DIM, SIDES>(trf * m_origin, std::move(new_normals));
 }
