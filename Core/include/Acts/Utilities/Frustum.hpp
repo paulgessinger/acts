@@ -17,10 +17,10 @@ namespace Acts {
 template <typename value_t, size_t DIM, size_t SIDES>
 class Frustum
 {
-  using transform_t   = Eigen::Transform<value_t, DIM, Eigen::Affine>;
   using translation_t = Eigen::Translation<value_t, DIM>;
 
 public:
+  using transform_type = Eigen::Transform<value_t, DIM, Eigen::Affine>;
   using value_type        = value_t;
   using vertex_type       = ActsVector<value_t, DIM>;
   using vertex_array_type = Eigen::Array<value_t, DIM, 1>;

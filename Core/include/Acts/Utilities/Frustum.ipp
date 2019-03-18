@@ -45,13 +45,13 @@ Acts::Frustum<value_t, DIM, SIDES>::Frustum(const vertex_type& origin,
   const vertex_type ldir = vertex_type::UnitZ();
   const vertex_type lup  = vertex_type::UnitX();
 
-  transform_t transform;
+  transform_type transform;
   transform = (Eigen::Quaternion<value_type>().setFromTwoVectors(ldir, dir));
 
   m_normals[0] = ldir;
 
   const value_type phi_sep = 2 * M_PI / sides;
-  transform_t      rot;
+  transform_type   rot;
   rot = angle_axis_t(phi_sep, ldir);
 
   value_type half_opening_angle = opening_angle / 2.;
@@ -151,7 +151,7 @@ Acts::Frustum<value_t, DIM, SIDES>::svg(std::ostream& os,
 
   // set up transform for svg. +y is down, normally, and unit is pixels.
   // We flip the y axis, and scale up by `unit`.
-  transform_t trf = transform_t::Identity();
+  transform_type trf = transform_type::Identity();
   trf.translate(mid);
   trf = trf * Eigen::Scaling(vertex_type(1, -1));
   trf.scale(unit);
