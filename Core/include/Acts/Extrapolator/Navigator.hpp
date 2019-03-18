@@ -951,10 +951,20 @@ private:
           or distance * distance
               < s_onSurfaceTolerance * s_onSurfaceTolerance) {
         debugLog(state, [&] {
-          return std::string("Boundary intersection not valid, skipping it.");
+          std::stringstream ss;
+          ss << "Boundary intersection with:\n";
+          ss << *boundaryIntersect.object << "\n";
+          ss << "Boundary intersection not valid, skipping it.\n";
+          ss << "valid: " << bool(boundaryIntersect) << "\n";
+          ss << "pathLength: " << distance << "\n";
+          if (distance < 0 && std::abs(distance) < 0.01) {
+            ss << "Very likely overstepped over boundary surface! \n";
+          }
+          return ss.str();
         });
         // Increase the iterator to the next one
         ++state.navigation.navBoundaryIter;
+
       } else {
         debugLog(state,
                  [&] { return std::string("Boundary intersection valid."); });
