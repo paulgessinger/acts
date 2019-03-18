@@ -199,8 +199,8 @@ Acts::AxisAlignedBoundingBox<entity_t, value_t, DIM>::intersect(
     // std::cout << p_vtx[j] << std::endl;
     //}
 
-    p_vtx = (normal.array() < 0).template cast<value_t>() * vmin
-        + (normal.array() >= 0).template cast<value_t>() * vmax;
+    p_vtx = (normal.array() < 0).template cast<value_type>() * vmin
+        + (normal.array() >= 0).template cast<value_type>() * vmax;
     // std::cout << p_vtx.transpose() << std::endl;
 
     if (p_vtx.dot(normal) < 0) {
