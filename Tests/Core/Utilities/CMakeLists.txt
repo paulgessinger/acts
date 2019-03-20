@@ -82,5 +82,8 @@ add_executable (RayTest RayTest.cpp)
 target_link_libraries (RayTest PRIVATE ActsCore ActsTestsCommonHelpers)
 add_test(NAME RayTest COMMAND RayTest)
 
+find_package(TBB)
+message(STATUS ${TBB_LIBRARIES})
 add_executable (BVHNavigationTest BVHNavigationTest.cpp)
-target_link_libraries (BVHNavigationTest PRIVATE ActsCore)
+target_link_libraries (BVHNavigationTest PRIVATE ActsCore ${TBB_LIBRARIES})
+
