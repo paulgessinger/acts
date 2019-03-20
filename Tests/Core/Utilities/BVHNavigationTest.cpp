@@ -42,6 +42,9 @@
 #include "Acts/Tools/TrackingVolumeArrayCreator.hpp"
 #include "Acts/Utilities/BinnedArrayXD.hpp"
 
+#include <thread>
+#include "tbb/tbb.h"
+
 using namespace Acts::VectorHelpers;
 
 namespace {
@@ -300,9 +303,7 @@ atlasCaloFactory(std::string input_file)
     iss >> calosample;
 
     scale = 1.;
-    if (calosample >= 12 && calosample <= 20) {
-      scale = 0.5;
-    }
+    if (calosample >= 12 && calosample <= 20) { scale = 0.5; }
 
     // Acts::ply_helper<double>* ply;
     // if (calosample <= 11) {
@@ -393,9 +394,7 @@ main(int argc, char* argv[])
   }
 
   std::string filename = argv[1];
-  if (argc > 2) {
-    n_rays = std::stoi(argv[2]);
-  }
+  if (argc > 2) { n_rays = std::stoi(argv[2]); }
 
   std::cout << "Reading from: " << filename << std::endl;
   std::cout << "Build calo geometry..." << std::flush;
@@ -413,66 +412,107 @@ main(int argc, char* argv[])
   // std::ofstream os("calo.ply");
   // os << ply;
   // os.close();
-
   using Box = Acts::Volume::BoundingBox;
   using Ray = Acts::Ray<double, 3>;
 
-  Ray ray({0, 0, 0}, {1, 2, 3});
+  {
+    std::mt19937                           rng(42);
+    std::uniform_real_distribution<double> eta_dist(-5, 5);
+    std::uniform_real_distribution<double> phi_dist(-M_PI, M_PI);
+    std::uniform_real_distribution<double> z_dist(-100, 100);
+    std::vector<Acts::Vector3D>            dirs;
 
-  Acts::ply_helper<double> ply_cells;
-  Acts::ply_helper<double> ply_cells_all;
-  Acts::ply_helper<double> ply_aabb;
-  Acts::ply_helper<double> ply_obb;
+    std::ofstream csv("../ray_purity.csv");
+    csv << "n,eta,phi,aabb,obb,cells\n";
 
-  for(const auto& cell : cells) {
-    
-    // do we hit the bb?
-    auto bb = cell->boundingBox();
-    if(bb.intersect(ray)) {
-      auto vb = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(&cell->volumeBounds());
-      auto surfaces = vb->decomposeToSurfaces(&cell->transform());
-      bool is_hit = false;
-      for(const auto& srf : surfaces) {
-        Acts::NavigationOptions<Acts::Surface> no(Acts::forward, true);
-        if(srf->surfaceIntersectionEstimate(ray.origin(), ray.dir(), no)) {
-          is_hit = true;
-          vb->draw(ply_cells, cell->transform());
-          break;
-        }
-      }
-          
-      //std::cout << "hit" << std::endl;
-      if (!is_hit) {
-        vb->draw(ply_cells_all, cell->transform());
-      }
-      bb.draw(ply_aabb);
+    Acts::ply_helper<double> ply_cells;
+    Acts::ply_helper<double> ply_cells_all;
+    Acts::ply_helper<double> ply_aabb;
+    Acts::ply_helper<double> ply_obb;
+    Acts::ply_helper<double> ply_ray;
 
-      // draw obb
-      auto obb = cell->orientedBoundingBox();
-      if (obb.intersect(ray.transformed(cell->itransform()))) {
-        obb.draw(ply_obb, {120, 120, 120}, cell->transform());
-      }
+    tbb::concurrent_vector<
+        std::tuple<size_t, double, double, size_t, size_t, size_t>>
+        rows;
+    rows.reserve(n_rays);
 
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, n_rays), [&](const auto& r) {
+          thread_local std::mt19937 engine(
+              std::hash<std::thread::id>{}(std::this_thread::get_id()));
+          for (size_t i = r.begin(); i != r.end(); ++i) {
+            size_t         n_cells = 0, n_aabb = 0, n_obb = 0;
+            double         eta   = eta_dist(engine);
+            double         phi   = phi_dist(engine);
+            double         theta = 2 * std::atan(std::exp(-eta));
+            Acts::Vector3D dir;
+            dir << std::cos(phi), std::sin(phi), 1. / std::tan(theta);
+            dir.normalize();
 
-      
+            Ray ray({0, 0, 0}, dir);
+            // ray.draw(ply_ray, 10000);
+
+            for (const auto& cell : cells) {
+
+              // do we hit the bb?
+              auto bb = cell->boundingBox();
+              if (bb.intersect(ray)) {
+                n_aabb++;
+                auto vb = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
+                    &cell->volumeBounds());
+                auto surfaces = vb->decomposeToSurfaces(&cell->transform());
+                bool is_hit   = false;
+                for (const auto& srf : surfaces) {
+                  Acts::NavigationOptions<Acts::Surface> no(Acts::forward,
+                                                            true);
+                  if (srf->surfaceIntersectionEstimate(
+                          ray.origin(), ray.dir(), no)) {
+                    is_hit = true;
+                    // vb->draw(ply_cells, cell->transform());
+                    n_cells++;
+                    break;
+                  }
+                }
+
+                // std::cout << "hit" << std::endl;
+                // if (!is_hit) { vb->draw(ply_cells_all, cell->transform()); }
+                // bb.draw(ply_aabb);
+
+                // draw obb
+                auto obb = cell->orientedBoundingBox();
+                if (obb.intersect(ray.transformed(cell->itransform()))) {
+                  // obb.draw(ply_obb, {120, 120, 120}, cell->transform());
+                  n_obb++;
+                }
+              }
+            }
+
+            // csv << i << "," << eta << "," << phi << "," << n_aabb << ","
+            //<< n_obb << "," << n_cells << "\n";
+            rows.push_back({i, eta, phi, n_aabb, n_obb, n_cells});
+          }
+        });
+
+    for (const auto& row : rows) {
+      auto [i, eta, phi, n_aabb, n_obb, n_cells] = row;
+      csv << i << "," << eta << "," << phi << "," << n_aabb << "," << n_obb
+          << "," << n_cells << "\n";
     }
 
+    csv.close();
+
+    std::ofstream eff("../eff_cells.ply");
+    eff << ply_cells;
+    eff = std::ofstream("../eff_cells_all.ply");
+    eff << ply_cells_all;
+    eff = std::ofstream("../eff_aabb.ply");
+    eff << ply_aabb;
+    eff = std::ofstream("../eff_obb.ply");
+    eff << ply_obb;
+
+    eff = std::ofstream("../eff_ray.ply");
+    eff << ply_ray;
   }
-
-
-  std::ofstream eff("../eff_cells.ply");
-  eff << ply_cells;
-  eff = std::ofstream("../eff_cells_all.ply");
-  eff << ply_cells_all;
-  eff = std::ofstream("../eff_aabb.ply");
-  eff << ply_aabb;
-  eff = std::ofstream("../eff_obb.ply");
-  eff << ply_obb;
-
-  ply_cells.clear();
-  ray.draw(ply_cells, 10000);
-  eff = std::ofstream("../eff_ray.ply");
-  eff << ply_cells;
 
   // auto intersections = [](const auto& obj, const Box* top) {
   // const Box*              lnode = top;
@@ -500,7 +540,7 @@ main(int argc, char* argv[])
   //} while (lnode != nullptr);
   // return hits;
   //};
-  
+
   return 0;
 
   // create BVH for the calo geo
@@ -653,7 +693,7 @@ main(int argc, char* argv[])
   // repack cells
   std::vector<std::unique_ptr<const Acts::Volume>> cells_vol;
   cells_vol.reserve(cells.size());
-  for(auto& cell : cells) {
+  for (auto& cell : cells) {
     cells_vol.push_back(std::unique_ptr<const Acts::Volume>(cell.release()));
   }
   std::shared_ptr<Acts::TrackingVolume> tv
@@ -902,9 +942,7 @@ main(int argc, char* argv[])
     auto last = steppingResults.back();
     if (last.position.z() < -7000 && perp(last.position) < 10000) {
       // print and end
-      if (last.surface != nullptr) {
-        std::cout << *last.surface << std::endl;
-      }
+      if (last.surface != nullptr) { std::cout << *last.surface << std::endl; }
       std::cout << last.position.transpose() << std::endl;
       std::cout << "DEBUG:" << std::endl;
       std::cout << debugString << std::endl;
@@ -974,3 +1012,4 @@ main(int argc, char* argv[])
   // os << ply;
   // os.close();
 }
+
