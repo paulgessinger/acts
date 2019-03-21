@@ -739,10 +739,20 @@ private:
                                            nullptr,
                                            state.navigation.targetSurface);
 
+        Vector3D pos = stepper.position(state.stepping);
+        double mom = units::Nat2SI<units::MOMENTUM>(stepper.momentum(state.stepping));
+        double q = stepper.charge(state.stepping);
+        Vector3D B = stepper.getField(state.stepping, pos);
+        Vector3D dir = stepper.direction(state.stepping);
+        double ir = (dir.cross(B).norm()) * q / mom;
+        double s = 0;
+        double opening_angle = std::atan((1 - std::cos(s*ir)) / std::sin(s*ir));
+
         auto protoNavSurfaces
             = state.navigation.currentVolume->compatibleSurfacesFromHierarchy(
-                stepper.position(state.stepping),
-                stepper.direction(state.stepping),
+                pos,
+                dir,
+                opening_angle,
                 navOpts,
                 navCorr);
         if (!protoNavSurfaces.empty()) {

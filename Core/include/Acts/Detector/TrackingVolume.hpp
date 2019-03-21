@@ -21,6 +21,7 @@
 #include "Acts/Utilities/BinnedArray.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Utilities/Frustum.hpp"
 #include "Acts/Utilities/GeometrySignature.hpp"
 #include "Acts/Utilities/Ray.hpp"
 #include "Acts/Volumes/BoundarySurfaceT.hpp"
@@ -259,6 +260,7 @@ public:
   std::vector<SurfaceIntersection>
   compatibleSurfacesFromHierarchy(const Vector3D&    position,
                                   const Vector3D&    momentum,
+                                  double             angle,
                                   const options_t&   options,
                                   const corrector_t& corrfnc
                                   = corrector_t()) const
@@ -275,33 +277,16 @@ public:
       dir *= -1;
     }
 
-    // direction will be normalized by Ray
-    Ray3D ray(position, dir);
-
     const Volume::BoundingBox* lnode = m_bvhTop;
     std::vector<const Volume*> hits;
-    hits.reserve(20);  // arbitrary
-    do {
-      if (lnode->intersect(ray)) {
-
-        if (lnode->hasEntity()) {
-          // found primitive
-          // check obb to limit false positivies
-          const Volume* vol = lnode->entity();
-          auto          obb = vol->orientedBoundingBox();
-          if (obb.intersect(ray.transformed(vol->itransform()))) {
-            hits.push_back(vol);
-          }
-          // we skip in any case, whether we actually hit the OBB or not
-          lnode = lnode->getSkip();
-        } else {
-          // go over children
-          lnode = lnode->getLeftChild();
-        }
-      } else {
-        lnode = lnode->getSkip();
-      }
-    } while (lnode != nullptr);
+    if (angle == 0) {
+      // use ray
+      Ray3D obj(position, dir);
+      hits = intersectSearchHierarchy(std::move(obj), lnode);
+    } else {
+      Acts::Frustum<double, 3, 4> obj(position, dir, angle);
+      hits = intersectSearchHierarchy(std::move(obj), lnode);
+    }
 
     // have cells, decompose to surfaces
     for (const Volume* vol : hits) {
@@ -311,9 +296,13 @@ public:
               boundarySurfaces
           = avol->boundarySurfaces();
       for (const auto& bs : boundarySurfaces) {
-        const Surface&      srf = bs->surfaceRepresentation();
-        SurfaceIntersection sfi = srf.surfaceIntersectionEstimate(
-            position, momentum, options, corrfnc);
+        const Surface& srf = bs->surfaceRepresentation();
+        // SurfaceIntersection sfi = srf.surfaceIntersectionEstimate(
+        // position, momentum, options, corrfnc);
+        SurfaceIntersection sfi(
+            srf.intersectionEstimate(
+                position, momentum, options.navDir, false, corrfnc),
+            &srf);
 
         if (sfi) {
           sIntersections.push_back(std::move(sfi));
@@ -329,6 +318,37 @@ public:
     }
 
     return sIntersections;
+  }
+
+  template <typename T>
+  static std::vector<const Volume*>
+  intersectSearchHierarchy(const T obj, const Volume::BoundingBox* lnode)
+  {
+    std::vector<const Volume*> hits;
+    hits.reserve(20);  // arbitrary
+    do {
+      if (lnode->intersect(obj)) {
+
+        if (lnode->hasEntity()) {
+          // found primitive
+          // check obb to limit false positivies
+          const Volume* vol = lnode->entity();
+          const auto&   obb = vol->orientedBoundingBox();
+          if (obb.intersect(obj.transformed(vol->itransform()))) {
+            hits.push_back(vol);
+          }
+          // we skip in any case, whether we actually hit the OBB or not
+          lnode = lnode->getSkip();
+        } else {
+          // go over children
+          lnode = lnode->getLeftChild();
+        }
+      } else {
+        lnode = lnode->getSkip();
+      }
+    } while (lnode != nullptr);
+
+    return hits;
   }
 
   /// Return the associated sub Volume, returns THIS if no subVolume exists
