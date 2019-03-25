@@ -44,7 +44,7 @@ public:
               const Vector3D&    envelope = {0, 0, 0},
               const Volume*      entity   = nullptr) const override;
   std::ostream&
-  dump(std::ostream& sl) const override;
+  toStream(std::ostream& sl) const override;
 
   template <typename helper_t>
   void

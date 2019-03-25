@@ -170,13 +170,15 @@ Acts::TrackingVolume::glueTrackingVolume(
   // find the connection of the two tracking volumes : binR returns the
   // center except for cylindrical volumes
   Vector3D bPosition(binningPosition(gctx, binR));
-  Vector3D distance = Vector3D(neighbor->binningPosition(gctx, binR) - bPosition);
+  Vector3D distance
+      = Vector3D(neighbor->binningPosition(gctx, binR) - bPosition);
   // glue to the face
   std::shared_ptr<const BoundarySurfaceT<TrackingVolume>> bSurfaceMine
       = boundarySurfaces().at(bsfMine);
   // @todo - complex glueing could be possible with actual intersection for
   // the normal vector
-  Vector3D normal = bSurfaceMine->surfaceRepresentation().normal(gctx, bPosition);
+  Vector3D normal
+      = bSurfaceMine->surfaceRepresentation().normal(gctx, bPosition);
   // estimate the orientation
   BoundaryOrientation bOrientation
       = (normal.dot(distance) > 0.) ? outsideVolume : insideVolume;
@@ -374,12 +376,13 @@ Acts::TrackingVolume::closeGeometry(
         mutableLayerPtr->closeGeometry(layerID);
       }
     } else if (m_bvhTop != nullptr) {
-      geo_id_value               isurface = 0;
-      for(const auto& descVol : m_descendantVolumes) {
-        // attempt to cast to AbstractVolume, that's the only one we'll handle here
+      geo_id_value isurface = 0;
+      for (const auto& descVol : m_descendantVolumes) {
+        // attempt to cast to AbstractVolume, that's the only one we'll handle
+        // here
         const AbstractVolume* avol
-              = dynamic_cast<const AbstractVolume*>(descVol.get());
-        if(avol != nullptr) {
+            = dynamic_cast<const AbstractVolume*>(descVol.get());
+        if (avol != nullptr) {
           const auto& bndSrf = avol->boundarySurfaces();
           for (const auto& bnd : bndSrf) {
             const auto& srf              = bnd->surfaceRepresentation();

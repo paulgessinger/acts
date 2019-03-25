@@ -12,8 +12,6 @@
 #include "Acts/Surfaces/PlanarBounds.hpp"
 #include "Acts/Surfaces/RectangleBounds.hpp"
 #include "Acts/Utilities/Definitions.hpp"
-//#include "Acts/Utilities/VariantDataFwd.hpp"
-#include "Acts/Utilities/VariantData.hpp"
 
 namespace Acts {
 
@@ -22,14 +20,9 @@ class ConvexPolygonBoundsBase : public PlanarBounds
 public:
   /// Output Method for std::ostream
   ///
-  /// @param sl is the ostream to be dumped into
+  /// @param sl is the ostream to be written into
   std::ostream&
-  dump(std::ostream& sl) const final;
-
-  /// Produce a @c variant_data representation of this object
-  /// @return The representation
-  variant_data
-  toVariantData() const final;
+  toStream(std::ostream& sl) const final;
 
   std::vector<TDD_real_t>
   valueStore() const final;

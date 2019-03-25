@@ -740,6 +740,7 @@ private:
 
         auto protoNavSurfaces
             = state.navigation.currentVolume->compatibleSurfacesFromHierarchy(
+                state.geoContext,
                 stepper.position(state.stepping),
                 stepper.direction(state.stepping),
                 navOpts,

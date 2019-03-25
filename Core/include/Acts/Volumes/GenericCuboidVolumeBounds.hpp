@@ -65,9 +65,9 @@ public:
 
   /// Output Method for std::ostream, to be overloaded by child classes
   ///
-  /// @param sl is the output stream to be dumped into
+  /// @param sl is the output stream to be written into
   virtual std::ostream&
-  dump(std::ostream& sl) const;
+  toStream(std::ostream& sl) const;
 
   template <typename helper_t>
   void

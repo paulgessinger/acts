@@ -171,7 +171,7 @@ Acts::GenericCuboidVolumeBounds::decomposeToSurfaces(
 }
 
 std::ostream&
-Acts::GenericCuboidVolumeBounds::dump(std::ostream& sl) const
+Acts::GenericCuboidVolumeBounds::toStream(std::ostream& sl) const
 {
   sl << "Acts::GenericCuboidVolumeBounds: vertices (x, y, z) =\n";
   for (size_t i = 0; i < 8; i++) {

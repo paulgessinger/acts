@@ -18,11 +18,14 @@
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Tests/CommonHelpers/FloatComparisons.hpp"
 #include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Utilities/GeometryContext.hpp"
 #include "Acts/Utilities/Visualization.hpp"
 #include "Acts/Volumes/GenericCuboidVolumeBounds.hpp"
 
 namespace Acts {
 namespace Test {
+
+  GeometryContext gctx = GeometryContext();
 
   BOOST_AUTO_TEST_SUITE(Volumes)
 
@@ -80,7 +83,7 @@ namespace Test {
       auto pbounds = dynamic_cast<const PlanarBounds*>(&srf->bounds());
       for (const auto& vtx : pbounds->vertices()) {
         Vector3D glob;
-        srf->localToGlobal(vtx, {}, glob);
+        srf->localToGlobal(gctx, vtx, {}, glob);
         // check if glob is in actual vertex list
         BOOST_CHECK(is_in(glob, vertices));
       }
@@ -101,7 +104,7 @@ namespace Test {
       auto pbounds = dynamic_cast<const PlanarBounds*>(&srf->bounds());
       for (const auto& vtx : pbounds->vertices()) {
         Vector3D glob;
-        srf->localToGlobal(vtx, {}, glob);
+        srf->localToGlobal(gctx, vtx, {}, glob);
         // check if glob is in actual vertex list
         BOOST_CHECK(is_in(glob, vertices));
       }
@@ -116,7 +119,7 @@ namespace Test {
       auto pbounds = dynamic_cast<const PlanarBounds*>(&srf->bounds());
       for (const auto& vtx : pbounds->vertices()) {
         Vector3D glob;
-        srf->localToGlobal(vtx, {}, glob);
+        srf->localToGlobal(gctx, vtx, {}, glob);
         // check if glob is in actual vertex list
         BOOST_CHECK(is_in(trf.inverse() * glob, vertices));
       }

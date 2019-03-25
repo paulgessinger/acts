@@ -55,7 +55,6 @@ namespace Test {
     return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
   }
 
-
   template <typename T, typename coll_t>
   std::tuple<size_t, double, std::vector<std::set<Object::id_t>>>
   bench_frustum(int                                                octree_depth,
@@ -168,7 +167,7 @@ namespace Test {
         // if(n_intersects > 80) throw std::runtime_error("");
       } while (lnode != nullptr);
 
-      //result.push_back(std::move(hits));
+      // result.push_back(std::move(hits));
     }
 
     clock::time_point end  = clock::now();
@@ -184,31 +183,29 @@ namespace Test {
 
   template <size_t S>
   std::tuple<size_t, double>
-  frust_par_bench(
-      int                                                octd,
-      real_t angle,
-      size_t nObj,
-      std::function<std::vector<std::unique_ptr<Box>>()> boxFactory)
+  frust_par_bench(int                                                octd,
+                  real_t                                             angle,
+                  size_t                                             nObj,
+                  std::function<std::vector<std::unique_ptr<Box>>()> boxFactory)
   {
-    using Frustum            = Acts::Frustum<real_t, 3, S>;
+    using Frustum = Acts::Frustum<real_t, 3, S>;
     std::vector<Frustum> objects;
     objects.reserve(nObj);
-  
-    std::mt19937 rng;
+
+    std::mt19937                           rng;
     std::uniform_real_distribution<real_t> dir_dist(-1, 1);
     std::uniform_real_distribution<real_t> pos_dist(0., 0.);
 
-    for(size_t i=0;i<nObj;i++) {
+    for (size_t i = 0; i < nObj; i++) {
       vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
       vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
       dir.normalize();
       objects.push_back(Frustum(pos, dir, angle));
     }
 
-    auto [n_ix, dt, _h] = bench_frustum<Frustum>(octd, boxFactory, objects);
+    auto[n_ix, dt, _h] = bench_frustum<Frustum>(octd, boxFactory, objects);
 
     return {n_ix, dt};
-
   }
 }  // namespace Test
 }  // namespace Acts
@@ -419,9 +416,9 @@ void
 do_octree_scan(size_t                                             n_tests,
                std::function<std::vector<std::unique_ptr<Box>>()> boxFactory,
                std::function<object_t()>                          objectFactory,
-               std::string fname)
+               std::string                                        fname)
 {
-  std::vector<int> octree_depths = {0, 1, 2, 3, 4, 5, 6, 7, 8/*, 9, 10*/};
+  std::vector<int> octree_depths = {0, 1, 2, 3, 4, 5, 6, 7, 8 /*, 9, 10*/};
   size_t           n_ix;
   double           diff;
   std::vector<std::set<oid_t>> hits;
@@ -490,7 +487,7 @@ do_octree_scan(size_t                                             n_tests,
 int
 main()
 {
-  size_t n    = 59;
+  size_t n   = 59;
   real_t min = 1e10;
   real_t max = -1e10;
 
@@ -498,7 +495,7 @@ main()
   auto                                 gridBoxFactory = [&]() {
     Box::Size size(Acts::ActsVectorD<3>(2, 2, 2));
 
-    real_t step = (max - min) / real_t(n);
+    real_t                            step = (max - min) / real_t(n);
     std::vector<std::unique_ptr<Box>> boxes;
     boxes.reserve((n + 1) * (n + 1) * (n + 1));
 
@@ -509,8 +506,7 @@ main()
     for (size_t i = 0; i <= n; i++) {
       for (size_t j = 0; j <= n; j++) {
         for (size_t k = 0; k <= n; k++) {
-          vec_t pos(
-              min + i * step, min + j * step, min + k * step);
+          vec_t pos(min + i * step, min + j * step, min + k * step);
           // boxes.emplace_back(o, pos, size);
           // Object o{{i, j, k}};
           // Object o;
@@ -699,44 +695,43 @@ main()
 
     return boxes;
   };
-   using res_t = std::tuple<size_t, double>;
+  using res_t = std::tuple<size_t, double>;
 
-   std::vector<std::pair<size_t, res_t>> results;
+  std::vector<std::pair<size_t, res_t>> results;
 
-  //using Frustum            = Acts::Frustum<real_t, 3, n_sides>;
-  using Ray                = Acts::Ray<real_t, 3>;
-  int octd = -1;
-  real_t angle = M_PI/6.;
-  size_t nObj = 1e3;
-  //auto boxFactory = gridBoxFactory;
+  // using Frustum            = Acts::Frustum<real_t, 3, n_sides>;
+  using Ray    = Acts::Ray<real_t, 3>;
+  int    octd  = -1;
+  real_t angle = M_PI / 6.;
+  size_t nObj  = 1e3;
+  // auto boxFactory = gridBoxFactory;
   auto boxFactory = atlasCaloFactory;
 
-  //results = {
-    //{3,   Acts::Test::frust_par_bench<3  >(octd, angle, nObj, boxFactory)},
-    //{4,   Acts::Test::frust_par_bench<4  >(octd, angle, nObj, boxFactory)},
-    //{5,   Acts::Test::frust_par_bench<5  >(octd, angle, nObj, boxFactory)},
-    //{6,  Acts::Test::frust_par_bench<6 >(octd, angle, nObj, boxFactory)},
-    //{7,  Acts::Test::frust_par_bench<7 >(octd, angle, nObj, boxFactory)},
-    //{8,  Acts::Test::frust_par_bench<8 >(octd, angle, nObj, boxFactory)},
-    //{9,  Acts::Test::frust_par_bench<9 >(octd, angle, nObj, boxFactory)},
-    //{10,  Acts::Test::frust_par_bench<10 >(octd, angle, nObj, boxFactory)},
-    //{11,  Acts::Test::frust_par_bench<11 >(octd, angle, nObj, boxFactory)},
-    //{12, Acts::Test::frust_par_bench<12>(octd, angle, nObj, boxFactory)},
-    //{13, Acts::Test::frust_par_bench<13>(octd, angle, nObj, boxFactory)}
+  // results = {
+  //{3,   Acts::Test::frust_par_bench<3  >(octd, angle, nObj, boxFactory)},
+  //{4,   Acts::Test::frust_par_bench<4  >(octd, angle, nObj, boxFactory)},
+  //{5,   Acts::Test::frust_par_bench<5  >(octd, angle, nObj, boxFactory)},
+  //{6,  Acts::Test::frust_par_bench<6 >(octd, angle, nObj, boxFactory)},
+  //{7,  Acts::Test::frust_par_bench<7 >(octd, angle, nObj, boxFactory)},
+  //{8,  Acts::Test::frust_par_bench<8 >(octd, angle, nObj, boxFactory)},
+  //{9,  Acts::Test::frust_par_bench<9 >(octd, angle, nObj, boxFactory)},
+  //{10,  Acts::Test::frust_par_bench<10 >(octd, angle, nObj, boxFactory)},
+  //{11,  Acts::Test::frust_par_bench<11 >(octd, angle, nObj, boxFactory)},
+  //{12, Acts::Test::frust_par_bench<12>(octd, angle, nObj, boxFactory)},
+  //{13, Acts::Test::frust_par_bench<13>(octd, angle, nObj, boxFactory)}
   //};
 
-   //std::ofstream os("../sides.csv");
-   //os << "sides,n_ix,diff\n";
-   //for(const auto& pr : results) {
-   //size_t sides = pr.first;
-   //size_t n_ix;
-   //double diff;
-   //std::tie(n_ix, diff) = pr.second;
-   //os << sides << "," << n_ix << "," << diff << "\n";
-   //sides++;
+  // std::ofstream os("../sides.csv");
+  // os << "sides,n_ix,diff\n";
+  // for(const auto& pr : results) {
+  // size_t sides = pr.first;
+  // size_t n_ix;
+  // double diff;
+  // std::tie(n_ix, diff) = pr.second;
+  // os << sides << "," << n_ix << "," << diff << "\n";
+  // sides++;
   //}
-   //os.close();
-
+  // os.close();
 
   constexpr size_t n_sides = 4;
   using Frustum            = Acts::Frustum<real_t, 3, n_sides>;
@@ -747,14 +742,14 @@ main()
   // std::uniform_real_distribution<real_t> angle_dist(0.1 * M_PI,
   // M_PI / 4. * 0.9);
 
-  //real_t min  = -10;
-  //real_t max  = 10;
+  // real_t min  = -10;
+  // real_t max  = 10;
   real_t step = (max - min) / real_t(n);
 
   std::uniform_real_distribution<real_t> dir_dist(-1, 1);
   std::uniform_real_distribution<real_t> pos_dist(0., 0.);
 
-  //real_t angle      = M_PI / 2.;
+  // real_t angle      = M_PI / 2.;
   auto frustFactory = [&](/*auto& pos_dist, auto& dir_dist*/) {
     vec_t pos(pos_dist(rng), pos_dist(rng), pos_dist(rng));
     vec_t dir(dir_dist(rng), dir_dist(rng), dir_dist(rng));
@@ -777,170 +772,167 @@ main()
   };
   (void)rayFactory;
 
-
-  //auto boxFactory = gridBoxFactory;
-  //auto objectFactory = rayFactory;
-  //using object_t     = Ray;
+  // auto boxFactory = gridBoxFactory;
+  // auto objectFactory = rayFactory;
+  // using object_t     = Ray;
   auto objectFactory = frustFactory;
   using object_t     = Frustum;
 
   size_t n_tests = 1e3;
-  //do_octree_scan<object_t>(n_tests, boxFactory, objectFactory, "../rays_octree_scan.csv");
-
-  
+  // do_octree_scan<object_t>(n_tests, boxFactory, objectFactory,
+  // "../rays_octree_scan.csv");
 
   std::vector<real_t> angles = {10., 8., 6., 4., 3., 2.};
 
-  for(const auto _angle : angles) {
-    angle = M_PI/_angle;
+  for (const auto _angle : angles) {
+    angle = M_PI / _angle;
     std::stringstream ss;
     ss << "../pi/frust_octree_scan_pi_by_" << _angle << ".csv";
     do_octree_scan<object_t>(n_tests, boxFactory, objectFactory, ss.str());
   }
 
-
   Acts::ply_helper<real_t> ply;
 
-  Acts::Frustum<real_t, 3, 4> fr1({0, 0, 0}, {0, 0, 1}, M_PI/8.);
+  Acts::Frustum<real_t, 3, 4> fr1({0, 0, 0}, {0, 0, 1}, M_PI / 8.);
   fr1.draw(ply);
-  
-  Acts::Frustum<real_t, 3, 4> fr2({6.5, 0, 0}, {0, 0, 1}, M_PI/6.);
+
+  Acts::Frustum<real_t, 3, 4> fr2({6.5, 0, 0}, {0, 0, 1}, M_PI / 6.);
   fr2.draw(ply);
 
-  Acts::Frustum<real_t, 3, 4> fr3({15, 0, 0}, {0, 0, 1}, M_PI/4.);
+  Acts::Frustum<real_t, 3, 4> fr3({15, 0, 0}, {0, 0, 1}, M_PI / 4.);
   fr3.draw(ply);
 
-  Acts::Frustum<real_t, 3, 4> fr4({30, 0, 0}, {0, 0, 1}, M_PI/2.);
+  Acts::Frustum<real_t, 3, 4> fr4({30, 0, 0}, {0, 0, 1}, M_PI / 2.);
   fr4.draw(ply);
 
   std::ofstream sstr("../frust_angles.ply");
   sstr << ply;
   sstr.close();
 
-
-/*
-  return 0;
-
-
-  return 0;
+  /*
+    return 0;
 
 
-  auto              boxes = boxFactory();
-  std::vector<Box*> prims;
-  for (auto& box : boxes) {
-    prims.push_back(box.get());
-  }
-  Box* top_node = nullptr;
-  top_node      = make_octree(boxes, prims, 6);
+    return 0;
 
-  Acts::ply_helper<float> ply;
 
-  auto intersections = [&](const auto& obj, const Box* top) {
-    const Box*              lnode = top;
-    std::vector<const Box*> hits;
-    do {
-      if (lnode->intersect(obj)) {
-
-        if (lnode->hasEntity()) {
-          // found primitive
-          hits.push_back(lnode);
-          lnode = lnode->getSkip();
-        } else {
-          // go over children
-          lnode = lnode->getLeftChild();
-        }
-      } else {
-        lnode = lnode->getSkip();
-      }
-    } while (lnode != nullptr);
-    return hits;
-  };
-
-  // for (const auto& box : hits) { box->draw(ply); }
-
-  // std::ofstream os("boxes.ply");
-  // os << ply;
-  // os.close();
-  // ply.clear();
-
-  size_t nrays = 1e6;
-
-  std::ofstream os("ray_efficiency.csv");
-  os << "n,eta,phi,boxes,obb,cells\n";
-
-  std::uniform_real_distribution<float> eta_dist(-5, 5);
-  std::uniform_real_distribution<float> phi_dist(-M_PI, M_PI);
-  for (size_t i = 0; i < nrays; i++) {
-    float eta = eta_dist(rng);
-    float phi = phi_dist(rng);
-
-    float          theta = 2 * std::atan(std::exp(-eta));
-    Acts::Vector3D dir;
-    dir << std::cos(phi), std::sin(phi), 1. / std::tan(theta);
-    dir.normalize();
-
-    // std::cout << "eta phi: " << eta << ", " << phi << std::endl;
-    // std::cout << dir.transpose() << std::endl;
-    // std::cout << Acts::VectorHelpers::phi(dir) << std::endl;
-    // std::cout << Acts::VectorHelpers::eta(dir) << std::endl;
-
-    Ray ray({0, 0, 0}, dir);
-
-    auto hits = intersections(ray, top_node);
-
-    size_t boxes_hit = 0;
-    size_t cells_hit = 0;
-    size_t obb_hit   = 0;
-    for (const auto& box : hits) {
-      const Acts::AbstractVolume* vol;
-      vol = box->entity()->volume;
-      // auto vbo = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
-      //&vol->volumeBounds());
-      // std::cout << *vol << std::endl;
-
-      boxes_hit++;
-
-      auto obb = vol->orientedBoundingBox();
-      // do we hit the obb?
-      if (obb.intersect(ray.transformed(vol->transform().inverse()))) {
-        obb_hit++;
-      }
-
-      // check if we actually hit it
-      auto surfaces = vol->boundarySurfaces();
-      for (const auto& boundarySurface : surfaces) {
-        auto& srf = boundarySurface->surfaceRepresentation();
-        auto ix = srf.intersectionEstimate(ray.origin().template cast<double>(),
-                                           ray.dir().template cast<double>(),
-                                           Acts::forward,
-                                           true);
-
-        if (ix) {
-          // std::cout << "valid surface intersect" << std::endl;
-          cells_hit++;
-          // vbo->draw(ply, &vol->transform());
-          break;  // no need to test other boundary surfaces
-        }
-      }
+    auto              boxes = boxFactory();
+    std::vector<Box*> prims;
+    for (auto& box : boxes) {
+      prims.push_back(box.get());
     }
+    Box* top_node = nullptr;
+    top_node      = make_octree(boxes, prims, 6);
 
-    os << i << "," << eta << "," << phi << "," << boxes_hit << "," << obb_hit
-       << "," << cells_hit << "\n";
+    Acts::ply_helper<float> ply;
 
-    // std::cout << "boxes hit: " << boxes_hit << " cells_hit: " << cells_hit
-    //<< std::endl;
-    // os = std::ofstream("cells.ply");
+    auto intersections = [&](const auto& obj, const Box* top) {
+      const Box*              lnode = top;
+      std::vector<const Box*> hits;
+      do {
+        if (lnode->intersect(obj)) {
+
+          if (lnode->hasEntity()) {
+            // found primitive
+            hits.push_back(lnode);
+            lnode = lnode->getSkip();
+          } else {
+            // go over children
+            lnode = lnode->getLeftChild();
+          }
+        } else {
+          lnode = lnode->getSkip();
+        }
+      } while (lnode != nullptr);
+      return hits;
+    };
+
+    // for (const auto& box : hits) { box->draw(ply); }
+
+    // std::ofstream os("boxes.ply");
     // os << ply;
     // os.close();
-
     // ply.clear();
-    // ray.draw(ply, 10000);
-    // os = std::ofstream("rays.ply");
-    // os << ply;
-    // os.close();
-  }
-  os.close();
 
-  return 0;
-  */
+    size_t nrays = 1e6;
+
+    std::ofstream os("ray_efficiency.csv");
+    os << "n,eta,phi,boxes,obb,cells\n";
+
+    std::uniform_real_distribution<float> eta_dist(-5, 5);
+    std::uniform_real_distribution<float> phi_dist(-M_PI, M_PI);
+    for (size_t i = 0; i < nrays; i++) {
+      float eta = eta_dist(rng);
+      float phi = phi_dist(rng);
+
+      float          theta = 2 * std::atan(std::exp(-eta));
+      Acts::Vector3D dir;
+      dir << std::cos(phi), std::sin(phi), 1. / std::tan(theta);
+      dir.normalize();
+
+      // std::cout << "eta phi: " << eta << ", " << phi << std::endl;
+      // std::cout << dir.transpose() << std::endl;
+      // std::cout << Acts::VectorHelpers::phi(dir) << std::endl;
+      // std::cout << Acts::VectorHelpers::eta(dir) << std::endl;
+
+      Ray ray({0, 0, 0}, dir);
+
+      auto hits = intersections(ray, top_node);
+
+      size_t boxes_hit = 0;
+      size_t cells_hit = 0;
+      size_t obb_hit   = 0;
+      for (const auto& box : hits) {
+        const Acts::AbstractVolume* vol;
+        vol = box->entity()->volume;
+        // auto vbo = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
+        //&vol->volumeBounds());
+        // std::cout << *vol << std::endl;
+
+        boxes_hit++;
+
+        auto obb = vol->orientedBoundingBox();
+        // do we hit the obb?
+        if (obb.intersect(ray.transformed(vol->transform().inverse()))) {
+          obb_hit++;
+        }
+
+        // check if we actually hit it
+        auto surfaces = vol->boundarySurfaces();
+        for (const auto& boundarySurface : surfaces) {
+          auto& srf = boundarySurface->surfaceRepresentation();
+          auto ix = srf.intersectionEstimate(ray.origin().template
+    cast<double>(),
+                                             ray.dir().template cast<double>(),
+                                             Acts::forward,
+                                             true);
+
+          if (ix) {
+            // std::cout << "valid surface intersect" << std::endl;
+            cells_hit++;
+            // vbo->draw(ply, &vol->transform());
+            break;  // no need to test other boundary surfaces
+          }
+        }
+      }
+
+      os << i << "," << eta << "," << phi << "," << boxes_hit << "," << obb_hit
+         << "," << cells_hit << "\n";
+
+      // std::cout << "boxes hit: " << boxes_hit << " cells_hit: " << cells_hit
+      //<< std::endl;
+      // os = std::ofstream("cells.ply");
+      // os << ply;
+      // os.close();
+
+      // ply.clear();
+      // ray.draw(ply, 10000);
+      // os = std::ofstream("rays.ply");
+      // os << ply;
+      // os.close();
+    }
+    os.close();
+
+    return 0;
+    */
 }

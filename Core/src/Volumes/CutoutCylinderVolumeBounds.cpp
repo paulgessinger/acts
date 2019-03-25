@@ -62,14 +62,12 @@ Acts::CutoutCylinderVolumeBounds::decomposeToSurfaces(
   } else {
     trf = std::make_shared<const Transform3D>(Transform3D::Identity());
   }
-  
-  if(m_rmin == 0.) {
+
+  if (m_rmin == 0.) {
     surfaces.resize(6);  // exactly six surfaces (no choke inner cover)
-  }
-  else {
+  } else {
     surfaces.resize(8);  // exactly eight surfaces
   }
-
 
   // outer cylinder envelope
   auto outer = Surface::makeShared<CylinderSurface>(trf, m_rmax, m_dz1);
@@ -85,7 +83,7 @@ Acts::CutoutCylinderVolumeBounds::decomposeToSurfaces(
   double hlChoke = (m_dz1 - m_dz2) * 0.5;
   double zChoke  = m_dz2 + hlChoke;
 
-  if(m_rmin > 0.) {
+  if (m_rmin > 0.) {
     auto posChokeTrf = std::make_shared<const Transform3D>(
         *trf * Translation3D(Vector3D(0, 0, zChoke)));
     auto posInner
@@ -154,7 +152,7 @@ Acts::CutoutCylinderVolumeBounds::boundingBox(const Acts::Transform3D* trf,
 }
 
 std::ostream&
-Acts::CutoutCylinderVolumeBounds::dump(std::ostream& sl) const
+Acts::CutoutCylinderVolumeBounds::toStream(std::ostream& sl) const
 {
   sl << "Acts::CutoutCylinderVolumeBounds(\n";
   sl << "rmin = " << m_rmin << " rmed = " << m_rmed << " rmax = " << m_rmax

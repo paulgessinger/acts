@@ -42,9 +42,13 @@
 #include "Acts/Tools/TrackingVolumeArrayCreator.hpp"
 #include "Acts/Utilities/BinnedArrayXD.hpp"
 
+#include "Acts/Utilities/GeometryContext.hpp"
+
 #include <thread>
 #include "tbb/tbb.h"
 
+Acts::GeometryContext      tgContext = Acts::GeometryContext();
+Acts::MagneticFieldContext mfContext = Acts::MagneticFieldContext();
 using namespace Acts::VectorHelpers;
 
 namespace {
@@ -303,7 +307,9 @@ atlasCaloFactory(std::string input_file)
     iss >> calosample;
 
     scale = 1.;
-    if (calosample >= 12 && calosample <= 20) { scale = 0.5; }
+    if (calosample >= 12 && calosample <= 20) {
+      scale = 0.5;
+    }
 
     // Acts::ply_helper<double>* ply;
     // if (calosample <= 11) {
@@ -394,7 +400,9 @@ main(int argc, char* argv[])
   }
 
   std::string filename = argv[1];
-  if (argc > 2) { n_rays = std::stoi(argv[2]); }
+  if (argc > 2) {
+    n_rays = std::stoi(argv[2]);
+  }
 
   std::cout << "Reading from: " << filename << std::endl;
   std::cout << "Build calo geometry..." << std::flush;
@@ -431,8 +439,12 @@ main(int argc, char* argv[])
     Acts::ply_helper<double> ply_obb;
     Acts::ply_helper<double> ply_ray;
 
-    tbb::concurrent_vector<
-        std::tuple<size_t, double, double, size_t, size_t, size_t>>
+    tbb::concurrent_vector<std::tuple<size_t,
+                                      double,
+                                      double,
+                                      size_t,
+                                      size_t,
+                                      size_t>>
         rows;
     rows.reserve(n_rays);
 
@@ -461,12 +473,12 @@ main(int argc, char* argv[])
                 auto vb = dynamic_cast<const Acts::GenericCuboidVolumeBounds*>(
                     &cell->volumeBounds());
                 auto surfaces = vb->decomposeToSurfaces(&cell->transform());
-                bool is_hit   = false;
+                // bool is_hit   = false;
                 for (const auto& srf : surfaces) {
                   Acts::NavigationOptions<Acts::Surface> no(Acts::forward,
                                                             true);
                   if (srf->surfaceIntersectionEstimate(
-                          ray.origin(), ray.dir(), no)) {
+                          tgContext, ray.origin(), ray.dir(), no)) {
                     is_hit = true;
                     // vb->draw(ply_cells, cell->transform());
                     n_cells++;
@@ -494,7 +506,7 @@ main(int argc, char* argv[])
         });
 
     for (const auto& row : rows) {
-      auto [i, eta, phi, n_aabb, n_obb, n_cells] = row;
+      auto[i, eta, phi, n_aabb, n_obb, n_cells] = row;
       csv << i << "," << eta << "," << phi << "," << n_aabb << "," << n_obb
           << "," << n_cells << "\n";
     }
@@ -641,8 +653,8 @@ main(int argc, char* argv[])
   std::cout << *volBds << std::endl;
 
   for (const auto& srf : volBds->decomposeToSurfaces(nullptr)) {
-    std::cout << "NORMAL: " << srf->normal().transpose() << " ";
-    std::cout << "CTR: " << srf->center().transpose() << std::endl;
+    std::cout << "NORMAL: " << srf->normal(tgContext).transpose() << " ";
+    std::cout << "CTR: " << srf->center(tgContext).transpose() << std::endl;
   }
 
   // return 0;
@@ -705,9 +717,12 @@ main(int argc, char* argv[])
                                      nullptr,  // no material
                                      "calo");
 
-  tv->glueTrackingVolume(Acts::tubeInnerCover, innerCyl, Acts::tubeOuterCover);
-  tv->glueTrackingVolume(Acts::index7, posChokeVol, Acts::tubeOuterCover);
-  tv->glueTrackingVolume(Acts::index6, negChokeVol, Acts::tubeOuterCover);
+  tv->glueTrackingVolume(
+      tgContext, Acts::tubeInnerCover, innerCyl, Acts::tubeOuterCover);
+  tv->glueTrackingVolume(
+      tgContext, Acts::index7, posChokeVol, Acts::tubeOuterCover);
+  tv->glueTrackingVolume(
+      tgContext, Acts::index6, negChokeVol, Acts::tubeOuterCover);
 
   // create binutility for ID to Calo
   std::vector<float> rBoundaries   = {0, float(rmin_at_choke), float(rmax)};
@@ -797,14 +812,15 @@ main(int argc, char* argv[])
       tVolArrCtr);
 
   // and now combine those together into another one
-  Acts::TrackingVolumeArrayCreator tvac;
+  Acts::TrackingVolumeArrayCreator::Config cfg;
+  Acts::TrackingVolumeArrayCreator         tvac(cfg);
 
   auto mainContainer = Acts::TrackingVolume::create(
       std::make_shared<const Acts::Transform3D>(Acts::Transform3D::Identity()),
       std::make_shared<Acts::CylinderVolumeBounds>(
           0, volBds->rMax(), volBds->dZ1()),
-      tvac.trackingVolumeArray({negContainer, ctrContainer, posContainer},
-                               Acts::binZ));
+      tvac.trackingVolumeArray(
+          tgContext, {negContainer, ctrContainer, posContainer}, Acts::binZ));
 
   auto tg = std::make_shared<Acts::TrackingGeometry>(mainContainer);
 
@@ -905,11 +921,12 @@ main(int argc, char* argv[])
     Acts::CurvilinearParameters startPar(
         nullptr, origin + zshift, dir * mom, +1);
 
-    Acts::PropagatorOptions<ActionList, AbortConditions> options;
+    Acts::PropagatorOptions<ActionList, AbortConditions> options(tgContext,
+                                                                 mfContext);
     options.debug     = debug;
     options.pathLimit = 20 * Acts::units::_m;
 
-    const auto& result = propagator.propagate(startPar, options);
+    const auto result = propagator.propagate(startPar, options).value();
 
     const auto debugString
         = result.template get<DebugOutput::result_type>().debugString;
@@ -942,7 +959,10 @@ main(int argc, char* argv[])
     auto last = steppingResults.back();
     if (last.position.z() < -7000 && perp(last.position) < 10000) {
       // print and end
-      if (last.surface != nullptr) { std::cout << *last.surface << std::endl; }
+      if (last.surface != nullptr) {
+        last.surface->toStream(tgContext, std::cout);
+        std::cout << std::endl;
+      }
       std::cout << last.position.transpose() << std::endl;
       std::cout << "DEBUG:" << std::endl;
       std::cout << debugString << std::endl;
@@ -1012,4 +1032,3 @@ main(int argc, char* argv[])
   // os << ply;
   // os.close();
 }
-

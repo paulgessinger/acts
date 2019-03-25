@@ -27,7 +27,7 @@ namespace Test {
   BOOST_AUTO_TEST_CASE(construction_test)
   {
     CutoutCylinderVolumeBounds ccvb(5, 10, 15, 30, 25);
-    ccvb.dump(std::cout);
+    ccvb.toStream(std::cout);
   }
 
   BOOST_AUTO_TEST_CASE(decomposeToSurfaces_test)

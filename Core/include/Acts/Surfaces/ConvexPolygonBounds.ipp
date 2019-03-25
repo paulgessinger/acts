@@ -7,10 +7,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include "Acts/Utilities/ThrowAssert.hpp"
-#include "Acts/Utilities/VariantData.hpp"
 
 std::ostream&
-Acts::ConvexPolygonBoundsBase::dump(std::ostream& sl) const
+Acts::ConvexPolygonBoundsBase::toStream(std::ostream& sl) const
 {
   std::vector<Vector2D> vtxs = vertices();
   sl << "Acts::ConvexPolygonBounds<" << vtxs.size() << ">: vertices: [x, y]\n";
@@ -39,28 +38,6 @@ Acts::ConvexPolygonBoundsBase::makeBoundingBox(const coll_t& vertices)
   }
 
   return {vmin, vmax};
-}
-
-Acts::variant_data
-Acts::ConvexPolygonBoundsBase::toVariantData() const
-{
-  std::vector<Vector2D> vtxs = vertices();
-  using namespace std::string_literals;
-  variant_map payload;
-  payload["sides"] = int(vtxs.size());
-
-  variant_vector var_vertices;
-  for (const auto& vtx : vtxs) {
-    var_vertices.push_back(to_variant(vtx));
-  }
-
-  payload["vertices"] = var_vertices;
-
-  variant_map data;
-  data["type"]    = "ConvexPolygonBounds"s;
-  data["payload"] = payload;
-
-  return data;
 }
 
 std::vector<TDD_real_t>

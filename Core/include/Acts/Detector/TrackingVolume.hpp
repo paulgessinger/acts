@@ -256,10 +256,11 @@ public:
   template <typename options_t,
             typename corrector_t = VoidIntersectionCorrector>
   std::vector<SurfaceIntersection>
-  compatibleSurfacesFromHierarchy(const Vector3D&    position,
-                                  const Vector3D&    momentum,
-                                  const options_t&   options,
-                                  const corrector_t& corrfnc
+  compatibleSurfacesFromHierarchy(const GeometryContext& gctx,
+                                  const Vector3D&        position,
+                                  const Vector3D&        momentum,
+                                  const options_t&       options,
+                                  const corrector_t&     corrfnc
                                   = corrector_t()) const
   {
     std::vector<SurfaceIntersection> sIntersections;
@@ -312,7 +313,7 @@ public:
       for (const auto& bs : boundarySurfaces) {
         const Surface&      srf = bs->surfaceRepresentation();
         SurfaceIntersection sfi = srf.surfaceIntersectionEstimate(
-            position, momentum, options, corrfnc);
+            gctx, position, momentum, options, corrfnc);
 
         if (sfi) {
           sIntersections.push_back(std::move(sfi));
