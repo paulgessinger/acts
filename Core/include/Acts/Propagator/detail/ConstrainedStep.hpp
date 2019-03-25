@@ -113,6 +113,18 @@ namespace detail {
       return values[type];
     }
 
+    double
+    max() const
+    {
+      return (*std::max_element(values.begin(), values.end()));
+    }
+
+    double 
+    min() const
+    {
+      return (*std::min_element(values.begin(), values.end()));
+    }
+
     /// Access to currently leading min type
     ///
     Type

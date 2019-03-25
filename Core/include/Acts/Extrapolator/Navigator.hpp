@@ -12,6 +12,7 @@
 #include <iterator>
 #include <sstream>
 #include <string>
+#include <iomanip>
 #include "Acts/Detector/TrackingGeometry.hpp"
 #include "Acts/Detector/TrackingVolume.hpp"
 #include "Acts/Detector/detail/BoundaryIntersectionSorter.hpp"
@@ -738,15 +739,36 @@ private:
                                            resolvePassive,
                                            nullptr,
                                            state.navigation.targetSurface);
+        double opening_angle = 0;
 
         Vector3D pos = stepper.position(state.stepping);
         double mom = units::Nat2SI<units::MOMENTUM>(stepper.momentum(state.stepping));
         double q = stepper.charge(state.stepping);
-        Vector3D B = stepper.getField(state.stepping, pos);
         Vector3D dir = stepper.direction(state.stepping);
-        double ir = (dir.cross(B).norm()) * q / mom;
-        double s = 0;
-        double opening_angle = std::atan((1 - std::cos(s*ir)) / std::sin(s*ir));
+        Vector3D B = stepper.getField(state.stepping, pos);
+        //if (B.squaredNorm() > 1e-9) {
+          // ~ non-zero field
+          double ir = (dir.cross(B).norm()) * q / mom;
+          double s;
+          if (state.stepping.navDir == forward) {
+            s = state.stepping.stepSize.max();
+          }
+          else {
+            s = state.stepping.stepSize.min();
+          }
+          opening_angle = std::atan((1 - std::cos(s*ir)) / std::sin(s*ir));
+        //}
+        debugLog(state, [&] {
+            std::stringstream ss;
+            ss << std::fixed << std::setprecision(50);
+            ss << "Estimating opening angle for frustum nav:" << std::endl;
+            ss << "pos: " << pos.transpose() << std::endl;
+            ss << "dir: " << dir.transpose() << std::endl;
+            ss << "B: " << B.transpose() << " |B|: " << B.norm() << std::endl;
+            ss << "step mom: " << stepper.momentum(state.stepping) << std::endl;
+            ss << "=> opening angle: " << opening_angle << std::endl;
+            return ss.str();
+        });
 
         auto protoNavSurfaces
             = state.navigation.currentVolume->compatibleSurfacesFromHierarchy(
