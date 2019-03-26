@@ -479,7 +479,7 @@ main(int argc, char* argv[])
                                                             true);
                   if (srf->surfaceIntersectionEstimate(
                           tgContext, ray.origin(), ray.dir(), no)) {
-                    is_hit = true;
+                    // is_hit = true;
                     // vb->draw(ply_cells, cell->transform());
                     n_cells++;
                     break;
