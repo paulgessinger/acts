@@ -36,6 +36,7 @@ option(ACTS_BUILD_PLUGIN_JSON "Build json plugin" OFF)
 option(ACTS_USE_SYSTEM_NLOHMANN_JSON "Use nlohmann::json provided by the system instead of the bundled version" OFF)
 option(ACTS_BUILD_PLUGIN_LEGACY "Build legacy plugin" OFF)
 option(ACTS_BUILD_PLUGIN_ONNX "Build ONNX plugin" OFF)
+option(ACTS_BUILD_PLUGIN_PYTHON "Build python plugin" OFF)
 option(ACTS_BUILD_PLUGIN_SYCL "Build SYCL plugin" OFF)
 option(ACTS_BUILD_PLUGIN_TGEO "Build TGeo plugin" OFF)
 # fatras related options
@@ -191,6 +192,9 @@ endif()
 if(ACTS_BUILD_PLUGIN_ONNX)
   find_package(OnnxRuntime REQUIRED)
 endif()
+if(ACTS_BUILD_PLUGIN_PYTHON)
+    add_subdirectory(thirdparty/pybind11)
+endif()
 if(ACTS_BUILD_PLUGIN_SYCL)
   find_package(SYCL REQUIRED)
 endif()
@@ -246,6 +250,7 @@ add_component_if(Fatras Fatras ACTS_BUILD_FATRAS)
 
 # examples
 add_subdirectory_if(Examples ACTS_BUILD_EXAMPLES)
+
 
 # automated tests and benchmarks
 if(ACTS_BUILD_BENCHMARKS OR ACTS_BUILD_INTEGRATIONTESTS OR ACTS_BUILD_UNITTESTS)
