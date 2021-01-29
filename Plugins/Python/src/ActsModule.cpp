@@ -1,16 +1,16 @@
+#include "ActsExamples/Framework/RandomNumbers.hpp"
 #include "ActsExamples/Framework/Sequencer.hpp"
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
-int add(int i, int j) {
-  return i + j + 1;
-}
+void addExamplesDetector(py::module_& m);
+void addMaterial(py::module_& m);
 
 PYBIND11_MODULE(_acts, m) {
   m.doc() = "Acts";
-  m.def("add", &add, "Add stuff");
 
   auto logging = m.def_submodule("logging", "");
   py::enum_<Acts::Logging::Level>(logging, "Level")
@@ -34,7 +34,17 @@ PYBIND11_MODULE(_acts, m) {
       .def_readwrite("numThreads", &Config::numThreads)
       .def_readwrite("outputDir", &Config::outputDir);
 
-  sequencer.def(py::init<const Config&>());
+  sequencer.def(py::init<const Config&>()).def("run", &Sequencer::run);
 
-  
+  using ActsExamples::RandomNumbers;
+  auto randomNumbers = py::class_<RandomNumbers>(m, "RandomNumbers");
+
+  py::class_<RandomNumbers::Config>(randomNumbers, "Config")
+      .def(py::init<>())
+      .def_readwrite("seed", &RandomNumbers::Config::seed);
+
+  randomNumbers.def(py::init<const RandomNumbers::Config&>());
+
+  addExamplesDetector(m);
+  addMaterial(m);
 }
