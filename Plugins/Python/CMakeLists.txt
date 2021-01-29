@@ -27,6 +27,9 @@ file(MAKE_DIRECTORY ${_python_dir}/acts)
 pybind11_add_module(ActsPython src/ActsModule.cpp)
 set_target_properties(ActsPython PROPERTIES OUTPUT_NAME _acts)
 set_target_properties(ActsPython PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)
+set_target_properties(ActsPython PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${_python_dir}/acts)
+
+target_link_libraries(ActsPython PUBLIC ActsCore ActsExamplesFramework)
 
 
 add_custom_target(ActsPythonPyCode)
