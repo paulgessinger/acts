@@ -1,14 +1,21 @@
 ---
 kind: pipeline
 steps:
-  - name: test
-    image: alpine
+  - name: build
+    image: ghcr.io/acts-project/ubuntu2004
     commands:
-      - echo "hallo"
-      - echo "more"
+      - >
+        cmake -B build -S .
+        -GNinja
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_CXX_FLAGS=-Werror
+        -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
+        -DACTS_BUILD_EVERYTHING=on
+      - cmake --build build --
+        
 
 ---
 kind: signature
-hmac: 87e468780d40319fd0aa77dc0c1c7a76eb1d8c6dc1a8a57bf60233b659527d01
+hmac: 76e7cf9def5393a6c70f263e2e61ee0447ea9b577140e998f833f3df9cfcd136
 
 ...
