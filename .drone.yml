@@ -1,3 +1,4 @@
+---
 kind: pipeline
 steps:
   - name: test
@@ -6,3 +7,8 @@ steps:
       - echo "hallo"
       - echo "more"
 
+---
+kind: signature
+hmac: 87e468780d40319fd0aa77dc0c1c7a76eb1d8c6dc1a8a57bf60233b659527d01
+
+...
