@@ -1,18 +1,19 @@
 ---
-kind: pipeline
-name: builds
-steps:
-  - name: build
-    image: ghcr.io/acts-project/ubuntu2004
-    commands:
-      - >
-        cmake -B build -S .
-        -GNinja
-        -DCMAKE_BUILD_TYPE=Release
-        -DCMAKE_CXX_FLAGS=-Werror
-        -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
-        -DACTS_BUILD_EVERYTHING=on
-      # - cmake --build build --
+# ---
+# kind: pipeline
+# name: builds
+# steps:
+  # - name: build
+    # image: ghcr.io/acts-project/ubuntu2004
+    # commands:
+      # - >
+        # cmake -B build -S .
+        # -GNinja
+        # -DCMAKE_BUILD_TYPE=Release
+        # -DCMAKE_CXX_FLAGS=-Werror
+        # -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
+        # -DACTS_BUILD_EVERYTHING=on
+      # # - cmake --build build --
         
 ---
 kind: pipeline
@@ -29,12 +30,12 @@ steps:
         -DCMAKE_CXX_FLAGS="-Werror"
         -DACTS_BUILD_EVERYTHING=ON
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-      - cmakeperf collect build/compile_commands.json -o perf.csv
+      - cmakeperf collect build/compile_commands.json -o perf.csv -j$(nproc)
       - cmakeperf print perf.csv
 
 
 ---
 kind: signature
-hmac: 50677fcf9a5edee3ef3a310f3003812717c3977e07d841490bf83d2081e8f663
+hmac: 180fb6a97d3e8e64f4bccb23c072605545f10eebd406ee01e838c64c3037b931
 
 ...
