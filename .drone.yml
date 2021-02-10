@@ -1,5 +1,6 @@
 ---
 kind: pipeline
+name: builds
 steps:
   - name: build
     image: ghcr.io/acts-project/ubuntu2004
@@ -15,6 +16,7 @@ steps:
         
 ---
 kind: pipeline
+name: analysis
 steps:
   - name: analysis
     image: ghcr.io/acts-project/ubuntu2004:v9
@@ -33,6 +35,6 @@ steps:
 
 ---
 kind: signature
-hmac: bc961e87b99b1dee5418e5e512e29f31fe330242692e0f27c21072b94871fcdf
+hmac: 50677fcf9a5edee3ef3a310f3003812717c3977e07d841490bf83d2081e8f663
 
 ...
