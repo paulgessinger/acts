@@ -11,11 +11,28 @@ steps:
         -DCMAKE_CXX_FLAGS=-Werror
         -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
         -DACTS_BUILD_EVERYTHING=on
-      - cmake --build build --
+      # - cmake --build build --
         
+---
+kind: pipeline
+steps:
+  - name: analysis
+    image: ghcr.io/acts-project/ubuntu2004:v9
+    commands:
+      - pip3 install git+https://github.com/paulgessinger/cmakeperf.git@4cc3c8a
+      - >
+        cmake -B build -S .
+        -GNinja
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        -DCMAKE_CXX_FLAGS="-Werror"
+        -DACTS_BUILD_EVERYTHING=ON
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+      - cmakeperf collect build/compile_commands.json -o perf.csv
+      - cmakeperf print perf.csv
+
 
 ---
 kind: signature
-hmac: 76e7cf9def5393a6c70f263e2e61ee0447ea9b577140e998f833f3df9cfcd136
+hmac: bc961e87b99b1dee5418e5e512e29f31fe330242692e0f27c21072b94871fcdf
 
 ...
