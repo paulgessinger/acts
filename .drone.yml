@@ -15,7 +15,6 @@
         # -DACTS_BUILD_EVERYTHING=on
       # # - cmake --build build --
         
----
 kind: pipeline
 name: analysis
 steps:
