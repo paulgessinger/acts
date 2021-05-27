@@ -20,6 +20,7 @@
 #include "Acts/Propagator/StraightLineStepper.hpp"
 #include "Acts/Propagator/detail/SteppingHelper.hpp"
 #include "Acts/Surfaces/CylinderSurface.hpp"
+#include "Acts/Tests/CommonHelpers/CommonNavigatorTest.hpp"
 #include "Acts/Tests/CommonHelpers/CubicBVHTrackingGeometry.hpp"
 #include "Acts/Tests/CommonHelpers/CylindricalTrackingGeometry.hpp"
 #include "Acts/Tests/CommonHelpers/FloatComparisons.hpp"
@@ -86,6 +87,30 @@ struct PropagatorState {
 
       GeometryContext geoContext = GeometryContext();
     };
+
+    void step(State& sstate, double fraction = 1) {
+      // update the cache position
+      double ssize = sstate.stepSize * fraction;
+      Vector4 prev = sstate.pos4;
+      sstate.pos4[Acts::ePos0] += ssize * sstate.dir[Acts::eMom0];
+      sstate.pos4[Acts::ePos1] += ssize * sstate.dir[Acts::eMom1];
+      sstate.pos4[Acts::ePos2] += ssize * sstate.dir[Acts::eMom2];
+
+      std::cout << "PseudoStepper: Performing step with size: " << ssize
+                << " along [" << sstate.dir.transpose() << "]: " << std::endl;
+
+      auto rz = [](const Vector4& v) -> std::string {
+        return std::to_string(VectorHelpers::perp(v)) + "," +
+               std::to_string(v[eFreePos2]);
+      };
+      std::cout << "               [" << prev.transpose();
+      std::cout << "] -> [" << sstate.pos4.transpose() << "]" << std::endl;
+
+      std::cout << "               [" << rz(prev);
+      std::cout << "] -> [" << rz(sstate.pos4.transpose()) << "]" << std::endl;
+      // create navigation parameters
+      return;
+    }
 
     /// State resetter
     void resetState(State& /*unused*/, const BoundVector& /*unused*/,
@@ -226,16 +251,6 @@ struct PropagatorState {
   // The context cache for this propagation
   GeometryContext geoContext = GeometryContext();
 };
-
-template <typename stepper_state_t>
-void step(stepper_state_t& sstate) {
-  // update the cache position
-  sstate.pos4[Acts::ePos0] += sstate.stepSize * sstate.dir[Acts::eMom0];
-  sstate.pos4[Acts::ePos1] += sstate.stepSize * sstate.dir[Acts::eMom1];
-  sstate.pos4[Acts::ePos2] += sstate.stepSize * sstate.dir[Acts::eMom2];
-  // create navigation parameters
-  return;
-}
 
 /// @brief Method for testing vectors in @c Navigator::State
 ///
@@ -482,7 +497,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
   }
 
   // Do the step towards the beam pipe
-  step(state.stepping);
+  stepper.step(state.stepping);
 
   // (2) re-entering navigator:
   // STATUS
@@ -506,7 +521,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
   }
 
   // Do the step towards the boundary
-  step(state.stepping);
+  stepper.step(state.stepping);
 
   // (3) re-entering navigator:
   // STATUS
@@ -522,7 +537,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
   }
 
   // positive return: do the step
-  step(state.stepping);
+  stepper.step(state.stepping);
   // (4) re-entering navigator:
   // STATUS
   navigator.status(state, stepper);
@@ -538,7 +553,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
 
   // Step through the surfaces on first layer
   for (size_t isf = 0; isf < 5; ++isf) {
-    step(state.stepping);
+    stepper.step(state.stepping);
     // (5-9) re-entering navigator:
     // STATUS
     navigator.status(state, stepper);
@@ -554,7 +569,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
   }
 
   // positive return: do the step
-  step(state.stepping);
+  stepper.step(state.stepping);
   // (10) re-entering navigator:
   // STATUS
   navigator.status(state, stepper);
@@ -570,7 +585,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
 
   // Step through the surfaces on second layer
   for (size_t isf = 0; isf < 5; ++isf) {
-    step(state.stepping);
+    stepper.step(state.stepping);
     // (11-15) re-entering navigator:
     // STATUS
     navigator.status(state, stepper);
@@ -586,7 +601,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
   }
 
   // positive return: do the step
-  step(state.stepping);
+  stepper.step(state.stepping);
   // (16) re-entering navigator:
   // STATUS
   navigator.status(state, stepper);
@@ -602,7 +617,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
 
   // Step through the surfaces on third layer
   for (size_t isf = 0; isf < 3; ++isf) {
-    step(state.stepping);
+    stepper.step(state.stepping);
     // (17-19) re-entering navigator:
     // STATUS
     navigator.status(state, stepper);
@@ -618,7 +633,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
   }
 
   // positive return: do the step
-  step(state.stepping);
+  stepper.step(state.stepping);
   // (20) re-entering navigator:
   // STATUS
   navigator.status(state, stepper);
@@ -634,7 +649,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
 
   // Step through the surfaces on second layer
   for (size_t isf = 0; isf < 3; ++isf) {
-    step(state.stepping);
+    stepper.step(state.stepping);
     // (21-23) re-entering navigator:
     // STATUS
     navigator.status(state, stepper);
@@ -650,7 +665,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
   }
 
   // positive return: do the step
-  step(state.stepping);
+  stepper.step(state.stepping);
   // (24) re-entering navigator:
   // STATUS
   navigator.status(state, stepper);
@@ -703,6 +718,14 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
   BOOST_CHECK_EQUAL(BVHState.navigation.navLayers.size(), 0u);
   // Surfaces have been found
   BOOST_CHECK_EQUAL(BVHState.navigation.navSurfaces.size(), 42u);
+}
+
+BOOST_AUTO_TEST_CASE(Navigation) {
+  Navigator navigator(tGeometry);
+  PropagatorState::Stepper stepper;
+  PropagatorState state;
+
+  commonNavigatorSequenceTest(stepper, state, navigator);
 }
 
 }  // namespace Test
