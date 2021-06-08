@@ -33,6 +33,12 @@ pybind11_add_module(ActsPython
   src/ExampleAlgorithms.cpp
   src/MagneticField.cpp
 )
+
+if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
+  target_compile_definitions(ActsPython PRIVATE -DPYBIND_DD4HEP)
+  target_link_libraries(ActsPython PUBLIC ActsExamplesDetectorDD4hep)
+endif()
+
 set_target_properties(ActsPython PROPERTIES OUTPUT_NAME _acts)
 set_target_properties(ActsPython PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)
 set_target_properties(ActsPython PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${_python_dir}/acts)
@@ -42,7 +48,6 @@ target_link_libraries(ActsPython PUBLIC
   ActsExamplesFramework
   ActsExamplesDetectorsCommon
   ActsExamplesDetectorGeneric
-  ActsExamplesDetectorDD4hep
   ActsExamplesMagneticField
   ActsExamplesIoRoot
 )
