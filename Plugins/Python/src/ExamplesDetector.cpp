@@ -1,9 +1,13 @@
 #include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/Material/IMaterialDecorator.hpp"
-#include "ActsExamples/DD4hepDetector/DD4hepGeometryService.hpp"
 #include "ActsExamples/Detector/IBaseDetector.hpp"
 #include "ActsExamples/Framework/IContextDecorator.hpp"
 #include "ActsExamples/GenericDetector/GenericDetector.hpp"
+
+#ifdef PYBIND_DD4HEP
+#include "ActsExamples/DD4hepDetector/DD4hepDetector.hpp"
+#include "ActsExamples/DD4hepDetector/DD4hepGeometryService.hpp"
+#endif
 
 #include <memory>
 
@@ -40,17 +44,18 @@ void addExamplesDetector(py::module_& m) {
         .def_readwrite("buildProto", &Config::buildProto);
   }
 
+#ifdef PYBIND_DD4HEP
   {
     using Config = ActsExamples::DD4hep::DD4hepGeometryService::Config;
 
-    auto gd = py::class_<DD4hepDetector, std::shared_ptr<DD4hepDetector>>(
-                  m, "DD4hepDetector")
-                  .def(py::init<>())
-                  .def("finalize",
-                       py::overload_cast<
-                           const Config&,
-                           std::shared_ptr<const Acts::IMaterialDecorator>>(
-                           &GenericDetector::finalize));
+    auto gd =
+        py::class_<DD4hepDetector, std::shared_ptr<DD4hepDetector>>(
+            m, "DD4hepDetector")
+            .def(py::init<>())
+            .def("finalize",
+                 py::overload_cast<
+                     Config, std::shared_ptr<const Acts::IMaterialDecorator>>(
+                     &DD4hepDetector::finalize));
 
     py::class_<Config>(gd, "Config")
         .def(py::init<>())
@@ -64,4 +69,5 @@ void addExamplesDetector(py::module_& m) {
         .def_readwrite("envelopeZ", &Config::envelopeZ)
         .def_readwrite("defaultLayerThickness", &Config::defaultLayerThickness);
   }
+#endif
 }

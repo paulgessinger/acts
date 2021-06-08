@@ -3,6 +3,7 @@
 #include "Acts/MagneticField/BFieldMapUtils.hpp"
 #include "Acts/MagneticField/ConstantBField.hpp"
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
+#include "Acts/MagneticField/NullBField.hpp"
 #include "Acts/MagneticField/SolenoidBField.hpp"
 
 #include <memory>
@@ -36,6 +37,10 @@ void addMagneticField(py::module_& m) {
              Acts::MagneticFieldProvider,
              std::shared_ptr<ActsExamples::detail::InterpolatedMagneticField3>>(
       m, "InterpolatedMagneticField3");
+
+  py::class_<Acts::NullBField, Acts::MagneticFieldProvider,
+             std::shared_ptr<Acts::NullBField>>(m, "NullBField")
+      .def(py::init<>());
 
   {
     using Config = Acts::SolenoidBField::Config;

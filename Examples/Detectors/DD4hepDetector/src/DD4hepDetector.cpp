@@ -32,14 +32,13 @@ auto DD4hepDetector::finalize(
 }
 
 auto DD4hepDetector::finalize(
-    const ActsExamples::DD4hep::DD4hepGeometryService::Config& config,
+    ActsExamples::DD4hep::DD4hepGeometryService::Config config,
     std::shared_ptr<const Acts::IMaterialDecorator> mdecorator)
     -> std::pair<TrackingGeometryPtr, ContextDecorators> {
   Acts::GeometryContext dd4HepContext;
-  dd4HepDetectorConfig.matDecorator = mdecorator;
+  config.matDecorator = mdecorator;
   auto geometrySvc =
-      std::make_shared<ActsExamples::DD4hep::DD4hepGeometryService>(
-          dd4HepDetectorConfig);
+      std::make_shared<ActsExamples::DD4hep::DD4hepGeometryService>(config);
   TrackingGeometryPtr dd4tGeometry =
       geometrySvc->trackingGeometry(dd4HepContext);
   ContextDecorators dd4ContextDeocrators = {};
