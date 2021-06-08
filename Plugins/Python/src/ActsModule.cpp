@@ -8,6 +8,7 @@ namespace py = pybind11;
 
 void addExamplesDetector(py::module_& m);
 void addMaterial(py::module_& m);
+void addGeometry(py::module_& m);
 
 PYBIND11_MODULE(_acts, m) {
   m.doc() = "Acts";
@@ -23,9 +24,13 @@ PYBIND11_MODULE(_acts, m) {
       .export_values();
 
   using ActsExamples::Sequencer;
-  auto sequencer = py::class_<Sequencer>(m, "Sequencer");
-
   using Config = Sequencer::Config;
+  auto sequencer =
+      py::class_<Sequencer>(m, "Sequencer")
+          .def(py::init<const Config&>())
+          .def("run", &Sequencer::run)
+          .def("addContextDecorator", &Sequencer::addContextDecorator);
+
   py::class_<Config>(sequencer, "Config")
       .def(py::init<>())
       .def_readwrite("skip", &Config::skip)
@@ -33,8 +38,6 @@ PYBIND11_MODULE(_acts, m) {
       .def_readwrite("logLevel", &Config::logLevel)
       .def_readwrite("numThreads", &Config::numThreads)
       .def_readwrite("outputDir", &Config::outputDir);
-
-  sequencer.def(py::init<const Config&>()).def("run", &Sequencer::run);
 
   using ActsExamples::RandomNumbers;
   auto randomNumbers = py::class_<RandomNumbers>(m, "RandomNumbers");
@@ -47,4 +50,5 @@ PYBIND11_MODULE(_acts, m) {
 
   addExamplesDetector(m);
   addMaterial(m);
+  addGeometry(m);
 }
