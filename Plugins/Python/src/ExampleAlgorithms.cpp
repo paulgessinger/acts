@@ -13,6 +13,7 @@
 
 namespace py = pybind11;
 // using namespace ActsExamples;
+#define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
 
 template <typename stepper_t>
 void addStepper(const std::string& prefix, py::module_& m, py::module_& prop) {
@@ -35,11 +36,34 @@ void addStepper(const std::string& prefix, py::module_& m, py::module_& prop) {
                  prop, (prefix + "PropagationAlgorithm").c_str())
                  .def(py::init<const Config&, Acts::Logging::Level>());
 
-  py::class_<Config>(alg, "Config")
-      .def(py::init<propagator_t>())
-      .def_readwrite("randomNumberSvc", &Config::randomNumberSvc)
-      .def_readwrite("propagator", &Config::propagator)
-      .def_readwrite("ntests", &Config::ntests);
+  auto c = py::class_<Config>(alg, "Config").def(py::init<propagator_t>());
+#define _MEMBER(name) PY_MEMBER(c, Config, name)
+  _MEMBER(propagator);
+  _MEMBER(randomNumberSvc);
+  _MEMBER(mode);
+  _MEMBER(sterileLogger);
+  _MEMBER(debugOutput);
+  _MEMBER(energyLoss);
+  _MEMBER(multipleScattering);
+  _MEMBER(recordMaterialInteractions);
+  _MEMBER(ntests);
+  _MEMBER(d0Sigma);
+  _MEMBER(z0Sigma);
+  _MEMBER(phiSigma);
+  _MEMBER(thetaSigma);
+  _MEMBER(qpSigma);
+  _MEMBER(tSigma);
+  _MEMBER(phiRange);
+  _MEMBER(etaRange);
+  _MEMBER(ptRange);
+  _MEMBER(ptLoopers);
+  _MEMBER(maxStepSize);
+  _MEMBER(propagationStepCollection);
+  _MEMBER(propagationMaterialCollection);
+  _MEMBER(covarianceTransport);
+  _MEMBER(covariances);
+  _MEMBER(correlations);
+#undef _MEMBER
 }
 
 void addExamplesAlgorithms(py::module_& m) {
