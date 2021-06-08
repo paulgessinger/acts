@@ -30,6 +30,8 @@ pybind11_add_module(ActsPython
   src/ExamplesDetector.cpp
   src/Material.cpp
   src/Geometry.cpp
+  src/ExampleAlgorithms.cpp
+  src/MagneticField.cpp
 )
 set_target_properties(ActsPython PROPERTIES OUTPUT_NAME _acts)
 set_target_properties(ActsPython PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)

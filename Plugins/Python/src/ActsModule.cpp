@@ -1,3 +1,4 @@
+#include "Acts/Definitions/Units.hpp"
 #include "ActsExamples/Framework/RandomNumbers.hpp"
 #include "ActsExamples/Framework/Sequencer.hpp"
 
@@ -9,6 +10,58 @@ namespace py = pybind11;
 void addExamplesDetector(py::module_& m);
 void addMaterial(py::module_& m);
 void addGeometry(py::module_& m);
+void addExamplesAlgorithms(py::module_& m);
+void addMagneticField(py::module_& m);
+
+void addUnits(py::module_& m) {
+  auto u = m.def_submodule("UnitConstants");
+  using namespace Acts::UnitConstants;
+
+#define UNIT(x) u.attr(#x) = x;
+
+  UNIT(fm)
+  UNIT(pm)
+  UNIT(um)
+  UNIT(nm)
+  UNIT(mm)
+  UNIT(cm)
+  UNIT(m)
+  UNIT(km)
+  UNIT(mm2)
+  UNIT(cm2)
+  UNIT(m2)
+  UNIT(mm3)
+  UNIT(cm3)
+  UNIT(m3)
+  UNIT(s)
+  UNIT(fs)
+  UNIT(ps)
+  UNIT(ns)
+  UNIT(us)
+  UNIT(ms)
+  UNIT(min)
+  UNIT(h)
+  UNIT(mrad)
+  UNIT(rad)
+  UNIT(degree)
+  UNIT(eV)
+  UNIT(keV)
+  UNIT(MeV)
+  UNIT(GeV)
+  UNIT(TeV)
+  UNIT(J)
+  UNIT(u)
+  UNIT(g)
+  UNIT(kg)
+  UNIT(e)
+  UNIT(C)
+  UNIT(T)
+  UNIT(Gauss)
+  UNIT(kGauss)
+  UNIT(mol)
+
+#undef UNIT
+}
 
 PYBIND11_MODULE(_acts, m) {
   m.doc() = "Acts";
@@ -29,7 +82,8 @@ PYBIND11_MODULE(_acts, m) {
       py::class_<Sequencer>(m, "Sequencer")
           .def(py::init<const Config&>())
           .def("run", &Sequencer::run)
-          .def("addContextDecorator", &Sequencer::addContextDecorator);
+          .def("addContextDecorator", &Sequencer::addContextDecorator)
+          .def("addAlgorithm", &Sequencer::addAlgorithm);
 
   py::class_<Config>(sequencer, "Config")
       .def(py::init<>())
@@ -40,7 +94,9 @@ PYBIND11_MODULE(_acts, m) {
       .def_readwrite("outputDir", &Config::outputDir);
 
   using ActsExamples::RandomNumbers;
-  auto randomNumbers = py::class_<RandomNumbers>(m, "RandomNumbers");
+  auto randomNumbers =
+      py::class_<RandomNumbers, std::shared_ptr<RandomNumbers>>(
+          m, "RandomNumbers");
 
   py::class_<RandomNumbers::Config>(randomNumbers, "Config")
       .def(py::init<>())
@@ -48,7 +104,10 @@ PYBIND11_MODULE(_acts, m) {
 
   randomNumbers.def(py::init<const RandomNumbers::Config&>());
 
+  addUnits(m);
+  addGeometry(m);
+  addMagneticField(m);
   addExamplesDetector(m);
   addMaterial(m);
-  addGeometry(m);
+  addExamplesAlgorithms(m);
 }
