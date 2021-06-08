@@ -32,6 +32,7 @@ pybind11_add_module(ActsPython
   src/Geometry.cpp
   src/ExampleAlgorithms.cpp
   src/MagneticField.cpp
+  src/Output.cpp
 )
 
 if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
@@ -50,6 +51,7 @@ target_link_libraries(ActsPython PUBLIC
   ActsExamplesDetectorGeneric
   ActsExamplesMagneticField
   ActsExamplesIoRoot
+  ActsExamplesIoObj
 )
 
 

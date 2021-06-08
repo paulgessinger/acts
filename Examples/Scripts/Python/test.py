@@ -52,10 +52,24 @@ prop = acts.Propagator(stepper, nav)
 
 algCfg = acts.PropagationAlgorithm.Config(prop)
 algCfg.randomNumberSvc = rnd
-algCfg.ntests = 10
+algCfg.ntests = 1000
+algCfg.sterileLogger = False
+algCfg.propagationStepCollection = "propagation-steps"
 alg = acts.PropagationAlgorithm(algCfg, acts.logging.Level.INFO)
 
 s.addAlgorithm(alg)
+
+
+# output
+objWriterCfg = acts.ObjPropagationStepsWriter.Config()
+objWriterCfg.collection = "propagation-steps"
+objWriterCfg.outputDir = "obj"
+s.addWriter(acts.ObjPropagationStepsWriter(objWriterCfg))
+
+rootWriterCfg = acts.RootPropagationStepsWriter.Config()
+rootWriterCfg.collection = "propagation-steps"
+rootWriterCfg.filePath = "propagation_steps_python.root"
+s.addWriter(acts.RootPropagationStepsWriter(rootWriterCfg))
 
 
 s.run()
