@@ -25,10 +25,17 @@ auto DD4hepDetector::finalize(
     const boost::program_options::variables_map& vm,
     std::shared_ptr<const Acts::IMaterialDecorator> mdecorator)
     -> std::pair<TrackingGeometryPtr, ContextDecorators> {
-  Acts::GeometryContext dd4HepContext;
   // read the detector config & dd4hep detector
   auto dd4HepDetectorConfig =
       ActsExamples::Options::readDD4hepConfig<po::variables_map>(vm);
+  return finalize(dd4HepDetectorConfig, mdecorator);
+}
+
+auto DD4hepDetector::finalize(
+    const ActsExamples::DD4hep::DD4hepGeometryService::Config& config,
+    std::shared_ptr<const Acts::IMaterialDecorator> mdecorator)
+    -> std::pair<TrackingGeometryPtr, ContextDecorators> {
+  Acts::GeometryContext dd4HepContext;
   dd4HepDetectorConfig.matDecorator = mdecorator;
   auto geometrySvc =
       std::make_shared<ActsExamples::DD4hep::DD4hepGeometryService>(

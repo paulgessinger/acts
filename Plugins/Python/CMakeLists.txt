@@ -42,6 +42,7 @@ target_link_libraries(ActsPython PUBLIC
   ActsExamplesFramework
   ActsExamplesDetectorsCommon
   ActsExamplesDetectorGeneric
+  ActsExamplesDetectorDD4hep
   ActsExamplesMagneticField
   ActsExamplesIoRoot
 )
