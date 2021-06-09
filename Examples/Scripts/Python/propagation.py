@@ -5,10 +5,16 @@ import acts.examples
 
 u = acts.UnitConstants
 
-cfg = acts.examples.Sequencer.Config()
-cfg.events = 10
-cfg.numThreads = 1
-s = acts.examples.Sequencer(cfg)
+# cfg = acts.examples.Sequencer.Config()
+# cfg.events = 10
+# cfg.numThreads = 1
+# s = acts.examples.Sequencer(cfg)
+
+s = acts.examples.Sequencer(
+    events=10,
+    numThreads=1
+)
+
 
 rndCfg = acts.examples.RandomNumbers.Config()
 rndCfg.seed = 42
@@ -51,26 +57,37 @@ stepper = acts.EigenStepper(field)
 print("We're running with:", type(stepper).__name__)
 prop = acts.Propagator(stepper, nav)
 
-algCfg = acts.examples.PropagationAlgorithm.Config(prop)
-algCfg.randomNumberSvc = rnd
-algCfg.ntests = 1000
-algCfg.sterileLogger = False
-algCfg.propagationStepCollection = "propagation-steps"
-alg = acts.examples.PropagationAlgorithm(algCfg, acts.logging.Level.INFO)
+# algCfg = acts.examples.PropagationAlgorithm.Config(
+#     prop,
+#     randomNumberSvc = rnd,
+#     ntests = 1000,
+#     sterileLogger = False,
+#     propagationStepCollection = "propagation-steps"
+# )
+# alg = acts.examples.PropagationAlgorithm(algCfg, acts.logging.Level.INFO)
+
+alg = acts.examples.PropagationAlgorithm(
+    propagator=prop, 
+    level=acts.logging.Level.INFO,
+    randomNumberSvc = rnd,
+    ntests = 1000,
+    sterileLogger = False,
+    propagationStepCollection = "propagation-steps",
+)
 
 s.addAlgorithm(alg)
 
 
 # output
-objWriterCfg = acts.examples.ObjPropagationStepsWriter.Config()
-objWriterCfg.collection = "propagation-steps"
-objWriterCfg.outputDir = "obj"
-s.addWriter(acts.examples.ObjPropagationStepsWriter(objWriterCfg))
+s.addWriter(acts.examples.ObjPropagationStepsWriter(
+    collection="propagation-steps",
+    outputDir="obj"
+))
 
-rootWriterCfg = acts.examples.RootPropagationStepsWriter.Config()
-rootWriterCfg.collection = "propagation-steps"
-rootWriterCfg.filePath = "propagation_steps_python.root"
-s.addWriter(acts.examples.RootPropagationStepsWriter(rootWriterCfg))
+s.addWriter(acts.examples.RootPropagationStepsWriter(
+    collection="propagation-steps",
+    filePath="propagation_steps_python.root"
+))
 
 
 s.run()

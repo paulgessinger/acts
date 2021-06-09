@@ -23,39 +23,42 @@ vtxGen.stddev = acts.Vector4(0, 0, 0, 0)
 ptclGenCfg = acts.examples.ParametricParticleGenerator.Config()
 ptclGen = acts.examples.ParametricParticleGenerator(ptclGenCfg)
 
-evGenCfg = acts.examples.EventGenerator.Config()
 g = acts.examples.EventGenerator.Generator()
 g.multiplicity = acts.examples.FixedMultiplicityGenerator()
 g.vertex = vtxGen
 g.particles = ptclGen
-evGenCfg.generators = [g]
-evGenCfg.outputParticles = "particles_input"
-evGenCfg.randomNumbers = rnd
-evGen = acts.examples.EventGenerator(evGenCfg, acts.logging.VERBOSE)
+
+evGen = acts.examples.EventGenerator(
+    level=acts.logging.VERBOSE,
+    generators=[g],
+    outputParticles="particles_input",
+    randomNumbers=rnd
+)
 
 # Simulation
-algCfg = acts.examples.FatrasAlgorithm.Config()
-algCfg.inputParticles = "particles_input"
-algCfg.outputParticlesInitial = "particles_initial"
-algCfg.outputParticlesFinal = "particles_final"
-algCfg.outputSimHits = "simhits"
-algCfg.randomNumbers = rnd
-algCfg.trackingGeometry = trackingGeometry
-algCfg.magneticField = field
-alg = acts.examples.FatrasAlgorithm(algCfg, acts.logging.VERBOSE)
+alg = acts.examples.FatrasAlgorithm(
+    level=acts.logging.VERBOSE,
+    inputParticles = "particles_input",
+    outputParticlesInitial = "particles_initial",
+    outputParticlesFinal = "particles_final",
+    outputSimHits = "simhits",
+    randomNumbers = rnd,
+    trackingGeometry = trackingGeometry,
+    magneticField = field
+)
 
 # Output
-csvCfg = acts.examples.CsvParticleWriter.Config()
-csvCfg.outputDir = "csv"
-csvCfg.inputParticles = "particles_final"
-csvCfg.outputStem = "particles_final"
-csv = acts.examples.CsvParticleWriter(csvCfg)
+csv = acts.examples.CsvParticleWriter(
+    outputDir = "csv",
+    inputParticles = "particles_final",
+    outputStem = "particles_final"
+)
 
 # Sequencer
-sCfg = acts.examples.Sequencer.Config()
-sCfg.events = 10
-sCfg.numThreads = 1
-s = acts.examples.Sequencer(sCfg)
+s = acts.examples.Sequencer(
+    events=10,
+    numThreads=1
+)
 
 s.addReader(evGen)
 s.addAlgorithm(alg)
