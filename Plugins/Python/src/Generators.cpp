@@ -5,6 +5,7 @@
 #include "ActsExamples/Generators/VertexGenerators.hpp"
 #include "ActsExamples/Propagation/PropagationAlgorithm.hpp"
 
+#include <cmath>
 #include <memory>
 
 #include <pybind11/functional.h>
@@ -12,6 +13,15 @@
 #include <pybind11/stl.h>
 
 namespace py = pybind11;
+
+namespace {
+double thetaToEta(double theta) {
+  return -1 * std::log(std::tan(theta / 2.));
+}
+double etaToTheta(double eta) {
+  return 2 * std::atan(std::exp(-eta));
+}
+}  // namespace
 
 void addGenerators(py::module_& mex) {
   py::class_<ActsExamples::GaussianVertexGenerator>(mex,
@@ -46,11 +56,49 @@ void addGenerators(py::module_& mex) {
         .def_readwrite("phiMax", &Config::phiMax)
         .def_readwrite("thetaMin", &Config::thetaMin)
         .def_readwrite("thetaMax", &Config::thetaMax)
-        .def_readwrite("pMin", &Config::pMax)
+        .def_readwrite("pMin", &Config::pMin)
+        .def_readwrite("pMax", &Config::pMax)
         .def_readwrite("pTransverse", &Config::pTransverse)
         .def_readwrite("pdg", &Config::pdg)
         .def_readwrite("randomizeCharge", &Config::randomizeCharge)
-        .def_readwrite("numParticles", &Config::numParticles);
+        .def_readwrite("numParticles", &Config::numParticles)
+        .def_property(
+            "p",
+            [](Config& cfg) {
+              return std::pair{cfg.pMin, cfg.pMax};
+            },
+            [](Config& cfg, std::pair<double, double> value) {
+              cfg.pMin = value.first;
+              cfg.pMax = value.second;
+            })
+        .def_property(
+            "phi",
+            [](Config& cfg) {
+              return std::pair{cfg.phiMin, cfg.phiMax};
+            },
+            [](Config& cfg, std::pair<double, double> value) {
+              cfg.phiMin = value.first;
+              cfg.phiMax = value.second;
+            })
+        .def_property(
+            "theta",
+            [](Config& cfg) {
+              return std::pair{cfg.thetaMin, cfg.thetaMax};
+            },
+            [](Config& cfg, std::pair<double, double> value) {
+              cfg.thetaMin = value.first;
+              cfg.thetaMax = value.second;
+            })
+        .def_property(
+            "eta",
+            [](Config& cfg) {
+              return std::pair{thetaToEta(cfg.thetaMin),
+                               thetaToEta(cfg.thetaMax)};
+            },
+            [](Config& cfg, std::pair<double, double> value) {
+              cfg.thetaMin = etaToTheta(value.first);
+              cfg.thetaMax = etaToTheta(value.second);
+            });
   }
 
   py::class_<ActsExamples::FixedMultiplicityGenerator>(
