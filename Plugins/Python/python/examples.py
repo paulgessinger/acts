@@ -7,11 +7,12 @@ _propagators = []
 _propagation_algorithms = []
 for prefix in ("Eigen", "Atlas", "StraightLine"):
     _propagators.append(getattr(acts._acts._propagator, f"{prefix}Propagator"))
-    _propagation_algorithms.append(getattr(acts._acts._examples, f"{prefix}PropagationAlgorithm"))
+    _propagation_algorithms.append(
+        getattr(acts._acts._examples, f"{prefix}PropagationAlgorithm")
+    )
 
 
-class _propagationAlgorithmHelper():
-
+class _propagationAlgorithmHelper:
     @staticmethod
     def Config(propagator, **kwargs):
         for prop, alg in zip(_propagators, _propagation_algorithms):
@@ -22,7 +23,6 @@ class _propagationAlgorithmHelper():
                 return cfg
 
         raise TypeError(f"Unknown propagator {type(propagator).__name__}")
-
 
     @staticmethod
     def __call__(*args, **kwargs):
@@ -45,7 +45,9 @@ class _propagationAlgorithmHelper():
 
         raise TypeError(f"Unknown propagator config {type(config).__name__}")
 
+
 PropagationAlgorithm = _propagationAlgorithmHelper()
+
 
 def _make_config_adapter(cls):
     class wrapped(cls):
@@ -65,12 +67,16 @@ def _make_config_adapter(cls):
                 else:
                     _kwargs[k] = v
             super().__init__(cfg, *args, **_kwargs)
+
     return wrapped
 
+
 import inspect
+
 for name, cls in inspect.getmembers(acts._acts._examples, inspect.isclass):
     if not hasattr(cls, "Config"):
         continue
-    if name.endswith("Detector"): continue
-    globals()[name] = _make_config_adapter(cls) 
-
+    if name.endswith("Detector"):
+        continue
+    print(name)
+    globals()[name] = _make_config_adapter(cls)

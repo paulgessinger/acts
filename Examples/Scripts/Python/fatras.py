@@ -18,8 +18,9 @@ field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 vtxGen = acts.examples.GaussianVertexGenerator()
 vtxGen.stddev = acts.Vector4(0, 0, 0, 0)
 
-ptclGenCfg = acts.examples.ParametricParticleGenerator.Config()
-ptclGen = acts.examples.ParametricParticleGenerator(ptclGenCfg)
+ptclGen = acts.examples.ParametricParticleGenerator(
+    p=(1 * u.GeV, 10 * u.GeV), eta=(-2, 2)
+)
 
 g = acts.examples.EventGenerator.Generator()
 g.multiplicity = acts.examples.FixedMultiplicityGenerator()
