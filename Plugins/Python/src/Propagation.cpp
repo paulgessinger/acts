@@ -34,7 +34,8 @@ void addStepper(const std::string& prefix, py::module_& m, py::module_& prop,
   auto alg = py::class_<Algorithm, ActsExamples::BareAlgorithm,
                         std::shared_ptr<Algorithm>>(
                  mex, (prefix + "PropagationAlgorithm").c_str())
-                 .def(py::init<const Config&, Acts::Logging::Level>());
+                 .def(py::init<const Config&, Acts::Logging::Level>(),
+                      py::arg("propagator"), py::arg("level"));
 
   auto c = py::class_<Config>(alg, "Config").def(py::init<propagator_t>());
 #define _MEMBER(name) PY_MEMBER(c, Config, name)

@@ -10,7 +10,7 @@
 namespace py = pybind11;
 #define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
 
-void addExamplesAlgorithms(py::module_& mex, py::module_& prop) {
+void addExamplesAlgorithms(py::module_& mex, py::module_& /*prop*/) {
   auto iAlgorithm =
       py::class_<ActsExamples::IAlgorithm,
                  std::shared_ptr<ActsExamples::IAlgorithm>>(mex, "IAlgorithm");
@@ -27,7 +27,8 @@ void addExamplesAlgorithms(py::module_& mex, py::module_& prop) {
         py::class_<ActsExamples::FatrasAlgorithm, ActsExamples::BareAlgorithm,
                    std::shared_ptr<ActsExamples::FatrasAlgorithm>>(
             mex, "FatrasAlgorithm")
-            .def(py::init<const Config&, Acts::Logging::Level>());
+            .def(py::init<const Config&, Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"));
 
     auto c = py::class_<Config>(alg, "Config").def(py::init<>());
 #define _MEMBER(name) PY_MEMBER(c, Config, name)
