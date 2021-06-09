@@ -10,15 +10,9 @@ u = acts.UnitConstants
 # cfg.numThreads = 1
 # s = acts.examples.Sequencer(cfg)
 
-s = acts.examples.Sequencer(
-    events=10,
-    numThreads=1
-)
+s = acts.examples.Sequencer(events=10, numThreads=1)
 
-
-rndCfg = acts.examples.RandomNumbers.Config()
-rndCfg.seed = 42
-rnd = acts.examples.RandomNumbers(rndCfg)
+rnd = acts.examples.RandomNumbers(seed=42)
 
 # print("Building generic detector")
 # gdc = acts.examples.GenericDetector.Config()
@@ -26,9 +20,7 @@ rnd = acts.examples.RandomNumbers(rndCfg)
 # trackingGeometry, contextDecorators = detector.finalize(gdc, None)
 
 dd4hepCfg = acts.examples.DD4hepDetector.Config()
-dd4hepCfg.xmlFileNames = [
-    "thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"
-]
+dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
 detector = acts.examples.DD4hepDetector()
 trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
 
@@ -44,9 +36,9 @@ field = acts.NullBField()
 #     nCoils = 1194
 # )
 # field = acts.solenoidFieldMap(
-#     rlim=(0, 1200*u.mm), 
-#     zlim=(-5000*u.mm, 5000*u.mm), 
-#     nbins=(50, 50), 
+#     rlim=(0, 1200*u.mm),
+#     zlim=(-5000*u.mm, 5000*u.mm),
+#     nbins=(50, 50),
 #     field=solenoid
 # )
 nav = acts.Navigator(trackingGeometry)
@@ -67,27 +59,29 @@ prop = acts.Propagator(stepper, nav)
 # alg = acts.examples.PropagationAlgorithm(algCfg, acts.logging.Level.INFO)
 
 alg = acts.examples.PropagationAlgorithm(
-    propagator=prop, 
+    propagator=prop,
     level=acts.logging.Level.INFO,
-    randomNumberSvc = rnd,
-    ntests = 1000,
-    sterileLogger = False,
-    propagationStepCollection = "propagation-steps",
+    randomNumberSvc=rnd,
+    ntests=1000,
+    sterileLogger=False,
+    propagationStepCollection="propagation-steps",
 )
 
 s.addAlgorithm(alg)
 
 
 # output
-s.addWriter(acts.examples.ObjPropagationStepsWriter(
-    collection="propagation-steps",
-    outputDir="obj"
-))
+s.addWriter(
+    acts.examples.ObjPropagationStepsWriter(
+        collection="propagation-steps", outputDir="obj"
+    )
+)
 
-s.addWriter(acts.examples.RootPropagationStepsWriter(
-    collection="propagation-steps",
-    filePath="propagation_steps_python.root"
-))
+s.addWriter(
+    acts.examples.RootPropagationStepsWriter(
+        collection="propagation-steps", filePath="propagation_steps_python.root"
+    )
+)
 
 
 s.run()
