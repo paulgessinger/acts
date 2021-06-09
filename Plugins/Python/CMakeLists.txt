@@ -34,6 +34,7 @@ pybind11_add_module(ActsPython
   src/MagneticField.cpp
   src/Output.cpp
   src/Propagation.cpp
+  src/Generators.cpp
 )
 
 if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
@@ -52,7 +53,10 @@ target_link_libraries(ActsPython PUBLIC
   ActsExamplesDetectorGeneric
   ActsExamplesMagneticField
   ActsExamplesIoRoot
+  ActsExamplesIoCsv
   ActsExamplesIoObj
+  ActsExamplesGenerators
+  ActsExamplesFatras
 )
 
 

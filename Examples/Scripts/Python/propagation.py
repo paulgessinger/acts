@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import acts
+import acts.examples
 
 u = acts.UnitConstants
 
@@ -61,15 +62,15 @@ s.addAlgorithm(alg)
 
 
 # output
-objWriterCfg = acts.ObjPropagationStepsWriter.Config()
+objWriterCfg = acts.examples.ObjPropagationStepsWriter.Config()
 objWriterCfg.collection = "propagation-steps"
 objWriterCfg.outputDir = "obj"
-s.addWriter(acts.ObjPropagationStepsWriter(objWriterCfg))
+s.addWriter(acts.examples.ObjPropagationStepsWriter(objWriterCfg))
 
-rootWriterCfg = acts.RootPropagationStepsWriter.Config()
+rootWriterCfg = acts.examples.RootPropagationStepsWriter.Config()
 rootWriterCfg.collection = "propagation-steps"
 rootWriterCfg.filePath = "propagation_steps_python.root"
-s.addWriter(acts.RootPropagationStepsWriter(rootWriterCfg))
+s.addWriter(acts.examples.RootPropagationStepsWriter(rootWriterCfg))
 
 
 s.run()

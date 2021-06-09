@@ -21,9 +21,6 @@ void addMagneticField(py::module_& m) {
   m.def("solenoidFieldMap", &Acts::solenoidFieldMap, py::arg("rlim"),
         py::arg("zlim"), py::arg("nbins"), py::arg("field"));
 
-  py::class_<Acts::Vector3>(m, "Vector3")
-      .def(py::init<double, double, double>());
-
   py::class_<Acts::ConstantBField, Acts::MagneticFieldProvider,
              std::shared_ptr<Acts::ConstantBField>>(m, "ConstantBField")
       .def(py::init<Acts::Vector3>());
