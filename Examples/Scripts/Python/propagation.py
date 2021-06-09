@@ -10,25 +10,25 @@ u = acts.UnitConstants
 # cfg.numThreads = 1
 # s = acts.examples.Sequencer(cfg)
 
-s = acts.examples.Sequencer(events=10, numThreads=1)
+s = acts.examples.Sequencer(events=1000, numThreads=20)
 
 rnd = acts.examples.RandomNumbers(seed=42)
 
 # print("Building generic detector")
-# gdc = acts.examples.GenericDetector.Config()
-# detector = acts.examples.GenericDetector()
-# trackingGeometry, contextDecorators = detector.finalize(gdc, None)
+gdc = acts.examples.GenericDetector.Config()
+detector = acts.examples.GenericDetector()
+trackingGeometry, contextDecorators = detector.finalize(gdc, None)
 
-dd4hepCfg = acts.examples.DD4hepDetector.Config()
-dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-detector = acts.examples.DD4hepDetector()
-trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
+# dd4hepCfg = acts.examples.DD4hepDetector.Config()
+# dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+# detector = acts.examples.DD4hepDetector()
+# trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
 
 for cdr in contextDecorators:
     s.addContextDecorator(cdr)
 
 field = acts.NullBField()
-# field = acts.ConstantBField(acts.Vector3(0, 0, 2*acts.UnitConstants.T))
+# field = acts.ConstantBField(acts.Vector3(0, 0, 2 * acts.UnitConstants.T))
 # solenoid = acts.SolenoidBField(
 #     radius = 1200*u.mm,
 #     length = 6000*u.mm,
@@ -63,7 +63,7 @@ alg = acts.examples.PropagationAlgorithm(
     level=acts.logging.Level.INFO,
     randomNumberSvc=rnd,
     ntests=1000,
-    sterileLogger=False,
+    sterileLogger=True,
     propagationStepCollection="propagation-steps",
 )
 
@@ -71,17 +71,17 @@ s.addAlgorithm(alg)
 
 
 # output
-s.addWriter(
-    acts.examples.ObjPropagationStepsWriter(
-        collection="propagation-steps", outputDir="obj"
-    )
-)
+# s.addWriter(
+#     acts.examples.ObjPropagationStepsWriter(
+#         collection="propagation-steps", outputDir="obj"
+#     )
+# )
 
-s.addWriter(
-    acts.examples.RootPropagationStepsWriter(
-        collection="propagation-steps", filePath="propagation_steps_python.root"
-    )
-)
+# s.addWriter(
+#     acts.examples.RootPropagationStepsWriter(
+#         collection="propagation-steps", filePath="propagation_steps_python.root"
+#     )
+# )
 
 
 s.run()

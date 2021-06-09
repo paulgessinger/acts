@@ -24,31 +24,73 @@ double etaToTheta(double eta) {
 }  // namespace
 
 void addGenerators(py::module_& mex) {
-  py::class_<ActsExamples::GaussianVertexGenerator>(mex,
-                                                    "GaussianVertexGenerator")
+  {
+    using Config = ActsExamples::EventGenerator::Config;
+    auto gen = py::class_<ActsExamples::EventGenerator, ActsExamples::IReader,
+                          std::shared_ptr<ActsExamples::EventGenerator>>(
+                   mex, "EventGenerator")
+                   .def(py::init<const Config&, Acts::Logging::Level>(),
+                        py::arg("config"), py::arg("level"));
+
+    py::class_<ActsExamples::EventGenerator::VertexGenerator,
+               std::shared_ptr<ActsExamples::EventGenerator::VertexGenerator>>(
+        gen, "VertexGenerator");
+    py::class_<
+        ActsExamples::EventGenerator::ParticlesGenerator,
+        std::shared_ptr<ActsExamples::EventGenerator::ParticlesGenerator>>(
+        gen, "ParticlesGenerator");
+    py::class_<
+        ActsExamples::EventGenerator::MultiplicityGenerator,
+        std::shared_ptr<ActsExamples::EventGenerator::MultiplicityGenerator>>(
+        gen, "MultiplicityGenerator");
+
+    using Generator = ActsExamples::EventGenerator::Generator;
+    py::class_<Generator>(gen, "Generator")
+        .def(py::init<>())
+        .def_readwrite("multiplicity", &Generator::multiplicity)
+        .def_readwrite("vertex", &Generator::vertex)
+        .def_readwrite("particles", &Generator::particles);
+
+    py::class_<Config>(gen, "Config")
+        .def(py::init<>())
+        .def_readwrite("outputParticles", &Config::outputParticles)
+        .def_readwrite("generators", &Config::generators)
+        .def_readwrite("randomNumbers", &Config::randomNumbers);
+  }
+
+  py::class_<ActsExamples::GaussianVertexGenerator,
+             ActsExamples::EventGenerator::VertexGenerator,
+             std::shared_ptr<ActsExamples::GaussianVertexGenerator>>(
+      mex, "GaussianVertexGenerator")
       .def(py::init<>())
       .def_readwrite("stddev", &ActsExamples::GaussianVertexGenerator::stddev)
-      .def_readwrite("mean", &ActsExamples::GaussianVertexGenerator::mean)
-      .def("__call__", &ActsExamples::GaussianVertexGenerator::operator(),
-           py::is_operator());
+      .def_readwrite("mean", &ActsExamples::GaussianVertexGenerator::mean);
+  // .def("__call__", &ActsExamples::GaussianVertexGenerator::operator(),
+  //      py::is_operator());
 
-  py::class_<ActsExamples::FixedVertexGenerator>(mex, "FixedVertexGenerator")
+  py::class_<ActsExamples::FixedVertexGenerator,
+             ActsExamples::EventGenerator::VertexGenerator,
+             std::shared_ptr<ActsExamples::FixedVertexGenerator>>(
+      mex, "FixedVertexGenerator")
       .def(py::init<>())
-      .def_readwrite("fixed", &ActsExamples::FixedVertexGenerator::fixed)
-      .def("__call__", &ActsExamples::FixedVertexGenerator::operator(),
-           py::is_operator());
+      .def_readwrite("fixed", &ActsExamples::FixedVertexGenerator::fixed);
+  // .def("__call__", &ActsExamples::FixedVertexGenerator::operator(),
+  //      py::is_operator());
 
   py::class_<ActsExamples::SimParticle>(mex, "SimParticle");
   py::class_<ActsExamples::SimParticleContainer>(mex, "SimParticleContainer");
 
   {
     using Config = ActsExamples::ParametricParticleGenerator::Config;
-    auto gen = py::class_<ActsExamples::ParametricParticleGenerator>(
-                   mex, "ParametricParticleGenerator")
-                   .def(py::init<const Config&>())
-                   .def("__call__",
-                        &ActsExamples::ParametricParticleGenerator::operator(),
-                        py::is_operator());
+    auto gen =
+        py::class_<ActsExamples::ParametricParticleGenerator,
+                   ActsExamples::EventGenerator::ParticlesGenerator,
+                   std::shared_ptr<ActsExamples::ParametricParticleGenerator>>(
+            mex, "ParametricParticleGenerator")
+            .def(py::init<const Config&>());
+    //  .def("__call__",
+    //       &ActsExamples::ParametricParticleGenerator::operator(),
+    //       py::is_operator());
 
     py::class_<Config>(gen, "Config")
         .def(py::init<>())
@@ -101,39 +143,21 @@ void addGenerators(py::module_& mex) {
             });
   }
 
-  py::class_<ActsExamples::FixedMultiplicityGenerator>(
+  py::class_<ActsExamples::FixedMultiplicityGenerator,
+             ActsExamples::EventGenerator::MultiplicityGenerator,
+             std::shared_ptr<ActsExamples::FixedMultiplicityGenerator>>(
       mex, "FixedMultiplicityGenerator")
       .def(py::init<>())
-      .def_readwrite("n", &ActsExamples::FixedMultiplicityGenerator::n)
-      .def("__call__", &ActsExamples::FixedMultiplicityGenerator::operator(),
-           py::is_operator());
+      .def_readwrite("n", &ActsExamples::FixedMultiplicityGenerator::n);
+  // .def("__call__", &ActsExamples::FixedMultiplicityGenerator::operator(),
+  //  py::is_operator());
 
-  py::class_<ActsExamples::PoissonMultiplicityGenerator>(
+  py::class_<ActsExamples::PoissonMultiplicityGenerator,
+             ActsExamples::EventGenerator::MultiplicityGenerator,
+             std::shared_ptr<ActsExamples::PoissonMultiplicityGenerator>>(
       mex, "PoissonMultiplicityGenerator")
       .def(py::init<>())
-      .def_readwrite("mean", &ActsExamples::PoissonMultiplicityGenerator::mean)
-      .def("__call__", &ActsExamples::PoissonMultiplicityGenerator::operator(),
-           py::is_operator());
-
-  {
-    using Config = ActsExamples::EventGenerator::Config;
-    auto gen = py::class_<ActsExamples::EventGenerator, ActsExamples::IReader,
-                          std::shared_ptr<ActsExamples::EventGenerator>>(
-                   mex, "EventGenerator")
-                   .def(py::init<const Config&, Acts::Logging::Level>(),
-                        py::arg("config"), py::arg("level"));
-
-    using Generator = ActsExamples::EventGenerator::Generator;
-    py::class_<Generator>(gen, "Generator")
-        .def(py::init<>())
-        .def_readwrite("multiplicity", &Generator::multiplicity)
-        .def_readwrite("vertex", &Generator::vertex)
-        .def_readwrite("particles", &Generator::particles);
-
-    py::class_<Config>(gen, "Config")
-        .def(py::init<>())
-        .def_readwrite("outputParticles", &Config::outputParticles)
-        .def_readwrite("generators", &Config::generators)
-        .def_readwrite("randomNumbers", &Config::randomNumbers);
-  }
+      .def_readwrite("mean", &ActsExamples::PoissonMultiplicityGenerator::mean);
+  // .def("__call__", &ActsExamples::PoissonMultiplicityGenerator::operator(),
+  //      py::is_operator());
 }

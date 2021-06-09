@@ -13,21 +13,24 @@
 #pragma once
 
 #include "ActsExamples/Framework/RandomNumbers.hpp"
+#include "ActsExamples/Generators/EventGenerator.hpp"
 
 #include <random>
 
 namespace ActsExamples {
 
-struct FixedMultiplicityGenerator {
+struct FixedMultiplicityGenerator
+    : public EventGenerator::MultiplicityGenerator {
   size_t n = 1;
 
-  size_t operator()(RandomEngine& /* unused */) const { return n; }
+  size_t generate(RandomEngine& /* unused */) const override { return n; }
 };
 
-struct PoissonMultiplicityGenerator {
+struct PoissonMultiplicityGenerator
+    : public EventGenerator::MultiplicityGenerator {
   double mean = 1;
 
-  size_t operator()(RandomEngine& rng) const {
+  size_t generate(RandomEngine& rng) const override {
     return (0 < mean) ? std::poisson_distribution<size_t>(mean)(rng) : 0;
   }
 };
