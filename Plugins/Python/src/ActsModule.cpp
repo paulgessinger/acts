@@ -8,9 +8,10 @@
 namespace py = pybind11;
 
 void addExamplesDetector(py::module_& m);
-void addMaterial(py::module_& m);
+void addMaterial(py::module_& m, py::module_& mex);
 void addGeometry(py::module_& m);
-void addExamplesAlgorithms(py::module_& m);
+void addExamplesAlgorithms(py::module_& m, py::module_& prop);
+void addPropagation(py::module_& m, py::module_& prop);
 void addMagneticField(py::module_& m);
 void addOutput(py::module_& m);
 
@@ -67,6 +68,8 @@ void addUnits(py::module_& m) {
 PYBIND11_MODULE(_acts, m) {
   m.doc() = "Acts";
 
+  auto mex = m.def_submodule("_examples");
+
   auto logging = m.def_submodule("logging", "");
   py::enum_<Acts::Logging::Level>(logging, "Level")
       .value("VERBOSE", Acts::Logging::VERBOSE)
@@ -78,12 +81,12 @@ PYBIND11_MODULE(_acts, m) {
       .export_values();
 
   py::class_<ActsExamples::IWriter, std::shared_ptr<ActsExamples::IWriter>>(
-      m, "IWriter");
+      mex, "IWriter");
 
   using ActsExamples::Sequencer;
   using Config = Sequencer::Config;
   auto sequencer =
-      py::class_<Sequencer>(m, "Sequencer")
+      py::class_<Sequencer>(mex, "Sequencer")
           .def(py::init<const Config&>())
           .def("run", &Sequencer::run)
           .def("addContextDecorator", &Sequencer::addContextDecorator)
@@ -101,7 +104,7 @@ PYBIND11_MODULE(_acts, m) {
   using ActsExamples::RandomNumbers;
   auto randomNumbers =
       py::class_<RandomNumbers, std::shared_ptr<RandomNumbers>>(
-          m, "RandomNumbers");
+          mex, "RandomNumbers");
 
   py::class_<RandomNumbers::Config>(randomNumbers, "Config")
       .def(py::init<>())
@@ -109,11 +112,14 @@ PYBIND11_MODULE(_acts, m) {
 
   randomNumbers.def(py::init<const RandomNumbers::Config&>());
 
+  auto prop = m.def_submodule("propagator");
+
   addUnits(m);
   addGeometry(m);
   addMagneticField(m);
-  addExamplesDetector(m);
-  addMaterial(m);
-  addExamplesAlgorithms(m);
+  addExamplesDetector(mex);
+  addMaterial(m, mex);
+  addPropagation(m, prop);
+  addExamplesAlgorithms(mex, prop);
   addOutput(m);
 }
