@@ -4,25 +4,25 @@ import acts
 
 u = acts.UnitConstants
 
-cfg = acts.Sequencer.Config()
+cfg = acts.examples.Sequencer.Config()
 cfg.events = 10
 cfg.numThreads = 1
-s = acts.Sequencer(cfg)
+s = acts.examples.Sequencer(cfg)
 
-rndCfg = acts.RandomNumbers.Config()
+rndCfg = acts.examples.RandomNumbers.Config()
 rndCfg.seed = 42
-rnd = acts.RandomNumbers(rndCfg)
+rnd = acts.examples.RandomNumbers(rndCfg)
 
 # print("Building generic detector")
-# gdc = acts.GenericDetector.Config()
-# detector = acts.GenericDetector()
+# gdc = acts.examples.GenericDetector.Config()
+# detector = acts.examples.GenericDetector()
 # trackingGeometry, contextDecorators = detector.finalize(gdc, None)
 
-dd4hepCfg = acts.DD4hepDetector.Config()
+dd4hepCfg = acts.examples.DD4hepDetector.Config()
 dd4hepCfg.xmlFileNames = [
     "thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"
 ]
-detector = acts.DD4hepDetector()
+detector = acts.examples.DD4hepDetector()
 trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
 
 for cdr in contextDecorators:
@@ -50,12 +50,12 @@ stepper = acts.EigenStepper(field)
 print("We're running with:", type(stepper).__name__)
 prop = acts.Propagator(stepper, nav)
 
-algCfg = acts.PropagationAlgorithm.Config(prop)
+algCfg = acts.examples.PropagationAlgorithm.Config(prop)
 algCfg.randomNumberSvc = rnd
 algCfg.ntests = 1000
 algCfg.sterileLogger = False
 algCfg.propagationStepCollection = "propagation-steps"
-alg = acts.PropagationAlgorithm(algCfg, acts.logging.Level.INFO)
+alg = acts.examples.PropagationAlgorithm(algCfg, acts.logging.Level.INFO)
 
 s.addAlgorithm(alg)
 

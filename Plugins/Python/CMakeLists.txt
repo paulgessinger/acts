@@ -33,6 +33,7 @@ pybind11_add_module(ActsPython
   src/ExampleAlgorithms.cpp
   src/MagneticField.cpp
   src/Output.cpp
+  src/Propagation.cpp
 )
 
 if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
@@ -59,16 +60,30 @@ add_custom_target(ActsPythonPyCode)
 
 configure_file(python/_version.py ${_python_dir}/acts/)
 
+set(py_files 
+  __init__.py 
+  setup.py
+  examples.py
+)
+
+foreach(f ${py_files})
 add_custom_command(
         TARGET ActsPythonPyCode POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${CMAKE_CURRENT_SOURCE_DIR}/python/__init__.py
-                ${_python_dir}/acts/__init__.py)
-add_custom_command(
-        TARGET ActsPythonPyCode POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${CMAKE_CURRENT_SOURCE_DIR}/python/setup.py
-                ${_python_dir}/setup.py)
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+                ${CMAKE_CURRENT_SOURCE_DIR}/python/${f}
+                ${_python_dir}/acts/${f})
+endforeach()
+
+# add_custom_command(
+#         TARGET ActsPythonPyCode POST_BUILD
+#         COMMAND ${CMAKE_COMMAND} -E create_symlink
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/python/__init__.py
+#                 ${_python_dir}/acts/__init__.py)
+# add_custom_command(
+#         TARGET ActsPythonPyCode POST_BUILD
+#         COMMAND ${CMAKE_COMMAND} -E create_symlink
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/python/setup.py
+#                 ${_python_dir}/setup.py)
 
 add_dependencies(ActsPython ActsPythonPyCode)
 

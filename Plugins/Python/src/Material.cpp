@@ -12,7 +12,7 @@ using namespace ActsExamples;
 
 #define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
 
-void addMaterial(py::module_& m) {
+void addMaterial(py::module_& m, py::module_& mex) {
   {
     py::class_<Acts::IMaterialDecorator,
                std::shared_ptr<Acts::IMaterialDecorator>>(m,
@@ -20,10 +20,11 @@ void addMaterial(py::module_& m) {
   }
 
   {
-    auto rmd = py::class_<RootMaterialDecorator,
-                          std::shared_ptr<RootMaterialDecorator>,
-                          Acts::IMaterialDecorator>(m, "RootMaterialDecorator")
-                   .def(py::init<RootMaterialDecorator::Config>());
+    auto rmd =
+        py::class_<RootMaterialDecorator,
+                   std::shared_ptr<RootMaterialDecorator>,
+                   Acts::IMaterialDecorator>(mex, "RootMaterialDecorator")
+            .def(py::init<RootMaterialDecorator::Config>());
 
     using Config = RootMaterialDecorator::Config;
     auto c =

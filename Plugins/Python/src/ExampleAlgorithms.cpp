@@ -16,19 +16,8 @@ namespace py = pybind11;
 #define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
 
 template <typename stepper_t>
-void addStepper(const std::string& prefix, py::module_& m, py::module_& prop) {
-  auto stepper = py::class_<stepper_t>(m, (prefix + "Stepper").c_str());
-
-  if constexpr (std::is_same_v<stepper_t, Acts::StraightLineStepper>) {
-    stepper.def(py::init<>());
-  } else {
-    stepper.def(py::init<std::shared_ptr<const Acts::MagneticFieldProvider>>());
-  }
-
+void addStepper(const std::string& prefix, py::module_& prop) {
   using propagator_t = Acts::Propagator<stepper_t, Acts::Navigator>;
-  py::class_<propagator_t>(prop, (prefix + "Propagator").c_str())
-      .def(py::init<stepper_t, Acts::Navigator>());
-
   using Algorithm = typename ActsExamples::PropagationAlgorithm<propagator_t>;
   using Config = typename Algorithm::Config;
   auto alg = py::class_<Algorithm, ActsExamples::BareAlgorithm,
@@ -66,25 +55,17 @@ void addStepper(const std::string& prefix, py::module_& m, py::module_& prop) {
 #undef _MEMBER
 }
 
-void addExamplesAlgorithms(py::module_& m) {
-  py::class_<Acts::Navigator, std::shared_ptr<Acts::Navigator>>(m, "Navigator")
-      .def(py::init<std::shared_ptr<const Acts::TrackingGeometry>>())
-      .def_readwrite("resolveMaterial", &Acts::Navigator::resolveMaterial)
-      .def_readwrite("resolvePassive", &Acts::Navigator::resolvePassive)
-      .def_readwrite("resolveSensitive", &Acts::Navigator::resolveSensitive);
-
+void addExamplesAlgorithms(py::module_& mex, py::module_& prop) {
   auto iAlgorithm =
       py::class_<ActsExamples::IAlgorithm,
-                 std::shared_ptr<ActsExamples::IAlgorithm>>(m, "IAlgorithm");
+                 std::shared_ptr<ActsExamples::IAlgorithm>>(mex, "IAlgorithm");
 
   auto bareAlgorithm =
       py::class_<ActsExamples::BareAlgorithm, ActsExamples::IAlgorithm,
-                 std::shared_ptr<ActsExamples::BareAlgorithm>>(m,
+                 std::shared_ptr<ActsExamples::BareAlgorithm>>(mex,
                                                                "BareAlgorithm");
 
-  auto prop = m.def_submodule("propagator");
-
-  addStepper<Acts::EigenStepper<>>("Eigen", m, prop);
-  addStepper<Acts::AtlasStepper>("Atlas", m, prop);
-  addStepper<Acts::StraightLineStepper>("StraightLine", m, prop);
+  addStepper<Acts::EigenStepper<>>("Eigen", prop);
+  addStepper<Acts::AtlasStepper>("Atlas", prop);
+  addStepper<Acts::StraightLineStepper>("StraightLine", prop);
 }
