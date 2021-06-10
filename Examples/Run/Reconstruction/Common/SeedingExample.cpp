@@ -121,7 +121,7 @@ int runSeedingExample(int argc, char* argv[],
   };
   seedingCfg.outputSeeds = "seeds";
   seedingCfg.outputProtoTracks = "prototracks";
-  seedingCfg.rMax = 200.;
+  seedingCfg.rMax = 100.;
   seedingCfg.deltaRMax = 60.;
   seedingCfg.collisionRegionMin = -250;
   seedingCfg.collisionRegionMax = 250.;
