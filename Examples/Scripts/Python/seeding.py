@@ -9,9 +9,10 @@ u = acts.UnitConstants
 # Preliminaries
 rnd = acts.examples.RandomNumbers()
 
-gdc = acts.examples.GenericDetector.Config()
-detector = acts.examples.GenericDetector()
-trackingGeometry, contextDecorators = detector.finalize(gdc, None)
+detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
+# detector, trackingGeometry, _ = acts.examples.DD4hepDetector.create(
+#     xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+# )
 
 field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
