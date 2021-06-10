@@ -170,6 +170,11 @@ ActsExamples::FatrasAlgorithm::FatrasAlgorithm(Config cfg,
   ACTS_DEBUG("hits on material surfaces: " << m_cfg.generateHitsOnMaterial);
   ACTS_DEBUG("hits on passive surfaces: " << m_cfg.generateHitsOnPassive);
 
+  if (!m_cfg.generateHitsOnMaterial && !m_cfg.generateHitsOnMaterial &&
+      !m_cfg.generateHitsOnPassive) {
+    ACTS_WARNING("FatrasAlgorithm not configured to generate any hits!");
+  }
+
   if (!m_cfg.trackingGeometry) {
     throw std::invalid_argument{"Missing tracking geometry"};
   }
