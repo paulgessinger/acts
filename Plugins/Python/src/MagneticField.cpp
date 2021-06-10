@@ -5,6 +5,7 @@
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
 #include "Acts/MagneticField/NullBField.hpp"
 #include "Acts/MagneticField/SolenoidBField.hpp"
+#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -13,7 +14,10 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-void addMagneticField(py::module_& m) {
+namespace {
+
+ACTS_PYTHON_COMPONENT(MagneticField, ctx) {
+  auto& [m, mex, prop] = ctx;
   py::class_<Acts::MagneticFieldProvider,
              std::shared_ptr<Acts::MagneticFieldProvider>>(
       m, "MagneticFieldProvider");
@@ -62,3 +66,5 @@ void addMagneticField(py::module_& m) {
         .def_readwrite("bMagCenter", &Config::bMagCenter);
   }
 }
+
+}  // namespace

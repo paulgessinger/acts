@@ -2,6 +2,7 @@
 #include "ActsExamples/Io/Root/RootParticleWriter.hpp"
 #include "ActsExamples/Io/Root/RootPropagationStepsWriter.hpp"
 #include "ActsExamples/Plugins/Obj/ObjPropagationStepsWriter.hpp"
+#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -12,11 +13,13 @@ using namespace pybind11::literals;
 
 using namespace ActsExamples;
 
-void addOutput(py::module_& m) {
+namespace {
+ACTS_PYTHON_COMPONENT(Output, ctx) {
+  auto& [m, mex, prop] = ctx;
   {
     using Writer = ActsExamples::ObjPropagationStepsWriter<Acts::detail::Step>;
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
-                 m, "ObjPropagationStepsWriter")
+                 mex, "ObjPropagationStepsWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
                       py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
 
@@ -31,7 +34,7 @@ void addOutput(py::module_& m) {
   {
     using Writer = ActsExamples::RootPropagationStepsWriter;
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
-                 m, "RootPropagationStepsWriter")
+                 mex, "RootPropagationStepsWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
                       py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
 
@@ -46,7 +49,7 @@ void addOutput(py::module_& m) {
   {
     using Writer = ActsExamples::CsvParticleWriter;
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
-                 m, "CsvParticleWriter")
+                 mex, "CsvParticleWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
                       py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
 
@@ -61,7 +64,7 @@ void addOutput(py::module_& m) {
   {
     using Writer = ActsExamples::RootParticleWriter;
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
-                 m, "RootParticleWriter")
+                 mex, "RootParticleWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
                       py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
 
@@ -73,3 +76,4 @@ void addOutput(py::module_& m) {
         .def_readwrite("treeName", &Writer::Config::treeName);
   }
 }
+}  // namespace

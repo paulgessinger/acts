@@ -15,14 +15,14 @@ s = acts.examples.Sequencer(events=1000, numThreads=20)
 rnd = acts.examples.RandomNumbers(seed=42)
 
 # print("Building generic detector")
-gdc = acts.examples.GenericDetector.Config()
-detector = acts.examples.GenericDetector()
-trackingGeometry, contextDecorators = detector.finalize(gdc, None)
+# gdc = acts.examples.GenericDetector.Config()
+# detector = acts.examples.GenericDetector()
+# trackingGeometry, contextDecorators = detector.finalize(gdc, None)
 
-# dd4hepCfg = acts.examples.DD4hepDetector.Config()
-# dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-# detector = acts.examples.DD4hepDetector()
-# trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
+dd4hepCfg = acts.examples.DD4hepDetector.Config()
+dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+detector = acts.examples.DD4hepDetector()
+trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
 
 for cdr in contextDecorators:
     s.addContextDecorator(cdr)
@@ -60,7 +60,7 @@ prop = acts.Propagator(stepper, nav)
 
 alg = acts.examples.PropagationAlgorithm(
     propagator=prop,
-    level=acts.logging.Level.INFO,
+    level=acts.logging.INFO,
     randomNumberSvc=rnd,
     ntests=1000,
     sterileLogger=True,

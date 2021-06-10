@@ -4,6 +4,7 @@
 #include "Acts/Propagator/Propagator.hpp"
 #include "Acts/Propagator/StraightLineStepper.hpp"
 #include "ActsExamples/Propagation/PropagationAlgorithm.hpp"
+#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -14,6 +15,7 @@ namespace py = pybind11;
 
 #define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
 
+namespace {
 template <typename stepper_t>
 void addStepper(const std::string& prefix, py::module_& m, py::module_& prop,
                 py::module_& mex) {
@@ -67,7 +69,8 @@ void addStepper(const std::string& prefix, py::module_& m, py::module_& prop,
 #undef _MEMBER
 }
 
-void addPropagation(py::module_& m, py::module_& prop, py::module_& mex) {
+ACTS_PYTHON_COMPONENT(Propagation, ctx) {
+  auto& [m, mex, prop] = ctx;
   py::class_<Acts::Navigator, std::shared_ptr<Acts::Navigator>>(m, "Navigator")
       .def(py::init<std::shared_ptr<const Acts::TrackingGeometry>>())
       .def_readwrite("resolveMaterial", &Acts::Navigator::resolveMaterial)
@@ -78,3 +81,5 @@ void addPropagation(py::module_& m, py::module_& prop, py::module_& mex) {
   addStepper<Acts::AtlasStepper>("Atlas", m, prop, mex);
   addStepper<Acts::StraightLineStepper>("StraightLine", m, prop, mex);
 }
+
+}  // namespace

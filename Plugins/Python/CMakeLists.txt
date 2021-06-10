@@ -27,6 +27,7 @@ file(MAKE_DIRECTORY ${_python_dir}/acts)
 
 pybind11_add_module(ActsPython 
   src/ActsModule.cpp
+  src/Base.cpp
   src/ExamplesDetector.cpp
   src/Material.cpp
   src/Geometry.cpp
@@ -38,9 +39,11 @@ pybind11_add_module(ActsPython
 )
 
 if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
-  target_compile_definitions(ActsPython PRIVATE -DPYBIND_DD4HEP)
   target_link_libraries(ActsPython PUBLIC ActsExamplesDetectorDD4hep)
+  target_sources(ActsPython PRIVATE src/DD4hepComponent.cpp)
 endif()
+
+target_include_directories(ActsPython PRIVATE include)
 
 set_target_properties(ActsPython PROPERTIES OUTPUT_NAME _acts)
 set_target_properties(ActsPython PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)
