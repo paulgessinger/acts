@@ -47,9 +47,14 @@ ACTS_PYTHON_COMPONENT(Generators, ctx) {
         std::shared_ptr<ActsExamples::EventGenerator::MultiplicityGenerator>>(
         gen, "MultiplicityGenerator");
 
-    using Generator = ActsExamples::EventGenerator::Generator;
+    using EventGenerator = ActsExamples::EventGenerator;
+    using Generator = EventGenerator::Generator;
     py::class_<Generator>(gen, "Generator")
         .def(py::init<>())
+        .def(py::init<std::shared_ptr<EventGenerator::MultiplicityGenerator>,
+                      std::shared_ptr<EventGenerator::VertexGenerator>,
+                      std::shared_ptr<EventGenerator::ParticlesGenerator>>(),
+             py::arg("multiplicity"), py::arg("vertex"), py::arg("particles"))
         .def_readwrite("multiplicity", &Generator::multiplicity)
         .def_readwrite("vertex", &Generator::vertex)
         .def_readwrite("particles", &Generator::particles);
@@ -66,19 +71,28 @@ ACTS_PYTHON_COMPONENT(Generators, ctx) {
              std::shared_ptr<ActsExamples::GaussianVertexGenerator>>(
       mex, "GaussianVertexGenerator")
       .def(py::init<>())
+      .def(py::init([](Acts::Vector4 stddev, Acts::Vector4 mean) {
+             ActsExamples::GaussianVertexGenerator g;
+             g.stddev = stddev;
+             g.mean = mean;
+             return g;
+           }),
+           py::arg("stddev"), py::arg("mean"))
       .def_readwrite("stddev", &ActsExamples::GaussianVertexGenerator::stddev)
       .def_readwrite("mean", &ActsExamples::GaussianVertexGenerator::mean);
-  // .def("__call__", &ActsExamples::GaussianVertexGenerator::operator(),
-  //      py::is_operator());
 
   py::class_<ActsExamples::FixedVertexGenerator,
              ActsExamples::EventGenerator::VertexGenerator,
              std::shared_ptr<ActsExamples::FixedVertexGenerator>>(
       mex, "FixedVertexGenerator")
       .def(py::init<>())
+      .def(py::init([](Acts::Vector4 v) {
+             ActsExamples::FixedVertexGenerator g;
+             g.fixed = v;
+             return g;
+           }),
+           py::arg("fixed"))
       .def_readwrite("fixed", &ActsExamples::FixedVertexGenerator::fixed);
-  // .def("__call__", &ActsExamples::FixedVertexGenerator::operator(),
-  //      py::is_operator());
 
   py::class_<ActsExamples::SimParticle>(mex, "SimParticle");
   py::class_<ActsExamples::SimParticleContainer>(mex, "SimParticleContainer");
@@ -91,9 +105,6 @@ ACTS_PYTHON_COMPONENT(Generators, ctx) {
                    std::shared_ptr<ActsExamples::ParametricParticleGenerator>>(
             mex, "ParametricParticleGenerator")
             .def(py::init<const Config&>());
-    //  .def("__call__",
-    //       &ActsExamples::ParametricParticleGenerator::operator(),
-    //       py::is_operator());
 
     py::class_<Config>(gen, "Config")
         .def(py::init<>())
@@ -151,18 +162,26 @@ ACTS_PYTHON_COMPONENT(Generators, ctx) {
              std::shared_ptr<ActsExamples::FixedMultiplicityGenerator>>(
       mex, "FixedMultiplicityGenerator")
       .def(py::init<>())
+      .def(py::init([](size_t n) {
+             ActsExamples::FixedMultiplicityGenerator g;
+             g.n = n;
+             return g;
+           }),
+           py::arg("n"))
       .def_readwrite("n", &ActsExamples::FixedMultiplicityGenerator::n);
-  // .def("__call__", &ActsExamples::FixedMultiplicityGenerator::operator(),
-  //  py::is_operator());
 
   py::class_<ActsExamples::PoissonMultiplicityGenerator,
              ActsExamples::EventGenerator::MultiplicityGenerator,
              std::shared_ptr<ActsExamples::PoissonMultiplicityGenerator>>(
       mex, "PoissonMultiplicityGenerator")
       .def(py::init<>())
+      .def(py::init([](double mean) {
+             ActsExamples::PoissonMultiplicityGenerator g;
+             g.mean = mean;
+             return g;
+           }),
+           py::arg("mean"))
       .def_readwrite("mean", &ActsExamples::PoissonMultiplicityGenerator::mean);
-  // .def("__call__", &ActsExamples::PoissonMultiplicityGenerator::operator(),
-  //      py::is_operator());
 }
 
 }  // namespace

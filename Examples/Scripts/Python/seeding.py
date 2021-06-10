@@ -17,25 +17,23 @@ detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
 field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
 # Input
-vtxGen = acts.examples.GaussianVertexGenerator()
-vtxGen.stddev = acts.Vector4(0, 0, 0, 0)
-
-ptclGen = acts.examples.ParametricParticleGenerator(
-    p=(1 * u.GeV, 10 * u.GeV),
-    eta=(-2, 2),
-    phi=(0, 90 * u.degree),
-    randomizeCharge=True,
-    numParticles=4,
-)
-
-g = acts.examples.EventGenerator.Generator()
-g.multiplicity = acts.examples.FixedMultiplicityGenerator()
-g.vertex = vtxGen
-g.particles = ptclGen
-
 evGen = acts.examples.EventGenerator(
     level=acts.logging.INFO,
-    generators=[g],
+    generators=[
+        acts.examples.EventGenerator.Generator(
+            multiplicity=acts.examples.FixedMultiplicityGenerator(n=2),
+            vertex=acts.examples.GaussianVertexGenerator(
+                stddev=acts.Vector4(0, 0, 0, 0), mean=acts.Vector4(0, 0, 0, 0)
+            ),
+            particles=acts.examples.ParametricParticleGenerator(
+                p=(1 * u.GeV, 10 * u.GeV),
+                eta=(-2, 2),
+                phi=(0, 90 * u.degree),
+                randomizeCharge=True,
+                numParticles=4,
+            ),
+        )
+    ],
     outputParticles="particles_input",
     randomNumbers=rnd,
 )
