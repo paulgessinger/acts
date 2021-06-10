@@ -270,6 +270,7 @@ int ActsExamples::Sequencer::run() {
                                                       Duration::zero());
 
           for (size_t event = r.begin(); event != r.end(); ++event) {
+            m_cfg.iterationCallback();
             // Use per-event store
             WhiteBoard eventStore(Acts::getDefaultLogger(
                 "EventStore#" + std::to_string(event), m_cfg.logLevel));

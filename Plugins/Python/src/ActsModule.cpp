@@ -34,7 +34,14 @@ PYBIND11_MODULE(_acts, m) {
   using Config = Sequencer::Config;
   auto sequencer =
       py::class_<Sequencer>(mex, "Sequencer")
-          .def(py::init<const Config&>())
+          .def(py::init([](Config cfg) {
+            cfg.iterationCallback = []() {
+              if (PyErr_CheckSignals() != 0) {
+                throw py::error_already_set{};
+              }
+            };
+            return Sequencer{cfg};
+          }))
           .def("run", &Sequencer::run)
           .def("addContextDecorator", &Sequencer::addContextDecorator)
           .def("addAlgorithm", &Sequencer::addAlgorithm)
