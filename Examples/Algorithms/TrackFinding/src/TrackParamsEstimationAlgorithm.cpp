@@ -145,6 +145,7 @@ ActsExamples::TrackParamsEstimationAlgorithm::createSeeds(
 
 ActsExamples::ProcessCode ActsExamples::TrackParamsEstimationAlgorithm::execute(
     const ActsExamples::AlgorithmContext& ctx) const {
+  ACTS_VERBOSE("TrackParamsEstimationAlgorithm::execute");
   // Read source links (necesary for retrieving the geometry identifer)
   const auto& sourceLinks =
       ctx.eventStore.get<IndexSourceLinkContainer>(m_cfg.inputSourceLinks);

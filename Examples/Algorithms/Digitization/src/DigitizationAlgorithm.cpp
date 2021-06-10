@@ -112,6 +112,7 @@ ActsExamples::ProcessCode ActsExamples::DigitizationAlgorithm::execute(
     const AlgorithmContext& ctx) const {
   // Retrieve input
   const auto& simHits = ctx.eventStore.get<SimHitContainer>(m_cfg.inputSimHits);
+  ACTS_DEBUG("Loaded " << simHits.size() << " sim hits");
 
   // Prepare output containers
   IndexSourceLinkContainer sourceLinks;

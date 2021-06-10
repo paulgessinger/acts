@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 import acts
 import acts.examples
 
@@ -19,7 +20,11 @@ vtxGen = acts.examples.GaussianVertexGenerator()
 vtxGen.stddev = acts.Vector4(0, 0, 0, 0)
 
 ptclGen = acts.examples.ParametricParticleGenerator(
-    p=(1 * u.GeV, 10 * u.GeV), eta=(-2, 2)
+    p=(1 * u.GeV, 10 * u.GeV),
+    eta=(-2, 2),
+    phi=(0, 90 * u.degree),
+    randomizeCharge=True,
+    numParticles=4,
 )
 
 g = acts.examples.EventGenerator.Generator()
@@ -37,13 +42,14 @@ evGen = acts.examples.EventGenerator(
 # Simulation
 simAlg = acts.examples.FatrasAlgorithm(
     level=acts.logging.INFO,
-    inputParticles="particles_input",
+    inputParticles=evGen.config.outputParticles,
     outputParticlesInitial="particles_initial",
     outputParticlesFinal="particles_final",
     outputSimHits="simhits",
     randomNumbers=rnd,
     trackingGeometry=trackingGeometry,
     magneticField=field,
+    generateHitsOnSensitive=True,
 )
 
 # Digitization
@@ -54,7 +60,7 @@ digiCfg = acts.examples.DigitizationConfig(
 )
 digiCfg.trackingGeometry = trackingGeometry
 digiCfg.randomNumbers = rnd
-digiCfg.inputSimHits = "simhits"
+digiCfg.inputSimHits = simAlg.config.outputSimHits
 digiAlg = acts.examples.DigitizationAlgorithm(digiCfg, acts.logging.INFO)
 
 spAlg = acts.examples.SpacePointMaker(
@@ -75,24 +81,82 @@ seedingAlg = acts.examples.SeedingAlgorithm(
     outputProtoTracks="prototracks",
 )
 
-# Output
-csv = acts.examples.CsvParticleWriter(
-    outputDir="csv", inputParticles="particles_final", outputStem="particles_final"
+parEstimateAlg = acts.examples.TrackParamsEstimationAlgorithm(
+    level=acts.logging.INFO,
+    inputProtoTracks=seedingAlg.config.outputProtoTracks,
+    inputSpacePoints=[spAlg.config.outputSpacePoints],
+    inputSourceLinks=digiCfg.outputSourceLinks,
+    outputTrackParameters="estimatedparameters",
+    outputProtoTracks="prototracks_estimated",
+    trackingGeometry=trackingGeometry,
+    magneticField=field,
 )
-root = acts.examples.RootParticleWriter(
-    inputParticles="particles_final", filePath="fatras_particles.root"
+
+# Output
+tfPerf = acts.examples.TrackFinderPerformanceWriter(
+    level=acts.logging.INFO,
+    inputProtoTracks=seedingAlg.config.outputProtoTracks,
+    inputParticles=simAlg.config.outputParticlesFinal,
+    inputMeasurementParticlesMap=digiCfg.outputMeasurementParticlesMap,
+    outputDir="output",
+    outputFilename="performance_seeding_trees.root",
+)
+
+seedPerf = acts.examples.SeedingPerformanceWriter(
+    level=acts.logging.INFO,
+    inputProtoTracks=seedingAlg.config.outputProtoTracks,
+    inputParticles=simAlg.config.outputParticlesFinal,
+    inputMeasurementParticlesMap=digiCfg.outputMeasurementParticlesMap,
+    outputDir="output",
+    outputFilename="performance_seeding_trees.root",
+)
+
+tpWriter = acts.examples.RootTrackParameterWriter(
+    level=acts.logging.INFO,
+    inputTrackParameters=parEstimateAlg.config.outputTrackParameters,
+    inputProtoTracks=parEstimateAlg.config.outputProtoTracks,
+    inputParticles=simAlg.config.outputParticlesFinal,
+    inputSimHits=simAlg.config.outputSimHits,
+    inputMeasurementParticlesMap=digiCfg.outputMeasurementParticlesMap,
+    inputMeasurementSimHitsMap=digiCfg.outputMeasurementSimHitsMap,
+    outputDir="output",
+    outputFilename="estimatedparams.root",
+    outputTreename="estimatedparams",
 )
 
 # Sequencer
-s = acts.examples.Sequencer(events=10, numThreads=-1, logLevel=acts.logging.INFO)
+s = acts.examples.Sequencer(events=10000, numThreads=-1, logLevel=acts.logging.INFO)
 
 s.addReader(evGen)
 s.addAlgorithm(simAlg)
 s.addAlgorithm(digiAlg)
 s.addAlgorithm(spAlg)
 s.addAlgorithm(seedingAlg)
-# s.addWriter(csv)
-# s.addWriter(root)
+s.addAlgorithm(parEstimateAlg)
+
+s.addWriter(
+    acts.examples.RootParticleWriter(
+        inputParticles=evGen.config.outputParticles,
+        filePath="output/evgen_particles.root",
+    )
+)
+
+s.addWriter(
+    acts.examples.RootParticleWriter(
+        inputParticles=simAlg.config.outputParticlesFinal,
+        filePath="output/fatras_particles_final.root",
+    )
+)
+
+s.addWriter(
+    acts.examples.RootParticleWriter(
+        inputParticles=simAlg.config.outputParticlesInitial,
+        filePath="output/fatras_particles_initial.root",
+    )
+)
+s.addWriter(tfPerf)
+s.addWriter(seedPerf)
+s.addWriter(tpWriter)
 
 s.run()
 
