@@ -7,6 +7,7 @@
 #include "ActsExamples/Io/Json/JsonGeometryList.hpp"
 #include "ActsExamples/TrackFinding/SeedingAlgorithm.hpp"
 #include "ActsExamples/TrackFinding/SpacePointMaker.hpp"
+#include "ActsExamples/TrackFinding/TrackParamsEstimationAlgorithm.hpp"
 #include "ActsModule.hpp"
 
 #include <memory>
@@ -29,7 +30,9 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
                    std::shared_ptr<ActsExamples::FatrasAlgorithm>>(
             mex, "FatrasAlgorithm")
             .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"));
+                 py::arg("config"), py::arg("level"))
+            .def_property_readonly("config",
+                                   &ActsExamples::FatrasAlgorithm::config);
 
     auto c = py::class_<Config>(alg, "Config").def(py::init<>());
 #define _MEMBER(name) PY_MEMBER(c, Config, name)
@@ -121,7 +124,9 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
                    std::shared_ptr<ActsExamples::SeedingAlgorithm>>(
             mex, "SeedingAlgorithm")
             .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"));
+                 py::arg("config"), py::arg("level"))
+            .def_property_readonly("config",
+                                   &ActsExamples::SeedingAlgorithm::config);
 
     auto c = py::class_<Config>(alg, "Config").def(py::init<>());
     PY_MEMBER(c, Config, inputSpacePoints);
@@ -172,6 +177,38 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
           cfg.collisionRegionMin = values.first;
           cfg.collisionRegionMax = values.second;
         });
+  }
+
+  {
+    using Alg = ActsExamples::TrackParamsEstimationAlgorithm;
+    using Config = Alg::Config;
+
+    auto alg =
+        py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
+            mex, "TrackParamsEstimationAlgorithm")
+            .def(py::init<const Config&, Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"))
+            .def_property_readonly("config", &Alg::config);
+
+    auto c = py::class_<Config>(alg, "Config").def(py::init<>());
+    PY_MEMBER(c, Config, inputSeeds);
+    PY_MEMBER(c, Config, inputSpacePoints);
+    PY_MEMBER(c, Config, inputProtoTracks);
+    PY_MEMBER(c, Config, inputSourceLinks);
+    PY_MEMBER(c, Config, outputTrackParameters);
+    PY_MEMBER(c, Config, outputProtoTracks);
+    PY_MEMBER(c, Config, trackingGeometry);
+    PY_MEMBER(c, Config, magneticField);
+    PY_MEMBER(c, Config, deltaRMin);
+    PY_MEMBER(c, Config, deltaRMax);
+    PY_MEMBER(c, Config, bFieldMin);
+    PY_MEMBER(c, Config, sigmaLoc0);
+    PY_MEMBER(c, Config, sigmaLoc1);
+    PY_MEMBER(c, Config, sigmaPhi);
+    PY_MEMBER(c, Config, sigmaTheta);
+    PY_MEMBER(c, Config, sigmaQOverP);
+    PY_MEMBER(c, Config, sigmaT0);
+    PY_MEMBER(c, Config, initialVarInflation);
   }
 }
 

@@ -31,7 +31,9 @@ ACTS_PYTHON_COMPONENT(Generators, ctx) {
                           std::shared_ptr<ActsExamples::EventGenerator>>(
                    mex, "EventGenerator")
                    .def(py::init<const Config&, Acts::Logging::Level>(),
-                        py::arg("config"), py::arg("level"));
+                        py::arg("config"), py::arg("level"))
+                   .def_property_readonly(
+                       "config", &ActsExamples::EventGenerator::config);
 
     py::class_<ActsExamples::EventGenerator::VertexGenerator,
                std::shared_ptr<ActsExamples::EventGenerator::VertexGenerator>>(

@@ -49,24 +49,27 @@ class _propagationAlgorithmHelper:
 PropagationAlgorithm = _propagationAlgorithmHelper()
 
 
-def _make_config_adapter(cls):
-    class wrapped(cls):
-        def __init__(self, *args, **kwargs):
-            if len(args) > 0:
-                maybe_config = args[0]
-                if isinstance(maybe_config, type(self).Config):
-                    # is already config, nothing to do here
-                    super().__init__(maybe_config, *args[1:], **kwargs)
-                    return
+import functools
 
-            cfg = type(self).Config()
-            _kwargs = {}
-            for k, v in kwargs.items():
-                if hasattr(cfg, k):
-                    setattr(cfg, k, v)
-                else:
-                    _kwargs[k] = v
-            super().__init__(cfg, *args, **_kwargs)
+
+def _make_config_adapter(fn):
+    @functools.wraps(fn)
+    def wrapped(self, *args, **kwargs):
+        if len(args) > 0:
+            maybe_config = args[0]
+            if isinstance(maybe_config, type(self).Config):
+                # is already config, nothing to do here
+                fn(self, maybe_config, *args[1:], **kwargs)
+                return
+
+        cfg = type(self).Config()
+        _kwargs = {}
+        for k, v in kwargs.items():
+            if hasattr(cfg, k):
+                setattr(cfg, k, v)
+            else:
+                _kwargs[k] = v
+        fn(self, cfg, *args, **_kwargs)
 
     return wrapped
 
@@ -79,4 +82,4 @@ for name, cls in inspect.getmembers(acts._acts._examples, inspect.isclass):
         continue
     if name.endswith("Detector"):
         continue
-    globals()[name] = _make_config_adapter(cls)
+    cls.__init__ = _make_config_adapter(cls.__init__)
