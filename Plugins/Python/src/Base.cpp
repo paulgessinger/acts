@@ -1,5 +1,6 @@
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Definitions/Units.hpp"
+#include "Acts/Geometry/GeometryIdentifier.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "Acts/Utilities/PdgParticle.hpp"
 #include "ActsModule.hpp"
@@ -120,6 +121,8 @@ ACTS_PYTHON_COMPONENT(Base, ctx) {
   addAlgebra(m);
   addPdgParticle(m);
   addLogging(m);
+
+  py::class_<Acts::GeometryIdentifier>(m, "GeometryIdentifier");
 }
 
 }  // namespace

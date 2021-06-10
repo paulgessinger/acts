@@ -71,6 +71,15 @@ ActsExamples::DigitizationConfig::DigitizationConfig(
     smearingConfig(vars);
 }
 
+ActsExamples::DigitizationConfig::DigitizationConfig(
+    Acts::GeometryHierarchyMap<DigiComponentsConfig>&& digiCfgs)
+    : isSimpleSmearer(false),
+      doMerge(false),
+      mergeNsigma(1.0),
+      mergeCommonCorner(false) {
+  digitizationConfigs = std::move(digiCfgs);
+}
+
 void ActsExamples::DigitizationConfig::smearingConfig(
     const Options::Variables& variables) {
   ACTS_LOCAL_LOGGER(
