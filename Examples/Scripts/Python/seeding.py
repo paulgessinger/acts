@@ -35,7 +35,7 @@ evGen = acts.examples.EventGenerator(
 )
 
 # Simulation
-alg = acts.examples.FatrasAlgorithm(
+simAlg = acts.examples.FatrasAlgorithm(
     level=acts.logging.INFO,
     inputParticles="particles_input",
     outputParticlesInitial="particles_initial",
@@ -44,6 +44,35 @@ alg = acts.examples.FatrasAlgorithm(
     randomNumbers=rnd,
     trackingGeometry=trackingGeometry,
     magneticField=field,
+)
+
+# Digitization
+digiCfg = acts.examples.DigitizationConfig(
+    acts.examples.readDigiConfigFromJson(
+        "Examples/Algorithms/Digitization/share/default-smearing-config-generic.json"
+    )
+)
+digiCfg.trackingGeometry = trackingGeometry
+digiCfg.randomNumbers = rnd
+digiCfg.inputSimHits = "simhits"
+digiAlg = acts.examples.DigitizationAlgorithm(digiCfg, acts.logging.INFO)
+
+spAlg = acts.examples.SpacePointMaker(
+    level=acts.logging.INFO,
+    inputSourceLinks=digiCfg.outputSourceLinks,
+    inputMeasurements=digiCfg.outputMeasurements,
+    outputSpacePoints="spacepoints",
+    trackingGeometry=trackingGeometry,
+    geometrySelection=acts.examples.readJsonGeometryList(
+        "Examples/Algorithms/TrackFinding/share/geoSelection-genericDetector.json"
+    ),
+)
+
+seedingAlg = acts.examples.SeedingAlgorithm(
+    level=acts.logging.INFO,
+    inputSpacePoints=[spAlg.config.outputSpacePoints],
+    outputSeeds="seeds",
+    outputProtoTracks="prototracks",
 )
 
 # Output
@@ -55,10 +84,13 @@ root = acts.examples.RootParticleWriter(
 )
 
 # Sequencer
-s = acts.examples.Sequencer(events=100, numThreads=-1, logLevel=acts.logging.INFO)
+s = acts.examples.Sequencer(events=10, numThreads=-1, logLevel=acts.logging.INFO)
 
 s.addReader(evGen)
-s.addAlgorithm(alg)
+s.addAlgorithm(simAlg)
+s.addAlgorithm(digiAlg)
+s.addAlgorithm(spAlg)
+s.addAlgorithm(seedingAlg)
 # s.addWriter(csv)
 # s.addWriter(root)
 

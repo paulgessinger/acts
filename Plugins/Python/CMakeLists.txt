@@ -58,7 +58,9 @@ target_link_libraries(ActsPython PUBLIC
   ActsExamplesIoRoot
   ActsExamplesIoCsv
   ActsExamplesIoObj
+  ActsExamplesIoJson
   ActsExamplesGenerators
+  ActsExamplesTrackFinding
   ActsExamplesFatras
 )
 

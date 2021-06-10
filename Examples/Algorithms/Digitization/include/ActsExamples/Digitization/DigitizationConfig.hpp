@@ -108,6 +108,9 @@ class DigitizationConfig {
       const Options::Variables &vars,
       Acts::GeometryHierarchyMap<DigiComponentsConfig> &&digiCfgs);
 
+  DigitizationConfig(
+      Acts::GeometryHierarchyMap<DigiComponentsConfig> &&digiCfgs);
+
   /// Input collection of simulated hits.
   std::string inputSimHits = "simhits";
   /// Output source links collection.
