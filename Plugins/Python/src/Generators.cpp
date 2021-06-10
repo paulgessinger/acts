@@ -4,6 +4,7 @@
 #include "ActsExamples/Generators/ParametricParticleGenerator.hpp"
 #include "ActsExamples/Generators/VertexGenerators.hpp"
 #include "ActsExamples/Propagation/PropagationAlgorithm.hpp"
+#include "ActsModule.hpp"
 
 #include <cmath>
 #include <memory>
@@ -21,9 +22,9 @@ double thetaToEta(double theta) {
 double etaToTheta(double eta) {
   return 2 * std::atan(std::exp(-eta));
 }
-}  // namespace
 
-void addGenerators(py::module_& mex) {
+ACTS_PYTHON_COMPONENT(Generators, ctx) {
+  auto& [m, mex, prop] = ctx;
   {
     using Config = ActsExamples::EventGenerator::Config;
     auto gen = py::class_<ActsExamples::EventGenerator, ActsExamples::IReader,
@@ -161,3 +162,5 @@ void addGenerators(py::module_& mex) {
   // .def("__call__", &ActsExamples::PoissonMultiplicityGenerator::operator(),
   //      py::is_operator());
 }
+
+}  // namespace

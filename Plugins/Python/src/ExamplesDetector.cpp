@@ -3,11 +3,7 @@
 #include "ActsExamples/Detector/IBaseDetector.hpp"
 #include "ActsExamples/Framework/IContextDecorator.hpp"
 #include "ActsExamples/GenericDetector/GenericDetector.hpp"
-
-#ifdef PYBIND_DD4HEP
-#include "ActsExamples/DD4hepDetector/DD4hepDetector.hpp"
-#include "ActsExamples/DD4hepDetector/DD4hepGeometryService.hpp"
-#endif
+#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -17,17 +13,19 @@
 namespace py = pybind11;
 using namespace ActsExamples;
 
-void addExamplesDetector(py::module_& m) {
+namespace {
+ACTS_PYTHON_COMPONENT(ExamplesDetector, ctx) {
+  auto& [m, mex, prop] = ctx;
   {
     py::class_<IContextDecorator, std::shared_ptr<IContextDecorator>>(
-        m, "IContextDecorator");
+        mex, "IContextDecorator");
   }
 
   {
     using Config = GenericDetector::Config;
 
     auto gd = py::class_<GenericDetector, std::shared_ptr<GenericDetector>>(
-                  m, "GenericDetector")
+                  mex, "GenericDetector")
                   .def(py::init<>())
                   .def("finalize",
                        py::overload_cast<
@@ -43,31 +41,5 @@ void addExamplesDetector(py::module_& m) {
         .def_readwrite("volumeLogLevel", &Config::volumeLogLevel)
         .def_readwrite("buildProto", &Config::buildProto);
   }
-
-#ifdef PYBIND_DD4HEP
-  {
-    using Config = ActsExamples::DD4hep::DD4hepGeometryService::Config;
-
-    auto gd =
-        py::class_<DD4hepDetector, std::shared_ptr<DD4hepDetector>>(
-            m, "DD4hepDetector")
-            .def(py::init<>())
-            .def("finalize",
-                 py::overload_cast<
-                     Config, std::shared_ptr<const Acts::IMaterialDecorator>>(
-                     &DD4hepDetector::finalize));
-
-    py::class_<Config>(gd, "Config")
-        .def(py::init<>())
-        .def_readwrite("logLevel", &Config::logLevel)
-        .def_readwrite("xmlFileNames", &Config::xmlFileNames)
-        .def_readwrite("name", &Config::name)
-        .def_readwrite("bTypePhi", &Config::bTypePhi)
-        .def_readwrite("bTypeR", &Config::bTypeR)
-        .def_readwrite("bTypeZ", &Config::bTypeZ)
-        .def_readwrite("envelopeR", &Config::envelopeR)
-        .def_readwrite("envelopeZ", &Config::envelopeZ)
-        .def_readwrite("defaultLayerThickness", &Config::defaultLayerThickness);
-  }
-#endif
 }
+}  // namespace

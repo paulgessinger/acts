@@ -74,9 +74,9 @@ def _make_config_adapter(cls):
 import inspect
 
 for name, cls in inspect.getmembers(acts._acts._examples, inspect.isclass):
+    # print(name)
     if not hasattr(cls, "Config"):
         continue
     if name.endswith("Detector"):
         continue
-    print(name)
     globals()[name] = _make_config_adapter(cls)

@@ -59,8 +59,8 @@ s = acts.examples.Sequencer(events=100, numThreads=-1, logLevel=acts.logging.INF
 
 s.addReader(evGen)
 s.addAlgorithm(alg)
-s.addWriter(csv)
-s.addWriter(root)
+# s.addWriter(csv)
+# s.addWriter(root)
 
 s.run()
 

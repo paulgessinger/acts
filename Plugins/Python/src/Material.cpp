@@ -1,5 +1,6 @@
 #include "Acts/Material/IMaterialDecorator.hpp"
 #include "ActsExamples/Io/Root/RootMaterialDecorator.hpp"
+#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -12,7 +13,9 @@ using namespace ActsExamples;
 
 #define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
 
-void addMaterial(py::module_& m, py::module_& mex) {
+namespace {
+ACTS_PYTHON_COMPONENT(Material, ctx) {
+  auto& [m, mex, prop] = ctx;
   {
     py::class_<Acts::IMaterialDecorator,
                std::shared_ptr<Acts::IMaterialDecorator>>(m,
@@ -54,3 +57,4 @@ void addMaterial(py::module_& m, py::module_& mex) {
     PY_MEMBER(c, Config, name);
   }
 }
+}  // namespace

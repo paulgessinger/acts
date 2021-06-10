@@ -1,6 +1,7 @@
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
 #include "Acts/Propagator/StraightLineStepper.hpp"
 #include "ActsExamples/Fatras/FatrasAlgorithm.hpp"
+#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -10,16 +11,10 @@
 namespace py = pybind11;
 #define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
 
-void addExamplesAlgorithms(py::module_& mex, py::module_& /*prop*/) {
-  auto iAlgorithm =
-      py::class_<ActsExamples::IAlgorithm,
-                 std::shared_ptr<ActsExamples::IAlgorithm>>(mex, "IAlgorithm");
+namespace {
 
-  auto bareAlgorithm =
-      py::class_<ActsExamples::BareAlgorithm, ActsExamples::IAlgorithm,
-                 std::shared_ptr<ActsExamples::BareAlgorithm>>(mex,
-                                                               "BareAlgorithm");
-
+ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
+  auto& [m, mex, prop] = ctx;
   {
     using Config = ActsExamples::FatrasAlgorithm::Config;
 
@@ -52,3 +47,5 @@ void addExamplesAlgorithms(py::module_& mex, py::module_& /*prop*/) {
 #undef _MEMBER
   }
 }
+
+}  // namespace
