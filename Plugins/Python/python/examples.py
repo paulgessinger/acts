@@ -74,6 +74,22 @@ def _make_config_adapter(fn):
     return wrapped
 
 
+def _detector_create(cls):
+    def create(*args, mdecorator=None, **kwargs):
+        cfg = cls.Config()
+        _kwargs = {}
+        for k, v in kwargs.items():
+            if hasattr(cfg, k):
+                setattr(cfg, k, v)
+            else:
+                _kwargs[k] = v
+        det = cls()
+        tg, deco = det.finalize(cfg, mdecorator, *args, **_kwargs)
+        return det, tg, deco
+
+    return create
+
+
 import inspect
 
 for name, cls in inspect.getmembers(acts._acts._examples, inspect.isclass):
@@ -81,5 +97,6 @@ for name, cls in inspect.getmembers(acts._acts._examples, inspect.isclass):
     if not hasattr(cls, "Config"):
         continue
     if name.endswith("Detector"):
-        continue
-    cls.__init__ = _make_config_adapter(cls.__init__)
+        cls.create = _detector_create(cls)
+    else:
+        cls.__init__ = _make_config_adapter(cls.__init__)
