@@ -4,8 +4,8 @@ from pathlib import Path
 import os
 
 # print(os.environ["CMAKE_PREFIX_PATH"])
-# p = str(Path(__file__).parent / "Plugins" / "Python" / "python")
-p = "python"
+p = "Plugins/Python/python"
+# p = "python"
 packages = find_packages(where=p)
 print(packages)
 print(p)
