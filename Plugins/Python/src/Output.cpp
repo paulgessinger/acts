@@ -26,7 +26,7 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
                  mex, "ObjPropagationStepsWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
+                      py::arg("cfg"), py::arg("level"));
 
     py::class_<Writer::Config>(w, "Config")
         .def(py::init<>())
@@ -41,7 +41,7 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
                  mex, "RootPropagationStepsWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
+                      py::arg("cfg"), py::arg("level"));
 
     py::class_<Writer::Config>(w, "Config")
         .def(py::init<>())
@@ -56,7 +56,7 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
                  mex, "CsvParticleWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
+                      py::arg("cfg"), py::arg("level"));
 
     py::class_<Writer::Config>(w, "Config")
         .def(py::init<>())
@@ -71,7 +71,7 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
                  mex, "RootParticleWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
+                      py::arg("cfg"), py::arg("level"));
 
     py::class_<Writer::Config>(w, "Config")
         .def(py::init<>())
@@ -86,7 +86,7 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
                  mex, "TrackFinderPerformanceWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
+                      py::arg("cfg"), py::arg("level"));
 
     py::class_<Writer::Config>(w, "Config")
         .def(py::init<>())
@@ -103,7 +103,7 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
                  mex, "SeedingPerformanceWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
+                      py::arg("cfg"), py::arg("level"));
 
     py::class_<Writer::Config>(w, "Config")
         .def(py::init<>())
@@ -123,7 +123,7 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
                  mex, "RootTrackParameterWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("cfg"), py::arg("level") = Acts::Logging::INFO);
+                      py::arg("cfg"), py::arg("level"));
 
     auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
     PY_MEMBER(c, Writer::Config, inputTrackParameters);
