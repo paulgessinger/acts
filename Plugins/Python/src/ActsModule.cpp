@@ -13,6 +13,8 @@ namespace py = pybind11;
 PYBIND11_MODULE(_acts, m) {
   m.doc() = "Acts";
 
+  m.def("add", [](int i, int j) { return i * j; });
+
   auto mex = m.def_submodule("_examples");
 
   py::class_<ActsExamples::IWriter, std::shared_ptr<ActsExamples::IWriter>>(
@@ -45,6 +47,13 @@ PYBIND11_MODULE(_acts, m) {
           .def("run", &Sequencer::run)
           .def("addContextDecorator", &Sequencer::addContextDecorator)
           .def("addAlgorithm", &Sequencer::addAlgorithm)
+          .def("addAlgorithms",
+               [](Sequencer& s, py::args algs) {
+                 for (auto& alg : algs) {
+                   s.addAlgorithm(
+                       alg.cast<std::shared_ptr<ActsExamples::IAlgorithm>>());
+                 }
+               })
           .def("addReader", &Sequencer::addReader)
           .def("addWriter", &Sequencer::addWriter);
 

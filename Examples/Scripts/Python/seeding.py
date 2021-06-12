@@ -135,6 +135,7 @@ s.addAlgorithm(parEstimateAlg)
 
 s.addWriter(
     acts.examples.RootParticleWriter(
+        level=acts.logging.INFO,
         inputParticles=evGen.config.outputParticles,
         filePath="output/evgen_particles.root",
     )
@@ -142,6 +143,7 @@ s.addWriter(
 
 s.addWriter(
     acts.examples.RootParticleWriter(
+        level=acts.logging.INFO,
         inputParticles=simAlg.config.outputParticlesFinal,
         filePath="output/fatras_particles_final.root",
     )
@@ -149,6 +151,7 @@ s.addWriter(
 
 s.addWriter(
     acts.examples.RootParticleWriter(
+        level=acts.logging.INFO,
         inputParticles=simAlg.config.outputParticlesInitial,
         filePath="output/fatras_particles_initial.root",
     )

@@ -23,17 +23,15 @@ ACTS_PYTHON_COMPONENT(Material, ctx) {
   }
 
   {
-    auto rmd =
-        py::class_<RootMaterialDecorator,
-                   std::shared_ptr<RootMaterialDecorator>,
-                   Acts::IMaterialDecorator>(mex, "RootMaterialDecorator")
-            .def(py::init<RootMaterialDecorator::Config>());
+    auto rmd = py::class_<RootMaterialDecorator, Acts::IMaterialDecorator,
+                          std::shared_ptr<RootMaterialDecorator>>(
+                   mex, "RootMaterialDecorator")
+                   .def(py::init<RootMaterialDecorator::Config>());
 
     using Config = RootMaterialDecorator::Config;
-    auto c =
-        py::class_<Config>(rmd, "Config")
-            .def(py::init<const std::string&, Acts::Logging::Level>(),
-                 "lname"_a = "MaterialReader", "lvl"_a = Acts::Logging::INFO);
+    auto c = py::class_<Config>(rmd, "Config")
+                 .def(py::init<const std::string&, Acts::Logging::Level>(),
+                      "lname"_a, "lvl"_a);
 
     PY_MEMBER(c, Config, folderNameBase);
     PY_MEMBER(c, Config, voltag);
