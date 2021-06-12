@@ -16,7 +16,7 @@ add_library(ActsPluginPython INTERFACE)
 #   src/AlgebraJsonConverter.cpp
 #   src/SurfaceBoundsJsonConverter.cpp
 #   src/SurfaceJsonConverter.cpp
-#   src/UtilitiesJsonConverter.cpp)
+#   src/UtilitiesJsonCon_actsverter.cpp)
 # target_include_directories(
 #   ActsPluginJson
 #   PUBLIC
@@ -33,7 +33,7 @@ install(
 #   DIRECTORY include/Acts
 #   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# set(_python_dir "${CMAKE_BINARY_DIR}/python/")
+set(_python_dir "${CMAKE_BINARY_DIR}/python/")
 # file(MAKE_DIRECTORY ${_python_dir})
 # file(MAKE_DIRECTORY ${_python_dir}/acts)
 
@@ -61,7 +61,7 @@ target_include_directories(_acts PRIVATE include)
 set_target_properties(_acts PROPERTIES INSTALL_RPATH "\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
 
 # set_target_properties(_acts PROPERTIES OUTPUT_NAME _acts)
-# set_target_properties(_acts PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)
+set_target_properties(_acts PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)
 # set_target_properties(_acts PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${_python_dir}/acts)
 
 target_link_libraries(_acts PUBLIC 
@@ -81,23 +81,22 @@ target_link_libraries(_acts PUBLIC
 )
 
 
-# add_custom_target(ActsPythonPyCode)
+add_custom_target(ActsPythonPyCode)
 
 # configure_file(python/_version.py ${_python_dir}/acts/)
 
-# set(py_files 
-#   __init__.py 
-#   setup.py
-#   examples.py
-# )
+set(py_files 
+  __init__.py 
+  examples.py
+)
 
-# foreach(f ${py_files})
-# add_custom_command(
-#         TARGET ActsPythonPyCode POST_BUILD
-#         COMMAND ${CMAKE_COMMAND} -E create_symlink
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/python/${f}
-#                 ${_python_dir}/acts/${f})
-# endforeach()
+foreach(f ${py_files})
+add_custom_command(
+        TARGET ActsPythonPyCode POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+                ${CMAKE_CURRENT_SOURCE_DIR}/python/acts/${f}
+                ${_python_dir}/acts/${f})
+endforeach()
 
 # add_custom_command(
 #         TARGET ActsPythonPyCode POST_BUILD
@@ -110,7 +109,7 @@ target_link_libraries(_acts PUBLIC
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/python/setup.py
 #                 ${_python_dir}/setup.py)
 
-# add_dependencies(_acts ActsPythonPyCode)
+add_dependencies(_acts ActsPythonPyCode)
 
 # configure_file(python/__init__.py ${_python_dir}/acts/)
 # configure_file(python/setup.py ${_python_dir}/)
@@ -118,5 +117,5 @@ target_link_libraries(_acts PUBLIC
 install(TARGETS _acts DESTINATION .)
 # install(TARGETS _acts
 #   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+#   RUNTIME DESTssddNATION ${CMAKE_INSTALL_BINDIR})
   
