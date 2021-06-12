@@ -1,6 +1,6 @@
-from _acts._examples import *
-import _acts
-import _acts._examples
+from ._acts._examples import *
+from . import _acts
+from ._acts import _examples
 
 
 _propagators = []
