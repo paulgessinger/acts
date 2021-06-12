@@ -1,5 +1,3 @@
-# from acts._version import __version__
-
 from _acts import *
 import _acts
 
