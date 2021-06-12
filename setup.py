@@ -30,7 +30,7 @@ setup(
     cmake_args=cmake_args,
     packages=["acts"],
     package_dir={"": p},
-    # cmake_install_dir="Plugins/Python/python/acts",
+    cmake_install_dir="Plugins/Python/python/acts",
     #     install_requires=[],
     #     package_data = {
     #         'acts': ["*.so"]

@@ -1,5 +1,5 @@
-from _acts import *
-import _acts
+from ._acts import *
+from . import _acts
 
 
 def Propagator(stepper, nav):
