@@ -33,9 +33,9 @@ install(
 #   DIRECTORY include/Acts
 #   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-set(_python_dir "${CMAKE_BINARY_DIR}/python/")
-# file(MAKE_DIRECTORY ${_python_dir})
-# file(MAKE_DIRECTORY ${_python_dir}/acts)
+set(_python_dir "${CMAKE_BINARY_DIR}/python")
+file(MAKE_DIRECTORY ${_python_dir})
+file(MAKE_DIRECTORY ${_python_dir}/acts)
 
 pybind11_add_module(_acts 
   src/ActsModule.cpp
@@ -82,6 +82,7 @@ target_link_libraries(_acts PUBLIC
 
 
 add_custom_target(ActsPythonPyCode)
+configure_file(setup.sh.in ${_python_dir}/setup.sh)
 
 # configure_file(python/_version.py ${_python_dir}/acts/)
 

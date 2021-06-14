@@ -23,12 +23,17 @@ struct FixedMultiplicityGenerator
     : public EventGenerator::MultiplicityGenerator {
   size_t n = 1;
 
+  FixedMultiplicityGenerator(size_t _n) : n{_n} {}
+  FixedMultiplicityGenerator() = default;
+
   size_t generate(RandomEngine& /* unused */) const override { return n; }
 };
 
 struct PoissonMultiplicityGenerator
     : public EventGenerator::MultiplicityGenerator {
   double mean = 1;
+  PoissonMultiplicityGenerator(double _mean) : mean{_mean} {}
+  PoissonMultiplicityGenerator() = default;
 
   size_t generate(RandomEngine& rng) const override {
     return (0 < mean) ? std::poisson_distribution<size_t>(mean)(rng) : 0;

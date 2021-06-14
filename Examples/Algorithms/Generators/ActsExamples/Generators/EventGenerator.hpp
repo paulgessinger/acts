@@ -61,7 +61,7 @@ class EventGenerator final : public ActsExamples::IReader {
 
   struct ParticlesGenerator {
     virtual ~ParticlesGenerator() = default;
-    virtual SimParticleContainer generate(RandomEngine& rng) const = 0;
+    virtual SimParticleContainer generate(RandomEngine& rng) = 0;
   };
 
   struct Generator {
