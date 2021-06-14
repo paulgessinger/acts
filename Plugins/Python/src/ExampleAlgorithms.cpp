@@ -5,6 +5,9 @@
 #include "ActsExamples/Fatras/FatrasAlgorithm.hpp"
 #include "ActsExamples/Io/Json/JsonDigitizationConfig.hpp"
 #include "ActsExamples/Io/Json/JsonGeometryList.hpp"
+#include "ActsExamples/Printers/HitsPrinter.hpp"
+#include "ActsExamples/Printers/ParticlesPrinter.hpp"
+#include "ActsExamples/Printers/TrackParametersPrinter.hpp"
 #include "ActsExamples/TrackFinding/SeedingAlgorithm.hpp"
 #include "ActsExamples/TrackFinding/SpacePointMaker.hpp"
 #include "ActsExamples/TrackFinding/TrackParamsEstimationAlgorithm.hpp"
@@ -209,6 +212,57 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
     PY_MEMBER(c, Config, sigmaQOverP);
     PY_MEMBER(c, Config, sigmaT0);
     PY_MEMBER(c, Config, initialVarInflation);
+  }
+
+  {
+    using Alg = ActsExamples::ParticlesPrinter;
+
+    auto alg =
+        py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
+            mex, "ParticlesPrinter")
+            .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"));
+
+    py::class_<Alg::Config>(alg, "Config")
+        .def(py::init<>())
+        .def_readwrite("inputParticles", &Alg::Config::inputParticles);
+  }
+
+  {
+    using Alg = ActsExamples::HitsPrinter;
+
+    auto alg =
+        py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
+            mex, "HitsPrinter")
+            .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"));
+
+    py::class_<Alg::Config>(alg, "Config")
+        .def(py::init<>())
+        .def_readwrite("inputClusters", &Alg::Config::inputClusters)
+        .def_readwrite("inputMeasurementParticlesMap",
+                       &Alg::Config::inputMeasurementParticlesMap)
+        .def_readwrite("inputHitIds", &Alg::Config::inputHitIds)
+        .def_readwrite("selectIndexStart", &Alg::Config::selectIndexStart)
+        .def_readwrite("selectIndexLength", &Alg::Config::selectIndexLength)
+        .def_readwrite("selectVolume", &Alg::Config::selectVolume)
+        .def_readwrite("selectLayer", &Alg::Config::selectLayer)
+        .def_readwrite("selectModule", &Alg::Config::selectModule);
+  }
+
+  {
+    using Alg = ActsExamples::TrackParametersPrinter;
+
+    auto alg =
+        py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
+            mex, "TrackParametersPrinter")
+            .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"));
+
+    py::class_<Alg::Config>(alg, "Config")
+        .def(py::init<>())
+        .def_readwrite("inputTrackParameters",
+                       &Alg::Config::inputTrackParameters);
   }
 }
 

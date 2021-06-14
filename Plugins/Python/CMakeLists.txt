@@ -46,6 +46,7 @@ pybind11_add_module(_acts
   src/ExampleAlgorithms.cpp
   src/MagneticField.cpp
   src/Output.cpp
+  src/Input.cpp
   src/Propagation.cpp
   src/Generators.cpp
 )
@@ -54,6 +55,11 @@ pybind11_add_module(_acts
 if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
   target_link_libraries(_acts PUBLIC ActsExamplesDetectorDD4hep)
   target_sources(_acts PRIVATE src/DD4hepComponent.cpp)
+endif()
+
+if(ACTS_BUILD_EXAMPLES_PYTHIA8)
+  target_link_libraries(_acts PUBLIC ActsExamplesGeneratorsPythia8)
+  target_sources(_acts PRIVATE src/Pythia8Component.cpp)
 endif()
 
 target_include_directories(_acts PRIVATE include)
@@ -78,6 +84,7 @@ target_link_libraries(_acts PUBLIC
   ActsExamplesGenerators
   ActsExamplesTrackFinding
   ActsExamplesFatras
+  ActsExamplesPrinters
 )
 
 

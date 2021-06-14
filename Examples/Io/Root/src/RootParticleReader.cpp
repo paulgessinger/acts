@@ -21,8 +21,13 @@
 #include <TMath.h>
 
 ActsExamples::RootParticleReader::RootParticleReader(
-    const ActsExamples::RootParticleReader::Config& cfg)
-    : ActsExamples::IReader(), m_cfg(cfg), m_events(0), m_inputChain(nullptr) {
+    const ActsExamples::RootParticleReader::Config& cfg,
+    Acts::Logging::Level lvl)
+    : ActsExamples::IReader(),
+      m_cfg(cfg),
+      m_logger(Acts::getDefaultLogger(name(), lvl)),
+      m_events(0),
+      m_inputChain(nullptr) {
   m_inputChain = new TChain(m_cfg.treeName.c_str());
 
   if (m_cfg.inputFile.empty()) {
@@ -76,10 +81,6 @@ ActsExamples::RootParticleReader::RootParticleReader(
     TMath::Sort(m_inputChain->GetEntries(), m_inputChain->GetV1(),
                 m_entryNumbers.data(), false);
   }
-}
-
-std::string ActsExamples::RootParticleReader::name() const {
-  return m_cfg.name;
 }
 
 std::pair<size_t, size_t> ActsExamples::RootParticleReader::availableEvents()
