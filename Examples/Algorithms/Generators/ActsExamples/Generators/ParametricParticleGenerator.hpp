@@ -53,7 +53,7 @@ class ParametricParticleGenerator : public EventGenerator::ParticlesGenerator {
   ParametricParticleGenerator(const Config& cfg);
 
   /// Generate a single primary vertex with the given number of particles.
-  SimParticleContainer generate(RandomEngine& rng) const override;
+  SimParticleContainer generate(RandomEngine& rng) override;
 
  private:
   Config m_cfg;
