@@ -1,4 +1,5 @@
 from ._acts import *
+from ._acts import __version__
 from . import _acts
 
 
