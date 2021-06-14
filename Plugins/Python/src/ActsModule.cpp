@@ -1,5 +1,6 @@
 #include "ActsModule.hpp"
 
+#include "Acts/ActsVersion.hpp"
 #include "ActsExamples/Framework/BareAlgorithm.hpp"
 #include "ActsExamples/Framework/RandomNumbers.hpp"
 #include "ActsExamples/Framework/Sequencer.hpp"
@@ -10,10 +11,14 @@
 
 namespace py = pybind11;
 
+constexpr std::tuple<unsigned int, unsigned int, unsigned int> version{
+    Acts::VersionMajor, Acts::VersionMinor, Acts::VersionPatch};
+
 PYBIND11_MODULE(_acts, m) {
   m.doc() = "Acts";
 
-  m.def("add", [](int i, int j) { return i * j; });
+  m.attr("__version__") =
+      std::tuple{Acts::VersionMajor, Acts::VersionMinor, Acts::VersionPatch};
 
   auto mex = m.def_submodule("_examples");
 
