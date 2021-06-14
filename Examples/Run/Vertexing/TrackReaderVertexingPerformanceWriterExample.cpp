@@ -64,8 +64,8 @@ int main(int argc, char* argv[]) {
   particleReaderConfig.inputFile = "particles_initial.root";
   particleReaderConfig.treeName = "particles";
   particleReaderConfig.inputDir = inputDir;
-  sequencer.addReader(
-      std::make_shared<RootParticleReader>(particleReaderConfig));
+  sequencer.addReader(std::make_shared<RootParticleReader>(
+      particleReaderConfig, Acts::Logging::INFO));
 
   // add additional particle selection
   auto select = ActsExamples::ParticleSelector::readConfig(vars);
