@@ -38,10 +38,21 @@ evGen = acts.examples.EventGenerator(
     randomNumbers=rnd,
 )
 
+# Read input from input collection (e.g. Pythia8 output)
+
+# evGen = acts.examples.RootParticleReader(
+#     level=acts.logging.INFO,
+#     particleCollection="particles_input",
+#     inputDir="output",
+#     inputFile="pythia8_particles.root",
+# )
+
+
 # Simulation
 simAlg = acts.examples.FatrasAlgorithm(
     level=acts.logging.INFO,
     inputParticles=evGen.config.outputParticles,
+    # inputParticles=evGen.config.particleCollection,
     outputParticlesInitial="particles_initial",
     outputParticlesFinal="particles_final",
     outputSimHits="simhits",
@@ -124,7 +135,7 @@ tpWriter = acts.examples.RootTrackParameterWriter(
 )
 
 # Sequencer
-s = acts.examples.Sequencer(events=10000, numThreads=-1, logLevel=acts.logging.INFO)
+s = acts.examples.Sequencer(events=100, numThreads=-1, logLevel=acts.logging.INFO)
 
 s.addReader(evGen)
 s.addAlgorithm(simAlg)
@@ -137,6 +148,7 @@ s.addWriter(
     acts.examples.RootParticleWriter(
         level=acts.logging.INFO,
         inputParticles=evGen.config.outputParticles,
+        # inputParticles=evGen.config.particleCollection,
         filePath="output/evgen_particles.root",
     )
 )
