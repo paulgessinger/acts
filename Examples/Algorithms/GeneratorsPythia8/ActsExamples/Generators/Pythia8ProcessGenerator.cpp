@@ -47,7 +47,7 @@ ActsExamples::Pythia8Generator::Pythia8Generator(const Config& cfg,
 // needed to allow unique_ptr of forward-declared Pythia class
 ActsExamples::Pythia8Generator::~Pythia8Generator() {}
 
-ActsExamples::SimParticleContainer ActsExamples::Pythia8Generator::generate(
+ActsExamples::SimParticleContainer ActsExamples::Pythia8Generator::operator()(
     RandomEngine& rng) {
   using namespace Acts::UnitLiterals;
 

@@ -48,13 +48,13 @@ ActsExamples::ProcessCode ActsExamples::EventGenerator::read(
     auto& generate = m_cfg.generators[iGenerate];
 
     // generate the primary vertices from this generator
-    for (size_t n = generate.multiplicity->generate(rng); 0 < n; --n) {
+    for (size_t n = (*generate.multiplicity)(rng); 0 < n; --n) {
       nPrimaryVertices += 1;
 
       // generate primary vertex position
-      auto vertexPosition = generate.vertex->generate(rng);
+      auto vertexPosition = (*generate.vertex)(rng);
       // generate particles associated to this vertex
-      auto vertexParticles = generate.particles->generate(rng);
+      auto vertexParticles = (*generate.particles)(rng);
 
       auto updateParticleInPlace = [&](ActsFatras::Particle& particle) {
         // only set the primary vertex, leave everything else as-is

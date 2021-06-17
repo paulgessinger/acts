@@ -46,7 +46,7 @@ class Pythia8Generator : public EventGenerator::ParticlesGenerator {
   Pythia8Generator& operator=(const Pythia8Generator&) = delete;
   Pythia8Generator& operator=(Pythia8Generator&& other) = delete;
 
-  SimParticleContainer generate(RandomEngine& rng) override;
+  SimParticleContainer operator()(RandomEngine& rng) override;
 
  private:
   /// Private access to the logging instance
