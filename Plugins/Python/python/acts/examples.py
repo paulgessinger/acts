@@ -92,11 +92,12 @@ def _detector_create(cls):
 
 import inspect
 
-for name, cls in inspect.getmembers(_acts._examples, inspect.isclass):
-    # print(name)
-    if not hasattr(cls, "Config"):
-        continue
-    if name.endswith("Detector"):
-        cls.create = _detector_create(cls)
-    else:
-        cls.__init__ = _make_config_adapter(cls.__init__)
+for m in (_acts._examples, _acts._examples.dd4hep):
+    for name, cls in inspect.getmembers(m, inspect.isclass):
+        # print(name)
+        if not hasattr(cls, "Config"):
+            continue
+        if name.endswith("Detector"):
+            cls.create = _detector_create(cls)
+        else:
+            cls.__init__ = _make_config_adapter(cls.__init__)

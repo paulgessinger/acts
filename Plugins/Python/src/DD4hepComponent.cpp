@@ -15,12 +15,13 @@ using namespace ActsExamples;
 namespace {
 ACTS_PYTHON_COMPONENT(DD4hep, ctx) {
   auto& [m, mex, prop] = ctx;
+  auto dd4hep = mex.def_submodule("dd4hep");
   {
     using Config = ActsExamples::DD4hep::DD4hepGeometryService::Config;
 
     auto gd =
         py::class_<DD4hepDetector, std::shared_ptr<DD4hepDetector>>(
-            mex, "DD4hepDetector")
+            dd4hep, "DD4hepDetector")
             .def(py::init<>())
             .def("finalize",
                  py::overload_cast<

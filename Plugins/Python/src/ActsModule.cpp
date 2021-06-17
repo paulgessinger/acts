@@ -14,6 +14,25 @@ namespace py = pybind11;
 constexpr std::tuple<unsigned int, unsigned int, unsigned int> version{
     Acts::VersionMajor, Acts::VersionMinor, Acts::VersionPatch};
 
+using namespace ActsExamples;
+
+namespace {
+class PyIAlgorithm : public IAlgorithm {
+ public:
+  using IAlgorithm::IAlgorithm;
+
+  std::string name() const override {
+    py::gil_scoped_acquire acquire{};
+    PYBIND11_OVERRIDE_PURE(std::string, IAlgorithm, name);
+  }
+
+  ProcessCode execute(const AlgorithmContext& ctx) const override {
+    py::gil_scoped_acquire acquire{};
+    PYBIND11_OVERRIDE_PURE(ProcessCode, IAlgorithm, execute, ctx);
+  }
+};
+}  // namespace
+
 PYBIND11_MODULE(_acts, m) {
   m.doc() = "Acts";
 
@@ -28,9 +47,26 @@ PYBIND11_MODULE(_acts, m) {
   py::class_<ActsExamples::IReader, std::shared_ptr<ActsExamples::IReader>>(
       mex, "IReader");
 
+  // py::enum_<ProcessCode>(mex, "ProcessCode")
+  //     .value("SUCCESS", ProcessCode::SUCCESS)
+  //     .value("ABORT", ProcessCode::ABORT)
+  //     .value("END", ProcessCode::END);
+
+  // py::class_<AlgorithmContext>(mex, "AlgorithmContext")
+  //     .def_readonly("algorithmNumber", &AlgorithmContext::algorithmNumber)
+  //     .def_readonly("eventNumber", &AlgorithmContext::eventNumber)
+  //     // .def_readonly("eventStore", &AlgorithmContext::eventStore)
+  //     // .def_readonly("magFieldContext", &AlgorithmContext::magFieldContext)
+  //     // .def_readonly("calibContext", &AlgorithmContext::calibContext)
+  //     ;
+
   auto iAlgorithm =
-      py::class_<ActsExamples::IAlgorithm,
-                 std::shared_ptr<ActsExamples::IAlgorithm>>(mex, "IAlgorithm");
+      py::class_<ActsExamples::IAlgorithm, PyIAlgorithm,
+                 std::shared_ptr<ActsExamples::IAlgorithm>>(mex, "IAlgorithm")
+          .def(py::init<>())
+      // .def("execute", &IAlgorithm::execute)
+      // .def("name", &ActsExamples::IAlgorithm::name)
+      ;
 
   auto bareAlgorithm =
       py::class_<ActsExamples::BareAlgorithm, ActsExamples::IAlgorithm,

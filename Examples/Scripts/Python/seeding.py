@@ -7,16 +7,16 @@ import acts.examples
 u = acts.UnitConstants
 
 # Preliminaries
-rnd = acts.examples.RandomNumbers()
 
-detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
-# detector, trackingGeometry, _ = acts.examples.DD4hepDetector.create(
-#     xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-# )
+# detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
+detector, trackingGeometry, _ = acts.examples.dd4hep.DD4hepDetector.create(
+    xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+)
 
 field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
 # Input
+rnd = acts.examples.RandomNumbers()
 evGen = acts.examples.EventGenerator(
     level=acts.logging.INFO,
     generators=[
@@ -73,6 +73,19 @@ digiCfg.randomNumbers = rnd
 digiCfg.inputSimHits = simAlg.config.outputSimHits
 digiAlg = acts.examples.DigitizationAlgorithm(digiCfg, acts.logging.INFO)
 
+
+selAlg = acts.examples.TruthSeedSelector(
+    level=acts.logging.INFO,
+    ptMin=1 * u.GeV,
+    eta=(-2.5, 2.5),
+    nHitsMin=9,
+    inputParticles=simAlg.config.outputParticlesFinal,
+    inputMeasurementParticlesMap=digiCfg.outputMeasurementParticlesMap,
+    outputParticles="particles_selected",
+)
+
+inputParticles = selAlg.config.outputParticles
+
 spAlg = acts.examples.SpacePointMaker(
     level=acts.logging.INFO,
     inputSourceLinks=digiCfg.outputSourceLinks,
@@ -106,7 +119,7 @@ parEstimateAlg = acts.examples.TrackParamsEstimationAlgorithm(
 tfPerf = acts.examples.TrackFinderPerformanceWriter(
     level=acts.logging.INFO,
     inputProtoTracks=seedingAlg.config.outputProtoTracks,
-    inputParticles=simAlg.config.outputParticlesFinal,
+    inputParticles=inputParticles,
     inputMeasurementParticlesMap=digiCfg.outputMeasurementParticlesMap,
     outputDir="output",
     outputFilename="performance_seeding_trees.root",
@@ -115,7 +128,7 @@ tfPerf = acts.examples.TrackFinderPerformanceWriter(
 seedPerf = acts.examples.SeedingPerformanceWriter(
     level=acts.logging.INFO,
     inputProtoTracks=seedingAlg.config.outputProtoTracks,
-    inputParticles=simAlg.config.outputParticlesFinal,
+    inputParticles=inputParticles,
     inputMeasurementParticlesMap=digiCfg.outputMeasurementParticlesMap,
     outputDir="output",
     outputFilename="performance_seeding_trees.root",
@@ -140,6 +153,7 @@ s = acts.examples.Sequencer(events=100, numThreads=-1, logLevel=acts.logging.INF
 s.addReader(evGen)
 s.addAlgorithm(simAlg)
 s.addAlgorithm(digiAlg)
+s.addAlgorithm(selAlg)
 s.addAlgorithm(spAlg)
 s.addAlgorithm(seedingAlg)
 s.addAlgorithm(parEstimateAlg)
