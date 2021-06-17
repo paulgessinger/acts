@@ -24,7 +24,7 @@ struct FixedVertexGenerator : public EventGenerator::VertexGenerator {
   /// The fixed vertex position and time.
   Acts::Vector4 fixed = Acts::Vector4::Zero();
 
-  Acts::Vector4 generate(RandomEngine& /* unused */) const override {
+  Acts::Vector4 operator()(RandomEngine& /* unused */) const override {
     return fixed;
   }
 };
@@ -36,7 +36,7 @@ struct GaussianVertexGenerator : public EventGenerator::VertexGenerator {
   /// Mean vertex position and time.
   Acts::Vector4 mean = {0.0, 0.0, 0.0, 0.0};
 
-  Acts::Vector4 generate(RandomEngine& rng) const override {
+  Acts::Vector4 operator()(RandomEngine& rng) const override {
     auto normal = std::normal_distribution<double>(0.0, 1.0);
     Acts::Vector4 rndNormal = {
         normal(rng),

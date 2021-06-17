@@ -51,17 +51,17 @@ class EventGenerator final : public ActsExamples::IReader {
 
   struct MultiplicityGenerator {
     virtual ~MultiplicityGenerator() = default;
-    virtual size_t generate(RandomEngine& rng) const = 0;
+    virtual size_t operator()(RandomEngine& rng) const = 0;
   };
 
   struct VertexGenerator {
     virtual ~VertexGenerator() = default;
-    virtual Acts::Vector4 generate(RandomEngine& rng) const = 0;
+    virtual Acts::Vector4 operator()(RandomEngine& rng) const = 0;
   };
 
   struct ParticlesGenerator {
     virtual ~ParticlesGenerator() = default;
-    virtual SimParticleContainer generate(RandomEngine& rng) = 0;
+    virtual SimParticleContainer operator()(RandomEngine& rng) = 0;
   };
 
   struct Generator {
