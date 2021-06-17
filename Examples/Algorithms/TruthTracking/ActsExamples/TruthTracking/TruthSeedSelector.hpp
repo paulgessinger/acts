@@ -68,6 +68,7 @@ class TruthSeedSelector final : public BareAlgorithm {
   /// Construct particle selector config from user variables.
   static Config readConfig(const Options::Variables& vars);
 
+  /// Get readonly access to the config parameters
   const Config& config() const { return m_cfg; }
 
  private:
