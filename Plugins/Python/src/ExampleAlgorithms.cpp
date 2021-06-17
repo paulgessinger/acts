@@ -11,6 +11,7 @@
 #include "ActsExamples/TrackFinding/SeedingAlgorithm.hpp"
 #include "ActsExamples/TrackFinding/SpacePointMaker.hpp"
 #include "ActsExamples/TrackFinding/TrackParamsEstimationAlgorithm.hpp"
+#include "ActsExamples/TruthTracking/TruthSeedSelector.hpp"
 #include "ActsModule.hpp"
 
 #include <memory>
@@ -20,6 +21,9 @@
 
 namespace py = pybind11;
 #define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
+
+using namespace ActsExamples;
+using namespace Acts;
 
 namespace {
 
@@ -38,25 +42,26 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
                                    &ActsExamples::FatrasAlgorithm::config);
 
     auto c = py::class_<Config>(alg, "Config").def(py::init<>());
-#define _MEMBER(name) PY_MEMBER(c, Config, name)
-    _MEMBER(inputParticles);
-    _MEMBER(outputParticlesInitial);
-    _MEMBER(outputParticlesFinal);
-    _MEMBER(outputSimHits);
-    _MEMBER(imputParametrisationNuclearInteraction);
-    _MEMBER(randomNumbers);
-    _MEMBER(trackingGeometry);
-    _MEMBER(magneticField);
-    _MEMBER(pMin);
-    _MEMBER(emScattering);
-    _MEMBER(emEnergyLossIonisation);
-    _MEMBER(emEnergyLossRadiation);
-    _MEMBER(emPhotonConversion);
-    _MEMBER(generateHitsOnSensitive);
-    _MEMBER(generateHitsOnMaterial);
-    _MEMBER(generateHitsOnPassive);
-    _MEMBER(averageHitsPerParticle);
-#undef _MEMBER
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(inputParticles);
+    ACTS_PYTHON_MEMBER(outputParticlesInitial);
+    ACTS_PYTHON_MEMBER(outputParticlesFinal);
+    ACTS_PYTHON_MEMBER(outputSimHits);
+    ACTS_PYTHON_MEMBER(imputParametrisationNuclearInteraction);
+    ACTS_PYTHON_MEMBER(randomNumbers);
+    ACTS_PYTHON_MEMBER(trackingGeometry);
+    ACTS_PYTHON_MEMBER(magneticField);
+    ACTS_PYTHON_MEMBER(pMin);
+    ACTS_PYTHON_MEMBER(emScattering);
+    ACTS_PYTHON_MEMBER(emEnergyLossIonisation);
+    ACTS_PYTHON_MEMBER(emEnergyLossRadiation);
+    ACTS_PYTHON_MEMBER(emPhotonConversion);
+    ACTS_PYTHON_MEMBER(generateHitsOnSensitive);
+    ACTS_PYTHON_MEMBER(generateHitsOnMaterial);
+    ACTS_PYTHON_MEMBER(generateHitsOnPassive);
+    ACTS_PYTHON_MEMBER(averageHitsPerParticle);
+    ACTS_PYTHON_STRUCT_END();
   }
 
   {
@@ -72,20 +77,18 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
                  .def(py::init<Acts::GeometryHierarchyMap<
                           ActsExamples::DigiComponentsConfig>>());
 
-    PY_MEMBER(c, Config, inputSimHits);
-    PY_MEMBER(c, Config, outputSourceLinks);
-    PY_MEMBER(c, Config, outputMeasurements);
-    PY_MEMBER(c, Config, outputClusters);
-    PY_MEMBER(c, Config, outputMeasurementParticlesMap);
-    PY_MEMBER(c, Config, outputMeasurementSimHitsMap);
-    PY_MEMBER(c, Config, trackingGeometry);
-    PY_MEMBER(c, Config, randomNumbers);
-    PY_MEMBER(c, Config, digitizationConfigs);
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(inputSimHits);
+    ACTS_PYTHON_MEMBER(outputSourceLinks);
+    ACTS_PYTHON_MEMBER(outputMeasurements);
+    ACTS_PYTHON_MEMBER(outputClusters);
+    ACTS_PYTHON_MEMBER(outputMeasurementParticlesMap);
+    ACTS_PYTHON_MEMBER(outputMeasurementSimHitsMap);
+    ACTS_PYTHON_MEMBER(trackingGeometry);
+    ACTS_PYTHON_MEMBER(randomNumbers);
+    ACTS_PYTHON_MEMBER(digitizationConfigs);
+    ACTS_PYTHON_STRUCT_END();
 
-    // PY_MEMBER(c, Config, isSimpleSmearer);
-    // PY_MEMBER(c, Config, doMerge);
-    // PY_MEMBER(c, Config, mergeNsigma);
-    // PY_MEMBER(c, Config, mergeCommonCorner);
     c.def_readonly("isSimpleSmearer", &Config::isSimpleSmearer);
     c.def_readonly("doMerge", &Config::doMerge);
     c.def_readonly("mergeNsigma", &Config::mergeNsigma);
@@ -110,11 +113,13 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
 
     auto c = py::class_<ActsExamples::SpacePointMaker::Config>(alg, "Config")
                  .def(py::init<>());
-    PY_MEMBER(c, Config, inputSourceLinks);
-    PY_MEMBER(c, Config, inputMeasurements);
-    PY_MEMBER(c, Config, outputSpacePoints);
-    PY_MEMBER(c, Config, trackingGeometry);
-    PY_MEMBER(c, Config, geometrySelection);
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(inputSourceLinks);
+    ACTS_PYTHON_MEMBER(inputMeasurements);
+    ACTS_PYTHON_MEMBER(outputSpacePoints);
+    ACTS_PYTHON_MEMBER(trackingGeometry);
+    ACTS_PYTHON_MEMBER(geometrySelection);
+    ACTS_PYTHON_STRUCT_END();
 
     mex.def("readJsonGeometryList", ActsExamples::readJsonGeometryList);
   }
@@ -132,25 +137,27 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
                                    &ActsExamples::SeedingAlgorithm::config);
 
     auto c = py::class_<Config>(alg, "Config").def(py::init<>());
-    PY_MEMBER(c, Config, inputSpacePoints);
-    PY_MEMBER(c, Config, outputSeeds);
-    PY_MEMBER(c, Config, outputProtoTracks);
-    PY_MEMBER(c, Config, rMax);
-    PY_MEMBER(c, Config, deltaRMin);
-    PY_MEMBER(c, Config, deltaRMax);
-    PY_MEMBER(c, Config, collisionRegionMin);
-    PY_MEMBER(c, Config, collisionRegionMax);
-    PY_MEMBER(c, Config, zMin);
-    PY_MEMBER(c, Config, zMax);
-    PY_MEMBER(c, Config, maxSeedsPerSpM);
-    PY_MEMBER(c, Config, cotThetaMax);
-    PY_MEMBER(c, Config, sigmaScattering);
-    PY_MEMBER(c, Config, radLengthPerSeed);
-    PY_MEMBER(c, Config, minPt);
-    PY_MEMBER(c, Config, bFieldInZ);
-    PY_MEMBER(c, Config, beamPosX);
-    PY_MEMBER(c, Config, beamPosY);
-    PY_MEMBER(c, Config, impactMax);
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(inputSpacePoints);
+    ACTS_PYTHON_MEMBER(outputSeeds);
+    ACTS_PYTHON_MEMBER(outputProtoTracks);
+    ACTS_PYTHON_MEMBER(rMax);
+    ACTS_PYTHON_MEMBER(deltaRMin);
+    ACTS_PYTHON_MEMBER(deltaRMax);
+    ACTS_PYTHON_MEMBER(collisionRegionMin);
+    ACTS_PYTHON_MEMBER(collisionRegionMax);
+    ACTS_PYTHON_MEMBER(zMin);
+    ACTS_PYTHON_MEMBER(zMax);
+    ACTS_PYTHON_MEMBER(maxSeedsPerSpM);
+    ACTS_PYTHON_MEMBER(cotThetaMax);
+    ACTS_PYTHON_MEMBER(sigmaScattering);
+    ACTS_PYTHON_MEMBER(radLengthPerSeed);
+    ACTS_PYTHON_MEMBER(minPt);
+    ACTS_PYTHON_MEMBER(bFieldInZ);
+    ACTS_PYTHON_MEMBER(beamPosX);
+    ACTS_PYTHON_MEMBER(beamPosY);
+    ACTS_PYTHON_MEMBER(impactMax);
+    ACTS_PYTHON_STRUCT_END();
 
     c.def_property(
         "deltaR",
@@ -194,24 +201,26 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
             .def_property_readonly("config", &Alg::config);
 
     auto c = py::class_<Config>(alg, "Config").def(py::init<>());
-    PY_MEMBER(c, Config, inputSeeds);
-    PY_MEMBER(c, Config, inputSpacePoints);
-    PY_MEMBER(c, Config, inputProtoTracks);
-    PY_MEMBER(c, Config, inputSourceLinks);
-    PY_MEMBER(c, Config, outputTrackParameters);
-    PY_MEMBER(c, Config, outputProtoTracks);
-    PY_MEMBER(c, Config, trackingGeometry);
-    PY_MEMBER(c, Config, magneticField);
-    PY_MEMBER(c, Config, deltaRMin);
-    PY_MEMBER(c, Config, deltaRMax);
-    PY_MEMBER(c, Config, bFieldMin);
-    PY_MEMBER(c, Config, sigmaLoc0);
-    PY_MEMBER(c, Config, sigmaLoc1);
-    PY_MEMBER(c, Config, sigmaPhi);
-    PY_MEMBER(c, Config, sigmaTheta);
-    PY_MEMBER(c, Config, sigmaQOverP);
-    PY_MEMBER(c, Config, sigmaT0);
-    PY_MEMBER(c, Config, initialVarInflation);
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(inputSeeds);
+    ACTS_PYTHON_MEMBER(inputSpacePoints);
+    ACTS_PYTHON_MEMBER(inputProtoTracks);
+    ACTS_PYTHON_MEMBER(inputSourceLinks);
+    ACTS_PYTHON_MEMBER(outputTrackParameters);
+    ACTS_PYTHON_MEMBER(outputProtoTracks);
+    ACTS_PYTHON_MEMBER(trackingGeometry);
+    ACTS_PYTHON_MEMBER(magneticField);
+    ACTS_PYTHON_MEMBER(deltaRMin);
+    ACTS_PYTHON_MEMBER(deltaRMax);
+    ACTS_PYTHON_MEMBER(bFieldMin);
+    ACTS_PYTHON_MEMBER(sigmaLoc0);
+    ACTS_PYTHON_MEMBER(sigmaLoc1);
+    ACTS_PYTHON_MEMBER(sigmaPhi);
+    ACTS_PYTHON_MEMBER(sigmaTheta);
+    ACTS_PYTHON_MEMBER(sigmaQOverP);
+    ACTS_PYTHON_MEMBER(sigmaT0);
+    ACTS_PYTHON_MEMBER(initialVarInflation);
+    ACTS_PYTHON_STRUCT_END();
   }
 
   {
@@ -237,17 +246,18 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
             .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
                  py::arg("config"), py::arg("level"));
 
-    py::class_<Alg::Config>(alg, "Config")
-        .def(py::init<>())
-        .def_readwrite("inputClusters", &Alg::Config::inputClusters)
-        .def_readwrite("inputMeasurementParticlesMap",
-                       &Alg::Config::inputMeasurementParticlesMap)
-        .def_readwrite("inputHitIds", &Alg::Config::inputHitIds)
-        .def_readwrite("selectIndexStart", &Alg::Config::selectIndexStart)
-        .def_readwrite("selectIndexLength", &Alg::Config::selectIndexLength)
-        .def_readwrite("selectVolume", &Alg::Config::selectVolume)
-        .def_readwrite("selectLayer", &Alg::Config::selectLayer)
-        .def_readwrite("selectModule", &Alg::Config::selectModule);
+    auto c = py::class_<Alg::Config>(alg, "Config").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Alg::Config);
+    ACTS_PYTHON_MEMBER(inputClusters);
+    ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
+    ACTS_PYTHON_MEMBER(inputHitIds);
+    ACTS_PYTHON_MEMBER(selectIndexStart);
+    ACTS_PYTHON_MEMBER(selectIndexLength);
+    ACTS_PYTHON_MEMBER(selectVolume);
+    ACTS_PYTHON_MEMBER(selectLayer);
+    ACTS_PYTHON_MEMBER(selectModule);
+    ACTS_PYTHON_STRUCT_END();
   }
 
   {
@@ -263,6 +273,48 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
         .def(py::init<>())
         .def_readwrite("inputTrackParameters",
                        &Alg::Config::inputTrackParameters);
+  }
+
+  {
+    using Alg = ActsExamples::TruthSeedSelector;
+    using Config = Alg::Config;
+
+    auto alg = py::class_<Alg, BareAlgorithm, std::shared_ptr<Alg>>(
+                   mex, "TruthSeedSelector")
+                   .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
+                        py::arg("config"), py::arg("level"))
+                   .def_property_readonly("config", &Alg::config);
+
+    auto c = py::class_<Config>(alg, "Config").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(inputParticles);
+    ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
+    ACTS_PYTHON_MEMBER(outputParticles);
+    ACTS_PYTHON_MEMBER(rhoMin);
+    ACTS_PYTHON_MEMBER(rhoMax);
+    ACTS_PYTHON_MEMBER(zMin);
+    ACTS_PYTHON_MEMBER(zMax);
+    ACTS_PYTHON_MEMBER(phiMin);
+    ACTS_PYTHON_MEMBER(phiMax);
+    ACTS_PYTHON_MEMBER(etaMin);
+    ACTS_PYTHON_MEMBER(etaMax);
+    ACTS_PYTHON_MEMBER(absEtaMin);
+    ACTS_PYTHON_MEMBER(absEtaMax);
+    ACTS_PYTHON_MEMBER(ptMin);
+    ACTS_PYTHON_MEMBER(ptMax);
+    ACTS_PYTHON_MEMBER(keepNeutral);
+    ACTS_PYTHON_MEMBER(nHitsMin);
+    ACTS_PYTHON_MEMBER(nHitsMax);
+    ACTS_PYTHON_STRUCT_END();
+
+    pythonRangeProperty(c, "rho", &Config::rhoMin, &Config::rhoMax);
+    pythonRangeProperty(c, "z", &Config::zMin, &Config::zMax);
+    pythonRangeProperty(c, "phi", &Config::phiMin, &Config::phiMax);
+    pythonRangeProperty(c, "eta", &Config::etaMin, &Config::etaMax);
+    pythonRangeProperty(c, "absEta", &Config::absEtaMin, &Config::absEtaMax);
+    pythonRangeProperty(c, "pt", &Config::ptMin, &Config::ptMax);
+    pythonRangeProperty(c, "nHits", &Config::nHitsMin, &Config::nHitsMax);
   }
 }
 
