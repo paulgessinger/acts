@@ -21,6 +21,9 @@ pybind11_add_module(ActsPythonBindings
   src/Input.cpp
   src/Propagation.cpp
   src/Generators.cpp
+  src/TruthTracking.cpp
+  src/TrackFitting.cpp
+  src/TrackFinding.cpp
 )
 
 
@@ -55,6 +58,7 @@ target_link_libraries(ActsPythonBindings PUBLIC
   ActsExamplesIoPerformance
   ActsExamplesGenerators
   ActsExamplesTrackFinding
+  ActsExamplesTrackFitting
   ActsExamplesFatras
   ActsExamplesPrinters
 )
