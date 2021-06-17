@@ -95,7 +95,8 @@ int main(int argc, char* argv[]) {
       std::make_shared<TrackSelector>(trackSelectorConfig, logLevel));
 
   // find vertices
-  AdaptiveMultiVertexFinderAlgorithm::Config findVertices(magneticField);
+  AdaptiveMultiVertexFinderAlgorithm::Config findVertices;
+  findVertices.bField = magneticField;
   findVertices.inputTrackParameters = trackSelectorConfig.outputTrackParameters;
   findVertices.outputProtoVertices = "fittedProtoVertices";
   findVertices.outputVertices = "fittedVertices";
