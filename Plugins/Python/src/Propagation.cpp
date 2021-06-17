@@ -13,8 +13,6 @@
 
 namespace py = pybind11;
 
-#define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
-
 namespace {
 template <typename stepper_t>
 void addStepper(const std::string& prefix, py::module_& m, py::module_& prop,
@@ -41,41 +39,50 @@ void addStepper(const std::string& prefix, py::module_& m, py::module_& prop,
 
   auto c = py::class_<Config>(alg, "Config").def(py::init<propagator_t>());
 #define _MEMBER(name) PY_MEMBER(c, Config, name)
-  _MEMBER(propagator);
-  _MEMBER(randomNumberSvc);
-  _MEMBER(mode);
-  _MEMBER(sterileLogger);
-  _MEMBER(debugOutput);
-  _MEMBER(energyLoss);
-  _MEMBER(multipleScattering);
-  _MEMBER(recordMaterialInteractions);
-  _MEMBER(ntests);
-  _MEMBER(d0Sigma);
-  _MEMBER(z0Sigma);
-  _MEMBER(phiSigma);
-  _MEMBER(thetaSigma);
-  _MEMBER(qpSigma);
-  _MEMBER(tSigma);
-  _MEMBER(phiRange);
-  _MEMBER(etaRange);
-  _MEMBER(ptRange);
-  _MEMBER(ptLoopers);
-  _MEMBER(maxStepSize);
-  _MEMBER(propagationStepCollection);
-  _MEMBER(propagationMaterialCollection);
-  _MEMBER(covarianceTransport);
-  _MEMBER(covariances);
-  _MEMBER(correlations);
-#undef _MEMBER
+  ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+  ACTS_PYTHON_MEMBER(propagator);
+  ACTS_PYTHON_MEMBER(randomNumberSvc);
+  ACTS_PYTHON_MEMBER(mode);
+  ACTS_PYTHON_MEMBER(sterileLogger);
+  ACTS_PYTHON_MEMBER(debugOutput);
+  ACTS_PYTHON_MEMBER(energyLoss);
+  ACTS_PYTHON_MEMBER(multipleScattering);
+  ACTS_PYTHON_MEMBER(recordMaterialInteractions);
+  ACTS_PYTHON_MEMBER(ntests);
+  ACTS_PYTHON_MEMBER(d0Sigma);
+  ACTS_PYTHON_MEMBER(z0Sigma);
+  ACTS_PYTHON_MEMBER(phiSigma);
+  ACTS_PYTHON_MEMBER(thetaSigma);
+  ACTS_PYTHON_MEMBER(qpSigma);
+  ACTS_PYTHON_MEMBER(tSigma);
+  ACTS_PYTHON_MEMBER(phiRange);
+  ACTS_PYTHON_MEMBER(etaRange);
+  ACTS_PYTHON_MEMBER(ptRange);
+  ACTS_PYTHON_MEMBER(ptLoopers);
+  ACTS_PYTHON_MEMBER(maxStepSize);
+  ACTS_PYTHON_MEMBER(propagationStepCollection);
+  ACTS_PYTHON_MEMBER(propagationMaterialCollection);
+  ACTS_PYTHON_MEMBER(covarianceTransport);
+  ACTS_PYTHON_MEMBER(covariances);
+  ACTS_PYTHON_MEMBER(correlations);
+  ACTS_PYTHON_STRUCT_END();
 }
 
 ACTS_PYTHON_COMPONENT(Propagation, ctx) {
   auto& [m, mex, prop] = ctx;
-  py::class_<Acts::Navigator, std::shared_ptr<Acts::Navigator>>(m, "Navigator")
-      .def(py::init<std::shared_ptr<const Acts::TrackingGeometry>>())
-      .def_readwrite("resolveMaterial", &Acts::Navigator::resolveMaterial)
-      .def_readwrite("resolvePassive", &Acts::Navigator::resolvePassive)
-      .def_readwrite("resolveSensitive", &Acts::Navigator::resolveSensitive);
+  using Config = Acts::Navigator::Config;
+  auto nav = py::class_<Acts::Navigator, std::shared_ptr<Acts::Navigator>>(
+                 m, "Navigator")
+                 .def(py::init<Config>());
+
+  auto c = py::class_<Config>(nav, "Config").def(py::init<>());
+
+  ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+  ACTS_PYTHON_MEMBER(resolveMaterial);
+  ACTS_PYTHON_MEMBER(resolvePassive);
+  ACTS_PYTHON_MEMBER(resolveSensitive);
+  ACTS_PYTHON_MEMBER(trackingGeometry);
+  ACTS_PYTHON_STRUCT_END();
 
   addStepper<Acts::EigenStepper<>>("Eigen", m, prop, mex);
   addStepper<Acts::AtlasStepper>("Atlas", m, prop, mex);
