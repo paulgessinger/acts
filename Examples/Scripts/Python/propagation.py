@@ -41,7 +41,7 @@ field = acts.NullBField()
 #     nbins=(50, 50),
 #     field=solenoid
 # )
-nav = acts.Navigator(trackingGeometry)
+nav = acts.Navigator(trackingGeometry=trackingGeometry)
 
 stepper = acts.EigenStepper(field)
 # stepper = acts.AtlasStepper(field)
