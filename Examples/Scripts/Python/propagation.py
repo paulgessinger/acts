@@ -18,11 +18,13 @@ rnd = acts.examples.RandomNumbers(seed=42)
 # gdc = acts.examples.GenericDetector.Config()
 # detector = acts.examples.GenericDetector()
 # trackingGeometry, contextDecorators = detector.finalize(gdc, None)
+detector, trackingGeometry, contextDecorators = acts.examples.GenericDetector.create()
 
-dd4hepCfg = acts.examples.DD4hepDetector.Config()
-dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-detector = acts.examples.DD4hepDetector()
-trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
+
+# dd4hepCfg = acts.examples.DD4hepDetector.Config()
+# dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+# detector = acts.examples.DD4hepDetector()
+# trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
 
 for cdr in contextDecorators:
     s.addContextDecorator(cdr)

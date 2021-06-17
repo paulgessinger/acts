@@ -1,7 +1,9 @@
 from ._acts._examples import *
 from . import _acts
 from ._acts import _examples
+import acts
 
+import inspect
 
 _propagators = []
 _propagation_algorithms = []
@@ -49,31 +51,6 @@ class _propagationAlgorithmHelper:
 PropagationAlgorithm = _propagationAlgorithmHelper()
 
 
-import functools
-
-
-def _make_config_adapter(fn):
-    @functools.wraps(fn)
-    def wrapped(self, *args, **kwargs):
-        if len(args) > 0:
-            maybe_config = args[0]
-            if isinstance(maybe_config, type(self).Config):
-                # is already config, nothing to do here
-                fn(self, maybe_config, *args[1:], **kwargs)
-                return
-
-        cfg = type(self).Config()
-        _kwargs = {}
-        for k, v in kwargs.items():
-            if hasattr(cfg, k):
-                setattr(cfg, k, v)
-            else:
-                _kwargs[k] = v
-        fn(self, cfg, *args, **_kwargs)
-
-    return wrapped
-
-
 def _detector_create(cls):
     def create(*args, mdecorator=None, **kwargs):
         cfg = cls.Config()
@@ -90,8 +67,6 @@ def _detector_create(cls):
     return create
 
 
-import inspect
-
 for m in (_acts._examples, _acts._examples.dd4hep):
     for name, cls in inspect.getmembers(m, inspect.isclass):
         # print(name)
@@ -100,4 +75,4 @@ for m in (_acts._examples, _acts._examples.dd4hep):
         if name.endswith("Detector"):
             cls.create = _detector_create(cls)
         else:
-            cls.__init__ = _make_config_adapter(cls.__init__)
+            cls.__init__ = acts._make_config_adapter(cls.__init__)
