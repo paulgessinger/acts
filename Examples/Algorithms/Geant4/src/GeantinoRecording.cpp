@@ -9,6 +9,7 @@
 #include "ActsExamples/Geant4/GeantinoRecording.hpp"
 
 #include "ActsExamples/Framework/WhiteBoard.hpp"
+#include "ActsExamples/Geant4/GdmlDetectorConstruction.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -23,22 +24,20 @@
 
 using namespace ActsExamples;
 
-GeantinoRecording::GeantinoRecording(GeantinoRecording::Config&& cfg,
-                                     Acts::Logging::Level lvl)
-    : BareAlgorithm("GeantinoRecording", lvl),
-      m_cfg(std::move(cfg)),
+GeantinoRecording::GeantinoRecording(GeantinoRecording::Config config,
+                                     Acts::Logging::Level level)
+    : BareAlgorithm("GeantinoRecording", level),
+      m_cfg(std::move(config)),
       m_runManager(std::make_unique<G4RunManager>()) {
   if (m_cfg.outputMaterialTracks.empty()) {
     throw std::invalid_argument("Missing output material tracks collection");
   }
-  if (not m_cfg.detectorConstruction) {
-    throw std::invalid_argument("Missing detector construction object");
-  }
-
   m_cfg.generationConfig.particleName = "geantino";
   m_cfg.generationConfig.energy = 1000.;
 
-  m_runManager->SetUserInitialization(m_cfg.detectorConstruction.release());
+  // This object here retains owner
+  m_runManager->SetUserInitialization(
+      new GdmlDetectorConstruction(m_cfg.gdmlInputPath));
   m_runManager->SetUserInitialization(new FTFP_BERT);
   m_runManager->SetUserAction(new RunAction());
   m_runManager->SetUserAction(new EventAction());

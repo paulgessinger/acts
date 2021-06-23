@@ -1,9 +1,6 @@
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
 #include "Acts/Propagator/StraightLineStepper.hpp"
-#include "ActsExamples/Digitization/DigitizationAlgorithm.hpp"
-#include "ActsExamples/Digitization/DigitizationConfig.hpp"
 #include "ActsExamples/Fatras/FatrasAlgorithm.hpp"
-#include "ActsExamples/Io/Json/JsonDigitizationConfig.hpp"
 #include "ActsExamples/Io/Json/JsonGeometryList.hpp"
 #include "ActsExamples/Printers/HitsPrinter.hpp"
 #include "ActsExamples/Printers/ParticlesPrinter.hpp"
@@ -61,42 +58,6 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
     ACTS_PYTHON_MEMBER(generateHitsOnPassive);
     ACTS_PYTHON_MEMBER(averageHitsPerParticle);
     ACTS_PYTHON_STRUCT_END();
-  }
-
-  {
-    using Config = ActsExamples::DigitizationConfig;
-
-    py::class_<ActsExamples::DigitizationAlgorithm, ActsExamples::BareAlgorithm,
-               std::shared_ptr<ActsExamples::DigitizationAlgorithm>>(
-        mex, "DigitizationAlgorithm")
-        .def(py::init<Config&, Acts::Logging::Level>(), py::arg("config"),
-             py::arg("level"));
-
-    auto c = py::class_<Config>(mex, "DigitizationConfig")
-                 .def(py::init<Acts::GeometryHierarchyMap<
-                          ActsExamples::DigiComponentsConfig>>());
-
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(inputSimHits);
-    ACTS_PYTHON_MEMBER(outputSourceLinks);
-    ACTS_PYTHON_MEMBER(outputMeasurements);
-    ACTS_PYTHON_MEMBER(outputClusters);
-    ACTS_PYTHON_MEMBER(outputMeasurementParticlesMap);
-    ACTS_PYTHON_MEMBER(outputMeasurementSimHitsMap);
-    ACTS_PYTHON_MEMBER(trackingGeometry);
-    ACTS_PYTHON_MEMBER(randomNumbers);
-    ACTS_PYTHON_MEMBER(digitizationConfigs);
-    ACTS_PYTHON_STRUCT_END();
-
-    c.def_readonly("isSimpleSmearer", &Config::isSimpleSmearer);
-    c.def_readonly("doMerge", &Config::doMerge);
-    c.def_readonly("mergeNsigma", &Config::mergeNsigma);
-    c.def_readonly("mergeCommonCorner", &Config::mergeCommonCorner);
-
-    py::class_<Acts::GeometryHierarchyMap<ActsExamples::DigiComponentsConfig>>(
-        mex, "GeometryHierarchy_DigiComponentsConfig");
-
-    mex.def("readDigiConfigFromJson", ActsExamples::readDigiConfigFromJson);
   }
 
   {

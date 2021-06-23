@@ -38,6 +38,16 @@ if(ACTS_BUILD_EXAMPLES_PYTHIA8)
   target_sources(ActsPythonBindings PRIVATE src/Pythia8Component.cpp)
 endif()
 
+if(ACTS_BUILD_PLUGIN_DIGITIZATION AND ACTS_BUILD_PLUGIN_IDENTIFICATION)
+  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesDigitization)
+  target_sources(ActsPythonBindings PRIVATE src/Digitization.cpp)
+endif()
+
+if(ACTS_BUILD_EXAMPLES_GEANT4)
+  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesGeant4)
+  target_sources(ActsPythonBindings PRIVATE src/Geant4.cpp)
+endif()
+
 target_include_directories(ActsPythonBindings PRIVATE src)
 
 set_target_properties(ActsPythonBindings PROPERTIES INSTALL_RPATH "\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
