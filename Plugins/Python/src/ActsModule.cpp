@@ -1,6 +1,7 @@
 #include "ActsModule.hpp"
 
 #include "Acts/ActsVersion.hpp"
+#include "Acts/Utilities/Logger.hpp"
 #include "ActsExamples/Framework/BareAlgorithm.hpp"
 #include "ActsExamples/Framework/RandomNumbers.hpp"
 #include "ActsExamples/Framework/Sequencer.hpp"
@@ -38,6 +39,11 @@ PYBIND11_MODULE(_acts, m) {
 
   m.attr("__version__") =
       std::tuple{Acts::VersionMajor, Acts::VersionMinor, Acts::VersionPatch};
+
+  {
+    py::class_<Acts::Logger, std::unique_ptr<Acts::Logger>>(m, "Logger");
+    m.def("getDefaultLogger", &Acts::getDefaultLogger);
+  }
 
   auto mex = m.def_submodule("_examples");
 

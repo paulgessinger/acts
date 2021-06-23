@@ -48,7 +48,7 @@ class GeantinoRecording final : public BareAlgorithm {
     Geant4::PrimaryGeneratorAction::Config generationConfig;
   };
 
-  GeantinoRecording(Config&& cfg, Acts::Logging::Level lvl);
+  GeantinoRecording(Config config, Acts::Logging::Level level);
   ~GeantinoRecording();
 
   ActsExamples::ProcessCode execute(
