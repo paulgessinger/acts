@@ -1,6 +1,7 @@
 #include "ActsExamples/Io/Csv/CsvParticleWriter.hpp"
 #include "ActsExamples/Io/Performance/SeedingPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/TrackFinderPerformanceWriter.hpp"
+#include "ActsExamples/Io/Root/RootBFieldWriter.hpp"
 #include "ActsExamples/Io/Root/RootMaterialTrackWriter.hpp"
 #include "ActsExamples/Io/Root/RootParticleWriter.hpp"
 #include "ActsExamples/Io/Root/RootPropagationStepsWriter.hpp"
@@ -158,6 +159,37 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     ACTS_PYTHON_MEMBER(prePostStep);
     ACTS_PYTHON_MEMBER(storeSurface);
     ACTS_PYTHON_MEMBER(storeVolume);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Writer = ActsExamples::RootBFieldWriter;
+    auto w =
+        py::class_<Writer>(mex, "RootBFieldWriter")
+            .def_static(
+                "run",
+                [](const Writer::Config& config, Acts::Logging::Level level) {
+                  Writer::run(config, Acts::getDefaultLogger("RootBFieldWriter",
+                                                             level));
+                },
+                py::arg("config"), py::arg("level"));
+
+    py::enum_<Writer::GridType>(w, "GridType")
+        .value("rz", Writer::GridType::rz)
+        .value("xyz", Writer::GridType::xyz);
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(treeName);
+    ACTS_PYTHON_MEMBER(fileName);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_MEMBER(bField);
+    ACTS_PYTHON_MEMBER(gridType);
+    ACTS_PYTHON_MEMBER(rBounds);
+    ACTS_PYTHON_MEMBER(zBounds);
+    ACTS_PYTHON_MEMBER(rBins);
+    ACTS_PYTHON_MEMBER(zBins);
+    ACTS_PYTHON_MEMBER(phiBins);
     ACTS_PYTHON_STRUCT_END();
   }
 }
