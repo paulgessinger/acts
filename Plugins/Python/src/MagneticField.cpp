@@ -22,6 +22,10 @@ ACTS_PYTHON_COMPONENT(MagneticField, ctx) {
              std::shared_ptr<Acts::MagneticFieldProvider>>(
       m, "MagneticFieldProvider");
 
+  py::class_<Acts::InterpolatedMagneticField,
+             std::shared_ptr<Acts::InterpolatedMagneticField>>(
+      m, "InterpolatedMagneticField");
+
   m.def("solenoidFieldMap", &Acts::solenoidFieldMap, py::arg("rlim"),
         py::arg("zlim"), py::arg("nbins"), py::arg("field"));
 
@@ -30,12 +34,12 @@ ACTS_PYTHON_COMPONENT(MagneticField, ctx) {
       .def(py::init<Acts::Vector3>());
 
   py::class_<ActsExamples::detail::InterpolatedMagneticField2,
-             Acts::MagneticFieldProvider,
+             Acts::InterpolatedMagneticField,
              std::shared_ptr<ActsExamples::detail::InterpolatedMagneticField2>>(
       m, "InterpolatedMagneticField2");
 
   py::class_<ActsExamples::detail::InterpolatedMagneticField3,
-             Acts::MagneticFieldProvider,
+             Acts::InterpolatedMagneticField,
              std::shared_ptr<ActsExamples::detail::InterpolatedMagneticField3>>(
       m, "InterpolatedMagneticField3");
 
