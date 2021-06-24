@@ -1,9 +1,11 @@
+#include "Acts/Utilities/PolymorphicValue.hpp"
 #include "ActsExamples/Geant4/GeantinoRecording.hpp"
 #include "ActsExamples/Geant4/PrimaryGeneratorAction.hpp"
 #include "ActsModule.hpp"
 
 #include <memory>
 
+#include <G4VUserDetectorConstruction.hh>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -11,6 +13,8 @@ namespace py = pybind11;
 
 using namespace ActsExamples;
 using namespace Acts;
+
+PYBIND11_DECLARE_HOLDER_TYPE(T, Acts::PolymorphicValue<T>)
 
 namespace {
 
@@ -24,13 +28,14 @@ ACTS_PYTHON_COMPONENT(Geant4, ctx) {
         py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
             mex, "GeantinoRecording")
             .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"));
+                 py::arg("config"), py::arg("level"))
+            .def_property_readonly("config", &Alg::config);
 
     auto c = py::class_<Alg::Config>(alg, "Config").def(py::init<>());
 
     ACTS_PYTHON_STRUCT_BEGIN(c, Alg::Config);
     ACTS_PYTHON_MEMBER(outputMaterialTracks);
-    ACTS_PYTHON_MEMBER(gdmlInputPath);
+    ACTS_PYTHON_MEMBER(detectorConstruction);
     ACTS_PYTHON_MEMBER(tracksPerEvent);
     ACTS_PYTHON_MEMBER(generationConfig);
     ACTS_PYTHON_STRUCT_END();
@@ -58,6 +63,10 @@ ACTS_PYTHON_COMPONENT(Geant4, ctx) {
     ACTS_PYTHON_MEMBER(samplingVariable);
     ACTS_PYTHON_STRUCT_END();
   }
+
+  py::class_<G4VUserDetectorConstruction,
+             Acts::PolymorphicValue<G4VUserDetectorConstruction>>(
+      mex, "G4VUserDetectorConstruction");
 }
 
 }  // namespace

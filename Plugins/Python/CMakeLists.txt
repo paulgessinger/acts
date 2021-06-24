@@ -48,6 +48,11 @@ if(ACTS_BUILD_EXAMPLES_GEANT4)
   target_sources(ActsPythonBindings PRIVATE src/Geant4.cpp)
 endif()
 
+if(ACTS_BUILD_EXAMPLES_GEANT4 AND ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
+  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesGeant4DD4hep)
+  target_sources(ActsPythonBindings PRIVATE src/Geant4DD4hep.cpp)
+endif()
+
 target_include_directories(ActsPythonBindings PRIVATE src)
 
 set_target_properties(ActsPythonBindings PROPERTIES INSTALL_RPATH "\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")

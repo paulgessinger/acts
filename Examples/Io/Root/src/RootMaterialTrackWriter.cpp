@@ -25,11 +25,11 @@ using Acts::VectorHelpers::perp;
 using Acts::VectorHelpers::phi;
 
 ActsExamples::RootMaterialTrackWriter::RootMaterialTrackWriter(
-    const ActsExamples::RootMaterialTrackWriter::Config& cfg,
+    const ActsExamples::RootMaterialTrackWriter::Config& config,
     Acts::Logging::Level level)
-    : WriterT(cfg.collection, "RootMaterialTrackWriter", level),
-      m_cfg(cfg),
-      m_outputFile(cfg.rootFile) {
+    : WriterT(config.collection, "RootMaterialTrackWriter", level),
+      m_cfg(config),
+      m_outputFile(m_cfg.rootFile) {
   // An input collection name and tree name must be specified
   if (m_cfg.collection.empty()) {
     throw std::invalid_argument("Missing input collection");
