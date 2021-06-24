@@ -29,6 +29,7 @@ GeantinoRecording::GeantinoRecording(GeantinoRecording::Config config,
     : BareAlgorithm("GeantinoRecording", level),
       m_cfg(std::move(config)),
       m_runManager(std::make_unique<G4RunManager>()) {
+  std::cout << __FILE__ << ":" << __LINE__ << std::endl;
   if (m_cfg.outputMaterialTracks.empty()) {
     throw std::invalid_argument("Missing output material tracks collection");
   }
@@ -36,8 +37,7 @@ GeantinoRecording::GeantinoRecording(GeantinoRecording::Config config,
   m_cfg.generationConfig.energy = 1000.;
 
   // This object here retains owner
-  m_runManager->SetUserInitialization(
-      new GdmlDetectorConstruction(m_cfg.gdmlInputPath));
+  m_runManager->SetUserInitialization(m_cfg.detectorConstruction.release());
   m_runManager->SetUserInitialization(new FTFP_BERT);
   m_runManager->SetUserAction(new RunAction());
   m_runManager->SetUserAction(new EventAction());

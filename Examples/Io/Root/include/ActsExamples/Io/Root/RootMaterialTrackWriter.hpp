@@ -62,7 +62,7 @@ class RootMaterialTrackWriter
   /// Constructor with
   /// @param cfg configuration struct
   /// @param output logging level
-  RootMaterialTrackWriter(const Config& cfg,
+  RootMaterialTrackWriter(const Config& config,
                           Acts::Logging::Level level = Acts::Logging::INFO);
 
   /// Virtual destructor

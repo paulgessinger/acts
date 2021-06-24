@@ -1,6 +1,7 @@
 #include "ActsExamples/Io/Csv/CsvParticleWriter.hpp"
 #include "ActsExamples/Io/Performance/SeedingPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/TrackFinderPerformanceWriter.hpp"
+#include "ActsExamples/Io/Root/RootMaterialTrackWriter.hpp"
 #include "ActsExamples/Io/Root/RootParticleWriter.hpp"
 #include "ActsExamples/Io/Root/RootPropagationStepsWriter.hpp"
 #include "ActsExamples/Io/Root/RootTrackParameterWriter.hpp"
@@ -126,17 +127,38 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
                       py::arg("cfg"), py::arg("level"));
 
     auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
-    PY_MEMBER(c, Writer::Config, inputTrackParameters);
-    PY_MEMBER(c, Writer::Config, inputProtoTracks);
-    PY_MEMBER(c, Writer::Config, inputParticles);
-    PY_MEMBER(c, Writer::Config, inputSimHits);
-    PY_MEMBER(c, Writer::Config, inputMeasurementParticlesMap);
-    PY_MEMBER(c, Writer::Config, inputMeasurementSimHitsMap);
-    PY_MEMBER(c, Writer::Config, outputDir);
-    PY_MEMBER(c, Writer::Config, outputFilename);
-    PY_MEMBER(c, Writer::Config, outputTreename);
-    PY_MEMBER(c, Writer::Config, fileMode);
-    // PY_MEMBER(c, Writer::Config, rootFile);
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputTrackParameters);
+    ACTS_PYTHON_MEMBER(inputProtoTracks);
+    ACTS_PYTHON_MEMBER(inputParticles);
+    ACTS_PYTHON_MEMBER(inputSimHits);
+    ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
+    ACTS_PYTHON_MEMBER(inputMeasurementSimHitsMap);
+    ACTS_PYTHON_MEMBER(outputDir);
+    ACTS_PYTHON_MEMBER(outputFilename);
+    ACTS_PYTHON_MEMBER(outputTreename);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Writer = ActsExamples::RootMaterialTrackWriter;
+    auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
+                 mex, "RootMaterialTrackWriter")
+                 .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                      py::arg("config"), py::arg("level"));
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(collection);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_MEMBER(treeName);
+    ACTS_PYTHON_MEMBER(recalculateTotals);
+    ACTS_PYTHON_MEMBER(prePostStep);
+    ACTS_PYTHON_MEMBER(storeSurface);
+    ACTS_PYTHON_MEMBER(storeVolume);
+    ACTS_PYTHON_STRUCT_END();
   }
 }
 }  // namespace

@@ -54,6 +54,9 @@ class GeantinoRecording final : public BareAlgorithm {
   ActsExamples::ProcessCode execute(
       const ActsExamples::AlgorithmContext& ctx) const final override;
 
+  /// Readonly access to the configuration
+  const Config& config() const { return m_cfg; }
+
  private:
   Config m_cfg;
   std::unique_ptr<G4RunManager> m_runManager;

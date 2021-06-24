@@ -24,6 +24,11 @@ def _make_config_adapter(fn):
                 fn(self, maybe_config, *args[1:], **kwargs)
                 return
 
+        if "config" in kwargs:
+            config = kwargs.pop("config")
+            fn(self, config, *args, **kwargs)
+            return
+
         cfg = type(self).Config()
         _kwargs = {}
         for k, v in kwargs.items():
