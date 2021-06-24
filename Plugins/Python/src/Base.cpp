@@ -93,8 +93,7 @@ void addPdgParticle(py::module_& m) {
       .value("eNeutron", Acts::PdgParticle::eNeutron)
       .value("eAntiNeutron", Acts::PdgParticle::eAntiNeutron)
       .value("eProton", Acts::PdgParticle::eProton)
-      .value("eAntiProton", Acts::PdgParticle::eAntiProton)
-      .export_values();
+      .value("eAntiProton", Acts::PdgParticle::eAntiProton);
 }
 
 void addAlgebra(py::module_& m) {
