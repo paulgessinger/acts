@@ -154,7 +154,7 @@ void RootBFieldWriter::run(const Config& config,
         for (size_t k = 0; k <= nBinsZ; k++) {
           double raw_z = minZ + k * stepZ;
           Acts::Vector3 position(raw_x, raw_y, raw_z);
-          auto bField = config.bField->getFieldUnchecked(position).value();
+          Vector3 bField = config.bField->getFieldUnchecked(position);
 
           x = raw_x / Acts::UnitConstants::mm;
           y = raw_y / Acts::UnitConstants::mm;
