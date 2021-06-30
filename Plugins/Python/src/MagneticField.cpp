@@ -5,7 +5,7 @@
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
 #include "Acts/MagneticField/NullBField.hpp"
 #include "Acts/MagneticField/SolenoidBField.hpp"
-#include "ActsModule.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 
 #include <memory>
 
@@ -14,10 +14,11 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-namespace {
+namespace Acts::Python {
 
-ACTS_PYTHON_COMPONENT(MagneticField, ctx) {
-  auto& [m, mex, prop] = ctx;
+void addMagneticField(Context& ctx) {
+  auto [m, mex, prop] = ctx.get("main", "examples", "propagation");
+
   py::class_<Acts::MagneticFieldProvider,
              std::shared_ptr<Acts::MagneticFieldProvider>>(
       m, "MagneticFieldProvider");
@@ -36,12 +37,12 @@ ACTS_PYTHON_COMPONENT(MagneticField, ctx) {
   py::class_<ActsExamples::detail::InterpolatedMagneticField2,
              Acts::InterpolatedMagneticField,
              std::shared_ptr<ActsExamples::detail::InterpolatedMagneticField2>>(
-      m, "InterpolatedMagneticField2");
+      mex, "InterpolatedMagneticField2");
 
   py::class_<ActsExamples::detail::InterpolatedMagneticField3,
              Acts::InterpolatedMagneticField,
              std::shared_ptr<ActsExamples::detail::InterpolatedMagneticField3>>(
-      m, "InterpolatedMagneticField3");
+      mex, "InterpolatedMagneticField3");
 
   py::class_<Acts::NullBField, Acts::MagneticFieldProvider,
              std::shared_ptr<Acts::NullBField>>(m, "NullBField")
@@ -71,4 +72,4 @@ ACTS_PYTHON_COMPONENT(MagneticField, ctx) {
   }
 }
 
-}  // namespace
+}  // namespace Acts::Python

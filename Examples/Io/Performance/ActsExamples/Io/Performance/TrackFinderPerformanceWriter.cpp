@@ -89,17 +89,16 @@ struct ActsExamples::TrackFinderPerformanceWriter::Impl {
     if (cfg.inputParticles.empty()) {
       throw std::invalid_argument("Missing particles input collection");
     }
-    if (cfg.outputFilename.empty()) {
+    if (cfg.filePath.empty()) {
       throw std::invalid_argument("Missing output filename");
     }
 
     // the output file can not be given externally since TFile accesses to the
     // same file from multiple threads are unsafe.
     // must always be opened internally
-    auto path = joinPaths(cfg.outputDir, cfg.outputFilename);
-    file = TFile::Open(path.c_str(), "RECREATE");
+    file = TFile::Open(cfg.filePath.c_str(), "RECREATE");
     if (not file) {
-      throw std::invalid_argument("Could not open '" + path + "'");
+      throw std::invalid_argument("Could not open '" + cfg.filePath + "'");
     }
 
     // construct trees

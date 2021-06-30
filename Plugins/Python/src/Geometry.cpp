@@ -1,5 +1,5 @@
 #include "Acts/Geometry/TrackingGeometry.hpp"
-#include "ActsModule.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 
 #include <memory>
 
@@ -8,16 +8,14 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-// #define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
+namespace Acts::Python {
+void addGeometry(Context& ctx) {
+  auto m = ctx.get("main");
 
-namespace {
-
-ACTS_PYTHON_COMPONENT(Geometry, ctx) {
-  auto& [m, mex, prop] = ctx;
   {
     py::class_<Acts::TrackingGeometry, std::shared_ptr<Acts::TrackingGeometry>>(
         m, "TrackingGeometry");
   }
 }
 
-}  // namespace
+}  // namespace Acts::Python

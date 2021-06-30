@@ -1,6 +1,7 @@
+
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Generators/EventGenerator.hpp"
 #include "ActsExamples/Generators/Pythia8ProcessGenerator.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -10,13 +11,16 @@
 namespace py = pybind11;
 using namespace ActsExamples;
 
-namespace {
-ACTS_PYTHON_COMPONENT(Pythia8, ctx) {
-  auto& [m, mex, prop] = ctx;
+namespace Acts::Python {
+void addPythia8(Context& ctx) {
+  auto mex = ctx.get("examples");
+
+  auto p8 = mex.def_submodule("pythia8");
+  ctx.modules["pythia8"] = &p8;
 
   using Gen = ActsExamples::Pythia8Generator;
   auto gen = py::class_<Gen, ActsExamples::EventGenerator::ParticlesGenerator,
-                        std::shared_ptr<Gen>>(mex, "Pythia8Generator")
+                        std::shared_ptr<Gen>>(p8, "Pythia8Generator")
                  .def(py::init<const Gen::Config&, Acts::Logging::Level>(),
                       py::arg("config"), py::arg("level"));
 
@@ -26,5 +30,7 @@ ACTS_PYTHON_COMPONENT(Pythia8, ctx) {
       .def_readwrite("pdgBeam1", &Gen::Config::pdgBeam1)
       .def_readwrite("cmsEnergy", &Gen::Config::cmsEnergy)
       .def_readwrite("settings", &Gen::Config::settings);
+
+  patchClassesWithConfig(p8);
 }
-}  // namespace
+}  // namespace Acts::Python

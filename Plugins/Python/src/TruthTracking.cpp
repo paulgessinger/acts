@@ -1,10 +1,10 @@
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/TruthTracking/ParticleSelector.hpp"
 #include "ActsExamples/TruthTracking/ParticleSmearing.hpp"
 #include "ActsExamples/TruthTracking/TrackSelector.hpp"
 #include "ActsExamples/TruthTracking/TruthSeedSelector.hpp"
 #include "ActsExamples/TruthTracking/TruthTrackFinder.hpp"
 #include "ActsExamples/TruthTracking/TruthVertexFinder.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -16,10 +16,10 @@ namespace py = pybind11;
 using namespace ActsExamples;
 using namespace Acts;
 
-namespace {
+namespace Acts::Python {
 
-ACTS_PYTHON_COMPONENT(TruthTracking, ctx) {
-  auto& [m, mex, prop] = ctx;
+void addTruthTracking(Context& ctx) {
+  auto mex = ctx.get("examples");
 
   {
     using Alg = ActsExamples::TruthTrackFinder;
@@ -218,4 +218,4 @@ ACTS_PYTHON_COMPONENT(TruthTracking, ctx) {
   }
 }
 
-}  // namespace
+}  // namespace Acts::Python

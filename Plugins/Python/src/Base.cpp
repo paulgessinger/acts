@@ -1,20 +1,21 @@
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Definitions/Units.hpp"
-#include "Acts/Geometry/GeometryIdentifier.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "Acts/Utilities/PdgParticle.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-namespace {
+namespace Acts::Python {
 
-void addUnits(py::module_& m) {
+void addUnits(Context& ctx) {
+  auto& m = ctx.get("main");
   auto u = m.def_submodule("UnitConstants");
   using namespace Acts::UnitConstants;
 
@@ -64,7 +65,8 @@ void addUnits(py::module_& m) {
 #undef UNIT
 }
 
-void addLogging(py::module_& m) {
+void addLogging(Acts::Python::Context& ctx) {
+  auto& m = ctx.get("main");
   auto logging = m.def_submodule("logging", "");
   py::enum_<Acts::Logging::Level>(logging, "Level")
       .value("VERBOSE", Acts::Logging::VERBOSE)
@@ -76,7 +78,8 @@ void addLogging(py::module_& m) {
       .export_values();
 }
 
-void addPdgParticle(py::module_& m) {
+void addPdgParticle(Acts::Python::Context& ctx) {
+  auto& m = ctx.get("main");
   py::enum_<Acts::PdgParticle>(m, "PdgParticle")
       .value("eInvalid", Acts::PdgParticle::eInvalid)
       .value("eElectron", Acts::PdgParticle::eElectron)
@@ -96,7 +99,8 @@ void addPdgParticle(py::module_& m) {
       .value("eAntiProton", Acts::PdgParticle::eAntiProton);
 }
 
-void addAlgebra(py::module_& m) {
+void addAlgebra(Acts::Python::Context& ctx) {
+  auto& m = ctx.get("main");
   py::class_<Acts::Vector3>(m, "Vector3")
       .def(py::init<double, double, double>())
       .def(py::init([](std::array<double, 3> a) {
@@ -114,14 +118,4 @@ void addAlgebra(py::module_& m) {
       }));
 }
 
-ACTS_PYTHON_COMPONENT(Base, ctx) {
-  auto& [m, mex, prop] = ctx;
-  addUnits(m);
-  addAlgebra(m);
-  addPdgParticle(m);
-  addLogging(m);
-
-  py::class_<Acts::GeometryIdentifier>(m, "GeometryIdentifier");
-}
-
-}  // namespace
+}  // namespace Acts::Python

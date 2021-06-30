@@ -1,10 +1,10 @@
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "Acts/Propagator/AtlasStepper.hpp"
 #include "Acts/Propagator/EigenStepper.hpp"
 #include "Acts/Propagator/Navigator.hpp"
 #include "Acts/Propagator/Propagator.hpp"
 #include "Acts/Propagator/StraightLineStepper.hpp"
 #include "ActsExamples/Propagation/PropagationAlgorithm.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -34,11 +34,9 @@ void addStepper(const std::string& prefix, py::module_& m, py::module_& prop,
   auto alg = py::class_<Algorithm, ActsExamples::BareAlgorithm,
                         std::shared_ptr<Algorithm>>(
                  mex, (prefix + "PropagationAlgorithm").c_str())
-                 .def(py::init<const Config&, Acts::Logging::Level>(),
-                      py::arg("propagator"), py::arg("level"));
+                 .def(py::init<const Config&, Acts::Logging::Level>());
 
   auto c = py::class_<Config>(alg, "Config").def(py::init<propagator_t>());
-#define _MEMBER(name) PY_MEMBER(c, Config, name)
   ACTS_PYTHON_STRUCT_BEGIN(c, Config);
   ACTS_PYTHON_MEMBER(propagator);
   ACTS_PYTHON_MEMBER(randomNumberSvc);
@@ -68,8 +66,12 @@ void addStepper(const std::string& prefix, py::module_& m, py::module_& prop,
   ACTS_PYTHON_STRUCT_END();
 }
 
-ACTS_PYTHON_COMPONENT(Propagation, ctx) {
-  auto& [m, mex, prop] = ctx;
+}  // namespace
+
+namespace Acts::Python {
+void addPropagation(Context& ctx) {
+  auto [m, prop, mex] = ctx.get("main", "propagation", "examples");
+
   using Config = Acts::Navigator::Config;
   auto nav = py::class_<Acts::Navigator, std::shared_ptr<Acts::Navigator>>(
                  m, "Navigator")
@@ -89,4 +91,4 @@ ACTS_PYTHON_COMPONENT(Propagation, ctx) {
   addStepper<Acts::StraightLineStepper>("StraightLine", m, prop, mex);
 }
 
-}  // namespace
+}  // namespace Acts::Python

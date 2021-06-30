@@ -1,8 +1,8 @@
 #include "Acts/Geometry/TrackingGeometry.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/DD4hepDetector/DD4hepDetector.hpp"
 #include "ActsExamples/DD4hepDetector/DD4hepGeometryService.hpp"
 #include "ActsExamples/Framework/IContextDecorator.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -12,16 +12,12 @@
 namespace py = pybind11;
 using namespace ActsExamples;
 
-namespace {
-ACTS_PYTHON_COMPONENT(DD4hep, ctx) {
-  auto& [m, mex, prop] = ctx;
-  auto dd4hep = mex.def_submodule("dd4hep");
-
+PYBIND11_MODULE(ActsPythonBindingsDD4hep, m) {
   {
     using Config = ActsExamples::DD4hep::DD4hepGeometryService::Config;
     auto s = py::class_<DD4hep::DD4hepGeometryService,
                         std::shared_ptr<DD4hep::DD4hepGeometryService>>(
-                 dd4hep, "DD4hepGeometryService")
+                 m, "DD4hepGeometryService")
                  .def(py::init<const Config&>());
 
     auto c = py::class_<Config>(s, "Config").def(py::init<>());
@@ -36,11 +32,13 @@ ACTS_PYTHON_COMPONENT(DD4hep, ctx) {
     ACTS_PYTHON_MEMBER(envelopeZ);
     ACTS_PYTHON_MEMBER(defaultLayerThickness);
     ACTS_PYTHON_STRUCT_END();
+
+    py::module::import("acts._adapter").attr("_patch_config_constructor")(c);
   }
 
   {
     auto gd = py::class_<DD4hepDetector, std::shared_ptr<DD4hepDetector>>(
-                  dd4hep, "DD4hepDetector")
+                  m, "DD4hepDetector")
                   .def(py::init<>())
                   .def("finalize",
                        py::overload_cast<
@@ -48,5 +46,7 @@ ACTS_PYTHON_COMPONENT(DD4hep, ctx) {
                            std::shared_ptr<const Acts::IMaterialDecorator>>(
                            &DD4hepDetector::finalize));
   }
+
+  auto parent = py::module::import("acts._adapter");
+  parent.attr("_patch_config")(m);
 }
-}  // namespace

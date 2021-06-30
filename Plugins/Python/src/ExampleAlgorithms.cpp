@@ -1,11 +1,11 @@
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "Acts/Propagator/StraightLineStepper.hpp"
 #include "ActsExamples/Fatras/FatrasAlgorithm.hpp"
 #include "ActsExamples/Io/Json/JsonGeometryList.hpp"
 #include "ActsExamples/Printers/HitsPrinter.hpp"
 #include "ActsExamples/Printers/ParticlesPrinter.hpp"
 #include "ActsExamples/Printers/TrackParametersPrinter.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -13,15 +13,14 @@
 #include <pybind11/stl.h>
 
 namespace py = pybind11;
-#define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
 
 using namespace ActsExamples;
 using namespace Acts;
 
-namespace {
+namespace Acts::Python {
 
-ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
-  auto& [m, mex, prop] = ctx;
+void addExampleAlgorithms(Context& ctx) {
+  auto mex = ctx.get("examples");
 
   mex.def("readJsonGeometryList", ActsExamples::readJsonGeometryList);
 
@@ -113,4 +112,4 @@ ACTS_PYTHON_COMPONENT(ExampleAlgorithms, ctx) {
   }
 }
 
-}  // namespace
+}  // namespace Acts::Python
