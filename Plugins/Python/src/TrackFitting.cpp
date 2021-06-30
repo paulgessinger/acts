@@ -1,7 +1,7 @@
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/TrackFitting/SurfaceSortingAlgorithm.hpp"
 #include "ActsExamples/TrackFitting/TrackFittingAlgorithm.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -13,10 +13,10 @@ namespace py = pybind11;
 using namespace ActsExamples;
 using namespace Acts;
 
-namespace {
+namespace Acts::Python {
 
-ACTS_PYTHON_COMPONENT(TrackFitting, ctx) {
-  auto& [m, mex, prop] = ctx;
+void addTrackFitting(Context& ctx) {
+  auto mex = ctx.get("examples");
 
   {
     using Alg = ActsExamples::SurfaceSortingAlgorithm;
@@ -77,4 +77,4 @@ ACTS_PYTHON_COMPONENT(TrackFitting, ctx) {
   }
 }
 
-}  // namespace
+}  // namespace Acts::Python

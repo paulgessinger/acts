@@ -1,3 +1,4 @@
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Io/Csv/CsvParticleWriter.hpp"
 #include "ActsExamples/Io/Performance/SeedingPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/TrackFinderPerformanceWriter.hpp"
@@ -7,7 +8,6 @@
 #include "ActsExamples/Io/Root/RootPropagationStepsWriter.hpp"
 #include "ActsExamples/Io/Root/RootTrackParameterWriter.hpp"
 #include "ActsExamples/Plugins/Obj/ObjPropagationStepsWriter.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -18,11 +18,9 @@ using namespace pybind11::literals;
 
 using namespace ActsExamples;
 
-#define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
-
-namespace {
-ACTS_PYTHON_COMPONENT(Output, ctx) {
-  auto& [m, mex, prop] = ctx;
+namespace Acts::Python {
+void addOutput(Context& ctx) {
+  auto [m, mex] = ctx.get("main", "examples");
   {
     using Writer = ActsExamples::ObjPropagationStepsWriter<Acts::detail::Step>;
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
@@ -96,8 +94,7 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
         .def_readwrite("inputMeasurementParticlesMap",
                        &Writer::Config::inputMeasurementParticlesMap)
         .def_readwrite("inputParticles", &Writer::Config::inputParticles)
-        .def_readwrite("outputDir", &Writer::Config::outputDir)
-        .def_readwrite("outputFilename", &Writer::Config::outputFilename);
+        .def_readwrite("filePath", &Writer::Config::filePath);
   }
 
   {
@@ -193,4 +190,4 @@ ACTS_PYTHON_COMPONENT(Output, ctx) {
     ACTS_PYTHON_STRUCT_END();
   }
 }
-}  // namespace
+}  // namespace Acts::Python

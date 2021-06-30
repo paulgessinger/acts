@@ -1,9 +1,9 @@
 #include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/Material/IMaterialDecorator.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Detector/IBaseDetector.hpp"
 #include "ActsExamples/Framework/IContextDecorator.hpp"
 #include "ActsExamples/GenericDetector/GenericDetector.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -13,9 +13,9 @@
 namespace py = pybind11;
 using namespace ActsExamples;
 
-namespace {
-ACTS_PYTHON_COMPONENT(ExamplesDetector, ctx) {
-  auto& [m, mex, prop] = ctx;
+namespace Acts::Python {
+void addDetector(Context& ctx) {
+  auto [m, mex] = ctx.get("main", "examples");
   {
     py::class_<IContextDecorator, std::shared_ptr<IContextDecorator>>(
         mex, "IContextDecorator");
@@ -42,4 +42,4 @@ ACTS_PYTHON_COMPONENT(ExamplesDetector, ctx) {
         .def_readwrite("buildProto", &Config::buildProto);
   }
 }
-}  // namespace
+}  // namespace Acts::Python

@@ -1,5 +1,5 @@
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Io/Root/RootParticleReader.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -10,11 +10,9 @@ using namespace pybind11::literals;
 
 using namespace ActsExamples;
 
-#define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
-
-namespace {
-ACTS_PYTHON_COMPONENT(Input, ctx) {
-  auto& [m, mex, prop] = ctx;
+namespace Acts::Python {
+void addInput(Context& ctx) {
+  auto mex = ctx.get("examples");
 
   {
     using Reader = ActsExamples::RootParticleReader;
@@ -27,12 +25,14 @@ ACTS_PYTHON_COMPONENT(Input, ctx) {
             .def_property_readonly("config", &Reader::config);
 
     auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    PY_MEMBER(c, Config, particleCollection);
-    PY_MEMBER(c, Config, vertexPrimaryCollection);
-    PY_MEMBER(c, Config, vertexSecondaryCollection);
-    PY_MEMBER(c, Config, treeName);
-    PY_MEMBER(c, Config, inputFile);
-    PY_MEMBER(c, Config, inputDir);
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(particleCollection);
+    ACTS_PYTHON_MEMBER(vertexPrimaryCollection);
+    ACTS_PYTHON_MEMBER(vertexSecondaryCollection);
+    ACTS_PYTHON_MEMBER(treeName);
+    ACTS_PYTHON_MEMBER(inputFile);
+    ACTS_PYTHON_MEMBER(inputDir);
+    ACTS_PYTHON_STRUCT_END();
   }
 }
-}  // namespace
+}  // namespace Acts::Python

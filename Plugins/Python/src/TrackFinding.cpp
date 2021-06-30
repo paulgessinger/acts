@@ -1,8 +1,8 @@
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/TrackFinding/SeedingAlgorithm.hpp"
 #include "ActsExamples/TrackFinding/SpacePointMaker.hpp"
 #include "ActsExamples/TrackFinding/TrackFindingAlgorithm.hpp"
 #include "ActsExamples/TrackFinding/TrackParamsEstimationAlgorithm.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -14,10 +14,10 @@ namespace py = pybind11;
 using namespace ActsExamples;
 using namespace Acts;
 
-namespace {
+namespace Acts::Python {
 
-ACTS_PYTHON_COMPONENT(TrackFinding, ctx) {
-  auto& [m, mex, prop] = ctx;
+void addTrackFinding(Context& ctx) {
+  auto mex = ctx.get("examples");
 
   {
     using Config = ActsExamples::SpacePointMaker::Config;
@@ -165,4 +165,4 @@ ACTS_PYTHON_COMPONENT(TrackFinding, ctx) {
   }
 }
 
-}  // namespace
+}  // namespace Acts::Python

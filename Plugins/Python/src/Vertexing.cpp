@@ -1,8 +1,8 @@
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Vertexing/AdaptiveMultiVertexFinderAlgorithm.hpp"
 #include "ActsExamples/Vertexing/IterativeVertexFinderAlgorithm.hpp"
 #include "ActsExamples/Vertexing/TutorialVertexFinderAlgorithm.hpp"
 #include "ActsExamples/Vertexing/VertexFitterAlgorithm.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -14,10 +14,10 @@ namespace py = pybind11;
 using namespace ActsExamples;
 using namespace Acts;
 
-namespace {
+namespace Acts::Python {
 
-ACTS_PYTHON_COMPONENT(Vertexing, ctx) {
-  auto& [m, mex, prop] = ctx;
+void addVertexing(Context& ctx) {
+  auto mex = ctx.get("examples");
 
   {
     using Alg = ActsExamples::AdaptiveMultiVertexFinderAlgorithm;
@@ -103,4 +103,4 @@ ACTS_PYTHON_COMPONENT(Vertexing, ctx) {
   }
 }
 
-}  // namespace
+}  // namespace Acts::Python

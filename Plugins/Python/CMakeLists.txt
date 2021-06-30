@@ -5,14 +5,17 @@ install(
   EXPORT ActsPluginPythonTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+add_library(ActsPythonUtilities INTERFACE)
+target_include_directories(ActsPythonUtilities INTERFACE include)
+
 set(_python_dir "${CMAKE_BINARY_DIR}/python")
 file(MAKE_DIRECTORY ${_python_dir})
 file(MAKE_DIRECTORY ${_python_dir}/acts)
 
 pybind11_add_module(ActsPythonBindings 
-  src/ActsModule.cpp
+  src/ModuleEntry.cpp
   src/Base.cpp
-  src/ExamplesDetector.cpp
+  src/Detector.cpp
   src/Material.cpp
   src/Geometry.cpp
   src/ExampleAlgorithms.cpp
@@ -26,43 +29,15 @@ pybind11_add_module(ActsPythonBindings
   src/TrackFinding.cpp
   src/Vertexing.cpp
 )
-
-
-if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
-  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesDetectorDD4hep)
-  target_sources(ActsPythonBindings PRIVATE src/DD4hepComponent.cpp)
-endif()
-
-if(ACTS_BUILD_EXAMPLES_PYTHIA8)
-  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesGeneratorsPythia8)
-  target_sources(ActsPythonBindings PRIVATE src/Pythia8Component.cpp)
-endif()
-
-if(ACTS_BUILD_PLUGIN_DIGITIZATION AND ACTS_BUILD_PLUGIN_IDENTIFICATION)
-  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesDigitization)
-  target_sources(ActsPythonBindings PRIVATE src/Digitization.cpp)
-endif()
-
-if(ACTS_BUILD_EXAMPLES_GEANT4)
-  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesGeant4)
-  target_sources(ActsPythonBindings PRIVATE src/Geant4.cpp)
-endif()
-
-if(ACTS_BUILD_EXAMPLES_GEANT4 AND ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
-  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesGeant4DD4hep)
-  target_sources(ActsPythonBindings PRIVATE src/Geant4DD4hep.cpp)
-endif()
-
-target_include_directories(ActsPythonBindings PRIVATE src)
+install(TARGETS ActsPythonBindings DESTINATION .)
+# target_include_directories(ActsPythonBindings PUBLIC include)
 
 set_target_properties(ActsPythonBindings PROPERTIES INSTALL_RPATH "\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
-
-set_target_properties(ActsPythonBindings PROPERTIES OUTPUT_NAME _acts)
 set_target_properties(ActsPythonBindings PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)
-# set_target_properties(ActsPythonBindings PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${_python_dir}/acts)
 
 target_link_libraries(ActsPythonBindings PUBLIC 
   ActsCore 
+  ActsPythonUtilities
   ActsExamplesFramework
   ActsExamplesDetectorsCommon
   ActsExamplesDetectorGeneric
@@ -80,24 +55,71 @@ target_link_libraries(ActsPythonBindings PUBLIC
   ActsExamplesPrinters
 )
 
+set(py_files 
+  __init__.py 
+  examples/__init__.py
+  _adapter.py
+)
+
+
+if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
+  pybind11_add_module(ActsPythonBindingsDD4hep src/DD4hepComponent.cpp)
+  target_link_libraries(ActsPythonBindingsDD4hep PUBLIC 
+    ActsPythonUtilities
+    ActsExamplesDetectorDD4hep)
+  add_dependencies(ActsPythonBindings ActsPythonBindingsDD4hep)
+
+  install(TARGETS ActsPythonBindingsDD4hep DESTINATION .)
+  set_target_properties(ActsPythonBindingsDD4hep PROPERTIES INSTALL_RPATH "\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
+  set_target_properties(ActsPythonBindingsDD4hep PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)
+  list(APPEND py_files examples/dd4hep.py)
+endif()
+
+if(ACTS_BUILD_EXAMPLES_PYTHIA8)
+  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesGeneratorsPythia8)
+  target_sources(ActsPythonBindings PRIVATE src/Pythia8.cpp)
+else()
+  target_sources(ActsPythonBindings PRIVATE src/Pythia8Stub.cpp)
+endif()
+
+if(ACTS_BUILD_PLUGIN_DIGITIZATION AND ACTS_BUILD_PLUGIN_IDENTIFICATION)
+  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesDigitization)
+  target_sources(ActsPythonBindings PRIVATE src/Digitization.cpp)
+else()
+  target_sources(ActsPythonBindings PRIVATE src/DigitizationStub.cpp)
+endif()
+
+# if(ACTS_BUILD_EXAMPLES_GEANT4)
+#   target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesGeant4)
+#   target_sources(ActsPythonBindings PRIVATE src/Geant4.cpp)
+
+#   if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
+#     target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesGeant4DD4hep ActsExamplesDetectorDD4hep)
+#     target_sources(ActsPythonBindings PRIVATE src/Geant4DD4hep.cpp)
+#   else()
+#     target_sources(ActsPythonBindings PRIVATE src/Geant4DD4hepStub.cpp)
+#   endif()
+# endif()
+
+
 
 add_custom_target(ActsPythonGlueCode)
 configure_file(setup.sh.in ${_python_dir}/setup.sh)
 
-set(py_files 
-  __init__.py 
-  examples.py
-)
 
 foreach(f ${py_files})
-add_custom_command(
-        TARGET ActsPythonGlueCode POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-                ${CMAKE_CURRENT_SOURCE_DIR}/python/acts/${f}
-                ${_python_dir}/acts/${f})
+set(_target ${_python_dir}/acts/${f})
+get_filename_component(_dir ${_target} DIRECTORY)
+file(MAKE_DIRECTORY ${_dir})
+
+file(CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/python/acts/${f} ${_target})
+# add_custom_command(
+#         TARGET ActsPythonGlueCode POST_BUILD
+#         COMMAND ${CMAKE_COMMAND} -E create_symlink
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/python/acts/${f}
+#                 ${_target})
 endforeach()
 
 add_dependencies(ActsPythonBindings ActsPythonGlueCode)
 
-install(TARGETS ActsPythonBindings DESTINATION .)
   

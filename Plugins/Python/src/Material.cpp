@@ -1,6 +1,6 @@
 #include "Acts/Material/IMaterialDecorator.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Io/Root/RootMaterialDecorator.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -11,11 +11,9 @@ using namespace pybind11::literals;
 
 using namespace ActsExamples;
 
-#define PY_MEMBER(obj, t, name) obj.def_readwrite(#name, &t::name)
-
-namespace {
-ACTS_PYTHON_COMPONENT(Material, ctx) {
-  auto& [m, mex, prop] = ctx;
+namespace Acts::Python {
+void addMaterial(Context& ctx) {
+  auto [m, mex] = ctx.get("main", "examples");
   {
     py::class_<Acts::IMaterialDecorator,
                std::shared_ptr<Acts::IMaterialDecorator>>(m,
@@ -23,36 +21,36 @@ ACTS_PYTHON_COMPONENT(Material, ctx) {
   }
 
   {
-    auto rmd = py::class_<RootMaterialDecorator, Acts::IMaterialDecorator,
-                          std::shared_ptr<RootMaterialDecorator>>(
-                   mex, "RootMaterialDecorator")
-                   .def(py::init<RootMaterialDecorator::Config>());
+    auto rmd =
+        py::class_<RootMaterialDecorator, Acts::IMaterialDecorator,
+                   std::shared_ptr<RootMaterialDecorator>>(
+            mex, "RootMaterialDecorator")
+            .def(
+                py::init<RootMaterialDecorator::Config, Acts::Logging::Level>(),
+                py::arg("config"), py::arg("level"));
 
     using Config = RootMaterialDecorator::Config;
-    auto c = py::class_<Config>(rmd, "Config")
-                 .def(py::init<const std::string&, Acts::Logging::Level>(),
-                      "lname"_a, "lvl"_a);
+    auto c = py::class_<Config>(rmd, "Config").def(py::init<>());
 
-    PY_MEMBER(c, Config, folderNameBase);
-    PY_MEMBER(c, Config, voltag);
-    PY_MEMBER(c, Config, boutag);
-    PY_MEMBER(c, Config, laytag);
-    PY_MEMBER(c, Config, apptag);
-    PY_MEMBER(c, Config, sentag);
-    PY_MEMBER(c, Config, ntag);
-    PY_MEMBER(c, Config, vtag);
-    PY_MEMBER(c, Config, otag);
-    PY_MEMBER(c, Config, mintag);
-    PY_MEMBER(c, Config, maxtag);
-    PY_MEMBER(c, Config, ttag);
-    PY_MEMBER(c, Config, x0tag);
-    PY_MEMBER(c, Config, l0tag);
-    PY_MEMBER(c, Config, atag);
-    PY_MEMBER(c, Config, ztag);
-    PY_MEMBER(c, Config, rhotag);
-    PY_MEMBER(c, Config, fileName);
-    PY_MEMBER(c, Config, logger);
-    PY_MEMBER(c, Config, name);
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(voltag);
+    ACTS_PYTHON_MEMBER(boutag);
+    ACTS_PYTHON_MEMBER(laytag);
+    ACTS_PYTHON_MEMBER(apptag);
+    ACTS_PYTHON_MEMBER(sentag);
+    ACTS_PYTHON_MEMBER(ntag);
+    ACTS_PYTHON_MEMBER(vtag);
+    ACTS_PYTHON_MEMBER(otag);
+    ACTS_PYTHON_MEMBER(mintag);
+    ACTS_PYTHON_MEMBER(maxtag);
+    ACTS_PYTHON_MEMBER(ttag);
+    ACTS_PYTHON_MEMBER(x0tag);
+    ACTS_PYTHON_MEMBER(l0tag);
+    ACTS_PYTHON_MEMBER(atag);
+    ACTS_PYTHON_MEMBER(ztag);
+    ACTS_PYTHON_MEMBER(rhotag);
+    ACTS_PYTHON_MEMBER(fileName);
+    ACTS_PYTHON_STRUCT_END();
   }
 }
-}  // namespace
+}  // namespace Acts::Python

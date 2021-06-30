@@ -1,10 +1,10 @@
 #include "Acts/Plugins/Digitization/PlanarModuleStepper.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Digitization/DigitizationAlgorithm.hpp"
 #include "ActsExamples/Digitization/DigitizationConfig.hpp"
 #include "ActsExamples/Digitization/PlanarSteppingAlgorithm.hpp"
 #include "ActsExamples/Digitization/SmearingAlgorithm.hpp"
 #include "ActsExamples/Io/Json/JsonDigitizationConfig.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -16,10 +16,10 @@ namespace py = pybind11;
 using namespace ActsExamples;
 using namespace Acts;
 
-namespace {
+namespace Acts::Python {
 
-ACTS_PYTHON_COMPONENT(Digitization, ctx) {
-  auto& [m, mex, prop] = ctx;
+void addDigitization(Context& ctx) {
+  auto [m, mex] = ctx.get("main", "examples");
 
   mex.def("readDigiConfigFromJson", ActsExamples::readDigiConfigFromJson);
 
@@ -52,6 +52,8 @@ ACTS_PYTHON_COMPONENT(Digitization, ctx) {
     c.def_readonly("doMerge", &Config::doMerge);
     c.def_readonly("mergeNsigma", &Config::mergeNsigma);
     c.def_readonly("mergeCommonCorner", &Config::mergeCommonCorner);
+
+    py::module::import("acts._adapter").attr("_patch_config_constructor")(c);
 
     py::class_<Acts::GeometryHierarchyMap<ActsExamples::DigiComponentsConfig>>(
         mex, "GeometryHierarchy_DigiComponentsConfig");
@@ -102,4 +104,4 @@ ACTS_PYTHON_COMPONENT(Digitization, ctx) {
   }
 }
 
-}  // namespace
+}  // namespace Acts::Python

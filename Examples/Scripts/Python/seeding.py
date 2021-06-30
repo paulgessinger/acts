@@ -4,14 +4,18 @@
 import acts
 import acts.examples
 
+import acts.examples.dd4hep
+
 u = acts.UnitConstants
 
 # Preliminaries
 
-# detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
-detector, trackingGeometry, _ = acts.examples.dd4hep.DD4hepDetector.create(
+dd4hepConfig = acts.examples.dd4hep.DD4hepGeometryService.Config(
     xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
 )
+detector = acts.examples.dd4hep.DD4hepDetector()
+trackingGeometry, _ = detector.finalize(dd4hepConfig, None)
+
 
 field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
@@ -66,11 +70,14 @@ simAlg = acts.examples.FatrasAlgorithm(
 digiCfg = acts.examples.DigitizationConfig(
     acts.examples.readDigiConfigFromJson(
         "Examples/Algorithms/Digitization/share/default-smearing-config-generic.json"
-    )
+    ),
+    trackingGeometry=trackingGeometry,
+    randomNumbers=rnd,
+    inputSimHits=simAlg.config.outputSimHits,
 )
-digiCfg.trackingGeometry = trackingGeometry
-digiCfg.randomNumbers = rnd
-digiCfg.inputSimHits = simAlg.config.outputSimHits
+# digiCfg.trackingGeometry = trackingGeometry
+# digiCfg.randomNumbers = rnd
+# digiCfg.inputSimHits = simAlg.config.outputSimHits
 digiAlg = acts.examples.DigitizationAlgorithm(digiCfg, acts.logging.INFO)
 
 
@@ -121,8 +128,7 @@ tfPerf = acts.examples.TrackFinderPerformanceWriter(
     inputProtoTracks=seedingAlg.config.outputProtoTracks,
     inputParticles=inputParticles,
     inputMeasurementParticlesMap=digiCfg.outputMeasurementParticlesMap,
-    outputDir="output",
-    outputFilename="performance_seeding_trees.root",
+    filePath="output/performance_seeding_trees.root",
 )
 
 seedPerf = acts.examples.SeedingPerformanceWriter(

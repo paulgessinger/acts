@@ -1,10 +1,10 @@
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/EventData/SimParticle.hpp"
 #include "ActsExamples/Generators/EventGenerator.hpp"
 #include "ActsExamples/Generators/MultiplicityGenerators.hpp"
 #include "ActsExamples/Generators/ParametricParticleGenerator.hpp"
 #include "ActsExamples/Generators/VertexGenerators.hpp"
 #include "ActsExamples/Propagation/PropagationAlgorithm.hpp"
-#include "ActsModule.hpp"
 
 #include <cmath>
 #include <memory>
@@ -22,9 +22,12 @@ double thetaToEta(double theta) {
 double etaToTheta(double eta) {
   return 2 * std::atan(std::exp(-eta));
 }
+}  // namespace
 
-ACTS_PYTHON_COMPONENT(Generators, ctx) {
-  auto& [m, mex, prop] = ctx;
+namespace Acts::Python {
+
+void addGenerators(Context& ctx) {
+  auto mex = ctx.get("examples");
   {
     using Config = ActsExamples::EventGenerator::Config;
     auto gen = py::class_<ActsExamples::EventGenerator, ActsExamples::IReader,
@@ -183,5 +186,4 @@ ACTS_PYTHON_COMPONENT(Generators, ctx) {
            py::arg("mean"))
       .def_readwrite("mean", &ActsExamples::PoissonMultiplicityGenerator::mean);
 }
-
-}  // namespace
+}  // namespace Acts::Python

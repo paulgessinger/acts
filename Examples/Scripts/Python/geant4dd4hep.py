@@ -2,6 +2,7 @@
 
 import acts
 import acts.examples
+import acts.examples.dd4hep
 
 u = acts.UnitConstants
 
@@ -10,14 +11,13 @@ u = acts.UnitConstants
 dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
     xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
 )
+dd4hepG4Construction = acts.examples.geant4.DD4hepDetectorConstruction(dd4hepSvc)
 
-dd4hepG4Construction = acts.examples.DD4hepDetectorConstruction(dd4hepSvc)
-
-g4AlgCfg = acts.examples.GeantinoRecording.Config()
+g4AlgCfg = acts.examples.geant4.GeantinoRecording.Config()
 g4AlgCfg.detectorConstruction = dd4hepG4Construction
 g4AlgCfg.tracksPerEvent = 100
 
-g4Alg = acts.examples.GeantinoRecording(level=acts.logging.INFO, config=g4AlgCfg)
+g4Alg = acts.examples.geant4.GeantinoRecording(level=acts.logging.INFO, config=g4AlgCfg)
 
 
 s = acts.examples.Sequencer(events=100, numThreads=1)

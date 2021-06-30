@@ -24,7 +24,7 @@ if nhard > 0:
         acts.examples.EventGenerator.Generator(
             multiplicity=acts.examples.FixedMultiplicityGenerator(n=nhard),
             vertex=vertexGenerator,
-            particles=acts.examples.Pythia8Generator(
+            particles=acts.examples.pythia8.Pythia8Generator(
                 level=acts.logging.INFO,
                 pdgBeam0=beam0,
                 pdgBeam1=beam1,
@@ -38,7 +38,7 @@ if npileup > 0:
         acts.examples.EventGenerator.Generator(
             multiplicity=acts.examples.FixedMultiplicityGenerator(n=npileup),
             vertex=vertexGenerator,
-            particles=acts.examples.Pythia8Generator(
+            particles=acts.examples.pythia8.Pythia8Generator(
                 level=acts.logging.INFO,
                 pdgBeam0=beam0,
                 pdgBeam1=beam1,

@@ -1,7 +1,7 @@
+#include "Acts/Plugins/Python/ActsModule.hpp"
 #include "Acts/Utilities/PolymorphicValue.hpp"
 #include "ActsExamples/DD4hepDetector/DD4hepDetectorOptions.hpp"
 #include "ActsExamples/Geant4DD4hep/DD4hepDetectorConstruction.hpp"
-#include "ActsModule.hpp"
 
 #include <memory>
 
@@ -16,14 +16,10 @@ using namespace Acts;
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, Acts::PolymorphicValue<T>)
 
-namespace {
-
-ACTS_PYTHON_COMPONENT(Geant4, ctx) {
-  auto& [m, mex, prop] = ctx;
-
+void addGeant4DD4hep(py::module_& m) {
   auto cc = py::class_<DD4hepDetectorConstruction, G4VUserDetectorConstruction,
                        Acts::PolymorphicValue<DD4hepDetectorConstruction>>(
-      mex, "DD4hepDetectorConstruction");
+      m, "DD4hepDetectorConstruction");
 
   // add a special constructor so we don't have to expose the internals of
   // DD4hepGeometryService
@@ -31,5 +27,3 @@ ACTS_PYTHON_COMPONENT(Geant4, ctx) {
     return DD4hepDetectorConstruction{*geometrySvc.lcdd()};
   }));
 }
-
-}  // namespace
