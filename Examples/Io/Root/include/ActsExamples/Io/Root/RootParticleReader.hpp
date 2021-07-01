@@ -35,15 +35,14 @@ class RootParticleReader : public IReader {
     std::string
         vertexSecondaryCollection;  ///< secondary vertex collection to read
     std::string treeName = "particles";  ///< name of the output tree
-    std::string inputFile;               ///< The name of the input file
-    std::string inputDir;                ///< The name of the input dir
+    std::string filePath;                ///< The name of the input file
     /// Whether the events are ordered or not
     bool orderedEvents = true;
   };
 
   /// Constructor
-  /// @param cfg The Configuration struct
-  RootParticleReader(const Config& cfg, Acts::Logging::Level lvl);
+  /// @param config The Configuration struct
+  RootParticleReader(const Config& config, Acts::Logging::Level level);
 
   /// Destructor
   ~RootParticleReader();
@@ -60,6 +59,7 @@ class RootParticleReader : public IReader {
   ProcessCode read(
       const ActsExamples::AlgorithmContext& context) final override;
 
+  /// Readonly access to the config
   const Config& config() const { return m_cfg; }
 
  private:

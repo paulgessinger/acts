@@ -30,7 +30,9 @@ void addDigitization(Context& ctx) {
                std::shared_ptr<ActsExamples::DigitizationAlgorithm>>(
         mex, "DigitizationAlgorithm")
         .def(py::init<Config&, Acts::Logging::Level>(), py::arg("config"),
-             py::arg("level"));
+             py::arg("level"))
+        .def_property_readonly("config",
+                               &ActsExamples::DigitizationAlgorithm::config);
 
     auto c = py::class_<Config>(mex, "DigitizationConfig")
                  .def(py::init<Acts::GeometryHierarchyMap<
@@ -53,7 +55,7 @@ void addDigitization(Context& ctx) {
     c.def_readonly("mergeNsigma", &Config::mergeNsigma);
     c.def_readonly("mergeCommonCorner", &Config::mergeCommonCorner);
 
-    py::module::import("acts._adapter").attr("_patch_config_constructor")(c);
+    patchKwargsConstructor(c);
 
     py::class_<Acts::GeometryHierarchyMap<ActsExamples::DigiComponentsConfig>>(
         mex, "GeometryHierarchy_DigiComponentsConfig");

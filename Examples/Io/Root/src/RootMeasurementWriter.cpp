@@ -28,9 +28,10 @@
 #include <TString.h>
 
 ActsExamples::RootMeasurementWriter::RootMeasurementWriter(
-    const ActsExamples::RootMeasurementWriter::Config& cfg,
-    Acts::Logging::Level lvl)
-    : WriterT(cfg.inputMeasurements, "RootMeasurementWriter", lvl), m_cfg(cfg) {
+    const ActsExamples::RootMeasurementWriter::Config& config,
+    Acts::Logging::Level level)
+    : WriterT(config.inputMeasurements, "RootMeasurementWriter", level),
+      m_cfg(config) {
   // Input container for measurements is already checked by base constructor
   if (m_cfg.inputSimHits.empty()) {
     throw std::invalid_argument("Missing simulated hits input collection");

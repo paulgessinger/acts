@@ -47,14 +47,40 @@ def _make_config_constructor(cls):
     return wrapped
 
 
-def _patch_config_constructor(cls):
+def _patchKwargsConstructor(cls):
     cls.__init__ = _make_config_constructor(cls)
 
 
 def _patch_config(m):
     for name, cls in inspect.getmembers(m, inspect.isclass):
+        if name == "Config":
+            _patchKwargsConstructor(cls)
+
+        if name.endswith("Detector"):
+            continue
+
         if hasattr(cls, "Config"):
             cls.__init__ = _make_config_adapter(cls.__init__)
+            _patchKwargsConstructor(cls.Config)
 
-        if name == "Config":
-            _patch_config_constructor(cls)
+
+def _detector_create(cls):
+    def create(*args, mdecorator=None, **kwargs):
+        cfg = cls.Config()
+        _kwargs = {}
+        for k, v in kwargs.items():
+            if hasattr(cfg, k):
+                setattr(cfg, k, v)
+            else:
+                _kwargs[k] = v
+        det = cls()
+        tg, deco = det.finalize(cfg, mdecorator, *args, **_kwargs)
+        return det, tg, deco
+
+    return create
+
+
+def _patch_detectors(m):
+    for name, cls in inspect.getmembers(m, inspect.isclass):
+        if name.endswith("Detector"):
+            cls.create = _detector_create(cls)

@@ -49,7 +49,7 @@ stepper = acts.EigenStepper(field)
 # stepper = acts.AtlasStepper(field)
 # stepper = acts.StraightLineStepper()
 print("We're running with:", type(stepper).__name__)
-prop = acts.Propagator(stepper, nav)
+prop = acts.examples.ConcretePropagator(acts.Propagator(stepper, nav))
 
 # algCfg = acts.examples.PropagationAlgorithm.Config(
 #     prop,
@@ -61,7 +61,7 @@ prop = acts.Propagator(stepper, nav)
 # alg = acts.examples.PropagationAlgorithm(algCfg, acts.logging.Level.INFO)
 
 alg = acts.examples.PropagationAlgorithm(
-    propagator=prop,
+    propagatorImpl=prop,
     level=acts.logging.INFO,
     randomNumberSvc=rnd,
     ntests=1000,

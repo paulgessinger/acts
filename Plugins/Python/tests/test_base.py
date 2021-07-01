@@ -51,3 +51,10 @@ def test_empty_sequencer(conf_const):
 
 def test_random_number():
     rnd = acts.examples.RandomNumbers(seed=42)
+
+
+def test_constructors():
+    s1 = acts.examples.Sequencer()
+    print(s1)
+    s2 = acts.examples.Sequencer()
+    print(s2)

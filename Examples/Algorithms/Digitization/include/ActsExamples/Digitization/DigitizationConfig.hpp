@@ -140,7 +140,7 @@ class DigitizationConfig {
 
   std::vector<
       std::pair<Acts::GeometryIdentifier, std::vector<Acts::BoundIndices>>>
-  getBoundIndices();
+  getBoundIndices() const;
 
  private:
   // Private initializer for SmearingAlgorithm

@@ -43,6 +43,11 @@ inline void patchClassesWithConfig(pybind11::module_& m) {
   pybind11::module::import("acts._adapter").attr("_patch_config")(m);
 }
 
+template <typename T>
+void patchKwargsConstructor(T& c) {
+  pybind11::module::import("acts._adapter").attr("_patchKwargsConstructor")(c);
+}
+
 inline pybind11::module_ getMainModule() {
   return pybind11::module::import("acts.ActsPythonBindings");
 }

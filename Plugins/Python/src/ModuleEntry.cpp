@@ -143,7 +143,7 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
                 throw py::error_already_set{};
               }
             };
-            return Sequencer{cfg};
+            return std::make_unique<Sequencer>(cfg);
           }))
           .def("run",
                [](Sequencer& self) {
@@ -155,15 +155,9 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
                })
           .def("addContextDecorator", &Sequencer::addContextDecorator)
           .def("addAlgorithm", &Sequencer::addAlgorithm, py::keep_alive<1, 2>())
-          .def("addAlgorithms",
-               [](Sequencer& s, py::args algs) {
-                 for (auto& alg : algs) {
-                   s.addAlgorithm(
-                       alg.cast<std::shared_ptr<ActsExamples::IAlgorithm>>());
-                 }
-               })
           .def("addReader", &Sequencer::addReader)
-          .def("addWriter", &Sequencer::addWriter);
+          .def("addWriter", &Sequencer::addWriter)
+          .def_property_readonly("config", &Sequencer::config);
 
   py::class_<Config>(sequencer, "Config")
       .def(py::init<>())
