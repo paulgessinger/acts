@@ -19,10 +19,15 @@ def test_constant_bfield():
     assert cb
 
 
-def test_solenoid():
-    solenoid = acts.SolenoidBField(
-        radius=1200 * u.mm, length=6000 * u.mm, bMagCenter=2 * u.T, nCoils=1194
+def test_solenoid(conf_const):
+    solenoid = conf_const(
+        acts.SolenoidBField,
+        radius=1200 * u.mm,
+        length=6000 * u.mm,
+        bMagCenter=2 * u.T,
+        nCoils=1194,
     )
+
     field = acts.solenoidFieldMap(
         rlim=(0, 1200 * u.mm),
         zlim=(-5000 * u.mm, 5000 * u.mm),
