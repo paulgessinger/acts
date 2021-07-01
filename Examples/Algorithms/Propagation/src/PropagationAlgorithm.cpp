@@ -141,7 +141,11 @@ std::optional<Acts::BoundSymMatrix> PropagationAlgorithm::generateCovariance(
 }
 
 PropagationAlgorithm::PropagationAlgorithm(
-    const PropagationAlgorithm::Config& cfg, Acts::Logging::Level level)
-    : BareAlgorithm("PropagationAlgorithm", level), m_cfg(cfg) {}
+    const PropagationAlgorithm::Config& config, Acts::Logging::Level level)
+    : BareAlgorithm("PropagationAlgorithm", level), m_cfg(config) {
+  if (!config.propagatorImpl) {
+    throw std::invalid_argument("Config needs to contain a propagator");
+  }
+}
 
 }  // namespace ActsExamples

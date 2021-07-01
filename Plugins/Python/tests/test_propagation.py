@@ -4,15 +4,15 @@ import acts
 import acts.examples
 
 
-def test_navigator():
-    nav = acts.Navigator()
-    nav = acts.Navigator(trackingGeometry=None)
+def test_navigator(conf_const):
+    nav = conf_const(acts.Navigator)
+    nav = conf_const(acts.Navigator, trackingGeometry=None)
 
 
-def test_steppers():
+def test_steppers(conf_const):
     with pytest.raises(TypeError):
         acts.examples.PropagationAlgorithm()
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         acts.examples.PropagationAlgorithm(level=acts.logging.INFO)
 
     with pytest.raises(TypeError):
@@ -29,8 +29,19 @@ def test_steppers():
         s = stepper(acts.NullBField())
         assert s
 
-        prop = acts.Propagator(stepper=s, navigator=nav)
+        prop = acts.examples.ConcretePropagator(
+            acts.Propagator(stepper=s, navigator=nav)
+        )
 
-        acts.examples.PropagationAlgorithm(level=acts.logging.INFO, propagator=prop)
+        # cfg = acts.examples.PropagationAlgorithm.Config()
+        # cfg.propagatorImpl = prop
+        # acts.examples.PropagationAlgorithm(level=acts.logging.INFO, config=cfg)
+        # acts.examples.PropagationAlgorithm(cfg, acts.logging.INFO)
+
+        assert conf_const(
+            acts.examples.PropagationAlgorithm,
+            level=acts.logging.INFO,
+            propagatorImpl=prop,
+        )
 
     assert acts.StraightLineStepper()

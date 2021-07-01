@@ -40,12 +40,12 @@ def test_algebra():
         acts.Vector4()
 
 
-def test_empty_sequencer():
+def test_empty_sequencer(conf_const):
     s = acts.examples.Sequencer()
     with pytest.raises(RuntimeError):
         s.run()
 
-    s = acts.examples.Sequencer(events=1)
+    s = conf_const(acts.examples.Sequencer, events=1)
     s.run()
 
 
