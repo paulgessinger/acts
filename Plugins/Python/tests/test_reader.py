@@ -10,14 +10,15 @@ from acts.examples import (
 )
 
 
-def test_root_particle_reader(tmp_path, ptcl_gun):
+def test_root_particle_reader(tmp_path, conf_const, ptcl_gun):
     # need to write out some particles first
     s = Sequencer(numThreads=1, events=10, logLevel=acts.logging.ERROR)
     evGen = ptcl_gun(s)
 
     file = tmp_path / "particles.root"
     s.addWriter(
-        RootParticleWriter(
+        conf_const(
+            RootParticleWriter,
             acts.logging.ERROR,
             inputParticles=evGen.config.outputParticles,
             filePath=str(file),
@@ -33,7 +34,8 @@ def test_root_particle_reader(tmp_path, ptcl_gun):
     s2 = Sequencer(numThreads=1, logLevel=acts.logging.ERROR)
 
     s2.addReader(
-        RootParticleReader(
+        conf_const(
+            RootParticleReader,
             acts.logging.ERROR,
             particleCollection="input_particles",
             filePath=str(file),
