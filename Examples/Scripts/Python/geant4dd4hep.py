@@ -2,7 +2,10 @@
 
 import acts
 import acts.examples
+
 import acts.examples.dd4hep
+import acts.examples.geant4
+import acts.examples.geant4.dd4hep
 
 u = acts.UnitConstants
 
@@ -11,7 +14,7 @@ u = acts.UnitConstants
 dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
     xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
 )
-dd4hepG4Construction = acts.examples.geant4.DD4hepDetectorConstruction(dd4hepSvc)
+dd4hepG4Construction = acts.examples.geant4.dd4hep.DD4hepDetectorConstruction(dd4hepSvc)
 
 g4AlgCfg = acts.examples.geant4.GeantinoRecording.Config()
 g4AlgCfg.detectorConstruction = dd4hepG4Construction

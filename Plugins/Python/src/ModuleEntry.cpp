@@ -21,13 +21,12 @@ class PyIAlgorithm : public IAlgorithm {
   using IAlgorithm::IAlgorithm;
 
   std::string name() const override {
-    std::cout << "NAME BOUNCE" << std::endl;
-    // py::gil_scoped_acquire acquire{};
+    py::gil_scoped_acquire acquire{};
     PYBIND11_OVERRIDE_PURE(std::string, IAlgorithm, name);
   }
 
   ProcessCode execute(const AlgorithmContext& ctx) const override {
-    // py::gil_scoped_acquire acquire{};
+    py::gil_scoped_acquire acquire{};
     PYBIND11_OVERRIDE_PURE(ProcessCode, IAlgorithm, execute, ctx);
   }
 };
@@ -37,12 +36,9 @@ class PyBareAlgorithm : public BareAlgorithm {
   using BareAlgorithm::BareAlgorithm;
 
   ProcessCode execute(const AlgorithmContext& ctx) const override {
-    // std::cout << "CPP EXECUTE" << std::endl;
-    // py::gil_scoped_acquire acquire{};
+    py::gil_scoped_acquire acquire{};
     PYBIND11_OVERRIDE_PURE(ProcessCode, BareAlgorithm, execute, ctx);
   }
-
-  ~PyBareAlgorithm() { std::cout << "DESTRUCT" << std::endl; }
 };
 }  // namespace
 
@@ -84,7 +80,6 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
   ctx.modules["examples"] = &mex;
   auto prop = m.def_submodule("_propagator");
   ctx.modules["propagation"] = &prop;
-  // std::cout << __FILE__ << ":" << __LINE__ << std::endl;
   m.doc() = "Acts";
 
   m.attr("__version__") =
@@ -152,7 +147,7 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
           }))
           .def("run",
                [](Sequencer& self) {
-                 //  py::gil_scoped_release gil;
+                 py::gil_scoped_release gil;
                  int res = self.run();
                  if (res != EXIT_SUCCESS) {
                    throw std::runtime_error{"Sequencer terminated abnormally"};

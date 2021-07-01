@@ -4,7 +4,7 @@ import multiprocessing
 # Cannot conveniently catch linker errors, so we launch a suprocess to
 # try importing and see if it works in order to provide a useful error message
 def _import_test():
-    from acts import ActsPythonBindingsDD4hep
+    from acts import ActsPythonBindingsGeant4DD4hep
 
 
 p = multiprocessing.Process(target=_import_test)
@@ -16,8 +16,8 @@ if p.exitcode != 0:
     )
 
 from acts._adapter import _patch_config
-from acts import ActsPythonBindingsDD4hep
+from acts import ActsPythonBindingsGeant4DD4hep
 
-_patch_config(ActsPythonBindingsDD4hep)
+_patch_config(ActsPythonBindingsGeant4DD4hep)
 
-from acts.ActsPythonBindingsDD4hep import *
+from acts.ActsPythonBindingsGeant4DD4hep import *

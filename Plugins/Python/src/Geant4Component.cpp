@@ -1,4 +1,4 @@
-#include "Acts/Plugins/Python/ActsModule.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "Acts/Utilities/PolymorphicValue.hpp"
 #include "ActsExamples/Geant4/GeantinoRecording.hpp"
 #include "ActsExamples/Geant4/PrimaryGeneratorAction.hpp"
@@ -16,21 +16,13 @@ using namespace Acts;
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, Acts::PolymorphicValue<T>)
 
-void addGeant4DD4hep(py::module_& m);
-
-namespace {
-
-ACTS_PYTHON_COMPONENT(Geant4, ctx) {
-  auto& [m, mex, prop] = ctx;
-
-  auto g4 = mex.def_submodule("geant4");
-
+PYBIND11_MODULE(ActsPythonBindingsGeant4, m) {
   {
     using Alg = GeantinoRecording;
 
     auto alg =
         py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
-            g4, "GeantinoRecording")
+            m, "GeantinoRecording")
             .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
                  py::arg("config"), py::arg("level"))
             .def_property_readonly("config", &Alg::config);
@@ -46,7 +38,7 @@ ACTS_PYTHON_COMPONENT(Geant4, ctx) {
   }
 
   {
-    auto cls = py::class_<PrimaryGeneratorAction>(g4, "PrimaryGeneratorAction");
+    auto cls = py::class_<PrimaryGeneratorAction>(m, "PrimaryGeneratorAction");
     auto c = py::class_<PrimaryGeneratorAction::Config>(cls, "Config")
                  .def(py::init<>());
 
@@ -69,10 +61,7 @@ ACTS_PYTHON_COMPONENT(Geant4, ctx) {
 
   py::class_<G4VUserDetectorConstruction,
              Acts::PolymorphicValue<G4VUserDetectorConstruction>>(
-      g4, "G4VUserDetectorConstruction");
+      m, "G4VUserDetectorConstruction");
 
-  addGeant4DD4hep(g4);
-  py::module::import("acts._adapter").attr("_patch_config")(g4);
+  // patchClassesWithConfig(g4);
 }
-
-}  // namespace
