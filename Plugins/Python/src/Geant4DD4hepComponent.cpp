@@ -1,4 +1,4 @@
-#include "Acts/Plugins/Python/ActsModule.hpp"
+#include "Acts/Plugins/Python/Utilities.hpp"
 #include "Acts/Utilities/PolymorphicValue.hpp"
 #include "ActsExamples/DD4hepDetector/DD4hepDetectorOptions.hpp"
 #include "ActsExamples/Geant4DD4hep/DD4hepDetectorConstruction.hpp"
@@ -16,7 +16,7 @@ using namespace Acts;
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, Acts::PolymorphicValue<T>)
 
-void addGeant4DD4hep(py::module_& m) {
+PYBIND11_MODULE(ActsPythonBindingsGeant4DD4hep, m) {
   auto cc = py::class_<DD4hepDetectorConstruction, G4VUserDetectorConstruction,
                        Acts::PolymorphicValue<DD4hepDetectorConstruction>>(
       m, "DD4hepDetectorConstruction");
