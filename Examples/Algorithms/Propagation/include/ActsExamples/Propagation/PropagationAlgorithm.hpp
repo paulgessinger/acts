@@ -129,6 +129,9 @@ class PropagationAlgorithm : public BareAlgorithm {
   ActsExamples::ProcessCode execute(
       const AlgorithmContext& context) const final override;
 
+  /// Get const access to the config
+  const Config& config() const { return m_cfg; }
+
  private:
   Config m_cfg;  ///< the config class
 

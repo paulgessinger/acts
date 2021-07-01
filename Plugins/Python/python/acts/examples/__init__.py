@@ -1,9 +1,7 @@
 from acts.ActsPythonBindings._examples import *
 from acts import ActsPythonBindings
 import acts
-from acts._adapter import _patch_config
-
-import inspect
+from acts._adapter import _patch_config, _patch_detectors
 
 _propagators = []
 _concrete_propagators = []
@@ -22,20 +20,6 @@ def ConcretePropagator(propagator):
     raise TypeError(f"Unknown propagator {type(propagator).__name__}")
 
 
-def _detector_create(cls):
-    def create(*args, mdecorator=None, **kwargs):
-        cfg = cls.Config()
-        _kwargs = {}
-        for k, v in kwargs.items():
-            if hasattr(cfg, k):
-                setattr(cfg, k, v)
-            else:
-                _kwargs[k] = v
-        det = cls()
-        tg, deco = det.finalize(cfg, mdecorator, *args, **_kwargs)
-        return det, tg, deco
-
-    return create
-
-
 _patch_config(ActsPythonBindings._examples)
+
+_patch_detectors(ActsPythonBindings._examples)

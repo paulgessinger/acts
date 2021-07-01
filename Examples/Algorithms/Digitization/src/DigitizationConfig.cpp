@@ -203,7 +203,7 @@ ActsExamples::createDigitizationAlgorithm(ActsExamples::DigitizationConfig& cfg,
 
 std::vector<
     std::pair<Acts::GeometryIdentifier, std::vector<Acts::BoundIndices>>>
-ActsExamples::DigitizationConfig::getBoundIndices() {
+ActsExamples::DigitizationConfig::getBoundIndices() const {
   std::vector<
       std::pair<Acts::GeometryIdentifier, std::vector<Acts::BoundIndices>>>
       bIndexInput;

@@ -21,23 +21,20 @@
 #include <TMath.h>
 
 ActsExamples::RootParticleReader::RootParticleReader(
-    const ActsExamples::RootParticleReader::Config& cfg,
-    Acts::Logging::Level lvl)
+    const ActsExamples::RootParticleReader::Config& config,
+    Acts::Logging::Level level)
     : ActsExamples::IReader(),
-      m_cfg(cfg),
-      m_logger(Acts::getDefaultLogger(name(), lvl)),
+      m_cfg(config),
+      m_logger(Acts::getDefaultLogger(name(), level)),
       m_events(0),
       m_inputChain(nullptr) {
   m_inputChain = new TChain(m_cfg.treeName.c_str());
 
-  if (m_cfg.inputFile.empty()) {
+  if (m_cfg.filePath.empty()) {
     throw std::invalid_argument("Missing input filename");
   }
   if (m_cfg.treeName.empty()) {
     throw std::invalid_argument("Missing tree name");
-  }
-  if (m_cfg.inputDir.empty()) {
-    throw std::invalid_argument("Missing input directory");
   }
 
   // Set the branches
@@ -64,7 +61,7 @@ ActsExamples::RootParticleReader::RootParticleReader(
   m_inputChain->SetBranchAddress("generation", &m_generation);
   m_inputChain->SetBranchAddress("sub_particle", &m_subParticle);
 
-  auto path = joinPaths(m_cfg.inputDir, m_cfg.inputFile);
+  auto path = m_cfg.filePath;
 
   // add file to the input chain
   m_inputChain->Add(path.c_str());

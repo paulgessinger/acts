@@ -25,9 +25,9 @@
 #include <type_traits>
 
 ActsExamples::DigitizationAlgorithm::DigitizationAlgorithm(
-    DigitizationConfig cfg, Acts::Logging::Level lvl)
-    : ActsExamples::BareAlgorithm("DigitizationAlgorithm", lvl),
-      m_cfg(std::move(cfg)) {
+    DigitizationConfig config, Acts::Logging::Level level)
+    : ActsExamples::BareAlgorithm("DigitizationAlgorithm", level),
+      m_cfg(std::move(config)) {
   if (m_cfg.inputSimHits.empty()) {
     throw std::invalid_argument("Missing simulated hits input collection");
   }

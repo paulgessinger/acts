@@ -1,9 +1,11 @@
 #include "Acts/Plugins/Python/Utilities.hpp"
+#include "ActsExamples/Io/Csv/CsvMeasurementWriter.hpp"
 #include "ActsExamples/Io/Csv/CsvParticleWriter.hpp"
 #include "ActsExamples/Io/Performance/SeedingPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/TrackFinderPerformanceWriter.hpp"
 #include "ActsExamples/Io/Root/RootBFieldWriter.hpp"
 #include "ActsExamples/Io/Root/RootMaterialTrackWriter.hpp"
+#include "ActsExamples/Io/Root/RootMeasurementWriter.hpp"
 #include "ActsExamples/Io/Root/RootParticleWriter.hpp"
 #include "ActsExamples/Io/Root/RootPropagationStepsWriter.hpp"
 #include "ActsExamples/Io/Root/RootTrackParameterWriter.hpp"
@@ -187,6 +189,52 @@ void addOutput(Context& ctx) {
     ACTS_PYTHON_MEMBER(rBins);
     ACTS_PYTHON_MEMBER(zBins);
     ACTS_PYTHON_MEMBER(phiBins);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Writer = ActsExamples::RootMeasurementWriter;
+    auto w = py::class_<Writer, IWriter, std::shared_ptr<Writer>>(
+                 mex, "RootMeasurementWriter")
+                 .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                      py::arg("config"), py::arg("level"));
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+
+    c.def("addBoundIndicesFromDigiConfig",
+          [](Writer::Config& self, const DigitizationConfig& digiCfg) {
+            self.boundIndices =
+                Acts::GeometryHierarchyMap<std::vector<Acts::BoundIndices>>(
+                    digiCfg.getBoundIndices());
+          });
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputMeasurements);
+    ACTS_PYTHON_MEMBER(inputClusters);
+    ACTS_PYTHON_MEMBER(inputSimHits);
+    ACTS_PYTHON_MEMBER(inputMeasurementSimHitsMap);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_MEMBER(boundIndices);
+    ACTS_PYTHON_MEMBER(trackingGeometry);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Writer = ActsExamples::CsvMeasurementWriter;
+    auto w = py::class_<Writer, IWriter, std::shared_ptr<Writer>>(
+                 mex, "CsvMeasurementWriter")
+                 .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                      py::arg("config"), py::arg("level"));
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputMeasurements);
+    ACTS_PYTHON_MEMBER(inputClusters);
+    ACTS_PYTHON_MEMBER(inputSimHits);
+    ACTS_PYTHON_MEMBER(inputMeasurementSimHitsMap);
+    ACTS_PYTHON_MEMBER(outputDir);
+    ACTS_PYTHON_MEMBER(outputPrecision);
     ACTS_PYTHON_STRUCT_END();
   }
 }
