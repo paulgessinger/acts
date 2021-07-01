@@ -37,7 +37,11 @@ class PyBareAlgorithm : public BareAlgorithm {
 
   ProcessCode execute(const AlgorithmContext& ctx) const override {
     py::gil_scoped_acquire acquire{};
-    PYBIND11_OVERRIDE_PURE(ProcessCode, BareAlgorithm, execute, ctx);
+    try {
+      PYBIND11_OVERRIDE_PURE(ProcessCode, BareAlgorithm, execute, ctx);
+    } catch (std::runtime_error& e) {
+      throw py::type_error("Python algorithm did not conform to interface");
+    }
   }
 };
 }  // namespace
