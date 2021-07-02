@@ -16,6 +16,7 @@
 #include "Acts/Utilities/EnumBitwiseOperators.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "ActsExamples/Framework/ProcessCode.hpp"
+#include "ActsExamples/MaterialMapping/IMaterialWriter.hpp"
 
 #include <mutex>
 
@@ -47,7 +48,7 @@ ACTS_DEFINE_ENUM_BITWISE_OPERATORS(JsonFormat)
 ///
 /// @brief Writes out Detector material maps
 /// using the Json Geometry converter
-class JsonMaterialWriter {
+class JsonMaterialWriter : public IMaterialWriter {
  public:
   struct Config {
     /// The config class of the converter
@@ -69,7 +70,7 @@ class JsonMaterialWriter {
   /// Write out the material map
   ///
   /// @param detMaterial is the SurfaceMaterial and VolumeMaterial maps
-  void write(const Acts::DetectorMaterialMaps& detMaterial);
+  void writeMaterial(const Acts::DetectorMaterialMaps& detMaterial) override;
 
   /// Write out the material map from Geometry
   ///

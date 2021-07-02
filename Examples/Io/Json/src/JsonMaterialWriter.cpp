@@ -27,7 +27,7 @@ ActsExamples::JsonMaterialWriter::JsonMaterialWriter(
 
 ActsExamples::JsonMaterialWriter::~JsonMaterialWriter() {}
 
-void ActsExamples::JsonMaterialWriter::write(
+void ActsExamples::JsonMaterialWriter::writeMaterial(
     const Acts::DetectorMaterialMaps& detMaterial) {
   // Evoke the converter
   Acts::MaterialMapJsonConverter jmConverter(m_cfg.converterCfg);

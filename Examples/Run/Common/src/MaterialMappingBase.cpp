@@ -110,7 +110,7 @@ int materialMappingExample(int argc, char* argv[],
     matTrackReaderRootConfig.fileList = intputFiles;
     auto matTrackReaderRoot =
         std::make_shared<ActsExamples::RootMaterialTrackReader>(
-            matTrackReaderRootConfig);
+            matTrackReaderRootConfig, logLevel);
     sequencer.addReader(matTrackReaderRoot);
   }
 
@@ -150,14 +150,13 @@ int materialMappingExample(int argc, char* argv[],
 
   if (!materialFileName.empty() and vm["output-root"].template as<bool>()) {
     // The writer of the indexed material
-    ActsExamples::RootMaterialWriter::Config rmwConfig("MaterialWriter");
+    ActsExamples::RootMaterialWriter::Config rmwConfig;
     rmwConfig.fileName = materialFileName + ".root";
-    ActsExamples::RootMaterialWriter rmwImpl(rmwConfig);
     // Fullfill the IMaterialWriter interface
-    using RootWriter =
-        ActsExamples::MaterialWriterT<ActsExamples::RootMaterialWriter>;
-    mmAlgConfig.materialWriters.push_back(
-        std::make_shared<RootWriter>(std::move(rmwImpl)));
+
+    auto rmw =
+        std::make_shared<ActsExamples::RootMaterialWriter>(rmwConfig, logLevel);
+    mmAlgConfig.materialWriters.push_back(rmw);
 
     if (mapSurface) {
       // Write the propagation steps as ROOT TTree
@@ -206,13 +205,10 @@ int materialMappingExample(int argc, char* argv[],
     }
     jmWriterCfg.writeFormat = format;
 
-    ActsExamples::JsonMaterialWriter jmwImpl(std::move(jmWriterCfg));
+    auto jmw = std::make_shared<ActsExamples::JsonMaterialWriter>(
+        std::move(jmWriterCfg));
 
-    // Fullfill the IMaterialWriter interface
-    using JsonWriter =
-        ActsExamples::MaterialWriterT<ActsExamples::JsonMaterialWriter>;
-    mmAlgConfig.materialWriters.push_back(
-        std::make_shared<JsonWriter>(std::move(jmwImpl)));
+    mmAlgConfig.materialWriters.push_back(jmw);
   }
 
   // Create the material mapping

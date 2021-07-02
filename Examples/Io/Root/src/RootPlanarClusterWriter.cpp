@@ -26,11 +26,10 @@
 #include <TTree.h>
 
 ActsExamples::RootPlanarClusterWriter::RootPlanarClusterWriter(
-    const ActsExamples::RootPlanarClusterWriter::Config& cfg,
-    Acts::Logging::Level lvl)
-    : WriterT(cfg.inputClusters, "RootPlanarClusterWriter", lvl),
-      m_cfg(cfg),
-      m_outputFile(cfg.rootFile) {
+    const ActsExamples::RootPlanarClusterWriter::Config& config,
+    Acts::Logging::Level level)
+    : WriterT(config.inputClusters, "RootPlanarClusterWriter", level),
+      m_cfg(config) {
   // inputClusters is already checked by base constructor
   if (m_cfg.inputSimHits.empty()) {
     throw std::invalid_argument("Missing simulated hits input collection");
@@ -83,9 +82,7 @@ ActsExamples::RootPlanarClusterWriter::RootPlanarClusterWriter(
 
 ActsExamples::RootPlanarClusterWriter::~RootPlanarClusterWriter() {
   /// Close the file if it's yours
-  if (m_cfg.rootFile == nullptr) {
-    m_outputFile->Close();
-  }
+  m_outputFile->Close();
 }
 
 ActsExamples::ProcessCode ActsExamples::RootPlanarClusterWriter::endRun() {

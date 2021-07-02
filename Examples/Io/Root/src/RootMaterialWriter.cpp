@@ -21,8 +21,10 @@
 #include <TH2F.h>
 
 ActsExamples::RootMaterialWriter::RootMaterialWriter(
-    const ActsExamples::RootMaterialWriter::Config& cfg)
-    : m_cfg(cfg) {
+    const ActsExamples::RootMaterialWriter::Config& config,
+    Acts::Logging::Level level)
+    : m_cfg(config),
+      m_logger{Acts::getDefaultLogger("RootMaterialWriter", level)} {
   // Validate the configuration
   if (m_cfg.folderSurfaceNameBase.empty()) {
     throw std::invalid_argument("Missing surface folder name base");
@@ -30,14 +32,10 @@ ActsExamples::RootMaterialWriter::RootMaterialWriter(
     throw std::invalid_argument("Missing volume folder name base");
   } else if (m_cfg.fileName.empty()) {
     throw std::invalid_argument("Missing file name");
-  } else if (!m_cfg.logger) {
-    throw std::invalid_argument("Missing logger");
-  } else if (m_cfg.name.empty()) {
-    throw std::invalid_argument("Missing service name");
   }
 }
 
-void ActsExamples::RootMaterialWriter::write(
+void ActsExamples::RootMaterialWriter::writeMaterial(
     const Acts::DetectorMaterialMaps& detMaterial) {
   // Setup ROOT I/O
   TFile* outputFile = TFile::Open(m_cfg.fileName.c_str(), "recreate");
@@ -309,7 +307,7 @@ void ActsExamples::RootMaterialWriter::write(
     collectMaterial(*hVolume, detMatMap);
   }
   // Write the resulting map to the file
-  write(detMatMap);
+  writeMaterial(detMatMap);
 }
 
 void ActsExamples::RootMaterialWriter::collectMaterial(
