@@ -28,8 +28,7 @@ ActsExamples::RootMaterialTrackWriter::RootMaterialTrackWriter(
     const ActsExamples::RootMaterialTrackWriter::Config& config,
     Acts::Logging::Level level)
     : WriterT(config.collection, "RootMaterialTrackWriter", level),
-      m_cfg(config),
-      m_outputFile(m_cfg.rootFile) {
+      m_cfg(config) {
   // An input collection name and tree name must be specified
   if (m_cfg.collection.empty()) {
     throw std::invalid_argument("Missing input collection");
@@ -38,12 +37,11 @@ ActsExamples::RootMaterialTrackWriter::RootMaterialTrackWriter(
   }
 
   // Setup ROOT I/O
+  m_outputFile = TFile::Open(m_cfg.filePath.c_str(), m_cfg.fileMode.c_str());
   if (m_outputFile == nullptr) {
-    m_outputFile = TFile::Open(m_cfg.filePath.c_str(), m_cfg.fileMode.c_str());
-    if (m_outputFile == nullptr) {
-      throw std::ios_base::failure("Could not open '" + m_cfg.filePath);
-    }
+    throw std::ios_base::failure("Could not open '" + m_cfg.filePath);
   }
+
   m_outputFile->cd();
   m_outputTree =
       new TTree(m_cfg.treeName.c_str(), "TTree from RootMaterialTrackWriter");

@@ -55,7 +55,7 @@ build(const boost::program_options::variables_map& vm,
       ActsExamples::RootMaterialDecorator::Config rootMatDecConfig;
       rootMatDecConfig.fileName = fileName;
       matDeco = std::make_shared<const ActsExamples::RootMaterialDecorator>(
-          rootMatDecConfig);
+          rootMatDecConfig, Acts::Logging::INFO);
     }
   }
 

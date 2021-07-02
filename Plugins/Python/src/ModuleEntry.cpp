@@ -39,6 +39,8 @@ class PyBareAlgorithm : public BareAlgorithm {
     py::gil_scoped_acquire acquire{};
     try {
       PYBIND11_OVERRIDE_PURE(ProcessCode, BareAlgorithm, execute, ctx);
+    } catch (py::error_already_set& e) {
+      throw;  // Error from python, handle in python.
     } catch (std::runtime_error& e) {
       throw py::type_error("Python algorithm did not conform to interface");
     }

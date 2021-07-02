@@ -43,15 +43,14 @@ class RootPlanarClusterWriter
     std::string filePath = "";          ///< path of the output file
     std::string fileMode = "RECREATE";  ///< file access mode
     std::string treeName = "clusters";  ///< name of the output tree
-    TFile* rootFile = nullptr;          ///< common root file
     /// Tracking geometry required to access global-to-local transforms.
     std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry;
   };
 
   /// Constructor with
-  /// @param cfg configuration struct
-  /// @param output logging level
-  RootPlanarClusterWriter(const Config& cfg, Acts::Logging::Level lvl);
+  /// @param config configuration struct
+  /// @param level logging level
+  RootPlanarClusterWriter(const Config& config, Acts::Logging::Level level);
 
   /// Virtual destructor
   ~RootPlanarClusterWriter() override;
