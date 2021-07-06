@@ -142,7 +142,7 @@ int processGeometry(int argc, char* argv[],
     if (!materialFileName.empty() and vm["output-root"].template as<bool>()) {
       // The writer of the indexed material
       ActsExamples::RootMaterialWriter::Config rmwConfig;
-      rmwConfig.fileName = materialFileName + ".root";
+      rmwConfig.filePath = materialFileName + ".root";
       ActsExamples::RootMaterialWriter rmwImpl(rmwConfig, logLevel);
       rmwImpl.write(*tGeometry);
     }

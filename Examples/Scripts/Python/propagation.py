@@ -1,89 +1,84 @@
 #!/usr/bin/env python3
+import os
 
 import acts
 import acts.examples
 
 u = acts.UnitConstants
 
-# cfg = acts.examples.Sequencer.Config()
-# cfg.events = 10
-# cfg.numThreads = 1
-# s = acts.examples.Sequencer(cfg)
 
-s = acts.examples.Sequencer(events=1000, numThreads=20)
+def runPropagation(trackingGeometry, field, outputDir, s=None):
+    s = s or acts.examples.Sequencer(events=10)
 
-rnd = acts.examples.RandomNumbers(seed=42)
+    rnd = acts.examples.RandomNumbers(seed=42)
 
-# print("Building generic detector")
-# gdc = acts.examples.GenericDetector.Config()
-# detector = acts.examples.GenericDetector()
-# trackingGeometry, contextDecorators = detector.finalize(gdc, None)
-detector, trackingGeometry, contextDecorators = acts.examples.GenericDetector.create()
+    nav = acts.Navigator(trackingGeometry=trackingGeometry)
 
+    stepper = acts.EigenStepper(field)
+    # stepper = acts.AtlasStepper(field)
+    # stepper = acts.StraightLineStepper()
 
-# dd4hepCfg = acts.examples.DD4hepDetector.Config()
-# dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-# detector = acts.examples.DD4hepDetector()
-# trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
+    print("We're running with:", type(stepper).__name__)
+    prop = acts.examples.ConcretePropagator(acts.Propagator(stepper, nav))
 
-for cdr in contextDecorators:
-    s.addContextDecorator(cdr)
+    alg = acts.examples.PropagationAlgorithm(
+        propagatorImpl=prop,
+        level=acts.logging.INFO,
+        randomNumberSvc=rnd,
+        ntests=1000,
+        sterileLogger=True,
+        propagationStepCollection="propagation-steps",
+    )
 
-field = acts.NullBField()
-# field = acts.ConstantBField(acts.Vector3(0, 0, 2 * acts.UnitConstants.T))
-# solenoid = acts.SolenoidBField(
-#     radius = 1200*u.mm,
-#     length = 6000*u.mm,
-#     bMagCenter = 2*u.T,
-#     nCoils = 1194
-# )
-# field = acts.solenoidFieldMap(
-#     rlim=(0, 1200*u.mm),
-#     zlim=(-5000*u.mm, 5000*u.mm),
-#     nbins=(50, 50),
-#     field=solenoid
-# )
-nav = acts.Navigator(trackingGeometry=trackingGeometry)
+    s.addAlgorithm(alg)
 
-stepper = acts.EigenStepper(field)
-# stepper = acts.AtlasStepper(field)
-# stepper = acts.StraightLineStepper()
-print("We're running with:", type(stepper).__name__)
-prop = acts.examples.ConcretePropagator(acts.Propagator(stepper, nav))
+    # Output
+    s.addWriter(
+        acts.examples.ObjPropagationStepsWriter(
+            level=acts.logging.INFO,
+            collection="propagation-steps",
+            outputDir=outputDir + "/obj",
+        )
+    )
 
-# algCfg = acts.examples.PropagationAlgorithm.Config(
-#     prop,
-#     randomNumberSvc = rnd,
-#     ntests = 1000,
-#     sterileLogger = False,
-#     propagationStepCollection = "propagation-steps"
-# )
-# alg = acts.examples.PropagationAlgorithm(algCfg, acts.logging.Level.INFO)
+    s.addWriter(
+        acts.examples.RootPropagationStepsWriter(
+            level=acts.logging.INFO,
+            collection="propagation-steps",
+            filePath=outputDir + "/propagation_steps.root",
+        )
+    )
 
-alg = acts.examples.PropagationAlgorithm(
-    propagatorImpl=prop,
-    level=acts.logging.INFO,
-    randomNumberSvc=rnd,
-    ntests=1000,
-    sterileLogger=True,
-    propagationStepCollection="propagation-steps",
-)
-
-s.addAlgorithm(alg)
+    return s
 
 
-# output
-# s.addWriter(
-#     acts.examples.ObjPropagationStepsWriter(
-#         collection="propagation-steps", outputDir="obj"
-#     )
-# )
+if "__main__" == __name__:
+    (
+        detector,
+        trackingGeometry,
+        contextDecorators,
+    ) = acts.examples.GenericDetector.create()
 
-# s.addWriter(
-#     acts.examples.RootPropagationStepsWriter(
-#         collection="propagation-steps", filePath="propagation_steps_python.root"
-#     )
-# )
+    # dd4hepCfg = acts.examples.DD4hepDetector.Config()
+    # dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+    # detector = acts.examples.DD4hepDetector()
+    # trackingGeometry, contextDecorators = detector.finalize(dd4hepCfg, None)
 
+    # field = acts.NullBField()
 
-s.run()
+    field = acts.ConstantBField(acts.Vector3(0, 0, 2 * acts.UnitConstants.T))
+
+    # solenoid = acts.SolenoidBField(
+    #     radius = 1200*u.mm,
+    #     length = 6000*u.mm,
+    #     bMagCenter = 2*u.T,
+    #     nCoils = 1194
+    # )
+    # field = acts.solenoidFieldMap(
+    #     rlim=(0, 1200*u.mm),
+    #     zlim=(-5000*u.mm, 5000*u.mm),
+    #     nbins=(50, 50),
+    #     field=solenoid
+    # )
+
+    runPropagation(trackingGeometry, field, os.getcwd()).run()

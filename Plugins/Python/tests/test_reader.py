@@ -1,10 +1,14 @@
 from typing import Type
+import inspect
+
 import pytest
 
 import acts
 from acts.examples import (
     RootParticleWriter,
     RootParticleReader,
+    RootMaterialTrackReader,
+    RootTrajectorySummaryReader,
     CsvParticleWriter,
     CsvParticleReader,
     BareAlgorithm,
@@ -20,7 +24,7 @@ class AssertCollectionExistsAlg(BareAlgorithm):
         BareAlgorithm.__init__(self, *args, **kwargs)
 
     def execute(self, ctx):
-        assert ctx.eventStore.exists("input_particles")
+        assert ctx.eventStore.exists(self.collection)
         self.events_seen += 1
         return acts.examples.ProcessCode.SUCCESS
 
@@ -65,7 +69,7 @@ def test_root_particle_reader(tmp_path, conf_const, ptcl_gun):
     assert alg.events_seen == 10
 
 
-def test_csv_particle_writer(tmp_path, conf_const, ptcl_gun):
+def test_csv_particle_reader(tmp_path, conf_const, ptcl_gun):
     s = Sequencer(numThreads=1, events=10, logLevel=acts.logging.ERROR)
     evGen = ptcl_gun(s)
 
@@ -76,7 +80,7 @@ def test_csv_particle_writer(tmp_path, conf_const, ptcl_gun):
     s.addWriter(
         conf_const(
             CsvParticleWriter,
-            acts.logging.ERROR,, events=10, 
+            acts.logging.ERROR,
             inputParticles=evGen.config.outputParticles,
             outputStem="particle",
             outputDir=str(out),
@@ -105,3 +109,20 @@ def test_csv_particle_writer(tmp_path, conf_const, ptcl_gun):
     s.run()
 
     assert alg.events_seen == 10
+
+
+@pytest.mark.parametrize(
+    "reader",
+    [RootParticleReader, RootTrajectorySummaryReader],
+)
+@pytest.mark.root
+def test_root_reader_interface(reader, conf_const, tmp_path):
+    assert hasattr(reader, "Config")
+
+    config = reader.Config
+
+    assert hasattr(config, "filePath")
+
+    kw = {"level": acts.logging.INFO, "filePath": str(tmp_path / "file.root")}
+
+    assert conf_const(reader, **kw)

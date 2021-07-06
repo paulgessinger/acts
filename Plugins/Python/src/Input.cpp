@@ -55,7 +55,6 @@ void addInput(Context& ctx) {
     auto c = py::class_<Config>(reader, "Config").def(py::init<>());
     ACTS_PYTHON_STRUCT_BEGIN(c, Config);
     ACTS_PYTHON_MEMBER(collection);
-    ACTS_PYTHON_MEMBER(filePath);
     ACTS_PYTHON_MEMBER(treeName);
     ACTS_PYTHON_MEMBER(fileList);
     ACTS_PYTHON_MEMBER(orderedEvents);
