@@ -4,12 +4,25 @@ import acts
 import acts.examples
 
 
+class AssertCollectionExistsAlg(acts.examples.BareAlgorithm):
+    events_seen = 0
+
+    def __init__(self, collection, *args, **kwargs):
+        self.collection = collection
+        acts.examples.BareAlgorithm.__init__(self, *args, **kwargs)
+
+    def execute(self, ctx):
+        assert ctx.eventStore.exists(self.collection)
+        self.events_seen += 1
+        return acts.examples.ProcessCode.SUCCESS
+
+
 def test_navigator(conf_const):
     nav = conf_const(acts.Navigator)
     nav = conf_const(acts.Navigator, trackingGeometry=None)
 
 
-def test_steppers(conf_const):
+def test_steppers(conf_const, trk_geo):
     with pytest.raises(TypeError):
         acts.examples.PropagationAlgorithm()
     with pytest.raises(ValueError):
@@ -18,7 +31,7 @@ def test_steppers(conf_const):
     with pytest.raises(TypeError):
         acts.Propagator()
 
-    nav = acts.Navigator()
+    nav = acts.Navigator(trackingGeometry=trk_geo)
 
     with pytest.raises(TypeError):
         acts.Propagator(navigator=nav)
@@ -38,10 +51,22 @@ def test_steppers(conf_const):
         # acts.examples.PropagationAlgorithm(level=acts.logging.INFO, config=cfg)
         # acts.examples.PropagationAlgorithm(cfg, acts.logging.INFO)
 
-        assert conf_const(
+        alg = conf_const(
             acts.examples.PropagationAlgorithm,
             level=acts.logging.INFO,
             propagatorImpl=prop,
+            randomNumberSvc=acts.examples.RandomNumbers(),
+            propagationStepCollection="propagation_steps",
+            sterileLogger=False,
+            ntests=10,
         )
+
+        seq = acts.examples.Sequencer(events=10, numThreads=1)
+        seq.addAlgorithm(alg)
+        chkAlg = AssertCollectionExistsAlg(
+            "propagation_steps", "chk_alg", level=acts.logging.INFO
+        )
+        seq.addAlgorithm(chkAlg)
+        seq.run()
 
     assert acts.StraightLineStepper()

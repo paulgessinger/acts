@@ -151,7 +151,7 @@ int materialMappingExample(int argc, char* argv[],
   if (!materialFileName.empty() and vm["output-root"].template as<bool>()) {
     // The writer of the indexed material
     ActsExamples::RootMaterialWriter::Config rmwConfig;
-    rmwConfig.fileName = materialFileName + ".root";
+    rmwConfig.filePath = materialFileName + ".root";
     // Fullfill the IMaterialWriter interface
 
     auto rmw =

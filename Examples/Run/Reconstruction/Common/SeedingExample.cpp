@@ -168,8 +168,7 @@ int runSeedingExample(int argc, char* argv[],
   seedPerfCfg.inputParticles = inputParticles;
   seedPerfCfg.inputMeasurementParticlesMap =
       digiCfg.outputMeasurementParticlesMap;
-  seedPerfCfg.outputDir = outputDir;
-  seedPerfCfg.outputFilename = "performance_seeding_hists.root";
+  seedPerfCfg.filePath = outputDir + "/performance_seeding_hists.root";
   sequencer.addWriter(
       std::make_shared<SeedingPerformanceWriter>(seedPerfCfg, logLevel));
 
@@ -184,9 +183,8 @@ int runSeedingExample(int argc, char* argv[],
       digiCfg.outputMeasurementParticlesMap;
   trackParamsWriterCfg.inputMeasurementSimHitsMap =
       digiCfg.outputMeasurementSimHitsMap;
-  trackParamsWriterCfg.outputDir = outputDir;
-  trackParamsWriterCfg.outputFilename = "estimatedparams.root";
-  trackParamsWriterCfg.outputTreename = "estimatedparams";
+  trackParamsWriterCfg.filePath = outputDir + "/estimatedparams.root";
+  trackParamsWriterCfg.treeName = "estimatedparams";
   sequencer.addWriter(std::make_shared<RootTrackParameterWriter>(
       trackParamsWriterCfg, logLevel));
 

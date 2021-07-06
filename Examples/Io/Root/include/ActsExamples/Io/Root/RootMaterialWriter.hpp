@@ -23,6 +23,8 @@
 #include <map>
 #include <mutex>
 
+class TFile;
+
 namespace Acts {
 using SurfaceMaterialMap =
     std::map<GeometryIdentifier, std::shared_ptr<const ISurfaceMaterial>>;
@@ -95,7 +97,9 @@ class RootMaterialWriter : public IMaterialWriter {
     /// The rho tag
     std::string rhotag = "rho";
     /// The name of the output file
-    std::string fileName = "material-maps.root";
+    std::string filePath = "material-maps.root";
+    /// The file mode
+    std::string fileMode = "RECREATE";
   };
 
   /// Constructor
@@ -105,7 +109,7 @@ class RootMaterialWriter : public IMaterialWriter {
   RootMaterialWriter(const Config& config, Acts::Logging::Level level);
 
   /// Virtual destructor
-  ~RootMaterialWriter() = default;
+  ~RootMaterialWriter();
 
   /// Write out the material map
   ///
@@ -140,6 +144,8 @@ class RootMaterialWriter : public IMaterialWriter {
 
   /// Private access to the logging instance
   const Acts::Logger& logger() const { return *m_logger; }
+
+  TFile* m_outputFile{nullptr};
 };
 
 }  // namespace ActsExamples

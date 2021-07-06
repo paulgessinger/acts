@@ -57,12 +57,14 @@ void addOutput(Context& ctx) {
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
                       py::arg("cfg"), py::arg("level"));
 
-    py::class_<Writer::Config>(w, "Config")
-        .def(py::init<>())
-        .def_readwrite("collection", &Writer::Config::collection)
-        .def_readwrite("filePath", &Writer::Config::filePath)
-        .def_readwrite("fileMode", &Writer::Config::fileMode)
-        .def_readwrite("treeName", &Writer::Config::treeName);
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(collection);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_MEMBER(treeName);
+    ACTS_PYTHON_STRUCT_END();
   }
 
   {
@@ -72,12 +74,14 @@ void addOutput(Context& ctx) {
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
                       py::arg("cfg"), py::arg("level"));
 
-    py::class_<Writer::Config>(w, "Config")
-        .def(py::init<>())
-        .def_readwrite("inputParticles", &Writer::Config::inputParticles)
-        .def_readwrite("filePath", &Writer::Config::filePath)
-        .def_readwrite("fileMode", &Writer::Config::fileMode)
-        .def_readwrite("treeName", &Writer::Config::treeName);
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputParticles);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_MEMBER(treeName);
+    ACTS_PYTHON_STRUCT_END();
   }
 
   {
@@ -85,15 +89,17 @@ void addOutput(Context& ctx) {
     auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
                  mex, "TrackFinderPerformanceWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("cfg"), py::arg("level"));
+                      py::arg("config"), py::arg("level"));
 
-    py::class_<Writer::Config>(w, "Config")
-        .def(py::init<>())
-        .def_readwrite("inputProtoTracks", &Writer::Config::inputProtoTracks)
-        .def_readwrite("inputMeasurementParticlesMap",
-                       &Writer::Config::inputMeasurementParticlesMap)
-        .def_readwrite("inputParticles", &Writer::Config::inputParticles)
-        .def_readwrite("filePath", &Writer::Config::filePath);
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputProtoTracks);
+    ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
+    ACTS_PYTHON_MEMBER(inputParticles);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_STRUCT_END();
   }
 
   {
@@ -108,8 +114,8 @@ void addOutput(Context& ctx) {
     ACTS_PYTHON_MEMBER(inputProtoTracks);
     ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
     ACTS_PYTHON_MEMBER(inputParticles);
-    ACTS_PYTHON_MEMBER(outputDir);
-    ACTS_PYTHON_MEMBER(outputFilename);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
     ACTS_PYTHON_MEMBER(effPlotToolConfig);
     ACTS_PYTHON_MEMBER(duplicationPlotToolConfig);
     ACTS_PYTHON_STRUCT_END();
@@ -130,9 +136,8 @@ void addOutput(Context& ctx) {
     ACTS_PYTHON_MEMBER(inputSimHits);
     ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
     ACTS_PYTHON_MEMBER(inputMeasurementSimHitsMap);
-    ACTS_PYTHON_MEMBER(outputDir);
-    ACTS_PYTHON_MEMBER(outputFilename);
-    ACTS_PYTHON_MEMBER(outputTreename);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(treeName);
     ACTS_PYTHON_MEMBER(fileMode);
     ACTS_PYTHON_STRUCT_END();
   }
@@ -254,7 +259,8 @@ void addOutput(Context& ctx) {
     ACTS_PYTHON_MEMBER(atag);
     ACTS_PYTHON_MEMBER(ztag);
     ACTS_PYTHON_MEMBER(rhotag);
-    ACTS_PYTHON_MEMBER(fileName);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
     ACTS_PYTHON_STRUCT_END();
   }
 

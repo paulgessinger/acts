@@ -33,9 +33,8 @@ class RootMaterialTrackReader : public IReader {
   struct Config {
     std::string collection =
         "material-tracks";                     ///< material collection to read
-    std::string filePath = "";                 ///< path of the output file
     std::string treeName = "material-tracks";  ///< name of the output tree
-    std::vector<std::string> fileList;         ///< The name of the input file
+    std::vector<std::string> fileList;         ///< List of input files
 
     /// Whether the events are ordered or not
     bool orderedEvents = true;
