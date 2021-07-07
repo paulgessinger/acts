@@ -372,7 +372,7 @@ def test_root_writer_interface(writer, conf_const, tmp_path, trk_geo):
     ],
 )
 @pytest.mark.csv
-def test_csv_writer_interface(writer, tmp_path, trk_geo):
+def test_csv_writer_interface(writer, conf_const, tmp_path, trk_geo):
     assert hasattr(writer, "Config")
 
     config = writer.Config
