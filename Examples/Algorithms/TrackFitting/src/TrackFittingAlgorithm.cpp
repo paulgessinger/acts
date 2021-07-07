@@ -97,6 +97,10 @@ ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
       continue;
     }
 
+    ACTS_VERBOSE("Initial parameters: "
+                 << initialParams.fourPosition(ctx.geoContext).transpose()
+                 << " -> " << initialParams.unitDirection().transpose());
+
     // Clear & reserve the right size
     trackSourceLinks.clear();
     trackSourceLinks.reserve(protoTrack.size());

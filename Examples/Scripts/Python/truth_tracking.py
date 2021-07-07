@@ -95,7 +95,7 @@ def runTruthTracking(
         level=acts.logging.INFO,
         ptMin=500 * u.MeV,
         nHitsMin=9,
-        inputParticles=simAlg.config.outputParticlesFinal,
+        inputParticles=simAlg.config.outputParticlesInitial,
         inputMeasurementParticlesMap=digiCfg.outputMeasurementParticlesMap,
         outputParticles="particles_seed_selected",
     )
@@ -106,20 +106,20 @@ def runTruthTracking(
     smearAlg = acts.examples.ParticleSmearing(
         level=acts.logging.INFO,
         inputParticles=inputParticles,
-        outputTrackParameters="smearedparameter",
+        outputTrackParameters="smearedparameters",
         randomNumbers=rnd,
         # Gaussian sigmas to smear particle parameters
-        sigmaD0=20 * u.um,
-        sigmaD0PtA=30 * u.um,
-        sigmaD0PtB=0.3 / u.GeV,
-        sigmaZ0=20 * u.um,
-        sigmaZ0PtA=30 * u.um,
-        sigmaZ0PtB=0.3 / u.GeV,
-        sigmaPhi=1 * u.degree,
-        sigmaTheta=1 * u.degree,
-        sigmaPRel=0.01,
-        sigmaT0=1 * u.ns,
-        initialVarInflation=[1, 1, 1, 1, 1, 1],
+        # sigmaD0=20 * u.um,
+        # sigmaD0PtA=30 * u.um,
+        # sigmaD0PtB=0.3 / u.GeV,
+        # sigmaZ0=20 * u.um,
+        # sigmaZ0PtA=30 * u.um,
+        # sigmaZ0PtB=0.3 / u.GeV,
+        # sigmaPhi=1 * u.degree,
+        # sigmaTheta=1 * u.degree,
+        # sigmaPRel=0.01,
+        # sigmaT0=1 * u.ns,
+        # initialVarInflation=[1, 1, 1, 1, 1, 1],
     )
     s.addAlgorithm(smearAlg)
 

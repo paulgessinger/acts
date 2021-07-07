@@ -189,9 +189,14 @@ def test_truth_tracking(tmp_path):
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
-    seq = Sequencer(events=1, numThreads=1)
+    seq = Sequencer(events=10, numThreads=1)
 
-    root_files = [("trackstates_fitter.root", "trackstates", 1)]
+    root_files = [
+        ("trackstates_fitter.root", "trackstates", 9),
+        ("tracksummary_fitter.root", "tracksummary", 10),
+        ("performance_track_finder.root", "track_finder_tracks", 9),
+        ("performance_track_fitter.root", None, -1),
+    ]
 
     for fn, _, _ in root_files:
         fp = tmp_path / fn
@@ -207,4 +212,5 @@ def test_truth_tracking(tmp_path):
         fp = tmp_path / fn
         assert fp.exists()
         assert fp.stat().st_size > 0
-        assert_entries(fp, tn, ee)
+        if tn is not None:
+            assert_entries(fp, tn, ee)
