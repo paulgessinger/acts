@@ -1,3 +1,4 @@
+from Examples.Scripts.Python.geantino_recording import runGeantinoRecording
 from pathlib import Path
 
 import pytest
@@ -126,3 +127,28 @@ def test_propagation(tmp_path, trk_geo, field, seq):
         assert fp.stat().st_size > 0
 
     assert len(list(obj.iterdir())) > 0
+
+
+@pytest.mark.slow
+def test_geantino_recording(tmp_path, seq):
+    from geantino_recording import runGeantinoRecording
+
+    root_files = ["geant-material-tracks.root"]
+
+    dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
+        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+    )
+    dd4hepG4Construction = acts.examples.geant4.dd4hep.DD4hepDetectorConstruction(
+        dd4hepSvc
+    )
+
+    for fn in root_files:
+        fp = tmp_path / fn
+        assert not fp.exists()
+
+    runGeantinoRecording(dd4hepG4Construction, str(tmp_path)).run()
+
+    for fn in root_files:
+        fp = tmp_path / fn
+        assert fp.exists()
+        assert fp.stat().st_size > 0

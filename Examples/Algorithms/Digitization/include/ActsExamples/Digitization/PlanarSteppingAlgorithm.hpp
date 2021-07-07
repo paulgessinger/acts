@@ -62,6 +62,9 @@ class PlanarSteppingAlgorithm final : public BareAlgorithm {
   /// @return a process code indication success or failure
   ProcessCode execute(const AlgorithmContext& ctx) const final override;
 
+  /// Readonly access to the config
+  const Config& config() const { return m_cfg; }
+
  private:
   struct Digitizable {
     const Acts::Surface* surface = nullptr;

@@ -64,9 +64,12 @@ def _patch_config(m):
             _patchKwargsConstructor(cls.Config)
 
 
-def _detector_create(cls):
+def _detector_create(cls, config_class=None):
     def create(*args, mdecorator=None, **kwargs):
-        cfg = cls.Config()
+        if config_class is None:
+            cfg = cls.Config()
+        else:
+            cfg = config_class()
         _kwargs = {}
         for k, v in kwargs.items():
             if hasattr(cfg, k):

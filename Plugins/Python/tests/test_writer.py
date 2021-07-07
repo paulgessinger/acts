@@ -5,6 +5,9 @@ import pytest
 
 
 import acts
+
+from acts import PlanarModuleStepper
+
 from acts.examples import (
     ObjPropagationStepsWriter,
     TrackFinderPerformanceWriter,
@@ -27,6 +30,7 @@ from acts.examples import (
     CsvTrackingGeometryWriter,
     CsvMeasurementWriter,
     TrackParamsEstimationAlgorithm,
+    PlanarSteppingAlgorithm,
     Sequencer,
 )
 
@@ -156,26 +160,156 @@ def test_root_meas_writer(tmp_path, fatras, trk_geo):
     assert out.stat().st_size > 0
 
 
+@pytest.mark.root
+def test_root_simhits_writer(tmp_path, fatras, conf_const):
+    s = Sequencer(numThreads=1, events=10)
+    evGen, simAlg, digiAlg = fatras(s)
+
+    out = tmp_path / "meas.root"
+
+    assert not out.exists()
+
+    s.addWriter(
+        conf_const(
+            RootSimHitWriter,
+            level=acts.logging.INFO,
+            inputSimHits=simAlg.config.outputSimHits,
+            filePath=str(out),
+        )
+    )
+
+    s.run()
+    assert out.exists()
+    assert out.stat().st_size > 0
+
+
+@pytest.mark.root
+def test_root_clusters_writer(tmp_path, fatras, conf_const, trk_geo, rng):
+    s = Sequencer(numThreads=1, events=10)  # we're not going to use this one
+    evGen, simAlg, _ = fatras(s)
+    s = Sequencer(numThreads=1, events=10)
+    s.addReader(evGen)
+    s.addAlgorithm(simAlg)
+    digiAlg = PlanarSteppingAlgorithm(
+        level=acts.logging.ERROR,
+        inputSimHits=simAlg.config.outputSimHits,
+        outputClusters="clusters",
+        outputSourceLinks="sourcelinks",
+        outputMeasurements="measurements",
+        outputMeasurementParticlesMap="meas_ptcl_map",
+        outputMeasurementSimHitsMap="meas_sh_map",
+        trackingGeometry=trk_geo,
+        randomNumbers=rng,
+        planarModuleStepper=PlanarModuleStepper(),
+    )
+    s.addAlgorithm(digiAlg)
+
+    out = tmp_path / "clusters.root"
+
+    assert not out.exists()
+
+    s.addWriter(
+        conf_const(
+            RootPlanarClusterWriter,
+            level=acts.logging.ERROR,
+            filePath=str(out),
+            inputSimHits=simAlg.config.outputSimHits,
+            inputClusters=digiAlg.config.outputClusters,
+            trackingGeometry=trk_geo,
+        )
+    )
+
+    s.run()
+    assert out.exists()
+    assert out.stat().st_size > 0
+
+
 @pytest.mark.csv
-def test_csv_meas_writer(tmp_path, fatras, trk_geo):
+def test_csv_meas_writer(tmp_path, fatras, trk_geo, conf_const):
     s = Sequencer(numThreads=1, events=10)
     evGen, simAlg, digiAlg = fatras(s)
 
     out = tmp_path / "csv"
     out.mkdir()
 
-    config = CsvMeasurementWriter.Config(
-        inputMeasurements=digiAlg.config.outputMeasurements,
-        inputClusters=""
-        if digiAlg.config.isSimpleSmearer
-        else digiAlg.config.outputClusters,
-        inputSimHits=simAlg.config.outputSimHits,
-        inputMeasurementSimHitsMap=digiAlg.config.outputMeasurementSimHitsMap,
-        outputDir=str(out),
+    s.addWriter(
+        conf_const(
+            CsvMeasurementWriter,
+            level=acts.logging.INFO,
+            inputMeasurements=digiAlg.config.outputMeasurements,
+            inputClusters=""
+            if digiAlg.config.isSimpleSmearer
+            else digiAlg.config.outputClusters,
+            inputSimHits=simAlg.config.outputSimHits,
+            inputMeasurementSimHitsMap=digiAlg.config.outputMeasurementSimHitsMap,
+            outputDir=str(out),
+        )
     )
-    s.addWriter(CsvMeasurementWriter(level=acts.logging.INFO, config=config))
     s.run()
 
+    assert len([f for f in out.iterdir() if f.is_file()]) == s.config.events * 3
+    assert all(f.stat().st_size > 0 for f in out.iterdir())
+
+
+@pytest.mark.csv
+def test_csv_simhits_writer(tmp_path, fatras, conf_const):
+    s = Sequencer(numThreads=1, events=10)
+    evGen, simAlg, digiAlg = fatras(s)
+
+    out = tmp_path / "csv"
+    out.mkdir()
+
+    s.addWriter(
+        conf_const(
+            CsvSimHitWriter,
+            level=acts.logging.INFO,
+            inputSimHits=simAlg.config.outputSimHits,
+            outputDir=str(out),
+            outputStem="hits",
+        )
+    )
+
+    s.run()
+    assert len([f for f in out.iterdir() if f.is_file()]) == s.config.events
+    assert all(f.stat().st_size > 0 for f in out.iterdir())
+
+
+@pytest.mark.csv
+def test_csv_clusters_writer(tmp_path, fatras, conf_const, trk_geo, rng):
+    s = Sequencer(numThreads=1, events=10)  # we're not going to use this one
+    evGen, simAlg, _ = fatras(s)
+    s = Sequencer(numThreads=1, events=10)
+    s.addReader(evGen)
+    s.addAlgorithm(simAlg)
+    digiAlg = PlanarSteppingAlgorithm(
+        level=acts.logging.ERROR,
+        inputSimHits=simAlg.config.outputSimHits,
+        outputClusters="clusters",
+        outputSourceLinks="sourcelinks",
+        outputMeasurements="measurements",
+        outputMeasurementParticlesMap="meas_ptcl_map",
+        outputMeasurementSimHitsMap="meas_sh_map",
+        trackingGeometry=trk_geo,
+        randomNumbers=rng,
+        planarModuleStepper=PlanarModuleStepper(),
+    )
+    s.addAlgorithm(digiAlg)
+
+    out = tmp_path / "csv"
+    out.mkdir()
+
+    s.addWriter(
+        conf_const(
+            CsvPlanarClusterWriter,
+            level=acts.logging.ERROR,
+            outputDir=str(out),
+            inputSimHits=simAlg.config.outputSimHits,
+            inputClusters=digiAlg.config.outputClusters,
+            trackingGeometry=trk_geo,
+        )
+    )
+
+    s.run()
     assert len([f for f in out.iterdir() if f.is_file()]) == s.config.events * 3
     assert all(f.stat().st_size > 0 for f in out.iterdir())
 
@@ -254,3 +388,22 @@ def test_csv_writer_interface(writer, conf_const, tmp_path, trk_geo):
             kw[k] = "stem"
 
     assert conf_const(writer, **kw)
+
+
+@pytest.mark.root
+def test_root_material_writer(conf_const, tmp_path):
+
+    detector, trackingGeometry, _ = acts.examples.dd4hep.DD4hepDetector.create(
+        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+    )
+
+    out = tmp_path / "material.root"
+
+    assert not out.exists()
+
+    rmw = RootMaterialWriter(level=acts.logging.ERROR, filePath=str(out))
+    assert out.exists()
+    assert out.stat().st_size > 0 and out.stat().st_size < 500
+    rmw.write(trackingGeometry)
+
+    assert out.stat().st_size > 1000
