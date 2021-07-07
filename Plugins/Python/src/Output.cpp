@@ -7,6 +7,7 @@
 #include "ActsExamples/Io/Csv/CsvTrackingGeometryWriter.hpp"
 #include "ActsExamples/Io/Performance/SeedingPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/TrackFinderPerformanceWriter.hpp"
+#include "ActsExamples/Io/Performance/TrackFitterPerformanceWriter.hpp"
 #include "ActsExamples/Io/Root/RootBFieldWriter.hpp"
 #include "ActsExamples/Io/Root/RootMaterialTrackWriter.hpp"
 #include "ActsExamples/Io/Root/RootMaterialWriter.hpp"
@@ -20,6 +21,7 @@
 #include "ActsExamples/Io/Root/RootTrajectorySummaryWriter.hpp"
 #include "ActsExamples/Io/Root/RootVertexPerformanceWriter.hpp"
 #include "ActsExamples/Plugins/Obj/ObjPropagationStepsWriter.hpp"
+#include "ActsExamples/Validation/ResPlotTool.hpp"
 
 #include <memory>
 
@@ -99,6 +101,30 @@ void addOutput(Context& ctx) {
     ACTS_PYTHON_MEMBER(inputParticles);
     ACTS_PYTHON_MEMBER(filePath);
     ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+
+  }
+
+  {
+    using Writer = ActsExamples::TrackFitterPerformanceWriter;
+    auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
+                 mex, "TrackFitterPerformanceWriter")
+                 .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                      py::arg("config"), py::arg("level"));
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputTrajectories);
+    ACTS_PYTHON_MEMBER(inputParticles);
+    ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(resPlotToolConfig);
+    ACTS_PYTHON_MEMBER(effPlotToolConfig);
+    ACTS_PYTHON_MEMBER(trackSummaryPlotToolConfig);
     ACTS_PYTHON_STRUCT_END();
   }
 

@@ -74,6 +74,7 @@ void addVertexing(Context& ctx);
 // Plugins
 void addDigitization(Context& ctx);
 void addPythia8(Context& ctx);
+void addJson(Context& ctx);
 
 }  // namespace Acts::Python
 
@@ -206,4 +207,5 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
 
   addDigitization(ctx);
   addPythia8(ctx);
+  addJson(ctx);
 }

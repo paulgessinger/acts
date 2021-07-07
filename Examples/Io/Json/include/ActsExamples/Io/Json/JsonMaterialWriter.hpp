@@ -61,8 +61,9 @@ class JsonMaterialWriter : public IMaterialWriter {
 
   /// Constructor
   ///
-  /// @param cfg The configuration struct of the writer
-  JsonMaterialWriter(const Config& cfg);
+  /// @param config The configuration struct of the writer
+  /// @param level The log level
+  JsonMaterialWriter(const Config& config, Acts::Logging::Level level);
 
   /// Virtual destructor
   ~JsonMaterialWriter();
@@ -81,8 +82,8 @@ class JsonMaterialWriter : public IMaterialWriter {
   /// The config of the writer
   Config m_cfg;
 
-  /// Private access to the logging instance
-  const Acts::Logger& logger() const { return *m_cfg.converterCfg.logger; }
+  /// The material converter
+  std::unique_ptr<Acts::MaterialMapJsonConverter> m_converter{nullptr};
 };
 
 }  // namespace ActsExamples

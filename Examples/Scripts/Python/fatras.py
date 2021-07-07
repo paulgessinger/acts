@@ -49,6 +49,7 @@ def runFatras(trackingGeometry, field, outputDir, s: acts.examples.Sequencer = N
         randomNumbers=rnd,
         trackingGeometry=trackingGeometry,
         magneticField=field,
+        generateHitsOnSensitive=True,
     )
 
     # Sequencer

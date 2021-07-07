@@ -58,6 +58,15 @@ void addTrackFitting(Context& ctx) {
                             std::shared_ptr<const Acts::MagneticFieldProvider>>(
                             &Alg::makeTrackFitterFunction));
 
+    py::class_<TrackFittingAlgorithm::TrackFitterFunction,
+               std::shared_ptr<TrackFittingAlgorithm::TrackFitterFunction>>(
+        alg, "TrackFitterFunction");
+
+    py::class_<
+        TrackFittingAlgorithm::DirectedTrackFitterFunction,
+        std::shared_ptr<TrackFittingAlgorithm::DirectedTrackFitterFunction>>(
+        alg, "DirectedTrackFitterFunction");
+
     auto c = py::class_<Config>(alg, "Config").def(py::init<>());
 
     ACTS_PYTHON_STRUCT_BEGIN(c, Config);

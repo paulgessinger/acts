@@ -11,7 +11,7 @@ u = acts.UnitConstants
 def runSeeding(trackingGeometry, field, outputDir, s=None):
 
     # Input
-    rnd = acts.examples.RandomNumbers()
+    rnd = acts.examples.RandomNumbers(seed=42)
     evGen = acts.examples.EventGenerator(
         level=acts.logging.INFO,
         generators=[
@@ -91,14 +91,14 @@ def runSeeding(trackingGeometry, field, outputDir, s=None):
     )
 
     seedingAlg = acts.examples.SeedingAlgorithm(
-        level=acts.logging.INFO,
+        level=acts.logging.VERBOSE,
         inputSpacePoints=[spAlg.config.outputSpacePoints],
         outputSeeds="seeds",
         outputProtoTracks="prototracks",
     )
 
     parEstimateAlg = acts.examples.TrackParamsEstimationAlgorithm(
-        level=acts.logging.INFO,
+        level=acts.logging.VERBOSE,
         inputProtoTracks=seedingAlg.config.outputProtoTracks,
         inputSpacePoints=[spAlg.config.outputSpacePoints],
         inputSourceLinks=digiCfg.outputSourceLinks,
@@ -190,7 +190,7 @@ def runSeeding(trackingGeometry, field, outputDir, s=None):
 
     s.addWriter(
         acts.examples.RootTrackParameterWriter(
-            level=acts.logging.INFO,
+            level=acts.logging.VERBOSE,
             inputTrackParameters=parEstimateAlg.config.outputTrackParameters,
             inputProtoTracks=parEstimateAlg.config.outputProtoTracks,
             inputParticles=simAlg.config.outputParticlesFinal,
@@ -213,7 +213,12 @@ if "__main__" == __name__:
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
     )
     detector = acts.examples.dd4hep.DD4hepDetector()
-    trackingGeometry, _ = detector.finalize(dd4hepConfig, None)
+
+    matDeco = acts.examples.JsonMaterialDecorator(
+        fileName="thirdparty/OpenDataDetector/config/odd-material-mapping.config"
+    )
+
+    trackingGeometry, _ = detector.finalize(dd4hepConfig, matDeco)
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
