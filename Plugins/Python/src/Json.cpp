@@ -2,6 +2,7 @@
 #include "Acts/Plugins/Json/JsonMaterialDecorator.hpp"
 #include "Acts/Plugins/Json/MaterialMapJsonConverter.hpp"
 #include "Acts/Plugins/Python/Utilities.hpp"
+#include "ActsExamples/Io/Json/JsonMaterialWriter.hpp"
 
 #include <memory>
 
@@ -11,6 +12,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 using namespace Acts;
+using namespace ActsExamples;
 
 namespace Acts::Python {
 void addJson(Context& ctx) {
@@ -45,6 +47,34 @@ void addJson(Context& ctx) {
     ACTS_PYTHON_MEMBER(processVolumes);
     ACTS_PYTHON_MEMBER(processDenseVolumes);
     ACTS_PYTHON_MEMBER(processNonMaterial);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    py::enum_<JsonFormat>(mex, "JsonFormat")
+        .value("NoOutput", JsonFormat::NoOutput)
+        .value("Json", JsonFormat::Json)
+        .value("Cbor", JsonFormat::Cbor)
+        .value("All", JsonFormat::All);
+  }
+
+  {
+    auto cls = py::class_<JsonMaterialWriter, IMaterialWriter,
+                          std::shared_ptr<JsonMaterialWriter>>(
+                   mex, "JsonMaterialWriter")
+                   .def(py::init<const JsonMaterialWriter::Config&,
+                                 Acts::Logging::Level>(),
+                        py::arg("config"), py::arg("level"))
+                   .def("writeMaterial", &JsonMaterialWriter::writeMaterial)
+                   .def("write", &JsonMaterialWriter::write);
+
+    auto c =
+        py::class_<JsonMaterialWriter::Config>(cls, "Config").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, JsonMaterialWriter::Config);
+    ACTS_PYTHON_MEMBER(converterCfg);
+    ACTS_PYTHON_MEMBER(fileName);
+    ACTS_PYTHON_MEMBER(writeFormat);
     ACTS_PYTHON_STRUCT_END();
   }
 }
