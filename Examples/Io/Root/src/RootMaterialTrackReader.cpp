@@ -50,6 +50,10 @@ ActsExamples::RootMaterialTrackReader::RootMaterialTrackReader(
   m_inputChain->SetBranchAddress("mat_Z", &m_step_Z);
   m_inputChain->SetBranchAddress("mat_rho", &m_step_rho);
 
+  if (m_cfg.fileList.empty()) {
+    throw std::invalid_argument{"No input files given"};
+  }
+
   // loop over the input files
   for (auto inputFile : m_cfg.fileList) {
     // add file to the input chain

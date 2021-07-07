@@ -71,8 +71,8 @@ class RootPlanarClusterWriter
  private:
   Config m_cfg;                    ///< the configuration object
   std::mutex m_writeMutex;         ///< protect multi-threaded writes
-  TFile* m_outputFile;             ///< the output file
-  TTree* m_outputTree;             ///< the output tree
+  TFile* m_outputFile{nullptr};    ///< the output file
+  TTree* m_outputTree{nullptr};    ///< the output tree
   int m_eventNr;                   ///< the event number of
   int m_volumeID;                  ///< volume identifier
   int m_layerID;                   ///< layer identifier

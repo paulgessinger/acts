@@ -11,6 +11,7 @@
 
 namespace py = pybind11;
 using namespace ActsExamples;
+using namespace Acts::Python;
 
 PYBIND11_MODULE(ActsPythonBindingsDD4hep, m) {
   {
@@ -33,7 +34,7 @@ PYBIND11_MODULE(ActsPythonBindingsDD4hep, m) {
     ACTS_PYTHON_MEMBER(defaultLayerThickness);
     ACTS_PYTHON_STRUCT_END();
 
-    py::module::import("acts._adapter").attr("_patch_config_constructor")(c);
+    patchKwargsConstructor(c);
   }
 
   {

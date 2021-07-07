@@ -41,15 +41,12 @@ ActsExamples::RootPlanarClusterWriter::RootPlanarClusterWriter(
     throw std::invalid_argument("Missing tracking geometry");
   }
   // Setup ROOT I/O
+  m_outputFile = TFile::Open(m_cfg.filePath.c_str(), m_cfg.fileMode.c_str());
   if (m_outputFile == nullptr) {
-    m_outputFile = TFile::Open(m_cfg.filePath.c_str(), m_cfg.fileMode.c_str());
-    if (m_outputFile == nullptr) {
-      throw std::ios_base::failure("Could not open '" + m_cfg.filePath);
-    }
+    throw std::ios_base::failure("Could not open '" + m_cfg.filePath);
   }
   m_outputFile->cd();
-  m_outputTree =
-      new TTree(m_cfg.treeName.c_str(), "TTree from RootPlanarClusterWriter");
+  m_outputTree = new TTree(m_cfg.treeName.c_str(), m_cfg.treeName.c_str());
   if (m_outputTree == nullptr)
     throw std::bad_alloc();
 
@@ -81,7 +78,6 @@ ActsExamples::RootPlanarClusterWriter::RootPlanarClusterWriter(
 }
 
 ActsExamples::RootPlanarClusterWriter::~RootPlanarClusterWriter() {
-  /// Close the file if it's yours
   m_outputFile->Close();
 }
 

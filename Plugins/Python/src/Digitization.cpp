@@ -68,7 +68,8 @@ void addDigitization(Context& ctx) {
         py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
             mex, "PlanarSteppingAlgorithm")
             .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"));
+                 py::arg("config"), py::arg("level"))
+            .def_property_readonly("config", &Alg::config);
 
     auto c = py::class_<Alg::Config>(alg, "Config").def(py::init<>());
 
