@@ -61,6 +61,12 @@ set(py_files
   _adapter.py
 )
 
+if(ACTS_BUILD_PLUGIN_JSON)
+  target_link_libraries(ActsPythonBindings PUBLIC ActsPluginJson)
+  target_sources(ActsPythonBindings PRIVATE src/Json.cpp)
+else()
+  target_sources(ActsPythonBindings PRIVATE src/JsonStub.cpp)
+endif()
 
 if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
   pybind11_add_module(ActsPythonBindingsDD4hep src/DD4hepComponent.cpp)

@@ -17,21 +17,18 @@
 #include <stdexcept>
 
 ActsExamples::JsonMaterialWriter::JsonMaterialWriter(
-    const ActsExamples::JsonMaterialWriter::Config& cfg)
-    : m_cfg(cfg) {
-  // Validate the configuration
-  if (m_cfg.converterCfg.name.empty()) {
-    throw std::invalid_argument("Missing service name");
-  }
-}
+    const ActsExamples::JsonMaterialWriter::Config& config,
+    Acts::Logging::Level level)
+    : m_cfg(config),
+      m_converter{std::make_unique<Acts::MaterialMapJsonConverter>(
+          m_cfg.converterCfg, level)} {}
 
 ActsExamples::JsonMaterialWriter::~JsonMaterialWriter() {}
 
 void ActsExamples::JsonMaterialWriter::writeMaterial(
     const Acts::DetectorMaterialMaps& detMaterial) {
   // Evoke the converter
-  Acts::MaterialMapJsonConverter jmConverter(m_cfg.converterCfg);
-  auto jOut = jmConverter.materialMapsToJson(detMaterial);
+  auto jOut = m_converter->materialMapsToJson(detMaterial);
   // And write the file(s)
   if (ACTS_CHECK_BIT(m_cfg.writeFormat, ActsExamples::JsonFormat::Json)) {
     std::ofstream ofj(m_cfg.fileName + ".json");
@@ -48,8 +45,7 @@ void ActsExamples::JsonMaterialWriter::writeMaterial(
 void ActsExamples::JsonMaterialWriter::write(
     const Acts::TrackingGeometry& tGeometry) {
   // Evoke the converter
-  Acts::MaterialMapJsonConverter jmConverter(m_cfg.converterCfg);
-  auto jOut = jmConverter.trackingGeometryToJson(tGeometry);
+  auto jOut = m_converter->trackingGeometryToJson(tGeometry);
   // And write the file(s)
   if (ACTS_CHECK_BIT(m_cfg.writeFormat, ActsExamples::JsonFormat::Json)) {
     std::ofstream ofj(m_cfg.fileName + ".json");

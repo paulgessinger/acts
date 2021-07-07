@@ -178,8 +178,7 @@ int materialMappingExample(int argc, char* argv[],
     /// The name of the output file
     std::string fileName = vm["mat-output-file"].template as<std::string>();
     // the material writer
-    Acts::MaterialMapJsonConverter::Config jmConverterCfg(
-        "MaterialMapJsonConverter", Acts::Logging::INFO);
+    Acts::MaterialMapJsonConverter::Config jmConverterCfg;
     jmConverterCfg.processSensitives =
         vm["mat-output-sensitives"].template as<bool>();
     jmConverterCfg.processApproaches =
@@ -206,7 +205,7 @@ int materialMappingExample(int argc, char* argv[],
     jmWriterCfg.writeFormat = format;
 
     auto jmw = std::make_shared<ActsExamples::JsonMaterialWriter>(
-        std::move(jmWriterCfg));
+        std::move(jmWriterCfg), Acts::Logging::INFO);
 
     mmAlgConfig.materialWriters.push_back(jmw);
   }

@@ -2,8 +2,11 @@ import pytest
 
 import acts
 
+from acts import MaterialMapJsonConverter, JsonMaterialDecorator
 
-def test_material(conf_const):
+
+@pytest.mark.root
+def test_material_root(conf_const):
     with pytest.raises(TypeError):
         acts.examples.RootMaterialDecorator()
     fileName = "blubb.root"
@@ -15,3 +18,12 @@ def test_material(conf_const):
         )
     except RuntimeError as e:
         assert fileName in str(e)
+
+
+def test_json_material_decorator():
+    config = MaterialMapJsonConverter.Config()
+    deco = JsonMaterialDecorator(
+        rConfig=config,
+        jFileName="thirdparty/OpenDataDetector/config/odd-material-mapping.config",
+        level=acts.logging.ERROR,
+    )

@@ -49,7 +49,7 @@ build(const boost::program_options::variables_map& vm,
       Acts::MaterialMapJsonConverter::Config jsonGeoConvConfig;
       // Set up the json-based decorator
       matDeco = std::make_shared<const Acts::JsonMaterialDecorator>(
-          jsonGeoConvConfig, fileName);
+          jsonGeoConvConfig, fileName, Acts::Logging::INFO);
     } else if (fileName.find(".root") != std::string::npos) {
       // Set up the root-based decorator
       ActsExamples::RootMaterialDecorator::Config rootMatDecConfig;
