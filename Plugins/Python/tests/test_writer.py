@@ -31,6 +31,8 @@ from acts.examples import (
     CsvMeasurementWriter,
     TrackParamsEstimationAlgorithm,
     PlanarSteppingAlgorithm,
+    JsonMaterialWriter,
+    JsonFormat,
     Sequencer,
 )
 
@@ -370,7 +372,7 @@ def test_root_writer_interface(writer, conf_const, tmp_path, trk_geo):
     ],
 )
 @pytest.mark.csv
-def test_csv_writer_interface(writer, conf_const, tmp_path, trk_geo):
+def test_csv_writer_interface(writer, tmp_path, trk_geo):
     assert hasattr(writer, "Config")
 
     config = writer.Config
@@ -391,7 +393,7 @@ def test_csv_writer_interface(writer, conf_const, tmp_path, trk_geo):
 
 
 @pytest.mark.root
-def test_root_material_writer(conf_const, tmp_path):
+def test_root_material_writer(tmp_path):
 
     detector, trackingGeometry, _ = acts.examples.dd4hep.DD4hepDetector.create(
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
@@ -405,5 +407,26 @@ def test_root_material_writer(conf_const, tmp_path):
     assert out.exists()
     assert out.stat().st_size > 0 and out.stat().st_size < 500
     rmw.write(trackingGeometry)
+
+    assert out.stat().st_size > 1000
+
+
+@pytest.mark.json
+@pytest.mark.parametrize("fmt", [JsonFormat.Json, JsonFormat.Cbor])
+def test_json_material_writer(tmp_path, fmt):
+
+    detector, trackingGeometry, _ = acts.examples.dd4hep.DD4hepDetector.create(
+        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+    )
+
+    out = (tmp_path / "material").with_suffix("." + fmt.name.lower())
+
+    assert not out.exists()
+
+    jmw = JsonMaterialWriter(
+        level=acts.logging.ERROR, fileName=str(out.with_suffix("")), writeFormat=fmt
+    )
+    assert not out.exists()
+    jmw.write(trackingGeometry)
 
     assert out.stat().st_size > 1000
