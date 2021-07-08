@@ -16,6 +16,10 @@ using namespace Acts;
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, Acts::PolymorphicValue<T>)
 
+namespace Acts::Python {
+void addGeant4HepMC3(Context& ctx);
+}
+
 PYBIND11_MODULE(ActsPythonBindingsGeant4, m) {
   {
     using Alg = GeantinoRecording;
@@ -64,4 +68,8 @@ PYBIND11_MODULE(ActsPythonBindingsGeant4, m) {
       m, "G4VUserDetectorConstruction");
 
   // patchClassesWithConfig(g4);
+  Acts::Python::Context ctx;
+  ctx.modules["geant4"] = &m;
+
+  addGeant4HepMC3(ctx);
 }

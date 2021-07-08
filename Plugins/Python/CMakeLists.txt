@@ -120,8 +120,22 @@ if(ACTS_BUILD_EXAMPLES_GEANT4)
     set_target_properties(ActsPythonBindingsGeant4DD4hep PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts)
     list(APPEND py_files examples/geant4/dd4hep.py)
   endif()
+
+  if(ACTS_BUILD_EXAMPLES_HEPMC3)
+    target_link_libraries(ActsPythonBindingsGeant4 PUBLIC ActsExamplesEventRecording)
+    target_sources(ActsPythonBindingsGeant4 PRIVATE src/Geant4HepMC3.cpp)
+  else()
+    target_sources(ActsPythonBindingsGeant4 PRIVATE src/Geant4HepMC3Stub.cpp)
+  endif()
+
 endif()
 
+if(ACTS_BUILD_EXAMPLES_HEPMC3)
+  target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesHepMC3)
+  target_sources(ActsPythonBindings PRIVATE src/HepMC3.cpp)
+else()
+  target_sources(ActsPythonBindings PRIVATE src/HepMC3Stub.cpp)
+endif()
 
 
 add_custom_target(ActsPythonGlueCode)

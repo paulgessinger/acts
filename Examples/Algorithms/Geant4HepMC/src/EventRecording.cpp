@@ -29,9 +29,10 @@ ActsExamples::EventRecording::~EventRecording() {
 }
 
 ActsExamples::EventRecording::EventRecording(
-    ActsExamples::EventRecording::Config&& cnf, Acts::Logging::Level level)
+    const ActsExamples::EventRecording::Config& config,
+    Acts::Logging::Level level)
     : ActsExamples::BareAlgorithm("EventRecording", level),
-      m_cfg(std::move(cnf)),
+      m_cfg(config),
       m_runManager(std::make_unique<G4RunManager>()) {
   if (m_cfg.inputParticles.empty()) {
     throw std::invalid_argument("Missing input particle collection");

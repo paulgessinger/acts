@@ -58,8 +58,8 @@ int main(int argc, char* argv[]) {
   auto dd4hepCfg = ActsExamples::Options::readDD4hepConfig(vm);
   auto geometrySvc =
       std::make_shared<ActsExamples::DD4hep::DD4hepGeometryService>(dd4hepCfg);
-  std::unique_ptr<G4VUserDetectorConstruction> g4detector =
-      std::make_unique<ActsExamples::DD4hepDetectorConstruction>(
+  auto g4detector =
+      Acts::makePolymorphicValue<ActsExamples::DD4hepDetectorConstruction>(
           *geometrySvc->lcdd());
 
   // Prepare the recording
