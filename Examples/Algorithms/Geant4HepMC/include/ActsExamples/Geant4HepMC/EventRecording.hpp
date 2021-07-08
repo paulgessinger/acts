@@ -11,6 +11,7 @@
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Propagator/MaterialInteractor.hpp"
 #include "Acts/Utilities/Logger.hpp"
+#include "Acts/Utilities/PolymorphicValue.hpp"
 #include "ActsExamples/Framework/BareAlgorithm.hpp"
 #include "ActsExamples/Framework/ProcessCode.hpp"
 
@@ -34,7 +35,7 @@ class EventRecording final : public ActsExamples::BareAlgorithm {
     /// The recorded events output
     std::string outputHepMcTracks = "geant-outcome-tracks";
 
-    std::unique_ptr<G4VUserDetectorConstruction> detectorConstruction = nullptr;
+    Acts::PolymorphicValue<G4VUserDetectorConstruction> detectorConstruction;
 
     /// random number seed 1
     int seed1 = 12345;
@@ -51,7 +52,10 @@ class EventRecording final : public ActsExamples::BareAlgorithm {
   };
 
   /// Constructor
-  EventRecording(Config&& cnf, Acts::Logging::Level level);
+  /// @param config the configuration
+  /// @param level the log level
+  EventRecording(const Config& config, Acts::Logging::Level level);
+
   ~EventRecording();
 
   ActsExamples::ProcessCode execute(
