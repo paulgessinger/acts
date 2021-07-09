@@ -18,6 +18,7 @@
 #include <Acts/Surfaces/Surface.hpp>
 
 #include <map>
+#include <memory>
 
 namespace Acts {
 
@@ -102,11 +103,11 @@ class MaterialMapJsonConverter {
       const Acts::TrackingVolume* tVolume);
 
  private:
-  /// The logger instance
-  std::unique_ptr<const Logger> m_logger{nullptr};
-
   /// The config class
   Config m_cfg;
+
+  /// The logger instance
+  std::unique_ptr<const Logger> m_logger{nullptr};
 
   /// Name of the volume hierarchy
   std::string m_volumeName = "Material Volume Map";
