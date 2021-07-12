@@ -1,6 +1,7 @@
 #include "Acts/Material/IMaterialDecorator.hpp"
 #include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Io/Root/RootMaterialDecorator.hpp"
+#include "ActsExamples/MaterialMapping/MaterialMapping.hpp"
 
 #include <memory>
 
@@ -50,6 +51,32 @@ void addMaterial(Context& ctx) {
     ACTS_PYTHON_MEMBER(ztag);
     ACTS_PYTHON_MEMBER(rhotag);
     ACTS_PYTHON_MEMBER(fileName);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Alg = ActsExamples::MaterialMapping;
+
+    auto alg =
+        py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
+            mex, "MaterialMapping")
+            .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"))
+            .def_property_readonly("config", &Alg::config);
+
+    auto c = py::class_<Alg::Config>(alg, "Config")
+                 .def(py::init<const Acts::GeometryContext&,
+                               const Acts::MagneticFieldContext&>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Alg::Config);
+    ACTS_PYTHON_MEMBER(collection);
+    ACTS_PYTHON_MEMBER(mappingMaterialCollection);
+    ACTS_PYTHON_MEMBER(materialSurfaceMapper);
+    ACTS_PYTHON_MEMBER(materialVolumeMapper);
+    ACTS_PYTHON_MEMBER(materialWriters);
+    ACTS_PYTHON_MEMBER(trackingGeometry);
+    ACTS_PYTHON_MEMBER(geoContext);
+    ACTS_PYTHON_MEMBER(magFieldContext);
     ACTS_PYTHON_STRUCT_END();
   }
 }

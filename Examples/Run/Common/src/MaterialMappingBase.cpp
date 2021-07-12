@@ -115,7 +115,7 @@ int materialMappingExample(int argc, char* argv[],
   }
 
   /// The material mapping algorithm
-  ActsExamples::MaterialMapping::Config mmAlgConfig(geoContext, mfContext);
+  ActsExamples::MaterialMapping::Config mmAlgConfig{geoContext, mfContext};
   if (mapSurface) {
     // Get a Navigator
     Acts::Navigator navigator({tGeometry, true, true, true});

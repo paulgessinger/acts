@@ -1,9 +1,12 @@
 from pathlib import Path
 import sys
+import os
 
-sys.path.append(
-    str(Path(__file__).parent.parent.parent.parent / "Examples/Scripts/Python/")
-)
+
+sys.path += [
+    str(Path(__file__).parent.parent.parent.parent / "Examples/Scripts/Python/"),
+    str(Path(__file__).parent),
+]
 
 import pytest
 

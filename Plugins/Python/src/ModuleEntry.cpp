@@ -75,6 +75,7 @@ void addVertexing(Context& ctx);
 void addDigitization(Context& ctx);
 void addPythia8(Context& ctx);
 void addJson(Context& ctx);
+void addHepMC3(Context& ctx);
 
 }  // namespace Acts::Python
 
@@ -208,4 +209,5 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
   addDigitization(ctx);
   addPythia8(ctx);
   addJson(ctx);
+  addHepMC3(ctx);
 }

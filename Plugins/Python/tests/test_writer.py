@@ -8,6 +8,7 @@ import acts
 
 from acts import PlanarModuleStepper
 
+
 from acts.examples import (
     ObjPropagationStepsWriter,
     TrackFinderPerformanceWriter,
@@ -394,8 +395,9 @@ def test_csv_writer_interface(writer, conf_const, tmp_path, trk_geo):
 
 @pytest.mark.root
 def test_root_material_writer(tmp_path):
+    from acts.examples.dd4hep import DD4hepDetector
 
-    detector, trackingGeometry, _ = acts.examples.dd4hep.DD4hepDetector.create(
+    detector, trackingGeometry, _ = DD4hepDetector.create(
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
     )
 
@@ -414,8 +416,9 @@ def test_root_material_writer(tmp_path):
 @pytest.mark.json
 @pytest.mark.parametrize("fmt", [JsonFormat.Json, JsonFormat.Cbor])
 def test_json_material_writer(tmp_path, fmt):
+    from acts.examples.dd4hep import DD4hepDetector
 
-    detector, trackingGeometry, _ = acts.examples.dd4hep.DD4hepDetector.create(
+    detector, trackingGeometry, _ = DD4hepDetector.create(
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
     )
 

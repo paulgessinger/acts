@@ -1,3 +1,4 @@
+from Plugins.Python.tests.conftest import geant4Enabled
 from typing import Type
 import inspect
 
@@ -141,6 +142,7 @@ def test_root_reader_interface(reader, conf_const, tmp_path):
 
 @pytest.mark.slow
 @pytest.mark.root
+@pytest.mark.skipif(not geant4Enabled, reason="Geant4 not set up")
 def test_root_material_track_reader(tmp_path):
 
     # use geantino recording to produce an output file

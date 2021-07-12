@@ -1,8 +1,12 @@
-from Examples.Scripts.Python.geantino_recording import runGeantinoRecording
 from pathlib import Path
+import os
 
 import pytest
-import ROOT
+
+from helpers import geant4Enabled, rootEnabled, dd4hepEnabled
+
+pytestmark = pytest.mark.skipif(not rootEnabled, reason="ROOT not set up")
+
 
 import acts
 from acts.examples import Sequencer
@@ -27,6 +31,7 @@ def assert_csv_output(csv_path, stem):
 
 
 def assert_entries(root_file, tree_name, exp):
+    import ROOT
 
     rf = ROOT.TFile.Open(str(root_file))
     assert rf.Get(tree_name).GetEntries() == exp, f"{root_file}:{tree_name}"
@@ -159,8 +164,11 @@ def test_propagation(tmp_path, trk_geo, field, seq):
 
 
 @pytest.mark.slow
+@pytest.mark.skipif(not geant4Enabled, reason="Geant4 not set up")
+@pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
 def test_geantino_recording(tmp_path, seq):
     from geantino_recording import runGeantinoRecording
+    from acts.examples.dd4hep import DD4hepGeometryService
 
     root_files = [("geant-material-tracks.root", "material-tracks", 10000)]
 
