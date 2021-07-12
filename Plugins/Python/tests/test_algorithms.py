@@ -9,7 +9,6 @@ from acts.examples import (
     TrackFindingAlgorithm,
     SeedingAlgorithm,
     TrackParamsEstimationAlgorithm,
-    HepMCProcessExtractor,
     EventGenerator,
     FatrasAlgorithm,
     MaterialMapping,
@@ -25,13 +24,15 @@ from acts.examples import (
     HitsPrinter,
     TrackParametersPrinter,
     PropagationAlgorithm,
-    GeantinoRecording,
     DigitizationAlgorithm,
     SmearingAlgorithm,
     PlanarSteppingAlgorithm,
 )
 
+from acts.examples.hepmc3 import HepMCProcessExtractor
+
 from acts.examples.geant4.hepmc3 import EventRecording
+from acts.examples.geant4 import GeantinoRecording
 
 
 @pytest.mark.parametrize(
@@ -69,4 +70,4 @@ from acts.examples.geant4.hepmc3 import EventRecording
     ],
 )
 def test_algorithm_interface(alg):
-    pass
+    assert hasattr(alg, "Config")

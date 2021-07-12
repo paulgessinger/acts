@@ -14,12 +14,14 @@ namespace Acts::Python {
 void addHepMC3(Context& ctx) {
   auto [m, mex] = ctx.get("main", "examples");
 
+  auto hepmc3 = mex.def_submodule("_hepmc3");
+
   {
     using Alg = ActsExamples::HepMCProcessExtractor;
 
     auto alg =
         py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
-            mex, "HepMCProcessExtractor")
+            hepmc3, "HepMCProcessExtractor")
             .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
                  py::arg("config"), py::arg("level"));
 
