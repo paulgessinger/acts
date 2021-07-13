@@ -111,6 +111,7 @@ if(ACTS_BUILD_EXAMPLES_GEANT4)
     pybind11_add_module(ActsPythonBindingsGeant4DD4hep src/Geant4DD4hepComponent.cpp)
     target_link_libraries(ActsPythonBindingsGeant4DD4hep PUBLIC 
       ActsPythonUtilities
+      ActsExamplesGeant4
       ActsExamplesGeant4DD4hep 
       ActsExamplesDetectorDD4hep)
     add_dependencies(ActsPythonBindings ActsPythonBindingsGeant4DD4hep)

@@ -11,10 +11,10 @@ import acts.examples.geant4.dd4hep
 u = acts.UnitConstants
 
 
-def runGeantinoRecording(g4_construction, outputDir, s=None):
+def runGeantinoRecording(geoFactory, outputDir, s=None):
 
     g4AlgCfg = acts.examples.geant4.GeantinoRecording.Config()
-    g4AlgCfg.detectorConstruction = g4_construction
+    g4AlgCfg.detectorConstructionFactory = geoFactory
     g4AlgCfg.tracksPerEvent = 100
 
     g4Alg = acts.examples.geant4.GeantinoRecording(
@@ -41,9 +41,8 @@ if "__main__" == __name__:
     dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
     )
-    dd4hepG4Construction = acts.examples.geant4.dd4hep.DD4hepDetectorConstruction(
+    geoFactory = acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(
         dd4hepSvc
     )
-    runGeantinoRecording(
-        g4_construction=dd4hepG4Construction, outputDir=os.getcwd()
-    ).run()
+
+    runGeantinoRecording(geoFactory=geoFactory, outputDir=os.getcwd()).run()

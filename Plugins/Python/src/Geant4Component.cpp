@@ -1,5 +1,6 @@
 #include "Acts/Plugins/Python/Utilities.hpp"
 #include "Acts/Utilities/PolymorphicValue.hpp"
+#include "ActsExamples/Geant4/G4DetectorConstructionFactory.hpp"
 #include "ActsExamples/Geant4/GeantinoRecording.hpp"
 #include "ActsExamples/Geant4/PrimaryGeneratorAction.hpp"
 
@@ -35,7 +36,7 @@ PYBIND11_MODULE(ActsPythonBindingsGeant4, m) {
 
     ACTS_PYTHON_STRUCT_BEGIN(c, Alg::Config);
     ACTS_PYTHON_MEMBER(outputMaterialTracks);
-    ACTS_PYTHON_MEMBER(detectorConstruction);
+    ACTS_PYTHON_MEMBER(detectorConstructionFactory);
     ACTS_PYTHON_MEMBER(tracksPerEvent);
     ACTS_PYTHON_MEMBER(generationConfig);
     ACTS_PYTHON_STRUCT_END();
@@ -66,6 +67,10 @@ PYBIND11_MODULE(ActsPythonBindingsGeant4, m) {
   py::class_<G4VUserDetectorConstruction,
              Acts::PolymorphicValue<G4VUserDetectorConstruction>>(
       m, "G4VUserDetectorConstruction");
+
+  py::class_<G4DetectorConstructionFactory,
+             std::shared_ptr<G4DetectorConstructionFactory>>(
+      m, "G4DetectorConstructionFactory");
 
   // patchClassesWithConfig(g4);
   Acts::Python::Context ctx;

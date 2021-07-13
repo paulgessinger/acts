@@ -175,8 +175,8 @@ def test_geantino_recording(tmp_path, seq):
     dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
     )
-    dd4hepG4Construction = acts.examples.geant4.dd4hep.DD4hepDetectorConstruction(
-        dd4hepSvc
+    dd4hepG4ConstructionFactory = (
+        acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
     )
 
     for fn, _, _ in root_files:
@@ -185,7 +185,7 @@ def test_geantino_recording(tmp_path, seq):
 
     s = Sequencer(events=10, numThreads=1)
 
-    runGeantinoRecording(dd4hepG4Construction, str(tmp_path), s=s)
+    runGeantinoRecording(dd4hepG4ConstructionFactory, str(tmp_path), s=s)
 
     s.run()
 

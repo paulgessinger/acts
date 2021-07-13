@@ -36,8 +36,13 @@ GeantinoRecording::GeantinoRecording(GeantinoRecording::Config config,
   m_cfg.generationConfig.particleName = "geantino";
   m_cfg.generationConfig.energy = 1000.;
 
+  if (!m_cfg.detectorConstructionFactory) {
+    throw std::invalid_argument("Missing detector construction object factory");
+  }
+
   // This object here retains owner
-  m_runManager->SetUserInitialization(m_cfg.detectorConstruction.release());
+  m_runManager->SetUserInitialization(
+      (*m_cfg.detectorConstructionFactory)().release());
   m_runManager->SetUserInitialization(new FTFP_BERT);
   m_runManager->SetUserAction(new RunAction());
   m_runManager->SetUserAction(new EventAction());

@@ -8,12 +8,18 @@
 
 #pragma once
 
+#include "ActsExamples/Geant4/G4DetectorConstructionFactory.hpp"
+
 #include <G4VUserDetectorConstruction.hh>
 
 namespace dd4hep {
 class Detector;
 }
 namespace ActsExamples {
+
+namespace DD4hep {
+class DD4hepGeometryService;
+}
 
 /// Construct the Geant4 detector from a DD4hep description.
 class DD4hepDetectorConstruction final : public G4VUserDetectorConstruction {
@@ -28,6 +34,17 @@ class DD4hepDetectorConstruction final : public G4VUserDetectorConstruction {
 
  private:
   dd4hep::Detector& m_detector;
+};
+
+class DD4hepDetectorConstructionFactory : public G4DetectorConstructionFactory {
+ public:
+  DD4hepDetectorConstructionFactory(
+      std::shared_ptr<DD4hep::DD4hepGeometryService> geometrySvc);
+
+  std::unique_ptr<G4VUserDetectorConstruction> operator()() const override;
+
+ private:
+  std::shared_ptr<DD4hep::DD4hepGeometryService> m_geometrySvc;
 };
 
 }  // namespace ActsExamples
