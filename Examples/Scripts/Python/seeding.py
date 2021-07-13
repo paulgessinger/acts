@@ -10,6 +10,10 @@ u = acts.UnitConstants
 
 def runSeeding(trackingGeometry, field, outputDir, s=None):
 
+    csv_dir = os.path.join(outputDir, "csv")
+    if not os.path.exists(csv_dir):
+        os.mkdir(csv_dir)
+
     # Input
     rnd = acts.examples.RandomNumbers(seed=42)
     evGen = acts.examples.EventGenerator(
@@ -206,19 +210,9 @@ def runSeeding(trackingGeometry, field, outputDir, s=None):
 
 
 if "__main__" == __name__:
+    from common import getOpenDataDetector
 
-    import acts.examples.dd4hep
-
-    dd4hepConfig = acts.examples.dd4hep.DD4hepGeometryService.Config(
-        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-    )
-    detector = acts.examples.dd4hep.DD4hepDetector()
-
-    matDeco = acts.examples.JsonMaterialDecorator(
-        fileName="thirdparty/OpenDataDetector/config/odd-material-mapping.config"
-    )
-
-    trackingGeometry, _ = detector.finalize(dd4hepConfig, matDeco)
+    detector, trackingGeometry, _ = getOpenDataDetector()
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 

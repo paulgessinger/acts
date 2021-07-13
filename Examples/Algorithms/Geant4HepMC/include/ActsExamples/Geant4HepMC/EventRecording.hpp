@@ -63,6 +63,9 @@ class EventRecording final : public ActsExamples::BareAlgorithm {
   ActsExamples::ProcessCode execute(
       const AlgorithmContext& context) const final override;
 
+  /// Readonly access to the config
+  const Config& config() const { return m_cfg; }
+
  private:
   /// The config object
   Config m_cfg;

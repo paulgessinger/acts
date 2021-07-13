@@ -15,3 +15,10 @@ if rootEnabled:
         rootEnabled = False
 
 dd4hepEnabled = "DD4hep_DIR" in os.environ
+
+try:
+    import acts.examples.hepmc3
+
+    hepmc3Enabled = True
+except ImportError:
+    hepmc3Enabled = False

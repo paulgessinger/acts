@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from Examples.Scripts.Python.common import getOpenDataDetector
 import os
 
 import acts
@@ -9,6 +10,7 @@ u = acts.UnitConstants
 
 
 def runTruthTracking(
+    trackingGeometry,
     field,
     outputDir,
     directNavigation=False,
@@ -17,19 +19,6 @@ def runTruthTracking(
 
     # Preliminaries
     rnd = acts.examples.RandomNumbers()
-
-    dd4hepConfig = acts.examples.dd4hep.DD4hepGeometryService.Config(
-        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-    )
-    detector = acts.examples.dd4hep.DD4hepDetector()
-
-    matDeco = acts.JsonMaterialDecorator(
-        rConfig=acts.MaterialMapJsonConverter.Config(),
-        jFileName="thirdparty/OpenDataDetector/config/odd-material-mapping.config",
-        level=acts.logging.ERROR,
-    )
-
-    trackingGeometry, _ = detector.finalize(dd4hepConfig, matDeco)
 
     # Sequencer
     s = s or acts.examples.Sequencer(
@@ -212,6 +201,8 @@ def runTruthTracking(
 
 if "__main__" == __name__:
 
+    detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
+
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
-    runTruthTracking(field, os.getcwd()).run()
+    runTruthTracking(trackingGeometry, field, os.getcwd()).run()

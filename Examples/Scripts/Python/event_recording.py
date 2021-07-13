@@ -4,17 +4,23 @@ import os
 import acts
 import acts.examples
 
+import acts.examples.hepmc3
 import acts.examples.dd4hep
 import acts.examples.geant4
 import acts.examples.geant4.dd4hep
-
-# import acts.examples.geant4.hepmc3
+import acts.examples.geant4.hepmc3
 
 u = acts.UnitConstants
 
 
 def runEventRecording(geoFactory, outputDir, s=None):
-    s = acts.examples.Sequencer(events=100, numThreads=1)
+    hepmc_dir = os.path.join(outputDir, "hepmc3")
+    if not os.path.exists(hepmc_dir):
+        os.mkdir(hepmc_dir)
+
+    print(hepmc_dir)
+
+    s = s or acts.examples.Sequencer(events=100, numThreads=1)
 
     rnd = acts.examples.RandomNumbers(seed=42)
     evGen = acts.examples.EventGenerator(
@@ -44,7 +50,7 @@ def runEventRecording(geoFactory, outputDir, s=None):
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
     )
 
-    erAlgCfg = acts.examples.geant4.EventRecording.Config(
+    erAlgCfg = acts.examples.geant4.hepmc3.EventRecording.Config(
         inputParticles=evGen.config.outputParticles,
         outputHepMcTracks="geant-event",
         seed1=43,
@@ -52,11 +58,20 @@ def runEventRecording(geoFactory, outputDir, s=None):
         detectorConstructionFactory=geoFactory,
     )
 
-    erAlg = acts.examples.geant4.EventRecording(
+    erAlg = acts.examples.geant4.hepmc3.EventRecording(
         config=erAlgCfg, level=acts.logging.INFO
     )
 
     s.addAlgorithm(erAlg)
+
+    s.addWriter(
+        acts.examples.hepmc3.HepMC3AsciiWriter(
+            level=acts.logging.INFO,
+            outputDir=hepmc_dir,
+            outputStem="events",
+            inputEvents=erAlg.config.outputHepMcTracks,
+        )
+    )
 
     return s
 
