@@ -8,7 +8,5 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 namespace Acts::Python {
-void addGeant4HepMC3(Context& ctx) {
-  auto [m, mex] = ctx.get("main", "examples");
-}
+void addGeant4HepMC3(Context& ctx) {}
 }  // namespace Acts::Python

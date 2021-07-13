@@ -183,7 +183,11 @@ def test_geantino_recording(tmp_path, seq):
         fp = tmp_path / fn
         assert not fp.exists()
 
-    runGeantinoRecording(dd4hepG4Construction, str(tmp_path)).run()
+    s = Sequencer(events=10, numThreads=1)
+
+    runGeantinoRecording(dd4hepG4Construction, str(tmp_path), s=s)
+
+    s.run()
 
     for fn, tn, ee in root_files:
         fp = tmp_path / fn
