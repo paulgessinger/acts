@@ -204,6 +204,10 @@ def test_geantino_recording(tmp_path, seq):
 def test_truth_tracking(tmp_path):
     from truth_tracking import runTruthTracking
 
+    from common import getOpenDataDetector
+
+    detector, trackingGeometry, _ = getOpenDataDetector()
+
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
     seq = Sequencer(events=10, numThreads=1)
@@ -219,7 +223,7 @@ def test_truth_tracking(tmp_path):
         fp = tmp_path / fn
         assert not fp.exists()
 
-    runTruthTracking(field, str(tmp_path), s=seq)
+    runTruthTracking(trackingGeometry, field, str(tmp_path), s=seq)
 
     seq.run()
 
