@@ -1,8 +1,9 @@
-from Plugins.Python.tests.conftest import geant4Enabled
 from typing import Type
 import inspect
 
 import pytest
+
+from helpers import geant4Enabled
 
 import acts
 
@@ -155,9 +156,14 @@ def test_root_material_track_reader(tmp_path):
         dd4hepSvc
     )
 
-    runGeantinoRecording(dd4hepG4Construction, str(tmp_path)).run()
-
     s = Sequencer(events=10, numThreads=1)
+
+    runGeantinoRecording(dd4hepG4Construction, str(tmp_path), s=s)
+    s.run()
+
+    # recreate sequencer
+
+    s = Sequencer(numThreads=1)
 
     s.addReader(
         RootMaterialTrackReader(
@@ -171,7 +177,7 @@ def test_root_material_track_reader(tmp_path):
 
     s.run()
 
-    assert alg.events_seen == 10
+    assert alg.events_seen == 1000
 
 
 @pytest.mark.csv
