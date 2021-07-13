@@ -1,5 +1,7 @@
 #include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/HepMC/HepMCProcessExtractor.hpp"
+#include "ActsExamples/Io/HepMC3/HepMC3Reader.hpp"
+#include "ActsExamples/Io/HepMC3/HepMC3Writer.hpp"
 
 #include <memory>
 
@@ -33,6 +35,40 @@ void addHepMC3(Context& ctx) {
     ACTS_PYTHON_MEMBER(absPdgMin);
     ACTS_PYTHON_MEMBER(absPdgMax);
     ACTS_PYTHON_MEMBER(pMin);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Writer = ActsExamples::HepMC3AsciiWriter;
+
+    auto alg =
+        py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
+            hepmc3, "HepMC3AsciiWriter")
+            .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"));
+
+    auto c = py::class_<Writer::Config>(alg, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(outputDir);
+    ACTS_PYTHON_MEMBER(outputStem);
+    ACTS_PYTHON_MEMBER(inputEvents);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Reader = ActsExamples::HepMC3AsciiReader;
+
+    auto alg =
+        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
+            hepmc3, "HepMC3AsciiReader")
+            .def(py::init<const Reader::Config&, Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"));
+
+    auto c = py::class_<Reader::Config>(alg, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Reader::Config);
+    ACTS_PYTHON_MEMBER(inputDir);
+    ACTS_PYTHON_MEMBER(inputStem);
+    ACTS_PYTHON_MEMBER(outputEvents);
     ACTS_PYTHON_STRUCT_END();
   }
 }

@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from helpers import geant4Enabled, rootEnabled, dd4hepEnabled
+from helpers import geant4Enabled, rootEnabled, dd4hepEnabled, hepmc3Enabled
 
 pytestmark = pytest.mark.skipif(not rootEnabled, reason="ROOT not set up")
 
@@ -25,12 +25,14 @@ def seq():
 
 
 def assert_csv_output(csv_path, stem):
+    __tracebackhide__ = True
     # print(list(csv_path.iterdir()))
     assert len([f for f in csv_path.iterdir() if f.name.endswith(stem + ".csv")]) > 0
     assert all([f.stat().st_size > 0 for f in csv_path.iterdir()])
 
 
 def assert_entries(root_file, tree_name, exp):
+    __tracebackhide__ = True
     import ROOT
 
     rf = ROOT.TFile.Open(str(root_file))
@@ -229,3 +231,30 @@ def test_truth_tracking(tmp_path):
         assert fp.stat().st_size > 0
         if tn is not None:
             assert_entries(fp, tn, ee)
+
+
+@pytest.mark.slow
+@pytest.mark.skipif(not hepmc3Enabled, reason="HepMC3 plugin not available")
+@pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
+def test_event_recording(tmp_path, seq):
+    from event_recording import runEventRecording
+    from acts.examples.dd4hep import DD4hepGeometryService
+
+    out_path = tmp_path / "hepmc3"
+    # out_path.mkdir()
+
+    dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
+        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+    )
+    dd4hepG4ConstructionFactory = (
+        acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
+    )
+
+    s = Sequencer(events=10, numThreads=1)
+
+    runEventRecording(dd4hepG4ConstructionFactory, outputDir=str(tmp_path), s=s)
+
+    s.run()
+
+    assert len([f for f in out_path.iterdir() if f.name.endswith("events.hepmc3")]) > 0
+    assert all([f.stat().st_size > 100 for f in out_path.iterdir()])
