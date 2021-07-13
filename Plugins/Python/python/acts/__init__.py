@@ -3,8 +3,6 @@ from .ActsPythonBindings import __version__
 from . import ActsPythonBindings
 from ._adapter import _patch_config
 
-print(__file__)
-
 
 def Propagator(stepper, navigator):
     for prefix in ("Eigen", "Atlas", "StraightLine"):
