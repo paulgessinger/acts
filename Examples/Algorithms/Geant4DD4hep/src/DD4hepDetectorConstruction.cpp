@@ -8,6 +8,8 @@
 
 #include "ActsExamples/Geant4DD4hep/DD4hepDetectorConstruction.hpp"
 
+#include "ActsExamples/DD4hepDetector/DD4hepGeometryService.hpp"
+
 #include <stdexcept>
 
 #include <DD4hep/Detector.h>
@@ -35,4 +37,14 @@ G4VPhysicalVolume* DD4hepDetectorConstruction::Construct() {
   // Create Geant4 volume manager
   g4map.volumeManager();
   return m_world;
+}
+
+DD4hepDetectorConstructionFactory::DD4hepDetectorConstructionFactory(
+    std::shared_ptr<DD4hep::DD4hepGeometryService> geometrySvc)
+    : m_geometrySvc{std::move(geometrySvc)} {}
+
+std::unique_ptr<G4VUserDetectorConstruction>
+
+DD4hepDetectorConstructionFactory::operator()() const {
+  return std::make_unique<DD4hepDetectorConstruction>(*(m_geometrySvc->lcdd()));
 }

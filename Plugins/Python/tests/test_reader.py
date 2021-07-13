@@ -152,13 +152,13 @@ def test_root_material_track_reader(tmp_path):
     dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
     )
-    dd4hepG4Construction = acts.examples.geant4.dd4hep.DD4hepDetectorConstruction(
-        dd4hepSvc
+    dd4hepG4ConstructionFactory = (
+        acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
     )
 
     s = Sequencer(events=10, numThreads=1)
 
-    runGeantinoRecording(dd4hepG4Construction, str(tmp_path), s=s)
+    runGeantinoRecording(dd4hepG4ConstructionFactory, str(tmp_path), s=s)
     s.run()
 
     del s

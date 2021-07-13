@@ -1,5 +1,7 @@
 import pytest
 
+import acts
+
 from acts.examples import (
     TutorialVertexFinderAlgorithm,
     AdaptiveMultiVertexFinderAlgorithm,
@@ -46,7 +48,6 @@ from acts.examples.geant4 import GeantinoRecording
         TrackFindingAlgorithm,
         SeedingAlgorithm,
         TrackParamsEstimationAlgorithm,
-        EventRecording,
         HepMCProcessExtractor,
         EventGenerator,
         FatrasAlgorithm,
@@ -64,10 +65,15 @@ from acts.examples.geant4 import GeantinoRecording
         TrackParametersPrinter,
         PropagationAlgorithm,
         GeantinoRecording,
-        # DigitizationAlgorithm,
-        # SmearingAlgorithm,
         PlanarSteppingAlgorithm,
+        EventRecording,
     ],
 )
 def test_algorithm_interface(alg):
     assert hasattr(alg, "Config")
+
+
+def test_special_algorithm_interfaces():
+    # just assert they exists
+    assert DigitizationAlgorithm
+    assert SmearingAlgorithm

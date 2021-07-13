@@ -14,7 +14,9 @@
 #include "Acts/Utilities/PolymorphicValue.hpp"
 #include "ActsExamples/Framework/BareAlgorithm.hpp"
 #include "ActsExamples/Framework/ProcessCode.hpp"
+#include "ActsExamples/Geant4/G4DetectorConstructionFactory.hpp"
 
+#include <functional>
 #include <memory>
 #include <mutex>
 
@@ -35,7 +37,7 @@ class EventRecording final : public ActsExamples::BareAlgorithm {
     /// The recorded events output
     std::string outputHepMcTracks = "geant-outcome-tracks";
 
-    Acts::PolymorphicValue<G4VUserDetectorConstruction> detectorConstruction;
+    std::shared_ptr<G4DetectorConstructionFactory> detectorConstructionFactory;
 
     /// random number seed 1
     int seed1 = 12345;
