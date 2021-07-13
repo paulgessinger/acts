@@ -161,6 +161,8 @@ def test_root_material_track_reader(tmp_path):
     runGeantinoRecording(dd4hepG4Construction, str(tmp_path), s=s)
     s.run()
 
+    del s
+
     # recreate sequencer
 
     s = Sequencer(numThreads=1)

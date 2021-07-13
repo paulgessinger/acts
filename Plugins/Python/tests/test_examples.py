@@ -170,7 +170,7 @@ def test_geantino_recording(tmp_path, seq):
     from geantino_recording import runGeantinoRecording
     from acts.examples.dd4hep import DD4hepGeometryService
 
-    root_files = [("geant-material-tracks.root", "material-tracks", 10000)]
+    root_files = [("geant-material-tracks.root", "material-tracks", 1000)]
 
     dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
         xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
@@ -189,6 +189,8 @@ def test_geantino_recording(tmp_path, seq):
 
     s.run()
 
+    del s
+
     for fn, tn, ee in root_files:
         fp = tmp_path / fn
         assert fp.exists()
@@ -196,6 +198,7 @@ def test_geantino_recording(tmp_path, seq):
         assert_entries(fp, tn, ee)
 
 
+@pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
 def test_truth_tracking(tmp_path):
     from truth_tracking import runTruthTracking
 

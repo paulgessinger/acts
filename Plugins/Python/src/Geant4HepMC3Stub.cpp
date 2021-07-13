@@ -8,5 +8,5 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 namespace Acts::Python {
-void addGeant4HepMC3(Context& ctx) {}
+void addGeant4HepMC3(Context&) {}
 }  // namespace Acts::Python
