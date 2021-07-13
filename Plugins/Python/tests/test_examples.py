@@ -3,7 +3,13 @@ import os
 
 import pytest
 
-from helpers import geant4Enabled, rootEnabled, dd4hepEnabled, hepmc3Enabled
+from helpers import (
+    geant4Enabled,
+    rootEnabled,
+    dd4hepEnabled,
+    hepmc3Enabled,
+    AssertCollectionExistsAlg,
+)
 
 pytestmark = pytest.mark.skipif(not rootEnabled, reason="ROOT not set up")
 
@@ -243,6 +249,7 @@ def test_truth_tracking(tmp_path):
 def test_event_recording(tmp_path, seq):
     from event_recording import runEventRecording
     from acts.examples.dd4hep import DD4hepGeometryService
+    from acts.examples.hepmc3 import HepMC3AsciiReader
 
     out_path = tmp_path / "hepmc3"
     # out_path.mkdir()
@@ -254,7 +261,7 @@ def test_event_recording(tmp_path, seq):
         acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
     )
 
-    s = Sequencer(events=10, numThreads=1)
+    s = Sequencer(events=20, numThreads=1, logLevel=acts.logging.VERBOSE)
 
     runEventRecording(dd4hepG4ConstructionFactory, outputDir=str(tmp_path), s=s)
 
@@ -262,3 +269,25 @@ def test_event_recording(tmp_path, seq):
 
     assert len([f for f in out_path.iterdir() if f.name.endswith("events.hepmc3")]) > 0
     assert all([f.stat().st_size > 100 for f in out_path.iterdir()])
+
+    del s
+
+    s = Sequencer(numThreads=1)
+
+    s.addReader(
+        HepMC3AsciiReader(
+            level=acts.logging.INFO,
+            inputDir=str(out_path),
+            inputStem="events",
+            outputEvents="hepmc-events",
+        )
+    )
+
+    alg = AssertCollectionExistsAlg(
+        "hepmc-tracks", name="check_alg", level=acts.logging.INFO
+    )
+    s.addAlgorithm(alg)
+
+    s.run()
+
+    assert alg.events_seen == 20

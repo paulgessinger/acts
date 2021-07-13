@@ -27,21 +27,6 @@ from acts.examples import (
 )
 
 
-class AssertCollectionExistsAlg(BareAlgorithm):
-    events_seen = 0
-
-    def __init__(self, collection, *args, **kwargs):
-        self.collection = collection
-        BareAlgorithm.__init__(self, *args, **kwargs)
-
-    def execute(self, ctx):
-        assert ctx.eventStore.exists(
-            self.collection
-        ), f"{self.collection} does not exist"
-        self.events_seen += 1
-        return acts.examples.ProcessCode.SUCCESS
-
-
 def test_root_particle_reader(tmp_path, conf_const, ptcl_gun):
     # need to write out some particles first
     s = Sequencer(numThreads=1, events=10, logLevel=acts.logging.ERROR)
