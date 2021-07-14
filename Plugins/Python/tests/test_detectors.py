@@ -45,4 +45,4 @@ def test_odd():
 
     geo, _ = detector.finalize(dd4hepConfig, matDeco)
 
-    assert count_surfaces(geo) == 19808
+    assert count_surfaces(geo) == 18824
