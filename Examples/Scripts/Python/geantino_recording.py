@@ -12,6 +12,7 @@ u = acts.UnitConstants
 
 
 def runGeantinoRecording(geoFactory, outputDir, s=None):
+    s = s or acts.examples.Sequencer(events=1, numThreads=1)
 
     g4AlgCfg = acts.examples.geant4.GeantinoRecording.Config()
     g4AlgCfg.detectorConstructionFactory = geoFactory
@@ -21,7 +22,6 @@ def runGeantinoRecording(geoFactory, outputDir, s=None):
         level=acts.logging.INFO, config=g4AlgCfg
     )
 
-    s = s or acts.examples.Sequencer(events=100, numThreads=1)
     s.addAlgorithm(g4Alg)
 
     s.addWriter(

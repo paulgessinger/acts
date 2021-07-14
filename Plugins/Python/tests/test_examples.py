@@ -293,3 +293,26 @@ def test_event_recording(tmp_path, seq):
     e.value == "Failed to read input data"
 
     assert alg.events_seen == 0
+
+
+def test_particle_gun(tmp_path):
+    from particle_gun import runParticleGun
+
+    s = Sequencer(events=20, numThreads=1)
+
+    csv_dir = tmp_path / "csv"
+    root_file = tmp_path / "particles.root"
+
+    assert not csv_dir.exists()
+    assert not root_file.exists()
+
+    runParticleGun(str(tmp_path), s=s).run()
+
+    assert csv_dir.exists()
+    assert root_file.exists()
+
+    assert len([f for f in csv_dir.iterdir() if f.name.endswith("particles.csv")]) > 0
+    assert all([f.stat().st_size > 100 for f in csv_dir.iterdir()])
+
+    assert root_file.stat().st_size > 200
+    assert_entries(root_file, "particles", 20)

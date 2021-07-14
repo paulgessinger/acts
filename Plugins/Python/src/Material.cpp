@@ -1,4 +1,6 @@
 #include "Acts/Material/IMaterialDecorator.hpp"
+#include "Acts/Material/SurfaceMaterialMapper.hpp"
+#include "Acts/Material/VolumeMaterialMapper.hpp"
 #include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Io/Root/RootMaterialDecorator.hpp"
 #include "ActsExamples/MaterialMapping/MaterialMapping.hpp"
@@ -6,6 +8,7 @@
 #include <memory>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -77,6 +80,49 @@ void addMaterial(Context& ctx) {
     ACTS_PYTHON_MEMBER(trackingGeometry);
     ACTS_PYTHON_MEMBER(geoContext);
     ACTS_PYTHON_MEMBER(magFieldContext);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    auto cls =
+        py::class_<SurfaceMaterialMapper,
+                   std::shared_ptr<SurfaceMaterialMapper>>(
+            m, "SurfaceMaterialMapper")
+            .def(py::init([](const SurfaceMaterialMapper::Config& config,
+                             SurfaceMaterialMapper::StraightLinePropagator prop,
+                             Acts::Logging::Level level) {
+                   return std::make_shared<SurfaceMaterialMapper>(
+                       config, std::move(prop),
+                       getDefaultLogger("SurfaceMaterialMapper", level));
+                 }),
+                 py::arg("config"), py::arg("propagator"), py::arg("level"));
+
+    auto c = py::class_<SurfaceMaterialMapper::Config>(cls, "Config")
+                 .def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, SurfaceMaterialMapper::Config);
+    ACTS_PYTHON_MEMBER(etaRange);
+    ACTS_PYTHON_MEMBER(emptyBinCorrection);
+    ACTS_PYTHON_MEMBER(mapperDebugOutput);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    auto cls =
+        py::class_<VolumeMaterialMapper, std::shared_ptr<VolumeMaterialMapper>>(
+            m, "VolumeMaterialMapper")
+            .def(py::init([](const VolumeMaterialMapper::Config& config,
+                             VolumeMaterialMapper::StraightLinePropagator prop,
+                             Acts::Logging::Level level) {
+                   return std::make_shared<VolumeMaterialMapper>(
+                       config, std::move(prop),
+                       getDefaultLogger("VolumeMaterialMapper", level));
+                 }),
+                 py::arg("config"), py::arg("propagator"), py::arg("level"));
+
+    auto c = py::class_<VolumeMaterialMapper::Config>(cls, "Config")
+                 .def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, VolumeMaterialMapper::Config);
+    ACTS_PYTHON_MEMBER(mappingStep);
     ACTS_PYTHON_STRUCT_END();
   }
 }

@@ -110,18 +110,27 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
       .value("ABORT", ProcessCode::ABORT)
       .value("END", ProcessCode::END);
 
-  py::class_<WhiteBoard>(mex, "WhiteBoard").def("exists", &WhiteBoard::exists);
+  py::class_<WhiteBoard>(mex, "WhiteBoard")
+      .def(py::init([](Acts::Logging::Level level) {
+        return std::make_unique<WhiteBoard>(
+            Acts::getDefaultLogger("WhiteBoard", level));
+      }))
+      .def("exists", &WhiteBoard::exists);
+
+  py::class_<Acts::GeometryContext>(m, "GeometryContext");
+  //   py::class_<Acts::MagneticFieldContext>(m, "MagneticFieldContext");
 
   py::class_<AlgorithmContext>(mex, "AlgorithmContext")
+      .def(py::init<size_t, size_t, WhiteBoard&>())
       .def_readonly("algorithmNumber", &AlgorithmContext::algorithmNumber)
       .def_readonly("eventNumber", &AlgorithmContext::eventNumber)
       .def_property_readonly("eventStore",
                              [](const AlgorithmContext& self) -> WhiteBoard& {
                                return self.eventStore;
                              })
-      // .def_readonly("magFieldContext", &AlgorithmContext::magFieldContext)
-      // .def_readonly("calibContext", &AlgorithmContext::calibContext)
-      ;
+      .def_readonly("magFieldContext", &AlgorithmContext::magFieldContext)
+      .def_readonly("geoContext", &AlgorithmContext::geoContext)
+      .def_readonly("calibContext", &AlgorithmContext::calibContext);
 
   auto iAlgorithm =
       py::class_<ActsExamples::IAlgorithm, PyIAlgorithm,
