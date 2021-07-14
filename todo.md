@@ -26,7 +26,7 @@
 - [x] JsonMaterialWriter
 
 ## HepMC3
-- [ ] HepMC3Writer
+- [x] HepMC3Writer
 
 # Readers
 ## Root
