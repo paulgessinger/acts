@@ -21,13 +21,13 @@ namespace Acts::Python {
 void addGeant4HepMC3(Context& ctx);
 }
 
-PYBIND11_MODULE(ActsPythonBindingsGeant4, m) {
+PYBIND11_MODULE(ActsPythonBindingsGeant4, mod) {
   {
     using Alg = GeantinoRecording;
 
     auto alg =
         py::class_<Alg, ActsExamples::BareAlgorithm, std::shared_ptr<Alg>>(
-            m, "GeantinoRecording")
+            mod, "GeantinoRecording")
             .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
                  py::arg("config"), py::arg("level"))
             .def_property_readonly("config", &Alg::config);
@@ -43,7 +43,8 @@ PYBIND11_MODULE(ActsPythonBindingsGeant4, m) {
   }
 
   {
-    auto cls = py::class_<PrimaryGeneratorAction>(m, "PrimaryGeneratorAction");
+    auto cls =
+        py::class_<PrimaryGeneratorAction>(mod, "PrimaryGeneratorAction");
     auto c = py::class_<PrimaryGeneratorAction::Config>(cls, "Config")
                  .def(py::init<>());
 
@@ -66,15 +67,15 @@ PYBIND11_MODULE(ActsPythonBindingsGeant4, m) {
 
   py::class_<G4VUserDetectorConstruction,
              Acts::PolymorphicValue<G4VUserDetectorConstruction>>(
-      m, "G4VUserDetectorConstruction");
+      mod, "G4VUserDetectorConstruction");
 
   py::class_<G4DetectorConstructionFactory,
              std::shared_ptr<G4DetectorConstructionFactory>>(
-      m, "G4DetectorConstructionFactory");
+      mod, "G4DetectorConstructionFactory");
 
   // patchClassesWithConfig(g4);
   Acts::Python::Context ctx;
-  ctx.modules["geant4"] = &m;
+  ctx.modules["geant4"] = &mod;
 
   addGeant4HepMC3(ctx);
 }
