@@ -288,6 +288,8 @@ def test_event_recording(tmp_path, seq):
     )
     s.addAlgorithm(alg)
 
-    s.run()
+    with pytest.raises(RuntimeError) as e:
+        s.run()
+    e.value == "Failed to read input data"
 
-    assert alg.events_seen == 20
+    assert alg.events_seen == 0
