@@ -78,7 +78,15 @@ class JsonMaterialWriter : public IMaterialWriter {
   /// @param tGeometry is the TrackingGeometry
   void write(const Acts::TrackingGeometry& tGeometry);
 
+  /// Readonly access to the config
+  const Config& config() const { return m_cfg; }
+
  private:
+  const Acts::Logger& logger() const { return *m_logger; }
+
+  /// The logger instance
+  std::unique_ptr<const Acts::Logger> m_logger{nullptr};
+
   /// The config of the writer
   Config m_cfg;
 

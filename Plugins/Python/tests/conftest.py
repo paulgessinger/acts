@@ -1,6 +1,7 @@
 from pathlib import Path
 import sys
 import os
+import tempfile
 
 
 sys.path += [
@@ -193,3 +194,28 @@ def fatras(ptcl_gun, trk_geo, rng):
         return evGen, simAlg, digiAlg
 
     return _factory
+
+
+@pytest.fixture(scope="session")
+def geantino_recording():
+    from geantino_recording import runGeantinoRecording
+
+    dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
+        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+    )
+    dd4hepG4ConstructionFactory = (
+        acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
+    )
+
+    with tempfile.TemporaryDirectory() as d:
+
+        s = acts.examples.Sequencer(events=10, numThreads=1)
+
+        runGeantinoRecording(dd4hepG4ConstructionFactory, str(d), s=s)
+        s.run()
+
+        del s
+        del dd4hepSvc
+        del dd4hepG4ConstructionFactory
+
+        yield Path(d)

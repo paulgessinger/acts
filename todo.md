@@ -76,28 +76,28 @@
 
 # Examples
 
-- [ ] ActsExampleAdaptiveMultiVertexFinder
-- [ ] ActsExampleCKFTracks
-- [ ] ActsExampleDigitizationConfig
-- [ ] ActsExampleDigitization
-- [x] ActsExampleEventRecording
-- [x] ActsExampleFatras
-- [x] ActsExampleGeantinoRecording
-- [ ] ActsExampleGeometry
-- [ ] ActsExampleHepMC3Exe
-- [ ] ActsExampleHepMC3Histogram
-- [ ] ActsExampleIterativeVertexFinder
-- [ ] ActsExampleMagneticField
-- [ ] ActsExampleMagneticFieldAccess
-- [ ] ActsExampleMaterialMapping
-- [ ] ActsExampleMaterialValidation
-- [ ] ActsExampleParticleGun
-- [x] ActsExamplePropagation
-- [x] ActsExamplePythia8
-- [x] ActsExampleSeeding
-- [ ] ActsExampleShowFatras
-- [ ] ActsExampleShowParticles
-- [x] ActsExampleTruthTracks
-- [ ] ActsExampleVertexFinderParticleReader
-- [ ] ActsExampleVertexFinderTrackReaderPerformanceWriter
-- [ ] ActsExampleVertexFitter
+- [ ] AdaptiveMultiVertexFinder
+- [ ] CKFTracks
+- [ ] DigitizationConfig
+- [ ] Digitization
+- [x] EventRecording
+- [x] Fatras
+- [x] GeantinoRecording
+- [ ] Geometry
+- [ ] HepMC3Exe
+- [ ] HepMC3Histogram
+- [ ] IterativeVertexFinder
+- [ ] MagneticField
+- [ ] MagneticFieldAccess
+- [ ] MaterialMapping
+- [ ] MaterialValidation
+- [x] ParticleGun
+- [x] Propagation
+- [x] Pythia8
+- [x] Seeding
+- [ ] ShowFatras
+- [ ] ShowParticles
+- [x] TruthTracks
+- [ ] VertexFinderParticleReader
+- [ ] VertexFinderTrackReaderPerformanceWriter
+- [ ] VertexFitter

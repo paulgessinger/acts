@@ -129,24 +129,7 @@ def test_root_reader_interface(reader, conf_const, tmp_path):
 @pytest.mark.slow
 @pytest.mark.root
 @pytest.mark.skipif(not geant4Enabled, reason="Geant4 not set up")
-def test_root_material_track_reader(tmp_path):
-
-    # use geantino recording to produce an output file
-    from geantino_recording import runGeantinoRecording
-
-    dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
-        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-    )
-    dd4hepG4ConstructionFactory = (
-        acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
-    )
-
-    s = Sequencer(events=10, numThreads=1)
-
-    runGeantinoRecording(dd4hepG4ConstructionFactory, str(tmp_path), s=s)
-    s.run()
-
-    del s
+def test_root_material_track_reader(tmp_path, geantino_recording):
 
     # recreate sequencer
 
@@ -155,7 +138,7 @@ def test_root_material_track_reader(tmp_path):
     s.addReader(
         RootMaterialTrackReader(
             level=acts.logging.INFO,
-            fileList=[str(tmp_path / "geant-material-tracks.root")],
+            fileList=[str(geantino_recording / "geant-material-tracks.root")],
         )
     )
 

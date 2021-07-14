@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import json
 
 import pytest
 
@@ -16,6 +17,8 @@ pytestmark = pytest.mark.skipif(not rootEnabled, reason="ROOT not set up")
 
 import acts
 from acts.examples import Sequencer
+
+from common import getOpenDataDetector
 
 u = acts.UnitConstants
 
@@ -316,3 +319,37 @@ def test_particle_gun(tmp_path):
 
     assert root_file.stat().st_size > 200
     assert_entries(root_file, "particles", 20)
+
+
+@pytest.mark.slow
+@pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
+def test_material_mapping(geantino_recording, tmp_path):
+
+    s = Sequencer(numThreads=1)
+
+    detector, trackingGeometry, decorators = getOpenDataDetector()
+
+    from material_mapping import runMaterialMapping
+
+    runMaterialMapping(
+        trackingGeometry,
+        decorators,
+        outputDir=str(tmp_path),
+        inputDir=geantino_recording,
+        s=s,
+    )
+
+    print("Running material mapping")
+    s.run()
+
+    del s  # MaterialMapping alg only writes on destruct
+
+    mat_file = tmp_path / "material.json"
+    print(mat_file)
+    print("IN TEST:", list(tmp_path.iterdir()))
+
+    assert mat_file.exists()
+    assert mat_file.stat().st_size > 200
+
+    with mat_file.open() as fh:
+        assert json.load(fh)
