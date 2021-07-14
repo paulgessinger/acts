@@ -8,8 +8,6 @@
 
 #include "ActsExamples/Geant4DD4hep/DD4hepDetectorConstruction.hpp"
 
-#include "ActsExamples/DD4hepDetector/DD4hepGeometryService.hpp"
-
 #include <stdexcept>
 
 #include <DD4hep/Detector.h>
@@ -40,11 +38,11 @@ G4VPhysicalVolume* DD4hepDetectorConstruction::Construct() {
 }
 
 DD4hepDetectorConstructionFactory::DD4hepDetectorConstructionFactory(
-    std::shared_ptr<DD4hep::DD4hepGeometryService> geometrySvc)
-    : m_geometrySvc{std::move(geometrySvc)} {}
+    dd4hep::Detector& detector)
+    : m_detector{detector} {}
 
 std::unique_ptr<G4VUserDetectorConstruction>
 
 DD4hepDetectorConstructionFactory::operator()() const {
-  return std::make_unique<DD4hepDetectorConstruction>(*(m_geometrySvc->lcdd()));
+  return std::make_unique<DD4hepDetectorConstruction>(m_detector);
 }

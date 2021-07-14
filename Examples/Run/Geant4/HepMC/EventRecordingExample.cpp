@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
   erConfig.outputHepMcTracks = "geant-event";
   erConfig.detectorConstructionFactory =
       std::make_unique<ActsExamples::DD4hepDetectorConstructionFactory>(
-          geometrySvc);
+          *geometrySvc->lcdd());
   erConfig.seed1 = vm["g4-rnd-seed1"].as<unsigned int>();
   erConfig.seed2 = vm["g4-rnd-seed2"].as<unsigned int>();
 

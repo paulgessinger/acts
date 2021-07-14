@@ -34,5 +34,8 @@ PYBIND11_MODULE(ActsPythonBindingsGeant4DD4hep, m) {
   py::class_<DD4hepDetectorConstructionFactory, G4DetectorConstructionFactory,
              std::shared_ptr<DD4hepDetectorConstructionFactory>>(
       m, "DD4hepDetectorConstructionFactory")
-      .def(py::init<std::shared_ptr<DD4hep::DD4hepGeometryService>>());
+      .def(py::init([](DD4hep::DD4hepGeometryService& geometrySvc) {
+        return std::make_shared<DD4hepDetectorConstructionFactory>(
+            *geometrySvc.lcdd());
+      }));
 }
