@@ -34,5 +34,6 @@ int main(int argc, char* argv[]) {
   auto geometrySvc = std::make_shared<DD4hep::DD4hepGeometryService>(dd4hepCfg);
 
   return runGeantinoRecording(
-      vm, std::make_unique<DD4hepDetectorConstructionFactory>(geometrySvc));
+      vm, std::make_unique<DD4hepDetectorConstructionFactory>(
+              *geometrySvc->lcdd()));
 }
