@@ -18,7 +18,9 @@ void addDetector(Context& ctx) {
   auto [m, mex] = ctx.get("main", "examples");
   {
     py::class_<IContextDecorator, std::shared_ptr<IContextDecorator>>(
-        mex, "IContextDecorator");
+        mex, "IContextDecorator")
+        .def("decorate", &IContextDecorator::decorate)
+        .def("name", &IContextDecorator::name);
   }
 
   {
