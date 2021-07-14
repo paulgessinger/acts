@@ -67,14 +67,16 @@ void addJson(Context& ctx) {
   }
 
   {
-    auto cls = py::class_<JsonMaterialWriter, IMaterialWriter,
-                          std::shared_ptr<JsonMaterialWriter>>(
-                   mex, "JsonMaterialWriter")
-                   .def(py::init<const JsonMaterialWriter::Config&,
-                                 Acts::Logging::Level>(),
-                        py::arg("config"), py::arg("level"))
-                   .def("writeMaterial", &JsonMaterialWriter::writeMaterial)
-                   .def("write", &JsonMaterialWriter::write);
+    auto cls =
+        py::class_<JsonMaterialWriter, IMaterialWriter,
+                   std::shared_ptr<JsonMaterialWriter>>(mex,
+                                                        "JsonMaterialWriter")
+            .def(py::init<const JsonMaterialWriter::Config&,
+                          Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"))
+            .def("writeMaterial", &JsonMaterialWriter::writeMaterial)
+            .def("write", &JsonMaterialWriter::write)
+            .def_property_readonly("config", &JsonMaterialWriter::config);
 
     auto c =
         py::class_<JsonMaterialWriter::Config>(cls, "Config").def(py::init<>());

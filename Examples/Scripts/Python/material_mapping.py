@@ -8,6 +8,8 @@ from acts.examples import (
     ProcessCode,
     RootMaterialTrackReader,
     MaterialMapping,
+    JsonMaterialWriter,
+    JsonFormat,
 )
 
 import acts
@@ -19,6 +21,7 @@ from acts import (
     Navigator,
     Propagator,
     StraightLineStepper,
+    MaterialMapJsonConverter,
 )
 
 from common import getOpenDataDetector
@@ -33,7 +36,7 @@ def runMaterialMapping(
     mapVolume=True,
     s=None,
 ):
-    s = s or Sequencer()
+    s = s or Sequencer(numThreads=1)
 
     for decorator in decorators:
         s.addContextDecorator(decorator)
@@ -79,6 +82,28 @@ def runMaterialMapping(
             level=acts.logging.INFO, propagator=propagator, mappingStep=999
         )
         mmAlgCfg.materialVolumeMapper = mapper
+
+    jmConverterCfg = MaterialMapJsonConverter.Config(
+        processSensitives=True,
+        processApproaches=True,
+        processRepresenting=True,
+        processBoundaries=True,
+        processVolumes=True,
+        context=context.geoContext,
+    )
+
+    jmw = JsonMaterialWriter(
+        level=acts.logging.VERBOSE,
+        converterCfg=jmConverterCfg,
+        fileName=os.path.join(outputDir, "material"),
+        writeFormat=JsonFormat.Json,
+    )
+    print(jmw.config.fileName)
+
+    print("OUTPUT DIR:")
+    os.system(outputDir)
+
+    mmAlgCfg.materialWriters = [jmw]
 
     s.addAlgorithm(MaterialMapping(level=acts.logging.INFO, config=mmAlgCfg))
 
