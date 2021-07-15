@@ -15,6 +15,7 @@
 namespace ActsExamples {
 class G4DetectorConstructionFactory {
  public:
+  virtual ~G4DetectorConstructionFactory() = default;
   virtual std::unique_ptr<G4VUserDetectorConstruction> operator()() const = 0;
 };
 }  // namespace ActsExamples
