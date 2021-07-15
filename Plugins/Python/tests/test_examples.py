@@ -249,6 +249,7 @@ def test_truth_tracking(tmp_path):
 @pytest.mark.slow
 @pytest.mark.skipif(not hepmc3Enabled, reason="HepMC3 plugin not available")
 @pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
+@pytest.mark.skipif(not geant4Enabled, reason="Geant4 not set up")
 def test_event_recording(tmp_path, seq):
     from event_recording import runEventRecording
     from acts.examples.dd4hep import DD4hepGeometryService
@@ -339,14 +340,11 @@ def test_material_mapping(geantino_recording, tmp_path):
         s=s,
     )
 
-    print("Running material mapping")
     s.run()
 
     del s  # MaterialMapping alg only writes on destruct
 
     mat_file = tmp_path / "material.json"
-    print(mat_file)
-    print("IN TEST:", list(tmp_path.iterdir()))
 
     assert mat_file.exists()
     assert mat_file.stat().st_size > 200

@@ -2,20 +2,27 @@ import os
 from acts.examples import BareAlgorithm
 
 geant4Enabled = any(v.startswith("G4") for v in os.environ.keys())
-rootEnabled = "ROOTSYS" in os.environ
 
-if rootEnabled:
-    try:
-        import ROOT
-    except ImportError:
+try:
+    import ROOT
+    rootEnabled = True
+except ImportError:
+    rootEnabled = False
+
+    if "ROOTSYS" in os.environ: # ROOT seems to be set up, but no PyROOT
         import warnings
 
         warnings.warn(
             "ROOT likely built without/with incompatible PyROOT. Skipping tests that need ROOT"
         )
-        rootEnabled = False
 
 dd4hepEnabled = "DD4hep_DIR" in os.environ
+
+if dd4hepEnabled:
+    try:
+        import acts.examples.dd4hep
+    except ImportError:
+        dd4hepEnabled = False
 
 try:
     import acts.examples.hepmc3

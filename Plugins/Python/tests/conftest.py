@@ -198,6 +198,9 @@ def fatras(ptcl_gun, trk_geo, rng):
 
 @pytest.fixture(scope="session")
 def geantino_recording():
+    if not helpers.geant4Enabled:
+        pytest.skip("Geantino recording requested, but Geant4 is not set up")
+
     from geantino_recording import runGeantinoRecording
 
     dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
