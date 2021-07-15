@@ -51,12 +51,12 @@ PYBIND11_MODULE(ActsPythonBindingsGeant4, mod) {
   }
 
   {
-    auto cls =
-        py::class_<PrimaryGeneratorAction>(mod, "PrimaryGeneratorAction");
-    auto c = py::class_<PrimaryGeneratorAction::Config>(cls, "Config")
+    auto cls = py::class_<Geant4::PrimaryGeneratorAction>(
+        mod, "PrimaryGeneratorAction");
+    auto c = py::class_<Geant4::PrimaryGeneratorAction::Config>(cls, "Config")
                  .def(py::init<>());
 
-    ACTS_PYTHON_STRUCT_BEGIN(c, PrimaryGeneratorAction::Config);
+    ACTS_PYTHON_STRUCT_BEGIN(c, Geant4::PrimaryGeneratorAction::Config);
     ACTS_PYTHON_MEMBER(particleName);
     ACTS_PYTHON_MEMBER(energy);
     ACTS_PYTHON_MEMBER(randomSeed1);
