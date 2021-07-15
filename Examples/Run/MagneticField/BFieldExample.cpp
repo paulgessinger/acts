@@ -94,10 +94,15 @@ int main(int argc, char* argv[]) {
         vm["bf-rRange"].template as<ActsExamples::Options::Reals<2>>();
     auto zBounds =
         vm["bf-zRange"].template as<ActsExamples::Options::Reals<2>>();
-    writerConfig.rBounds = {{(rBounds[0]) * Acts::UnitConstants::mm,
-                             (rBounds[1]) * Acts::UnitConstants::mm}};
-    writerConfig.zBounds = {{(zBounds[0]) * Acts::UnitConstants::mm,
-                             (zBounds[1]) * Acts::UnitConstants::mm}};
+
+    rBounds[0] *= Acts::UnitConstants::mm;
+    rBounds[1] *= Acts::UnitConstants::mm;
+
+    zBounds[0] *= Acts::UnitConstants::mm;
+    zBounds[1] *= Acts::UnitConstants::mm;
+
+    writerConfig.rBounds = rBounds;
+    writerConfig.zBounds = zBounds;
   }
   writerConfig.rBins = vm["bf-rBins"].template as<size_t>();
   writerConfig.zBins = vm["bf-ZBins"].template as<size_t>();
