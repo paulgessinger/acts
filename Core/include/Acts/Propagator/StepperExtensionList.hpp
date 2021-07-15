@@ -93,6 +93,10 @@ struct StepperExtensionList : private detail::Extendable<extensions...> {
           return implRef(std::integral_constant<int, N - 1>{}, implRef);
         }
         // Continue as long as evaluations are 'true'
+#if defined(__GNUC__) && __GNUC__ == 11
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
         if (std::get<N - 1>(this->tuple())
                 .template k(state, stepper, knew, bField, kQoP, i, h, kprev)) {
           return implRef(std::integral_constant<int, N - 1>{}, implRef);
@@ -101,6 +105,9 @@ struct StepperExtensionList : private detail::Extendable<extensions...> {
           return false;
         }
       }
+#if defined(__GNUC__) && __GNUC__ == 11
+#pragma GCC diagnostic pop
+#endif
     };
 
     return impl(std::integral_constant<int, nExtensions>{}, impl);
