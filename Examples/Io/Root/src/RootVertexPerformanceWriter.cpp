@@ -86,16 +86,13 @@ ActsExamples::RootVertexPerformanceWriter::RootVertexPerformanceWriter(
   }
 }
 
-ActsExamples::RootVertexPerformanceWriter::~RootVertexPerformanceWriter() {
-  if (m_outputFile) {
-    m_outputFile->Close();
-  }
-}
+ActsExamples::RootVertexPerformanceWriter::~RootVertexPerformanceWriter() {}
 
 ActsExamples::ProcessCode ActsExamples::RootVertexPerformanceWriter::endRun() {
   if (m_outputFile) {
     m_outputFile->cd();
     m_outputTree->Write();
+    m_outputFile->Close();
   }
   return ProcessCode::SUCCESS;
 }

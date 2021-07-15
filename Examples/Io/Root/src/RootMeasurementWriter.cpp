@@ -78,7 +78,9 @@ ActsExamples::RootMeasurementWriter::RootMeasurementWriter(
       std::move(dTrees));
 }
 
-ActsExamples::RootMeasurementWriter::~RootMeasurementWriter() {
+ActsExamples::RootMeasurementWriter::~RootMeasurementWriter() {}
+
+ActsExamples::ProcessCode ActsExamples::RootMeasurementWriter::endRun() {
   /// Close the file if it's yours
   m_outputFile->cd();
   for (auto dTree = m_outputTrees.begin(); dTree != m_outputTrees.end();
@@ -86,10 +88,7 @@ ActsExamples::RootMeasurementWriter::~RootMeasurementWriter() {
     (*dTree)->tree->Write();
   }
   m_outputFile->Close();
-}
 
-ActsExamples::ProcessCode ActsExamples::RootMeasurementWriter::endRun() {
-  // Write the tree
   return ProcessCode::SUCCESS;
 }
 

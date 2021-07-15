@@ -77,9 +77,7 @@ ActsExamples::RootPlanarClusterWriter::RootPlanarClusterWriter(
   m_outputTree->Branch("truth_barcode", &m_t_barcode, "truth_barcode/l");
 }
 
-ActsExamples::RootPlanarClusterWriter::~RootPlanarClusterWriter() {
-  m_outputFile->Close();
-}
+ActsExamples::RootPlanarClusterWriter::~RootPlanarClusterWriter() {}
 
 ActsExamples::ProcessCode ActsExamples::RootPlanarClusterWriter::endRun() {
   // Write the tree
@@ -87,6 +85,7 @@ ActsExamples::ProcessCode ActsExamples::RootPlanarClusterWriter::endRun() {
   m_outputTree->Write();
   ACTS_INFO("Wrote clusters to tree '" << m_cfg.treeName << "' in '"
                                        << m_cfg.filePath << "'");
+  m_outputFile->Close();
   return ProcessCode::SUCCESS;
 }
 

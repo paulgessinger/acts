@@ -97,11 +97,7 @@ ActsExamples::RootTrackParameterWriter::RootTrackParameterWriter(
   }
 }
 
-ActsExamples::RootTrackParameterWriter::~RootTrackParameterWriter() {
-  if (m_outputFile) {
-    m_outputFile->Close();
-  }
-}
+ActsExamples::RootTrackParameterWriter::~RootTrackParameterWriter() {}
 
 ActsExamples::ProcessCode ActsExamples::RootTrackParameterWriter::endRun() {
   if (m_outputFile) {
@@ -109,6 +105,7 @@ ActsExamples::ProcessCode ActsExamples::RootTrackParameterWriter::endRun() {
     m_outputTree->Write();
     ACTS_INFO("Write estimated parameters from seed to tree '"
               << m_cfg.treeName << "' in '" << m_cfg.filePath << "'");
+    m_outputFile->Close();
   }
   return ProcessCode::SUCCESS;
 }

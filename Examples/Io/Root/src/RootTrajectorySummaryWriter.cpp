@@ -112,11 +112,7 @@ ActsExamples::RootTrajectorySummaryWriter::RootTrajectorySummaryWriter(
   }
 }
 
-ActsExamples::RootTrajectorySummaryWriter::~RootTrajectorySummaryWriter() {
-  if (m_outputFile) {
-    m_outputFile->Close();
-  }
-}
+ActsExamples::RootTrajectorySummaryWriter::~RootTrajectorySummaryWriter() {}
 
 ActsExamples::ProcessCode ActsExamples::RootTrajectorySummaryWriter::endRun() {
   if (m_outputFile) {
@@ -124,6 +120,7 @@ ActsExamples::ProcessCode ActsExamples::RootTrajectorySummaryWriter::endRun() {
     m_outputTree->Write();
     ACTS_INFO("Write parameters of trajectories to tree '"
               << m_cfg.treeName << "' in '" << m_cfg.filePath << "'");
+    m_outputFile->Close();
   }
   return ProcessCode::SUCCESS;
 }
