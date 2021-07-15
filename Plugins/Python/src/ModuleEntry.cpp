@@ -162,7 +162,7 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
   auto sequencer =
       py::class_<Sequencer>(mex, "Sequencer")
           .def(py::init([](Config cfg) {
-            cfg.iterationCallback = [](size_t) {
+            cfg.iterationCallback = []() {
               py::gil_scoped_acquire gil;
               if (PyErr_CheckSignals() != 0) {
                 throw py::error_already_set{};
