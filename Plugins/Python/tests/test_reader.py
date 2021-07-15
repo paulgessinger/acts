@@ -147,7 +147,7 @@ def test_root_material_track_reader(tmp_path, geantino_recording):
 
     s.run()
 
-    assert alg.events_seen == 1000
+    assert alg.events_seen == 200
 
 
 @pytest.mark.csv

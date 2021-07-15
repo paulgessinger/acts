@@ -18,8 +18,6 @@ def runEventRecording(geoFactory, outputDir, s=None):
     if not os.path.exists(hepmc_dir):
         os.mkdir(hepmc_dir)
 
-    print(hepmc_dir)
-
     s = s or acts.examples.Sequencer(events=100, numThreads=1)
 
     rnd = acts.examples.RandomNumbers(seed=42)

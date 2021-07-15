@@ -1,15 +1,18 @@
 import os
+from typing import List, Union
+
 from acts.examples import BareAlgorithm
 
 geant4Enabled = any(v.startswith("G4") for v in os.environ.keys())
 
 try:
     import ROOT
+
     rootEnabled = True
 except ImportError:
     rootEnabled = False
 
-    if "ROOTSYS" in os.environ: # ROOT seems to be set up, but no PyROOT
+    if "ROOTSYS" in os.environ:  # ROOT seems to be set up, but no PyROOT
         import warnings
 
         warnings.warn(
@@ -34,14 +37,17 @@ except ImportError:
 
 class AssertCollectionExistsAlg(BareAlgorithm):
     events_seen = 0
+    collections: List[str]
 
-    def __init__(self, collection, *args, **kwargs):
-        self.collection = collection
+    def __init__(self, collections: Union[List[str], str], *args, **kwargs):
+        if isinstance(collections, str):
+            self.collections = [collections]
+        else:
+            self.collections = collections
         BareAlgorithm.__init__(self, *args, **kwargs)
 
     def execute(self, ctx):
-        assert ctx.eventStore.exists(
-            self.collection
-        ), f"{self.collection} does not exist"
+        for collection in self.collections:
+            assert ctx.eventStore.exists(collection), f"{collection} does not exist"
         self.events_seen += 1
         return acts.examples.ProcessCode.SUCCESS

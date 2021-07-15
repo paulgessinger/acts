@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import warnings
 
 import acts
 import acts.examples
@@ -10,13 +11,20 @@ import acts.examples.geant4.dd4hep
 
 u = acts.UnitConstants
 
+_geantino_recording_executed = False
 
-def runGeantinoRecording(geoFactory, outputDir, s=None):
-    s = s or acts.examples.Sequencer(events=1, numThreads=1)
+
+def runGeantinoRecording(geoFactory, outputDir, tracksPerEvent=10000, s=None):
+    global _geantino_recording_executed
+    if _geantino_recording_executed:
+        warnings.warn("Geantino recording already ran in this process. Expect crashes")
+    _geantino_recording_executed = True
+
+    s = s or acts.examples.Sequencer(events=10, numThreads=1)
 
     g4AlgCfg = acts.examples.geant4.GeantinoRecording.Config()
     g4AlgCfg.detectorConstructionFactory = geoFactory
-    g4AlgCfg.tracksPerEvent = 100
+    g4AlgCfg.tracksPerEvent = tracksPerEvent
 
     g4Alg = acts.examples.geant4.GeantinoRecording(
         level=acts.logging.INFO, config=g4AlgCfg

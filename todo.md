@@ -89,7 +89,7 @@
 - [ ] IterativeVertexFinder
 - [ ] MagneticField
 - [ ] MagneticFieldAccess
-- [ ] MaterialMapping
+- [x] MaterialMapping
 - [ ] MaterialValidation
 - [x] ParticleGun
 - [x] Propagation

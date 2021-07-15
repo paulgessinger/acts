@@ -100,9 +100,6 @@ def runMaterialMapping(
     )
     print(jmw.config.fileName)
 
-    print("OUTPUT DIR:")
-    os.system(outputDir)
-
     mmAlgCfg.materialWriters = [jmw]
 
     s.addAlgorithm(MaterialMapping(level=acts.logging.INFO, config=mmAlgCfg))

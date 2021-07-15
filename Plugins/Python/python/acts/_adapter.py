@@ -1,6 +1,8 @@
 import inspect
 import functools
 
+import acts
+
 
 def _make_config_adapter(fn):
     @functools.wraps(fn)
@@ -66,6 +68,9 @@ def _patch_config(m):
 
 def _detector_create(cls, config_class=None):
     def create(*args, mdecorator=None, **kwargs):
+        if mdecorator is not None:
+            if not isinstance(mdecorator, acts.IMaterialDecorator):
+                raise TypeError("Material decorator is not valid")
         if config_class is None:
             cfg = cls.Config()
         else:

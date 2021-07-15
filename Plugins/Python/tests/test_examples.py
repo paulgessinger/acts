@@ -37,7 +37,7 @@ def assert_csv_output(csv_path, stem):
     __tracebackhide__ = True
     # print(list(csv_path.iterdir()))
     assert len([f for f in csv_path.iterdir() if f.name.endswith(stem + ".csv")]) > 0
-    assert all([f.stat().st_size > 0 for f in csv_path.iterdir()])
+    assert all([f.stat().st_size > 100 for f in csv_path.iterdir()])
 
 
 def assert_entries(root_file, tree_name, exp):
@@ -77,7 +77,7 @@ def test_fatras(trk_geo, tmp_path, field):
     for f, tn, exp_entries in root_files:
         rfp = tmp_path / f
         assert rfp.exists()
-        assert rfp.stat().st_size > 0
+        assert rfp.stat().st_size > 2 ** 10 * 10
 
         assert_entries(rfp, tn, exp_entries)
 
@@ -114,7 +114,7 @@ def test_seeding(tmp_path, trk_geo, field):
     for fn, tn, exp_entries in root_files:
         fp = tmp_path / fn
         assert fp.exists()
-        assert fp.stat().st_size > 0
+        assert fp.stat().st_size > 100
 
         if tn is not None:
             assert_entries(fp, tn, exp_entries)
@@ -142,7 +142,7 @@ def test_pythia8(tmp_path, seq):
 
     fp = tmp_path / "pythia8_particles.root"
     assert fp.exists()
-    assert fp.stat().st_size > 0
+    assert fp.stat().st_size > 2 ** 10 * 50
     assert_entries(fp, "particles", events)
 
     assert len(list((tmp_path / "csv").iterdir())) > 0
@@ -168,7 +168,7 @@ def test_propagation(tmp_path, trk_geo, field, seq):
     for fn, tn, ee in root_files:
         fp = tmp_path / fn
         assert fp.exists()
-        assert fp.stat().st_size > 0
+        assert fp.stat().st_size > 2 ** 10 * 50
         assert_entries(fp, tn, ee)
 
     assert len(list(obj.iterdir())) > 0
@@ -177,35 +177,35 @@ def test_propagation(tmp_path, trk_geo, field, seq):
 @pytest.mark.slow
 @pytest.mark.skipif(not geant4Enabled, reason="Geant4 not set up")
 @pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
-def test_geantino_recording(tmp_path, seq):
-    from geantino_recording import runGeantinoRecording
-    from acts.examples.dd4hep import DD4hepGeometryService
+def test_geantino_recording(tmp_path, geantino_recording):
+    # from geantino_recording import runGeantinoRecording
+    # from acts.examples.dd4hep import DD4hepGeometryService
 
-    root_files = [("geant-material-tracks.root", "material-tracks", 1000)]
+    root_files = [("geant-material-tracks.root", "material-tracks", 200)]
 
-    dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
-        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-    )
-    dd4hepG4ConstructionFactory = (
-        acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
-    )
+    # dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
+    #     xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
+    # )
+    # dd4hepG4ConstructionFactory = (
+    #     acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
+    # )
 
-    for fn, _, _ in root_files:
-        fp = tmp_path / fn
-        assert not fp.exists()
+    # for fn, _, _ in root_files:
+    #     fp = tmp_path / fn
+    #     assert not fp.exists()
 
-    s = Sequencer(events=10, numThreads=1)
+    # s = Sequencer(events=2, numThreads=1)
 
-    runGeantinoRecording(dd4hepG4ConstructionFactory, str(tmp_path), s=s)
+    # runGeantinoRecording(dd4hepG4ConstructionFactory, str(tmp_path), s=s)
 
-    s.run()
+    # s.run()
 
-    del s
+    # del s
 
     for fn, tn, ee in root_files:
-        fp = tmp_path / fn
+        fp = geantino_recording / fn
         assert fp.exists()
-        assert fp.stat().st_size > 0
+        assert fp.stat().st_size > 2 ** 10 * 50
         assert_entries(fp, tn, ee)
 
 
@@ -241,7 +241,7 @@ def test_truth_tracking(tmp_path):
     for fn, tn, ee in root_files:
         fp = tmp_path / fn
         assert fp.exists()
-        assert fp.stat().st_size > 0
+        assert fp.stat().st_size > 1024
         if tn is not None:
             assert_entries(fp, tn, ee)
 
@@ -251,6 +251,10 @@ def test_truth_tracking(tmp_path):
 @pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
 @pytest.mark.skipif(not geant4Enabled, reason="Geant4 not set up")
 def test_event_recording(tmp_path, seq):
+    # keeping the test, it runs in isolation
+    pytest.skip("This test cannot be run in the same process as GeantinoRecording")
+    return
+
     from event_recording import runEventRecording
     from acts.examples.dd4hep import DD4hepGeometryService
     from acts.examples.hepmc3 import HepMC3AsciiReader
@@ -265,7 +269,7 @@ def test_event_recording(tmp_path, seq):
         acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(dd4hepSvc)
     )
 
-    s = Sequencer(events=20, numThreads=1, logLevel=acts.logging.VERBOSE)
+    s = Sequencer(events=5, numThreads=1, logLevel=acts.logging.VERBOSE)
 
     runEventRecording(dd4hepG4ConstructionFactory, outputDir=str(tmp_path), s=s)
 
@@ -349,7 +353,35 @@ def test_material_mapping(geantino_recording, tmp_path):
     mat_file = tmp_path / "material.json"
 
     assert mat_file.exists()
-    assert mat_file.stat().st_size > 200
+    assert mat_file.stat().st_size > 10
 
     with mat_file.open() as fh:
         assert json.load(fh)
+
+    # test the validation as well
+
+    # we need to destroy the ODD to reload with material
+    # del trackingGeometry
+    # del detector
+
+    detector, trackingGeometry, decorators = getOpenDataDetector(
+        mdecorator=acts.IMaterialDecorator.fromFile(mat_file)
+    )
+
+    root_file = tmp_path / "RecordedMaterialTracks.root"
+    assert not root_file.exists()
+
+    from material_validation import runMaterialValidation
+
+    s = Sequencer(events=10, numThreads=1)
+
+    field = acts.NullBField()
+
+    runMaterialValidation(
+        trackingGeometry, decorators, field, outputDir=str(tmp_path), s=s
+    )
+
+    s.run()
+
+    assert root_file.exists()
+    assert_entries(root_file, "material-tracks", 6131)

@@ -53,11 +53,15 @@ def runPropagation(trackingGeometry, field, outputDir, s=None):
 
 
 if "__main__" == __name__:
+    matDeco = None
+    # matDeco = acts.IMaterialDecorator.fromFile("material.json")
+    # matDeco = acts.IMaterialDecorator.fromFile("material.root")
+
     (
         detector,
         trackingGeometry,
         contextDecorators,
-    ) = acts.examples.GenericDetector.create()
+    ) = acts.examples.GenericDetector.create(mdecorator=matDeco)
 
     # dd4hepCfg = acts.examples.DD4hepDetector.Config()
     # dd4hepCfg.xmlFileNames = ["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]

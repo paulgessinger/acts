@@ -62,7 +62,7 @@ def test_obj_propagation_step_writer(tmp_path, trk_geo, conf_const, basic_prop_s
 
     assert len([f for f in obj.iterdir() if f.is_file()]) == s.config.events
     for f in obj.iterdir():
-        assert f.stat().st_size > 0
+        assert f.stat().st_size > 1024
 
 
 @pytest.mark.csv
@@ -87,7 +87,7 @@ def test_csv_particle_writer(tmp_path, conf_const, ptcl_gun):
     s.run()
 
     assert len([f for f in out.iterdir() if f.is_file()]) == s.config.events
-    assert all(f.stat().st_size > 0 for f in out.iterdir())
+    assert all(f.stat().st_size > 200 for f in out.iterdir())
 
 
 @pytest.mark.root
@@ -111,7 +111,7 @@ def test_root_prop_step_writer(tmp_path, trk_geo, conf_const, basic_prop_seq):
     s.run()
 
     assert file.exists()
-    assert file.stat().st_size > 0
+    assert file.stat().st_size > 2 ** 10 * 50
 
 
 @pytest.mark.root
@@ -135,7 +135,7 @@ def test_root_particle_writer(tmp_path, conf_const, ptcl_gun):
     s.run()
 
     assert file.exists()
-    assert file.stat().st_size > 0
+    assert file.stat().st_size > 1024 * 10
 
 
 @pytest.mark.root
@@ -162,7 +162,7 @@ def test_root_meas_writer(tmp_path, fatras, trk_geo):
     s.run()
 
     assert out.exists()
-    assert out.stat().st_size > 0
+    assert out.stat().st_size > 2 ** 10 * 50
 
 
 @pytest.mark.root
@@ -185,7 +185,7 @@ def test_root_simhits_writer(tmp_path, fatras, conf_const):
 
     s.run()
     assert out.exists()
-    assert out.stat().st_size > 0
+    assert out.stat().st_size > 3e4
 
 
 @pytest.mark.root
@@ -226,7 +226,7 @@ def test_root_clusters_writer(tmp_path, fatras, conf_const, trk_geo, rng):
 
     s.run()
     assert out.exists()
-    assert out.stat().st_size > 0
+    assert out.stat().st_size > 2 ** 10 * 50
 
 
 @pytest.mark.csv
@@ -253,7 +253,7 @@ def test_csv_meas_writer(tmp_path, fatras, trk_geo, conf_const):
     s.run()
 
     assert len([f for f in out.iterdir() if f.is_file()]) == s.config.events * 3
-    assert all(f.stat().st_size > 0 for f in out.iterdir())
+    assert all(f.stat().st_size > 10 for f in out.iterdir())
 
 
 @pytest.mark.csv
@@ -276,7 +276,7 @@ def test_csv_simhits_writer(tmp_path, fatras, conf_const):
 
     s.run()
     assert len([f for f in out.iterdir() if f.is_file()]) == s.config.events
-    assert all(f.stat().st_size > 0 for f in out.iterdir())
+    assert all(f.stat().st_size > 200 for f in out.iterdir())
 
 
 @pytest.mark.csv
@@ -316,7 +316,7 @@ def test_csv_clusters_writer(tmp_path, fatras, conf_const, trk_geo, rng):
 
     s.run()
     assert len([f for f in out.iterdir() if f.is_file()]) == s.config.events * 3
-    assert all(f.stat().st_size > 0 for f in out.iterdir())
+    assert all(f.stat().st_size > 1024 for f in out.iterdir())
 
 
 @pytest.mark.parametrize(

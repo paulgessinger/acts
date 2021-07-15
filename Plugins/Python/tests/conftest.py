@@ -212,9 +212,11 @@ def geantino_recording():
 
     with tempfile.TemporaryDirectory() as d:
 
-        s = acts.examples.Sequencer(events=10, numThreads=1)
+        s = acts.examples.Sequencer(events=2, numThreads=1)
 
-        runGeantinoRecording(dd4hepG4ConstructionFactory, str(d), s=s)
+        runGeantinoRecording(
+            dd4hepG4ConstructionFactory, str(d), tracksPerEvent=100, s=s
+        )
         s.run()
 
         del s
