@@ -342,7 +342,9 @@ def test_material_mapping(geantino_recording, tmp_path):
 
     s.run()
 
-    del s  # MaterialMapping alg only writes on destruct
+    # MaterialMapping alg only writes on destruct.
+    # See https://github.com/acts-project/acts/issues/881
+    del s
 
     mat_file = tmp_path / "material.json"
 
