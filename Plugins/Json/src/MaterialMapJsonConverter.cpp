@@ -318,9 +318,19 @@ void Acts::MaterialMapJsonConverter::convertToHierarchy(
         for (auto& ssf : lay->surfaceArray()->surfaces()) {
           if (ssf->surfaceMaterial() != nullptr ||
               m_cfg.processNonMaterial == true) {
-            surfaceHierarchy.push_back(
-                {ssf->geometryId(),
-                 defaultSurfaceMaterial(ssf->getSharedPtr())});
+            auto sp = ssf->getSharedPtr();
+            auto sm = defaultSurfaceMaterial(sp);
+            auto id = ssf->geometryId();
+
+            std::pair p{id, sm};
+            surfaceHierarchy.push_back(p);
+
+            // surfaceHierarchy.push_back(
+            //     std::pair{ssf->geometryId(), defaultSurfaceMaterial(sp)});
+
+            // surfaceHierarchy.push_back(
+            //     {ssf->geometryId(),
+            //      defaultSurfaceMaterial(ssf->getSharedPtr())});
           }
         }
       }

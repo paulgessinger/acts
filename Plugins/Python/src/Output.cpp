@@ -29,6 +29,7 @@
 #include "ActsExamples/Io/Root/RootTrajectorySummaryWriter.hpp"
 #include "ActsExamples/Io/Root/RootVertexPerformanceWriter.hpp"
 #include "ActsExamples/Plugins/Obj/ObjPropagationStepsWriter.hpp"
+#include "ActsExamples/Plugins/Obj/ObjTrackingGeometryWriter.hpp"
 #include "ActsExamples/Validation/ResPlotTool.hpp"
 
 #include <memory>
@@ -50,12 +51,53 @@ void addOutput(Context& ctx) {
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
                       py::arg("cfg"), py::arg("level"));
 
-    py::class_<Writer::Config>(w, "Config")
-        .def(py::init<>())
-        .def_readwrite("collection", &Writer::Config::collection)
-        .def_readwrite("outputDir", &Writer::Config::outputDir)
-        .def_readwrite("outputScalor", &Writer::Config::outputScalor)
-        .def_readwrite("outputPrecision", &Writer::Config::outputPrecision);
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(collection);
+    ACTS_PYTHON_MEMBER(outputDir);
+    ACTS_PYTHON_MEMBER(outputScalor);
+    ACTS_PYTHON_MEMBER(outputPrecision);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    auto c = py::class_<ViewConfig>(m, "ViewConfig").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, ViewConfig);
+    ACTS_PYTHON_MEMBER(visible);
+    ACTS_PYTHON_MEMBER(color);
+    ACTS_PYTHON_MEMBER(offset);
+    ACTS_PYTHON_MEMBER(lineThickness);
+    ACTS_PYTHON_MEMBER(surfaceThickness);
+    ACTS_PYTHON_MEMBER(nSegments);
+    ACTS_PYTHON_MEMBER(triangulate);
+    ACTS_PYTHON_MEMBER(outputName);
+    ACTS_PYTHON_STRUCT_END();
+
+    patchKwargsConstructor(c);
+  }
+
+  {
+    using Writer = ActsExamples::ObjTrackingGeometryWriter;
+    auto w = py::class_<Writer, std::shared_ptr<Writer>>(
+                 mex, "ObjTrackingGeometryWriter")
+                 .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                      py::arg("config"), py::arg("level"))
+                 .def("write", py::overload_cast<const AlgorithmContext&,
+                                                 const Acts::TrackingGeometry&>(
+                                   &Writer::write));
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(outputScalor);
+    ACTS_PYTHON_MEMBER(outputPrecision);
+    ACTS_PYTHON_MEMBER(outputDir);
+    ACTS_PYTHON_MEMBER(containerView);
+    ACTS_PYTHON_MEMBER(volumeView);
+    ACTS_PYTHON_MEMBER(sensitiveView);
+    ACTS_PYTHON_MEMBER(passiveView);
+    ACTS_PYTHON_MEMBER(gridView);
+    ACTS_PYTHON_STRUCT_END();
   }
 
   // ROOT WRITERS
@@ -490,7 +532,8 @@ void addOutput(Context& ctx) {
     auto w = py::class_<Writer, IWriter, std::shared_ptr<Writer>>(
                  mex, "CsvTrackingGeometryWriter")
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
-                      py::arg("config"), py::arg("level"));
+                      py::arg("config"), py::arg("level"))
+                 .def("write", &Writer::write);
 
     auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
     ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);

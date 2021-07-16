@@ -90,7 +90,7 @@
 - [ ] MagneticField
 - [ ] MagneticFieldAccess
 - [x] MaterialMapping
-- [ ] MaterialValidation
+- [x] MaterialValidation
 - [x] ParticleGun
 - [x] Propagation
 - [x] Pythia8

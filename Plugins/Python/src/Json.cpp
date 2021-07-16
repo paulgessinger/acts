@@ -11,6 +11,7 @@
 #include "Acts/Plugins/Json/MaterialMapJsonConverter.hpp"
 #include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Io/Json/JsonMaterialWriter.hpp"
+#include "ActsExamples/Io/Json/JsonSurfacesWriter.hpp"
 
 #include <memory>
 
@@ -85,6 +86,33 @@ void addJson(Context& ctx) {
     ACTS_PYTHON_MEMBER(converterCfg);
     ACTS_PYTHON_MEMBER(fileName);
     ACTS_PYTHON_MEMBER(writeFormat);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    auto cls =
+        py::class_<JsonSurfacesWriter, IWriter,
+                   std::shared_ptr<JsonSurfacesWriter>>(mex,
+                                                        "JsonSurfacesWriter")
+            .def(py::init<const JsonSurfacesWriter::Config&,
+                          Acts::Logging::Level>(),
+                 py::arg("config"), py::arg("level"))
+            .def("write", &JsonSurfacesWriter::write)
+            .def_property_readonly("config", &JsonSurfacesWriter::config);
+
+    auto c =
+        py::class_<JsonSurfacesWriter::Config>(cls, "Config").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, JsonSurfacesWriter::Config);
+    ACTS_PYTHON_MEMBER(trackingGeometry);
+    ACTS_PYTHON_MEMBER(outputDir);
+    ACTS_PYTHON_MEMBER(outputPrecision);
+    ACTS_PYTHON_MEMBER(writeLayer);
+    ACTS_PYTHON_MEMBER(writeApproach);
+    ACTS_PYTHON_MEMBER(writeSensitive);
+    ACTS_PYTHON_MEMBER(writeBoundary);
+    ACTS_PYTHON_MEMBER(writePerEvent);
+    ACTS_PYTHON_MEMBER(writeOnlyNames);
     ACTS_PYTHON_STRUCT_END();
   }
 }

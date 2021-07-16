@@ -56,9 +56,9 @@ void patchKwargsConstructor(T& c) {
   pybind11::module::import("acts._adapter").attr("_patchKwargsConstructor")(c);
 }
 
-inline pybind11::module_ getMainModule() {
-  return pybind11::module::import("acts.ActsPythonBindings");
-}
+// inline pybind11::module_ getMainModule() {
+//   return pybind11::module::import("acts.ActsPythonBindings");
+// }
 
 #define ACTS_PYTHON_MEMBER(name) \
   _binding_instance.def_readwrite(#name, &_struct_type::name)

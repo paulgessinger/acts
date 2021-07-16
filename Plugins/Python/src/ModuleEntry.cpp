@@ -119,10 +119,11 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
       .value("END", ProcessCode::END);
 
   py::class_<WhiteBoard>(mex, "WhiteBoard")
-      .def(py::init([](Acts::Logging::Level level) {
-        return std::make_unique<WhiteBoard>(
-            Acts::getDefaultLogger("WhiteBoard", level));
-      }))
+      .def(py::init([](Acts::Logging::Level level, const std::string& name) {
+             return std::make_unique<WhiteBoard>(
+                 Acts::getDefaultLogger(name, level));
+           }),
+           py::arg("level"), py::arg("name") = "WhiteBoard")
       .def("exists", &WhiteBoard::exists);
 
   py::class_<Acts::GeometryContext>(m, "GeometryContext");
