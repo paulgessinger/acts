@@ -41,20 +41,20 @@ def runGeometry(
             if r != ProcessCode.SUCCESS:
                 raise RuntimeError("Failed to decorate event context")
 
-        # if outputCsv:
-        #     writer = CsvTrackingGeometryWriter(
-        #         level=acts.logging.INFO,
-        #         trackingGeometry=trackingGeometry,
-        #         outputDir=os.path.join(outputDir, "csv"),
-        #         writePerEvent=True,
-        #     )
-        #     writer.write(context)
+        if outputCsv:
+            writer = CsvTrackingGeometryWriter(
+                level=acts.logging.INFO,
+                trackingGeometry=trackingGeometry,
+                outputDir=os.path.join(outputDir, "csv"),
+                writePerEvent=True,
+            )
+            writer.write(context)
 
-        # if outputObj:
-        #     writer = ObjTrackingGeometryWriter(
-        #         level=acts.logging.INFO, outputDir=os.path.join(outputDir, "obj")
-        #     )
-        #     writer.write(context, trackingGeometry)
+        if outputObj:
+            writer = ObjTrackingGeometryWriter(
+                level=acts.logging.INFO, outputDir=os.path.join(outputDir, "obj")
+            )
+            writer.write(context, trackingGeometry)
 
         if outputJson:
             writer = JsonSurfacesWriter(
@@ -82,7 +82,11 @@ def runGeometry(
                 writeFormat=JsonFormat.Json,
             )
 
-            jmw.write(trackingGeometry)
+            # Apparently JsonMaterialWriter cannot run in the same
+            # job as JsonSurfaceWriter
+            # https://github.com/acts-project/acts/issues/883
+
+            # jmw.write(trackingGeometry)
 
 
 if "__main__" == __name__:

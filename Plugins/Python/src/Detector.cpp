@@ -9,6 +9,7 @@
 #include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/Material/IMaterialDecorator.hpp"
 #include "Acts/Plugins/Python/Utilities.hpp"
+#include "ActsExamples/ContextualDetector/AlignedDetector.hpp"
 #include "ActsExamples/Detector/IBaseDetector.hpp"
 #include "ActsExamples/Framework/IContextDecorator.hpp"
 #include "ActsExamples/GenericDetector/GenericDetector.hpp"
@@ -50,6 +51,32 @@ void addDetector(Context& ctx) {
         .def_readwrite("layerLogLevel", &Config::layerLogLevel)
         .def_readwrite("volumeLogLevel", &Config::volumeLogLevel)
         .def_readwrite("buildProto", &Config::buildProto);
+  }
+
+  {
+    using Config = AlignedDetector::Config;
+
+    auto d = py::class_<AlignedDetector, std::shared_ptr<AlignedDetector>>(
+                 mex, "AlignedDetector")
+                 .def(py::init<>())
+                 .def("finalize",
+                      py::overload_cast<
+                          const Config&,
+                          std::shared_ptr<const Acts::IMaterialDecorator>>(
+                          &AlignedDetector::finalize));
+
+    auto c = py::class_<Config, GenericDetector::Config>(d, "Config")
+                 .def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(seed);
+    ACTS_PYTHON_MEMBER(iovSize);
+    ACTS_PYTHON_MEMBER(flushSize);
+    ACTS_PYTHON_MEMBER(sigmaInPlane);
+    ACTS_PYTHON_MEMBER(sigmaOutPlane);
+    ACTS_PYTHON_MEMBER(sigmaInRot);
+    ACTS_PYTHON_MEMBER(sigmaOutRot);
+    ACTS_PYTHON_MEMBER(firstIovNominal);
+    ACTS_PYTHON_STRUCT_END();
   }
 }
 }  // namespace Acts::Python

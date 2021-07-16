@@ -16,7 +16,7 @@ pytestmark = pytest.mark.skipif(not rootEnabled, reason="ROOT not set up")
 
 
 import acts
-from acts.examples import Sequencer
+from acts.examples import Sequencer, GenericDetector
 
 from common import getOpenDataDetector
 
@@ -385,3 +385,35 @@ def test_material_mapping(geantino_recording, tmp_path):
 
     assert root_file.exists()
     assert_entries(root_file, "material-tracks", 6131)
+
+
+@pytest.mark.parametrize(
+    "geoFactory,nobj",
+    [
+        (GenericDetector.create, 450),
+        pytest.param(
+            getOpenDataDetector,
+            502,
+            marks=pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up"),
+        ),
+    ],
+)
+def test_geometry_example(geoFactory, nobj, tmp_path):
+    detector, trackingGeometry, decorators = geoFactory()
+
+    from geometry import runGeometry
+
+    json_dir = tmp_path / "json"
+    csv_dir = tmp_path / "csv"
+    obj_dir = tmp_path / "obj"
+
+    for d in (json_dir, csv_dir, obj_dir):
+        d.mkdir()
+
+    runGeometry(trackingGeometry, decorators, outputDir=str(tmp_path))
+
+    assert len(list(obj_dir.iterdir())) == nobj
+    assert all(f.stat().st_size > 200 for f in obj_dir.iterdir())
+
+    assert len(list(csv_dir.iterdir())) == 3
+    assert all(f.stat().st_size > 200 for f in csv_dir.iterdir())
