@@ -219,7 +219,6 @@ void Acts::GeometryView3D::drawTrackingVolume(
         vname.replace(vname.find(rchar), rchar.size(), std::string("_"));
       }
     }
-    // std::cout << "POST: " << vname << std::endl;
     if (tVolume.confinedVolumes() == nullptr) {
       vcConfig = vConfig;
       vcConfig.outputName = vname + std::string("_boundaries") + tag;
@@ -249,7 +248,6 @@ void Acts::GeometryView3D::drawTrackingVolume(
   }
   if (writeIt) {
     std::string outputName = joinPaths(outputDir, vcConfig.outputName);
-    std::cout << outputName << std::endl;
     helper.write(outputName);
     helper.clear();
   }
