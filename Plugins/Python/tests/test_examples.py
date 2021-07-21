@@ -45,6 +45,8 @@ def assert_entries(root_file, tree_name, exp):
     import ROOT
 
     rf = ROOT.TFile.Open(str(root_file))
+    keys = [k.GetName() for k in rf.GetListOfKeys()]
+    assert tree_name in keys
     assert rf.Get(tree_name).GetEntries() == exp, f"{root_file}:{tree_name}"
 
 
@@ -417,3 +419,64 @@ def test_geometry_example(geoFactory, nobj, tmp_path):
 
     assert len(list(csv_dir.iterdir())) == 3
     assert all(f.stat().st_size > 200 for f in csv_dir.iterdir())
+
+
+def test_digitization_example(trk_geo, tmp_path):
+    from digitization import runDigitization
+
+    s = Sequencer(events=10, numThreads=1)
+
+    csv_dir = tmp_path / "csv"
+    root_file = tmp_path / "measurements.root"
+
+    assert not root_file.exists()
+    assert not csv_dir.exists()
+
+    field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
+    runDigitization(trk_geo, field, outputDir=tmp_path, s=s)
+
+    s.run()
+
+    assert root_file.exists()
+    assert csv_dir.exists()
+
+    assert len(list(csv_dir.iterdir())) == 3 * s.config.events
+    assert all(f.stat().st_size > 50 for f in csv_dir.iterdir())
+    for tn, nev in (
+        (8, 410),
+        (9, 0),
+        (12, 0),
+        (13, 374),
+        (14, 4),
+        (16, 13),
+        (17, 148),
+        (18, 13),
+    ):
+        assert_entries(root_file, f"vol{tn}", nev)
+
+
+def test_digitization_config_example(trk_geo, tmp_path):
+    from digitization_config import runDigitizationConfig
+
+    out_file = tmp_path / "output.json"
+    assert not out_file.exists()
+
+    input = (
+        Path(__file__).parent
+        / "../../../Examples/Algorithms/Digitization/share/default-smearing-config-generic.json"
+    )
+    assert input.exists(), input.resolve()
+
+    runDigitizationConfig(trk_geo, input=input, output=out_file)
+
+    assert out_file.exists()
+
+    with out_file.open() as fh:
+        data = json.load(fh)
+    assert len(data.keys()) == 2
+    assert data["acts-geometry-hierarchy-map"]["format-version"] == 0
+    assert (
+        data["acts-geometry-hierarchy-map"]["value-identifier"]
+        == "digitization-configuration"
+    )
+    assert len(data["entries"]) == 27

@@ -98,7 +98,6 @@ def runMaterialMapping(
         fileName=os.path.join(outputDir, "material"),
         writeFormat=JsonFormat.Json,
     )
-    print(jmw.config.fileName)
 
     mmAlgCfg.materialWriters = [jmw]
 

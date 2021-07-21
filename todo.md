@@ -24,6 +24,7 @@
 
 ## JSON
 - [x] JsonMaterialWriter
+- [ ] JsonSurfacesWriter
 
 ## HepMC3
 - [x] HepMC3Writer
@@ -78,12 +79,12 @@
 
 - [ ] AdaptiveMultiVertexFinder
 - [ ] CKFTracks
-- [ ] DigitizationConfig
-- [ ] Digitization
+- [x] DigitizationConfig
+- [x] Digitization
 - [x] EventRecording
 - [x] Fatras
 - [x] GeantinoRecording
-- [ ] Geometry
+- [x] Geometry
 - [ ] HepMC3Exe
 - [ ] HepMC3Histogram
 - [ ] IterativeVertexFinder

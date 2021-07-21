@@ -10,6 +10,7 @@
 #include "Acts/Plugins/Python/Utilities.hpp"
 #include "ActsExamples/Digitization/DigitizationAlgorithm.hpp"
 #include "ActsExamples/Digitization/DigitizationConfig.hpp"
+#include "ActsExamples/Digitization/DigitizationConfigurator.hpp"
 #include "ActsExamples/Digitization/PlanarSteppingAlgorithm.hpp"
 #include "ActsExamples/Digitization/SmearingAlgorithm.hpp"
 #include "ActsExamples/Io/Json/JsonDigitizationConfig.hpp"
@@ -30,6 +31,7 @@ void addDigitization(Context& ctx) {
   auto [m, mex] = ctx.get("main", "examples");
 
   mex.def("readDigiConfigFromJson", ActsExamples::readDigiConfigFromJson);
+  mex.def("writeDigiConfigToJson", ActsExamples::writeDigiConfigToJson);
 
   {
     using Config = ActsExamples::DigitizationConfig;
@@ -65,8 +67,12 @@ void addDigitization(Context& ctx) {
 
     patchKwargsConstructor(c);
 
+    py::class_<DigiComponentsConfig>(mex, "DigiComponentsConfig");
+
     py::class_<Acts::GeometryHierarchyMap<ActsExamples::DigiComponentsConfig>>(
-        mex, "GeometryHierarchy_DigiComponentsConfig");
+        mex, "GeometryHierarchyMap_DigiComponentsConfig")
+        .def(py::init<std::vector<
+                 std::pair<GeometryIdentifier, DigiComponentsConfig>>>());
   }
 
   {
@@ -112,6 +118,24 @@ void addDigitization(Context& ctx) {
         .def(py::init<const ActsExamples::DigitizationConfig&,
                       Acts::Logging::Level>(),
              py::arg("config"), py::arg("level"));
+  }
+
+  {
+    using DC = DigitizationConfigurator;
+    auto dc = py::class_<DC>(mex, "DigitizationConfigurator").def(py::init<>());
+
+    // py::class_<DC::CollectedOutputComponents,
+    //            std::shared_ptr<DC::CollectedOutputComponents>>(
+    //     dc, "CollectedOutputComponents");
+
+    dc.def("__call__", &DC::operator());
+
+    ACTS_PYTHON_STRUCT_BEGIN(dc, DC);
+    ACTS_PYTHON_MEMBER(inputDigiComponents);
+    ACTS_PYTHON_MEMBER(compactify);
+    ACTS_PYTHON_MEMBER(volumeLayerComponents);
+    ACTS_PYTHON_MEMBER(outputDigiComponents);
+    ACTS_PYTHON_STRUCT_END();
   }
 }
 
