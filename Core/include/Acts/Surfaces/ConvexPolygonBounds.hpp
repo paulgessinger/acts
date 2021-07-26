@@ -112,7 +112,8 @@ class ConvexPolygonBounds : public ConvexPolygonBoundsBase {
   /// @note the number of segements is ignored in this representation
   ///
   /// @return vector for vertices in 2D
-  std::vector<Vector2> vertices(unsigned int lseg = 1) const final;
+  void vertices(std::vector<Vector2>& result,
+                unsigned int lseg = 1) const final;
 
   /// Return a rectangle bounds object that encloses this polygon.
   /// @return The rectangular bounds
@@ -167,7 +168,8 @@ class ConvexPolygonBounds<PolygonDynamic> : public ConvexPolygonBoundsBase {
   /// @note the number of segements is ignored in this representation
   ///
   /// @return vector for vertices in 2D
-  std::vector<Vector2> vertices(unsigned int lseg = 1) const final;
+  void vertices(std::vector<Vector2>& result,
+                unsigned int lseg = 1) const final;
 
   ///
   /// Return a rectangle bounds object that encloses this polygon.

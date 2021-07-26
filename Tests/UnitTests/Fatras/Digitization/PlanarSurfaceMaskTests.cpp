@@ -139,6 +139,7 @@ BOOST_DATA_TEST_CASE(RandomPlanarSurfaceMask,
   DigitizationCsvOutput csvHelper;
 
   int itb = 0;
+  std::vector<Acts::Vector2> vertices;
   for (const auto& tb : testBeds) {
     const auto& name = std::get<0>(tb);
     const auto* surface = (std::get<1>(tb)).get();
@@ -150,14 +151,17 @@ BOOST_DATA_TEST_CASE(RandomPlanarSurfaceMask,
 
       // 0 - write the shape
       shape.open("PlanarSurfaceMask" + name + "Borders.csv");
+      vertices.clear();
       if (surface->type() == Acts::Surface::Plane) {
         const auto* pBounds =
             static_cast<const Acts::PlanarBounds*>(&(surface->bounds()));
-        csvHelper.writePolygon(shape, pBounds->vertices(1), -centerXY);
+        pBounds->vertices(vertices, 1);
+        csvHelper.writePolygon(shape, vertices, -centerXY);
       } else if (surface->type() == Acts::Surface::Disc) {
         const auto* dBounds =
             static_cast<const Acts::DiscBounds*>(&(surface->bounds()));
-        csvHelper.writePolygon(shape, dBounds->vertices(72), -centerXY);
+        dBounds->vertices(vertices, 72);
+        csvHelper.writePolygon(shape, vertices, -centerXY);
       }
 
       segmentOutput.push_back(std::array<std::ofstream, 3>());

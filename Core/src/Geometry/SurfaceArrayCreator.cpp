@@ -471,8 +471,11 @@ Acts::SurfaceArrayCreator::createVariableAxis(
           "Given SurfaceBounds are not planar - not implemented for "
           "other bounds yet! ");
     // get the global vertices
+    std::vector<Acts::Vector2> locVertices;
+    backBounds->vertices(locVertices, segments);
     std::vector<Acts::Vector3> backVertices =
-        makeGlobalVertices(gctx, *backSurface, backBounds->vertices(segments));
+        makeGlobalVertices(gctx, *backSurface, locVertices);
+
     AxisScalar maxBValue = phi(
         *std::max_element(backVertices.begin(), backVertices.end(),
                           [](const Acts::Vector3& a, const Acts::Vector3& b) {

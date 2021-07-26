@@ -57,14 +57,14 @@ bool Acts::DiscTrapezoidBounds::inside(
                                                vertices);
 }
 
-std::vector<Acts::Vector2> Acts::DiscTrapezoidBounds::vertices(
-    unsigned int /*lseg*/) const {
+void Acts::DiscTrapezoidBounds::vertices(std::vector<Acts::Vector2>& result,
+                                         unsigned int /*lseg*/) const {
   Vector2 cAxis(std::cos(get(eAveragePhi)), std::sin(get(eAveragePhi)));
   Vector2 nAxis(cAxis.y(), -cAxis.x());
-  return {get(eMinR) * cAxis - get(eHalfLengthXminR) * nAxis,
-          get(eMinR) * cAxis + get(eHalfLengthXminR) * nAxis,
-          m_ymax * cAxis + get(eHalfLengthXmaxR) * nAxis,
-          m_ymax * cAxis - get(eHalfLengthXmaxR) * nAxis};
+  result = {get(eMinR) * cAxis - get(eHalfLengthXminR) * nAxis,
+            get(eMinR) * cAxis + get(eHalfLengthXminR) * nAxis,
+            m_ymax * cAxis + get(eHalfLengthXmaxR) * nAxis,
+            m_ymax * cAxis - get(eHalfLengthXmaxR) * nAxis};
 }
 
 // ostream operator overload

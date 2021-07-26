@@ -125,7 +125,7 @@ class RadialBounds : public DiscBounds {
   /// number of segments returned
   ///
   /// @return vector for vertices in 2D
-  std::vector<Vector2> vertices(unsigned int lseg) const final;
+  void vertices(std::vector<Vector2>& result, unsigned int lseg) const final;
 };
 
 inline double RadialBounds::rMin() const {

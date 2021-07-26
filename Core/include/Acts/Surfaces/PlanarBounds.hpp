@@ -33,7 +33,8 @@ class PlanarBounds : public SurfaceBounds {
   /// number of segments returned
   ///
   /// @return vector for vertices in 2D
-  virtual std::vector<Vector2> vertices(unsigned int lseg = 1) const = 0;
+  virtual void vertices(std::vector<Vector2>& result,
+                        unsigned int lseg = 1) const = 0;
 
   /// Bounding box parameters
   ///

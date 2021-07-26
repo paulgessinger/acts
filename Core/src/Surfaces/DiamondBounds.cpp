@@ -19,11 +19,13 @@ Acts::SurfaceBounds::BoundsType Acts::DiamondBounds::type() const {
 
 bool Acts::DiamondBounds::inside(const Acts::Vector2& lposition,
                                  const Acts::BoundaryCheck& bcheck) const {
-  return bcheck.isInside(lposition, vertices());
+  std::vector<Vector2> result;
+  vertices(result);
+  return bcheck.isInside(lposition, result);
 }
 
-std::vector<Acts::Vector2> Acts::DiamondBounds::vertices(
-    unsigned int /*lseg*/) const {
+void Acts::DiamondBounds::vertices(std::vector<Acts::Vector2>& result,
+                                   unsigned int /*lseg*/) const {
   // Vertices starting at lower left (min rel. phi)
   // counter-clockwise
   double x1 = get(DiamondBounds::eHalfLengthXnegY);
@@ -32,7 +34,7 @@ std::vector<Acts::Vector2> Acts::DiamondBounds::vertices(
   double y2 = 0.;
   double x3 = get(DiamondBounds::eHalfLengthXposY);
   double y3 = get(DiamondBounds::eHalfLengthYpos);
-  return {{-x1, -y1}, {x1, -y1}, {x2, y2}, {x3, y3}, {-x3, y3}, {-x2, y2}};
+  result = {{-x1, -y1}, {x1, -y1}, {x2, y2}, {x3, y3}, {-x3, y3}, {-x2, y2}};
 }
 
 const Acts::RectangleBounds& Acts::DiamondBounds::boundingBox() const {

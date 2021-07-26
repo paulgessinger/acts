@@ -20,15 +20,15 @@ Acts::SurfaceBounds::BoundsType Acts::TrapezoidBounds::type() const {
 
 bool Acts::TrapezoidBounds::inside(const Acts::Vector2& lposition,
                                    const Acts::BoundaryCheck& bcheck) const {
-  return bcheck.isInside(lposition, vertices());
+  return bcheck.isInside(lposition, m_vertices);
 }
 
-std::vector<Acts::Vector2> Acts::TrapezoidBounds::vertices(
-    unsigned int /*lseg*/) const {
+void Acts::TrapezoidBounds::vertices(std::vector<Acts::Vector2>& result,
+                                     unsigned int /*lseg*/) const {
   double minhx = get(TrapezoidBounds::eHalfLengthXnegY);
   double maxhx = get(TrapezoidBounds::eHalfLengthXposY);
   double hy = get(TrapezoidBounds::eHalfLengthY);
-  return {{-minhx, -hy}, {minhx, -hy}, {maxhx, hy}, {-maxhx, hy}};
+  result = {{-minhx, -hy}, {minhx, -hy}, {maxhx, hy}, {-maxhx, hy}};
 }
 
 const Acts::RectangleBounds& Acts::TrapezoidBounds::boundingBox() const {
@@ -43,4 +43,12 @@ std::ostream& Acts::TrapezoidBounds::toStream(std::ostream& sl) const {
      << get(eHalfLengthY) << ")";
   sl << std::setprecision(-1);
   return sl;
+}
+
+void Acts::TrapezoidBounds::fillVertices() {
+  std::vector<Vector2> vtxs;
+  vertices(vtxs);
+  for (size_t i = 0; i < 4; i++) {
+    m_vertices[i] = vtxs[i];
+  }
 }

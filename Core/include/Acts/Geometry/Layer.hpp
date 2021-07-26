@@ -167,9 +167,10 @@ class Layer : public virtual GeometryObject {
   ///
   /// @return list of intersection of surfaces on the layer
   template <typename options_t>
-  std::vector<SurfaceIntersection> compatibleSurfaces(
-      const GeometryContext& gctx, const Vector3& position,
-      const Vector3& direction, const options_t& options) const;
+  void compatibleSurfaces(std::vector<SurfaceIntersection>& sIntersections,
+                          const GeometryContext& gctx, const Vector3& position,
+                          const Vector3& direction,
+                          const options_t& options) const;
 
   /// Surface seen on approach
   ///

@@ -224,13 +224,16 @@ void draw_surfaces(SrfVec surfaces, const std::string& fname) {
   os << std::fixed << std::setprecision(4);
 
   size_t nVtx = 0;
+  std::vector<Vector2> vtxs;
   for (const auto& srfx : surfaces) {
     std::shared_ptr<const PlaneSurface> srf =
         std::dynamic_pointer_cast<const PlaneSurface>(srfx);
     const PlanarBounds* bounds =
         dynamic_cast<const PlanarBounds*>(&srf->bounds());
 
-    for (const auto& vtxloc : bounds->vertices()) {
+    vtxs.clear();
+    bounds->vertices(vtxs);
+    for (const auto& vtxloc : vtxs) {
       Vector3 vtx =
           srf->transform(tgContext) * Vector3(vtxloc.x(), vtxloc.y(), 0);
       os << "v " << vtx.x() << " " << vtx.y() << " " << vtx.z() << "\n";
@@ -238,12 +241,12 @@ void draw_surfaces(SrfVec surfaces, const std::string& fname) {
 
     // connect them
     os << "f";
-    for (size_t i = 1; i <= bounds->vertices().size(); ++i) {
+    for (size_t i = 1; i <= vtxs.size(); ++i) {
       os << " " << nVtx + i;
     }
     os << "\n";
 
-    nVtx += bounds->vertices().size();
+    nVtx += vtxs.size();
   }
 
   os.close();

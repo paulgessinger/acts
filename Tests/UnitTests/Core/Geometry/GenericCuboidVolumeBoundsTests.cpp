@@ -73,10 +73,14 @@ BOOST_AUTO_TEST_CASE(GenericCuboidBoundsOrientedSurfaces) {
     return false;
   };
 
+  std::vector<Vector2> vtxs;
+
   auto surfaces = cubo.orientedSurfaces(Transform3::Identity());
   for (const auto& srf : surfaces) {
     auto pbounds = dynamic_cast<const PlanarBounds*>(&srf.first->bounds());
-    for (const auto& vtx : pbounds->vertices()) {
+    vtxs.clear();
+    pbounds->vertices(vtxs);
+    for (const auto& vtx : vtxs) {
       Vector3 glob = srf.first->localToGlobal(gctx, vtx, {});
       // check if glob is in actual vertex list
       BOOST_CHECK(is_in(glob, vertices));
@@ -96,7 +100,9 @@ BOOST_AUTO_TEST_CASE(GenericCuboidBoundsOrientedSurfaces) {
   surfaces = cubo.orientedSurfaces(Transform3::Identity());
   for (const auto& srf : surfaces) {
     auto pbounds = dynamic_cast<const PlanarBounds*>(&srf.first->bounds());
-    for (const auto& vtx : pbounds->vertices()) {
+    vtxs.clear();
+    pbounds->vertices(vtxs);
+    for (const auto& vtx : vtxs) {
       Vector3 glob = srf.first->localToGlobal(gctx, vtx, {});
       // check if glob is in actual vertex list
       BOOST_CHECK(is_in(glob, vertices));
@@ -110,7 +116,9 @@ BOOST_AUTO_TEST_CASE(GenericCuboidBoundsOrientedSurfaces) {
   surfaces = cubo.orientedSurfaces(trf);
   for (const auto& srf : surfaces) {
     auto pbounds = dynamic_cast<const PlanarBounds*>(&srf.first->bounds());
-    for (const auto& vtx : pbounds->vertices()) {
+    vtxs.clear();
+    pbounds->vertices(vtxs);
+    for (const auto& vtx : vtxs) {
       Vector3 glob = srf.first->localToGlobal(gctx, vtx, {});
       // check if glob is in actual vertex list
       BOOST_CHECK(is_in(trf.inverse() * glob, vertices));

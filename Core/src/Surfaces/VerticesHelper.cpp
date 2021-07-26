@@ -44,13 +44,12 @@ std::vector<Acts::ActsScalar> Acts::detail::VerticesHelper::phiSegments(
   return phiSegments;
 }
 
-std::vector<Acts::Vector2> Acts::detail::VerticesHelper::ellipsoidVertices(
-    ActsScalar innerRx, ActsScalar innerRy, ActsScalar outerRx,
-    ActsScalar outerRy, ActsScalar avgPhi, ActsScalar halfPhi,
-    unsigned int lseg) {
+void Acts::detail::VerticesHelper::ellipsoidVertices(
+    std::vector<Acts::Vector2>& result, ActsScalar innerRx, ActsScalar innerRy,
+    ActsScalar outerRx, ActsScalar outerRy, ActsScalar avgPhi,
+    ActsScalar halfPhi, unsigned int lseg) {
   // List of vertices counter-clockwise starting at smallest phi w.r.t center,
   // for both inner/outer ring/segment
-  std::vector<Vector2> rvertices;  // return vertices
   std::vector<Vector2> ivertices;  // inner vertices
   std::vector<Vector2> overtices;  // outer verices
 
@@ -78,24 +77,23 @@ std::vector<Acts::Vector2> Acts::detail::VerticesHelper::ellipsoidVertices(
   if (not innerExists) {
     if (not closed) {
       // Add the center case we have a sector
-      rvertices.push_back(Vector2(0., 0.));
+      result.push_back(Vector2(0., 0.));
     }
-    rvertices.insert(rvertices.end(), overtices.begin(), overtices.end());
+    result.insert(result.end(), overtices.begin(), overtices.end());
   } else if (not closed) {
-    rvertices.insert(rvertices.end(), overtices.begin(), overtices.end());
-    rvertices.insert(rvertices.end(), ivertices.rbegin(), ivertices.rend());
+    result.insert(result.end(), overtices.begin(), overtices.end());
+    result.insert(result.end(), ivertices.rbegin(), ivertices.rend());
   } else {
-    rvertices.insert(rvertices.end(), overtices.begin(), overtices.end());
-    rvertices.insert(rvertices.end(), ivertices.begin(), ivertices.end());
+    result.insert(result.end(), overtices.begin(), overtices.end());
+    result.insert(result.end(), ivertices.begin(), ivertices.end());
   }
-  return rvertices;
 }
 
-std::vector<Acts::Vector2> Acts::detail::VerticesHelper::circularVertices(
-    ActsScalar innerR, ActsScalar outerR, ActsScalar avgPhi, ActsScalar halfPhi,
-    unsigned int lseg) {
-  return ellipsoidVertices(innerR, innerR, outerR, outerR, avgPhi, halfPhi,
-                           lseg);
+void Acts::detail::VerticesHelper::circularVertices(
+    std::vector<Acts::Vector2>& result, ActsScalar innerR, ActsScalar outerR,
+    ActsScalar avgPhi, ActsScalar halfPhi, unsigned int lseg) {
+  ellipsoidVertices(result, innerR, innerR, outerR, outerR, avgPhi, halfPhi,
+                    lseg);
 }
 
 bool Acts::detail::VerticesHelper::onHyperPlane(

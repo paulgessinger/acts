@@ -19,10 +19,10 @@ bool Acts::RectangleBounds::inside(const Acts::Vector2& lposition,
   return bcheck.isInside(lposition, m_min, m_max);
 }
 
-std::vector<Acts::Vector2> Acts::RectangleBounds::vertices(
-    unsigned int /*lseg*/) const {
+void Acts::RectangleBounds::vertices(std::vector<Acts::Vector2>& result,
+                                     unsigned int /*lseg*/) const {
   // counter-clockwise starting from bottom-left corner
-  return {m_min, {m_max.x(), m_min.y()}, m_max, {m_min.x(), m_max.y()}};
+  result = {m_min, {m_max.x(), m_min.y()}, m_max, {m_min.x(), m_max.y()}};
 }
 
 const Acts::RectangleBounds& Acts::RectangleBounds::boundingBox() const {

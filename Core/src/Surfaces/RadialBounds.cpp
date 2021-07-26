@@ -35,10 +35,11 @@ bool Acts::RadialBounds::inside(const Acts::Vector2& lposition,
                          Vector2(get(eMaxR), get(eHalfPhiSector)));
 }
 
-std::vector<Acts::Vector2> Acts::RadialBounds::vertices(
-    unsigned int lseg) const {
-  return detail::VerticesHelper::circularVertices(
-      get(eMinR), get(eMaxR), get(eAveragePhi), get(eHalfPhiSector), lseg);
+void Acts::RadialBounds::vertices(std::vector<Acts::Vector2>& result,
+                                  unsigned int lseg) const {
+  detail::VerticesHelper::circularVertices(result, get(eMinR), get(eMaxR),
+                                           get(eAveragePhi),
+                                           get(eHalfPhiSector), lseg);
 }
 
 std::ostream& Acts::RadialBounds::toStream(std::ostream& sl) const {
