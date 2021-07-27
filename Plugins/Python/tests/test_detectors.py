@@ -39,10 +39,20 @@ def test_odd():
     config = acts.MaterialMapJsonConverter.Config()
     matDeco = acts.JsonMaterialDecorator(
         rConfig=config,
-        jFileName="thirdparty/OpenDataDetector/config/odd-material-mapping.config",
+        jFileName="thirdparty/OpenDataDetector/config/odd-material-mapping.json",
         level=acts.logging.ERROR,
     )
 
     geo, _ = detector.finalize(dd4hepConfig, matDeco)
 
     assert count_surfaces(geo) == 18824
+
+
+def test_aligned_detector():
+    detector, geo, deco = acts.examples.AlignedDetector.create()
+
+    assert detector is not None
+    assert geo is not None
+    assert deco is not None
+
+    assert count_surfaces(geo) == 18728

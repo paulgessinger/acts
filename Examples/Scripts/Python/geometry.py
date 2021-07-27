@@ -4,6 +4,7 @@ import os
 
 from acts.examples import (
     GenericDetector,
+    AlignedDetector,
     WhiteBoard,
     AlgorithmContext,
     ProcessCode,
@@ -82,15 +83,12 @@ def runGeometry(
                 writeFormat=JsonFormat.Json,
             )
 
-            # Apparently JsonMaterialWriter cannot run in the same
-            # job as JsonSurfaceWriter
-            # https://github.com/acts-project/acts/issues/883
-
-            # jmw.write(trackingGeometry)
+            jmw.write(trackingGeometry)
 
 
 if "__main__" == __name__:
-    detector, trackingGeometry, decorators = GenericDetector.create()
+    detector, trackingGeometry, decorators = AlignedDetector.create()
+    # detector, trackingGeometry, decorators = GenericDetector.create()
     # detector, trackingGeometry, decorators = getOpenDataDetector()
 
     runGeometry(trackingGeometry, decorators, outputDir=os.getcwd())

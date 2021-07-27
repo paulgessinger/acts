@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import json
+import functools
 
 import pytest
 
@@ -16,7 +17,7 @@ pytestmark = pytest.mark.skipif(not rootEnabled, reason="ROOT not set up")
 
 
 import acts
-from acts.examples import Sequencer, GenericDetector
+from acts.examples import Sequencer, GenericDetector, AlignedDetector
 
 from common import getOpenDataDetector
 
@@ -224,9 +225,9 @@ def test_truth_tracking(tmp_path):
     seq = Sequencer(events=10, numThreads=1)
 
     root_files = [
-        ("trackstates_fitter.root", "trackstates", 9),
+        ("trackstates_fitter.root", "trackstates", 8),
         ("tracksummary_fitter.root", "tracksummary", 10),
-        ("performance_track_finder.root", "track_finder_tracks", 9),
+        ("performance_track_finder.root", "track_finder_tracks", 8),
         ("performance_track_fitter.root", None, -1),
     ]
 
@@ -386,7 +387,7 @@ def test_material_mapping(geantino_recording, tmp_path):
     s.run()
 
     assert root_file.exists()
-    assert_entries(root_file, "material-tracks", 6131)
+    assert_entries(root_file, "material-tracks", 10000)
 
 
 @pytest.mark.parametrize(
@@ -395,9 +396,10 @@ def test_material_mapping(geantino_recording, tmp_path):
         (GenericDetector.create, 450),
         pytest.param(
             getOpenDataDetector,
-            502,
+            540,
             marks=pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up"),
         ),
+        (functools.partial(AlignedDetector.create, iovSize=1), 450),
     ],
 )
 def test_geometry_example(geoFactory, nobj, tmp_path):
@@ -412,13 +414,46 @@ def test_geometry_example(geoFactory, nobj, tmp_path):
     for d in (json_dir, csv_dir, obj_dir):
         d.mkdir()
 
-    runGeometry(trackingGeometry, decorators, outputDir=str(tmp_path))
+    events = 5
+
+    doJson = not isinstance(detector, AlignedDetector)
+
+    runGeometry(
+        trackingGeometry,
+        decorators,
+        events=events,
+        outputJson=doJson,
+        outputDir=str(tmp_path),
+    )
 
     assert len(list(obj_dir.iterdir())) == nobj
     assert all(f.stat().st_size > 200 for f in obj_dir.iterdir())
 
-    assert len(list(csv_dir.iterdir())) == 3
+    assert len(list(csv_dir.iterdir())) == 3 * events
     assert all(f.stat().st_size > 200 for f in csv_dir.iterdir())
+
+    detector_files = [csv_dir / f"event{i:>09}-detectors.csv" for i in range(events)]
+    for detector_file in detector_files:
+        assert detector_file.exists()
+        assert detector_file.stat().st_size > 200
+
+    contents = [f.read_text() for f in detector_files]
+    ref = contents[0]
+    for c in contents[1:]:
+        if isinstance(detector, AlignedDetector):
+            assert c != ref, "Detector writeout is expected to be different"
+        else:
+            assert c == ref, "Detector writeout is expected to be identical"
+
+    if doJson:
+        for f in [json_dir / f"event{i:>09}-detector.json" for i in range(events)]:
+            assert detector_file.exists()
+            with f.open() as fh:
+                data = json.load(fh)
+                print(data)
+        material_file = json_dir / "material.json"
+        assert material_file.exists()
+        assert material_file.stat().st_size > 200
 
 
 def test_digitization_example(trk_geo, tmp_path):
