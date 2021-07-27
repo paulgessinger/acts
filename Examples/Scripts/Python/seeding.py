@@ -212,7 +212,8 @@ def runSeeding(trackingGeometry, field, outputDir, s=None):
 if "__main__" == __name__:
     from common import getOpenDataDetector
 
-    detector, trackingGeometry, _ = getOpenDataDetector()
+    # detector, trackingGeometry, _ = getOpenDataDetector()
+    detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 

@@ -42,7 +42,7 @@
 - [x] CsvSimHitReader
 
 ## HepMC3
-- [ ] HepMC3Reader
+- [x] HepMC3Reader
 
 # Algorithms
 - [x] TutorialVertexFinderAlgorithm

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from Examples.Scripts.Python.common import getOpenDataDetector
 import os
 
 import acts
