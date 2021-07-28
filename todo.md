@@ -13,6 +13,7 @@
 - [x] RootMeasurementWriter
 - [x] RootPropagationStepsWriter
 - [x] RootParticleWriter
+- [x] CKFPerformanceWriter
 
 ## CSV
 - [x] CsvParticleWriter

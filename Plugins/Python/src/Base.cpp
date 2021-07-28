@@ -14,6 +14,7 @@
 
 #include <memory>
 
+#include <pybind11/eval.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -73,6 +74,24 @@ void addUnits(Context& ctx) {
 #undef UNIT
 }
 
+class PythonLogger {
+ public:
+  PythonLogger(const std::string& name, Acts::Logging::Level level)
+      : m_name{name}, m_logger{Acts::getDefaultLogger(m_name, level)} {}
+
+  void log(Acts::Logging::Level level, const std::string& message) const {
+    m_logger->log(level, message);
+  }
+
+  void setLevel(Acts::Logging::Level level) {
+    m_logger = Acts::getDefaultLogger(m_name, level);
+  }
+
+ private:
+  std::string m_name;
+  std::unique_ptr<const Logger> m_logger;
+};
+
 void addLogging(Acts::Python::Context& ctx) {
   auto& m = ctx.get("main");
   auto logging = m.def_submodule("logging", "");
@@ -84,6 +103,76 @@ void addLogging(Acts::Python::Context& ctx) {
       .value("ERROR", Acts::Logging::ERROR)
       .value("FATAL", Acts::Logging::FATAL)
       .export_values();
+
+  auto makeLogFunction = [](Acts::Logging::Level level) {
+    return
+        [level](PythonLogger& logger, const std::string& fmt, py::args args) {
+          auto locals = py::dict();
+          locals["args"] = args;
+          locals["fmt"] = fmt;
+          py::exec(R"(
+        message = fmt % args
+    )",
+                   py::globals(), locals);
+
+          auto message = locals["message"].cast<std::string>();
+
+          logger.log(level, message);
+        };
+  };
+
+  auto logger =
+      py::class_<PythonLogger, std::shared_ptr<PythonLogger>>(logging, "Logger")
+          .def("log", &PythonLogger::log)
+          .def("verbose", makeLogFunction(Acts::Logging::VERBOSE))
+          .def("debug", makeLogFunction(Acts::Logging::DEBUG))
+          .def("info", makeLogFunction(Acts::Logging::INFO))
+          .def("warning", makeLogFunction(Acts::Logging::WARNING))
+          .def("error", makeLogFunction(Acts::Logging::ERROR))
+          .def("fatal", makeLogFunction(Acts::Logging::FATAL))
+          .def("setLevel", &PythonLogger::setLevel);
+
+  static std::unordered_map<std::string, std::shared_ptr<PythonLogger>>
+      pythonLoggers = {{"root", std::make_shared<PythonLogger>(
+                                    "Python", Acts::Logging::INFO)}};
+
+  logging.def(
+      "getLogger",
+      [](const std::string& name) {
+        if (pythonLoggers.find(name) == pythonLoggers.end()) {
+          pythonLoggers[name] =
+              std::make_shared<PythonLogger>(name, Acts::Logging::INFO);
+        }
+        return pythonLoggers[name];
+      },
+      py::arg("name") = "root");
+
+  logging.def("setLevel", [](Acts::Logging::Level level) {
+    pythonLoggers.at("root")->setLevel(level);
+  });
+
+  auto makeModuleLogFunction = [](Acts::Logging::Level level) {
+    return [level](const std::string& fmt, py::args args) {
+      auto locals = py::dict();
+      locals["args"] = args;
+      locals["fmt"] = fmt;
+      py::exec(R"(
+        message = fmt % args
+    )",
+               py::globals(), locals);
+
+      auto message = locals["message"].cast<std::string>();
+
+      pythonLoggers.at("root")->log(level, message);
+    };
+  };
+
+  logging.def("verbose", makeModuleLogFunction(Acts::Logging::VERBOSE));
+  logging.def("debug", makeModuleLogFunction(Acts::Logging::DEBUG));
+  logging.def("info", makeModuleLogFunction(Acts::Logging::INFO));
+  logging.def("warning", makeModuleLogFunction(Acts::Logging::WARNING));
+  logging.def("error", makeModuleLogFunction(Acts::Logging::ERROR));
+  logging.def("fatal", makeModuleLogFunction(Acts::Logging::FATAL));
 }
 
 void addPdgParticle(Acts::Python::Context& ctx) {

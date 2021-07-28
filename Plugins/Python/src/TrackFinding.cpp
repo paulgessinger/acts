@@ -7,6 +7,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include "Acts/Plugins/Python/Utilities.hpp"
+#include "Acts/TrackFinding/MeasurementSelector.hpp"
 #include "ActsExamples/TrackFinding/SeedingAlgorithm.hpp"
 #include "ActsExamples/TrackFinding/SpacePointMaker.hpp"
 #include "ActsExamples/TrackFinding/TrackFindingAlgorithm.hpp"
@@ -25,7 +26,7 @@ using namespace Acts;
 namespace Acts::Python {
 
 void addTrackFinding(Context& ctx) {
-  auto mex = ctx.get("examples");
+  auto [m, mex] = ctx.get("main", "examples");
 
   {
     using Config = ActsExamples::SpacePointMaker::Config;
@@ -161,6 +162,10 @@ void addTrackFinding(Context& ctx) {
             .def_static("makeTrackFinderFunction",
                         &Alg::makeTrackFinderFunction);
 
+    py::class_<Alg::TrackFinderFunction,
+               std::shared_ptr<Alg::TrackFinderFunction>>(
+        alg, "TrackFinderFunction");
+
     auto c = py::class_<Config>(alg, "Config").def(py::init<>());
     ACTS_PYTHON_STRUCT_BEGIN(c, Config);
     ACTS_PYTHON_MEMBER(inputMeasurements);
@@ -170,6 +175,35 @@ void addTrackFinding(Context& ctx) {
     ACTS_PYTHON_MEMBER(findTracks);
     ACTS_PYTHON_MEMBER(measurementSelectorCfg);
     ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    auto constructor =
+        [](std::vector<std::pair<GeometryIdentifier, std::pair<double, size_t>>>
+               input) {
+          std::vector<std::pair<GeometryIdentifier, MeasurementSelectorCuts>>
+              converted;
+          converted.reserve(input.size());
+          for (const auto& [id, cuts] : input) {
+            const auto [chi2, num] = cuts;
+            converted.emplace_back(id, MeasurementSelectorCuts{chi2, num});
+          }
+          return std::make_unique<MeasurementSelector::Config>(converted);
+        };
+
+    py::class_<MeasurementSelectorCuts>(m, "MeasurementSelectorCuts")
+        .def(py::init<>())
+        .def(py::init<double, size_t>())
+        .def_readwrite("chi2CutOff", &MeasurementSelectorCuts::chi2CutOff)
+        .def_readwrite("numMeasurementsCutOff",
+                       &MeasurementSelectorCuts::numMeasurementsCutOff);
+
+    auto ms = py::class_<MeasurementSelector>(m, "MeasurementSelector");
+    auto c =
+        py::class_<MeasurementSelector::Config>(ms, "Config")
+            .def(py::init<std::vector<
+                     std::pair<GeometryIdentifier, MeasurementSelectorCuts>>>())
+            .def(py::init(constructor));
   }
 }
 

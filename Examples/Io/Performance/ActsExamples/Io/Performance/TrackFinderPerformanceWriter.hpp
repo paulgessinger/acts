@@ -33,8 +33,10 @@ class TrackFinderPerformanceWriter final : public WriterT<ProtoTrackContainer> {
     std::string filePath = "performance_track_finder.root";
     /// Output file mode
     std::string fileMode = "RECREATE";
-    /// Output tree name
-    std::string treeName = "track_finder_tracks";
+    /// Output tree name for the tracks
+    std::string treeNameTracks = "track_finder_tracks";
+    /// Output tree name for the particles
+    std::string treeNameParticles = "track_finder_particles";
   };
 
   /// Constructor

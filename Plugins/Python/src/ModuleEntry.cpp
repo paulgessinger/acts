@@ -156,7 +156,8 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
                py::arg("name"), py::arg("level"))
           .def("execute", &BareAlgorithm::execute);
 
-  py::class_<Acts::GeometryIdentifier>(m, "GeometryIdentifier");
+  py::class_<Acts::GeometryIdentifier>(m, "GeometryIdentifier")
+      .def(py::init<>());
 
   using ActsExamples::Sequencer;
   using Config = Sequencer::Config;

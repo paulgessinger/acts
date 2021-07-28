@@ -102,7 +102,7 @@ struct ActsExamples::TrackFinderPerformanceWriter::Impl {
     }
 
     // construct trees
-    trkTree = new TTree(cfg.treeName.c_str(), cfg.treeName.c_str());
+    trkTree = new TTree(cfg.treeNameTracks.c_str(), cfg.treeNameTracks.c_str());
     trkTree->SetDirectory(file);
     trkTree->Branch("event_id", &trkEventId);
     trkTree->Branch("track_id", &trkTrackId);
@@ -111,7 +111,8 @@ struct ActsExamples::TrackFinderPerformanceWriter::Impl {
     trkTree->Branch("particle_id", &trkParticleId);
     trkTree->Branch("particle_nhits_total", &trkParticleNumHitsTotal);
     trkTree->Branch("particle_nhits_on_track", &trkParticleNumHitsOnTrack);
-    prtTree = new TTree("track_finder_particles", "");
+    prtTree =
+        new TTree(cfg.treeNameParticles.c_str(), cfg.treeNameParticles.c_str());
     prtTree->SetDirectory(file);
     prtTree->Branch("event_id", &prtEventId);
     prtTree->Branch("particle_id", &prtParticleId);

@@ -13,6 +13,7 @@
 #include "ActsExamples/Io/Csv/CsvPlanarClusterWriter.hpp"
 #include "ActsExamples/Io/Csv/CsvSimHitWriter.hpp"
 #include "ActsExamples/Io/Csv/CsvTrackingGeometryWriter.hpp"
+#include "ActsExamples/Io/Performance/CKFPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/SeedingPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/TrackFinderPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/TrackFitterPerformanceWriter.hpp"
@@ -34,7 +35,9 @@
 
 #include <memory>
 
+#include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -151,6 +154,8 @@ void addOutput(Context& ctx) {
     ACTS_PYTHON_MEMBER(inputParticles);
     ACTS_PYTHON_MEMBER(filePath);
     ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_MEMBER(treeNameTracks);
+    ACTS_PYTHON_MEMBER(treeNameParticles);
     ACTS_PYTHON_STRUCT_END();
   }
 
@@ -545,6 +550,32 @@ void addOutput(Context& ctx) {
     ACTS_PYTHON_MEMBER(writeSurfaceGrid);
     ACTS_PYTHON_MEMBER(writeLayerVolume);
     ACTS_PYTHON_MEMBER(writePerEvent);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Writer = ActsExamples::CKFPerformanceWriter;
+    auto w = py::class_<Writer, IWriter, std::shared_ptr<Writer>>(
+                 mex, "CKFPerformanceWriter")
+                 .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                      py::arg("config"), py::arg("level"))
+                 .def("write", &Writer::write);
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputTrajectories);
+    ACTS_PYTHON_MEMBER(inputParticles);
+    ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_MEMBER(effPlotToolConfig);
+    ACTS_PYTHON_MEMBER(fakeRatePlotToolConfig);
+    ACTS_PYTHON_MEMBER(duplicationPlotToolConfig);
+    ACTS_PYTHON_MEMBER(trackSummaryPlotToolConfig);
+    ACTS_PYTHON_MEMBER(truthMatchProbMin);
+    ACTS_PYTHON_MEMBER(nMeasurementsMin);
+    ACTS_PYTHON_MEMBER(ptMin);
+    ACTS_PYTHON_MEMBER(duplicatedPredictor);
     ACTS_PYTHON_STRUCT_END();
   }
 }
