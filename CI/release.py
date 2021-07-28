@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 import sys
 import http
+import json
 
 import aiohttp
 from gidgethub.aiohttp import GitHubAPI
@@ -139,6 +140,11 @@ def markdown_changelog(version: str, changelog: dict, header: bool = False) -> s
 
     return output
 
+def update_zenodo(zenodo_file: Path, repo: str, next_version):
+  data = json.loads(zenodo_file.read_text())
+  data["title"] = f"{repo}: v{next_version}"
+  data["version"] = f"v{next_version}"
+  zenodo_file.write_text(json.dumps(data, indent=2))
 
 async def main(draft, dry_run):
     token = os.environ["GH_TOKEN"]
@@ -205,8 +211,14 @@ async def main(draft, dry_run):
 
         if not dry_run:
           version_file.write_text(next_version)
-
           git.add(version_file)
+
+          zenodo_file = Path(".zenodo.json")
+          update_zenodo(zenodo_file, repo, next_version) 
+          git.add(zenodo_file)
+
+          git.add()
+
           git.commit(m=f"Bump to version {next_tag}")
 
           # git.tag(next_tag)
