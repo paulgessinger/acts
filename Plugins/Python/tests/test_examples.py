@@ -416,15 +416,19 @@ def test_geometry_example(geoFactory, nobj, tmp_path):
 
     events = 5
 
-    doJson = not isinstance(detector, AlignedDetector)
-
-    runGeometry(
-        trackingGeometry,
-        decorators,
+    kwargs = dict(
+        trackingGeometry=trackingGeometry,
+        decorators=decorators,
         events=events,
-        outputJson=doJson,
         outputDir=str(tmp_path),
     )
+
+    if isinstance(detector, AlignedDetector):
+        with pytest.raises(RuntimeError):
+            runGeometry(outputJson=True, **kwargs)
+        runGeometry(outputJson=False, **kwargs)
+    else:
+        runGeometry(outputJson=True, **kwargs)
 
     assert len(list(obj_dir.iterdir())) == nobj
     assert all(f.stat().st_size > 200 for f in obj_dir.iterdir())
@@ -445,12 +449,12 @@ def test_geometry_example(geoFactory, nobj, tmp_path):
         else:
             assert c == ref, "Detector writeout is expected to be identical"
 
-    if doJson:
+    if not isinstance(detector, AlignedDetector):
         for f in [json_dir / f"event{i:>09}-detector.json" for i in range(events)]:
             assert detector_file.exists()
             with f.open() as fh:
                 data = json.load(fh)
-                print(data)
+                assert data
         material_file = json_dir / "material.json"
         assert material_file.exists()
         assert material_file.stat().st_size > 200
