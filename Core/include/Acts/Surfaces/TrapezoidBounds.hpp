@@ -45,6 +45,7 @@ class TrapezoidBounds : public PlanarBounds {
       : m_values({halfXnegY, halfXposY, halfY}),
         m_boundingBox(std::max(halfXnegY, halfXposY), halfY) {
     checkConsistency();
+    fillVertices();
   }
 
   /// Constructor for symmetric Trapezoid - from fixed size array
@@ -56,6 +57,7 @@ class TrapezoidBounds : public PlanarBounds {
             std::max(values[eHalfLengthXnegY], values[eHalfLengthXposY]),
             values[eHalfLengthY]) {
     checkConsistency();
+    fillVertices();
   }
 
   ~TrapezoidBounds() override;
@@ -116,7 +118,8 @@ class TrapezoidBounds : public PlanarBounds {
   /// @note the number of segements is ignored in this representation
   ///
   /// @return vector for vertices in 2D
-  std::vector<Vector2> vertices(unsigned int lseg = 1) const final;
+  void vertices(std::vector<Vector2>& result,
+                unsigned int lseg = 1) const final;
 
   // Bounding box representation
   const RectangleBounds& boundingBox() const final;
@@ -134,9 +137,13 @@ class TrapezoidBounds : public PlanarBounds {
   std::array<double, eSize> m_values;
   RectangleBounds m_boundingBox;
 
+  std::array<Vector2, 4> m_vertices;
+
   /// Check the input values for consistency, will throw a logic_exception
   /// if consistency is not given
   void checkConsistency() noexcept(false);
+
+  void fillVertices();
 };
 
 inline std::vector<double> TrapezoidBounds::values() const {

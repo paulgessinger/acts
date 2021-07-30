@@ -1125,9 +1125,10 @@ class Navigator {
                                 : stepper.overstepLimit(state.stepping);
 
     // get the surfaces
-    state.navigation.navSurfaces = navLayer->compatibleSurfaces(
-        state.geoContext, stepper.position(state.stepping),
-        stepper.direction(state.stepping), navOpts);
+    state.navigation.navSurfaces.clear();
+    navLayer->compatibleSurfaces(state.navigation.navSurfaces, state.geoContext,
+                                 stepper.position(state.stepping),
+                                 stepper.direction(state.stepping), navOpts);
     // the number of layer candidates
     if (!state.navigation.navSurfaces.empty()) {
       if (logger.doPrint(Logging::VERBOSE)) {

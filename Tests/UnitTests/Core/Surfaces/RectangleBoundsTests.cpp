@@ -25,7 +25,8 @@ namespace Acts {
 
 namespace Test {
 void dumpVertices(const RectangleBounds& r) {
-  const auto& v = r.vertices();
+  std::vector<Vector2> v;
+  r.vertices(v);
   for (const auto& i : v) {
     std::cout << "(" << i[0] << ", " << i[1] << ")" << std::endl;
   }
@@ -96,7 +97,9 @@ BOOST_AUTO_TEST_CASE(RectangleBoundsProperties) {
   const std::vector<Vector2> coords = {
       {-10., -5.}, {10., -5.}, {10., 5.}, {-10., 5.}};
   // equality, ensure ordering is ok
-  const auto& rectVertices = rect.vertices();
+  std::vector<Vector2> rectVertices;
+
+  rect.vertices(rectVertices);
   BOOST_CHECK_EQUAL_COLLECTIONS(coords.cbegin(), coords.cend(),
                                 rectVertices.cbegin(), rectVertices.cend());
   const Vector2 pointA{1.0, 1.0};
@@ -109,8 +112,10 @@ BOOST_AUTO_TEST_CASE(RectangleBoundsAssignment) {
   RectangleBounds rectA(halfX, halfY);
   RectangleBounds rectB(0.0, 0.0);
   rectB = rectA;
-  const auto originalVertices = rectA.vertices();
-  const auto assignedVertices = rectB.vertices();
+  std::vector<Vector2> originalVertices;
+  std::vector<Vector2> assignedVertices;
+  rectA.vertices(originalVertices);
+  rectB.vertices(assignedVertices);
   BOOST_CHECK_EQUAL_COLLECTIONS(
       originalVertices.cbegin(), originalVertices.cend(),
       assignedVertices.cbegin(), assignedVertices.cend());

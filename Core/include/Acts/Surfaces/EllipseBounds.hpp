@@ -93,7 +93,7 @@ class EllipseBounds : public PlanarBounds {
   /// the extremas in all direction
   ///
   /// @return vector for vertices in 2D
-  std::vector<Vector2> vertices(unsigned int lseg) const final;
+  void vertices(std::vector<Vector2>& result, unsigned int lseg) const final;
 
   // Bounding box representation
   const RectangleBounds& boundingBox() const final;

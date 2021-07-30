@@ -112,7 +112,8 @@ struct PlanarSurfaceTestBeds {
             Acts::Translation3(-aorigin.x(), -aorigin.y(), 0.),
         annulus);
 
-    auto vertices = annulus->vertices(72);
+    std::vector<Acts::Vector2> vertices;
+    annulus->vertices(vertices, 72);
     std::for_each(vertices.begin(), vertices.end(), [&](Acts::Vector2& v) {
       double r = Acts::VectorHelpers::perp(v);
       rmin = std::min(rmin, r);

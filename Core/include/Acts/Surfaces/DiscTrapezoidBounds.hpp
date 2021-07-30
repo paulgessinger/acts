@@ -123,7 +123,7 @@ class DiscTrapezoidBounds : public DiscBounds {
   /// @note that the number of segments are ignored for this surface
   ///
   /// @return vector for vertices in 2D
-  std::vector<Vector2> vertices(unsigned int lseg) const final;
+  void vertices(std::vector<Vector2>& result, unsigned int lseg) const final;
 
  private:
   std::array<double, eSize> m_values;

@@ -68,17 +68,18 @@ inline bool Layer::resolve(bool resolveSensitive, bool resolveMaterial,
 }
 
 template <typename options_t>
-std::vector<SurfaceIntersection> Layer::compatibleSurfaces(
-    const GeometryContext& gctx, const Vector3& position,
-    const Vector3& direction, const options_t& options) const {
-  // the list of valid intersection
-  std::vector<SurfaceIntersection> sIntersections;
+void Layer::compatibleSurfaces(std::vector<SurfaceIntersection>& sIntersections,
+                               const GeometryContext& gctx,
+                               const Vector3& position,
+                               const Vector3& direction,
+                               const options_t& options) const {
+  sIntersections.clear();
   // remember the surfaces for duplicate removal
-  std::map<const Surface*, bool> accepted;
+  // std::map<const Surface*, bool> accepted;
 
   // fast exit - there is nothing to
   if (!m_surfaceArray || !m_approachDescriptor || !options.navDir) {
-    return sIntersections;
+    return;
   }
 
   // reserve a few bins
@@ -101,7 +102,7 @@ std::vector<SurfaceIntersection> Layer::compatibleSurfaces(
     if (endInter) {
       pathLimit = endInter.intersection.pathLength;
     } else {
-      return sIntersections;
+      return;
     }
   } else {
     // compatibleSurfaces() should only be called when on the layer,
@@ -114,12 +115,12 @@ std::vector<SurfaceIntersection> Layer::compatibleSurfaces(
   }
 
   // lemma 0 : accept the surface
-  auto acceptSurface = [&options, &accepted](const Surface& sf,
-                                             bool sensitive = false) -> bool {
+  auto acceptSurface = [&options](const Surface& sf,
+                                  bool sensitive = false) -> bool {
     // check for duplicates
-    if (accepted.find(&sf) != accepted.end()) {
-      return false;
-    }
+    // if (accepted.find(&sf) != accepted.end()) {
+    //   return false;
+    // }
     // surface is sensitive and you're asked to resolve
     if (sensitive && options.resolveSensitive) {
       return true;
@@ -160,7 +161,7 @@ std::vector<SurfaceIntersection> Layer::compatibleSurfaces(
       // Now put the right sign on it
       sfi.intersection.pathLength *= std::copysign(1., options.navDir);
       sIntersections.push_back(sfi);
-      accepted[&sf] = true;
+      // accepted[&sf] = true;
     }
     return;
   };
@@ -205,6 +206,14 @@ std::vector<SurfaceIntersection> Layer::compatibleSurfaces(
   const Surface* layerSurface = &surfaceRepresentation();
   processSurface(*layerSurface);
 
+  std::sort(sIntersections.begin(), sIntersections.end(),
+            [](const auto& a, const auto& b) { return a.object < b.object; });
+
+  auto last = std::unique(
+      sIntersections.begin(), sIntersections.end(),
+      [](const auto& a, const auto& b) { return a.object == b.object; });
+  sIntersections.erase(last, sIntersections.end());
+
   // sort according to the path length
   if (options.navDir == forward) {
     std::sort(sIntersections.begin(), sIntersections.end());
@@ -212,7 +221,7 @@ std::vector<SurfaceIntersection> Layer::compatibleSurfaces(
     std::sort(sIntersections.begin(), sIntersections.end(), std::greater<>());
   }
 
-  return sIntersections;
+  return;
 }
 
 template <typename options_t>

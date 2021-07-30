@@ -107,8 +107,12 @@ ActsFatras::PlanarSurfaceMask::apply(const Acts::Surface& surface,
       dtbBounds =
           static_cast<const Acts::DiscTrapezoidBounds*>(&(surface.bounds()));
     }
-    auto vertices = planarBounds != nullptr ? planarBounds->vertices(1)
-                                            : dtbBounds->vertices(1);
+    std::vector<Acts::Vector2> vertices;
+    if (planarBounds != nullptr) {
+      planarBounds->vertices(vertices, 1);
+    } else {
+      dtbBounds->vertices(vertices, 1);
+    }
 
     return polygonMask(vertices, segment, startInside);
 
@@ -240,7 +244,8 @@ Acts::Result<ActsFatras::PlanarSurfaceMask::Segment2D>
 ActsFatras::PlanarSurfaceMask::annulusMask(const Acts::AnnulusBounds& aBounds,
                                            const Segment2D& segment,
                                            bool firstInside) const {
-  auto vertices = aBounds.vertices(0);
+  std::vector<Acts::Vector2> vertices;
+  aBounds.vertices(vertices, 0);
   Acts::Vector2 moduleOrigin = aBounds.moduleOrigin();
 
   std::array<std::array<unsigned int, 2>, 2> edgeCombos = {

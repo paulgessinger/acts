@@ -101,7 +101,9 @@ BOOST_AUTO_TEST_CASE(TrapezoidBoundsProperties, *utf::expected_failures(3)) {
   /// Test vertices
   std::vector<Vector2> expectedVertices{
       {1., -2.}, {6., 2.}, {-6., 2.}, {-1., -2.}};
-  const auto& actualVertices = trapezoidBoundsObject.vertices();
+
+  std::vector<Vector2> actualVertices;
+  trapezoidBoundsObject.vertices(actualVertices);
   BOOST_CHECK_EQUAL_COLLECTIONS(actualVertices.cbegin(), actualVertices.cend(),
                                 expectedVertices.cbegin(),
                                 expectedVertices.cend());

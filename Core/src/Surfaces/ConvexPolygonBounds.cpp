@@ -9,7 +9,8 @@
 #include "Acts/Surfaces/ConvexPolygonBounds.hpp"
 
 std::ostream& Acts::ConvexPolygonBoundsBase::toStream(std::ostream& sl) const {
-  std::vector<Vector2> vtxs = vertices();
+  std::vector<Vector2> vtxs;
+  vertices(vtxs);
   sl << "Acts::ConvexPolygonBounds<" << vtxs.size() << ">: vertices: [x, y]\n";
   for (size_t i = 0; i < vtxs.size(); i++) {
     const auto& vtx = vtxs[i];
@@ -24,7 +25,9 @@ std::ostream& Acts::ConvexPolygonBoundsBase::toStream(std::ostream& sl) const {
 
 std::vector<double> Acts::ConvexPolygonBoundsBase::values() const {
   std::vector<double> values;
-  for (const auto& vtx : vertices()) {
+  std::vector<Vector2> vtxs;
+  vertices(vtxs);
+  for (const auto& vtx : vtxs) {
     values.push_back(vtx.x());
     values.push_back(vtx.y());
   }
@@ -46,9 +49,9 @@ bool Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::inside(
   return bcheck.isInside(lposition, m_vertices);
 }
 
-std::vector<Acts::Vector2> Acts::ConvexPolygonBounds<
-    Acts::PolygonDynamic>::vertices(unsigned int /*lseg*/) const {
-  return {m_vertices.begin(), m_vertices.end()};
+void Acts::ConvexPolygonBounds<Acts::PolygonDynamic>::vertices(
+    std::vector<Acts::Vector2>& result, unsigned int /*lseg*/) const {
+  result = {m_vertices.begin(), m_vertices.end()};
 }
 
 const Acts::RectangleBounds&

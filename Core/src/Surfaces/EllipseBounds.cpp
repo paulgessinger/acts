@@ -47,10 +47,10 @@ bool Acts::EllipseBounds::inside(const Vector2& lposition,
   return (insidePhi && insideInner && insideOuter);
 }
 
-std::vector<Acts::Vector2> Acts::EllipseBounds::vertices(
-    unsigned int lseg) const {
-  return detail::VerticesHelper::ellipsoidVertices(
-      get(eInnerRx), get(eInnerRy), get(eOuterRx), get(eOuterRy),
+void Acts::EllipseBounds::vertices(std::vector<Acts::Vector2>& result,
+                                   unsigned int lseg) const {
+  detail::VerticesHelper::ellipsoidVertices(
+      result, get(eInnerRx), get(eInnerRy), get(eOuterRx), get(eOuterRy),
       get(eAveragePhi), get(eHalfPhiSector), lseg);
 }
 

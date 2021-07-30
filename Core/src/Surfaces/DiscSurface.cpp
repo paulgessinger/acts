@@ -151,7 +151,8 @@ Acts::Polyhedron Acts::DiscSurface::polyhedronRepresentation(
   // If you have bounds you can create a polyhedron representation
   bool exactPolyhedron = (m_bounds->type() == SurfaceBounds::eDiscTrapezoid);
   if (m_bounds) {
-    auto vertices2D = m_bounds->vertices(lseg);
+    std::vector<Vector2> vertices2D;
+    m_bounds->vertices(vertices2D, lseg);
     vertices.reserve(vertices2D.size() + 1);
     Vector3 wCenter(0., 0., 0);
     for (const auto& v2D : vertices2D) {
