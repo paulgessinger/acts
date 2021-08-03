@@ -39,12 +39,19 @@ class AssertCollectionExistsAlg(BareAlgorithm):
     events_seen = 0
     collections: List[str]
 
-    def __init__(self, collections: Union[List[str], str], *args, **kwargs):
+    def __init__(
+        self,
+        collections: Union[List[str], str],
+        name="check_alg",
+        level=acts.logging.INFO,
+        *args,
+        **kwargs,
+    ):
         if isinstance(collections, str):
             self.collections = [collections]
         else:
             self.collections = collections
-        BareAlgorithm.__init__(self, *args, **kwargs)
+        BareAlgorithm.__init__(self, name=name, level=level, *args, **kwargs)
 
     def execute(self, ctx):
         for collection in self.collections:

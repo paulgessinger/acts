@@ -664,3 +664,71 @@ def test_ckf_tracks_example_truth_smeared(tmp_path):
 
     assert len([f for f in csv.iterdir() if f.name.endswith("CKFtracks.csv")]) == events
     assert all([f.stat().st_size > 300 for f in csv.iterdir()])
+
+
+@pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
+def test_vertex_fitting(tmp_path):
+    detector, trackingGeometry, decorators = getOpenDataDetector()
+
+    field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
+
+    from vertex_fitting import runVertexFitting
+
+    s = Sequencer(events=10)
+
+    runVertexFitting(
+        trackingGeometry,
+        decorators,
+        field,
+        outputDir=Path.cwd(),
+        s=s,
+    )
+
+    alg = AssertCollectionExistsAlg(["fittedvertices"], name="check_alg")
+    s.addAlgorithm(alg)
+
+    s.run()
+
+    assert alg.events_seen == s.config.events
+
+
+@pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
+def test_vertex_fitting_reading(tmp_path, ptcl_gun, rng):
+
+    ptcl_file = tmp_path / "particles.root"
+    s1 = Sequencer(events=10)
+    evGen = ptcl_gun(s1)
+    s1.addWriter(
+        acts.examples.RootParticleWriter(
+            level=acts.logging.INFO,
+            inputParticles=evGen.config.outputParticles,
+            filePath=str(ptcl_file),
+        )
+    )
+
+    s1.run()
+
+    assert ptcl_file.exists()
+
+    detector, trackingGeometry, decorators = getOpenDataDetector()
+    field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
+
+    from vertex_fitting import runVertexFitting
+
+    s = Sequencer(events=10)
+
+    runVertexFitting(
+        trackingGeometry,
+        decorators,
+        field,
+        inputParticlePath=ptcl_file,
+        outputDir=Path.cwd(),
+        s=s,
+    )
+
+    alg = AssertCollectionExistsAlg(["fittedvertices"], name="check_alg")
+    s.addAlgorithm(alg)
+
+    s.run()
+
+    assert alg.events_seen == s.config.events

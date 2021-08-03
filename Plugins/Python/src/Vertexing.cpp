@@ -103,6 +103,7 @@ void addVertexing(Context& ctx) {
     ACTS_PYTHON_STRUCT_BEGIN(c, Config);
     ACTS_PYTHON_MEMBER(inputTrackParameters);
     ACTS_PYTHON_MEMBER(inputProtoVertices);
+    ACTS_PYTHON_MEMBER(outputVertices);
     ACTS_PYTHON_MEMBER(bField);
     ACTS_PYTHON_MEMBER(doConstrainedFit);
     ACTS_PYTHON_MEMBER(constraintPos);

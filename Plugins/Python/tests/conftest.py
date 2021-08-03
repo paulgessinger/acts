@@ -201,6 +201,9 @@ def geantino_recording():
     if not helpers.geant4Enabled:
         pytest.skip("Geantino recording requested, but Geant4 is not set up")
 
+    if not helpers.dd4hepEnabled:
+        pytest.skip("DD4hep recording requested, but Geant4 is not set up")
+
     from geantino_recording import runGeantinoRecording
 
     dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
