@@ -67,6 +67,8 @@ ActsExamples::ProcessCode ActsExamples::VertexFitterAlgorithm::execute(
       ctx.eventStore.get<ProtoVertexContainer>(m_cfg.inputProtoVertices);
   std::vector<const Acts::BoundTrackParameters*> inputTrackPtrCollection;
 
+  std::vector<Acts::Vertex<Acts::BoundTrackParameters>> fittedVertices;
+
   for (const auto& protoVertex : protoVertices) {
     // un-constrained fit requires at least two tracks
     if ((not m_cfg.doConstrainedFit) and (protoVertex.size() < 2)) {
@@ -83,14 +85,13 @@ ActsExamples::ProcessCode ActsExamples::VertexFitterAlgorithm::execute(
       inputTrackPtrCollection.push_back(&trackParameters[trackIdx]);
     }
 
-    Acts::Vertex<Acts::BoundTrackParameters> fittedVertex;
     if (!m_cfg.doConstrainedFit) {
       VertexFitterOptions vfOptions(ctx.geoContext, ctx.magFieldContext);
 
       auto fitRes = vertexFitter.fit(inputTrackPtrCollection, linearizer,
                                      vfOptions, state);
       if (fitRes.ok()) {
-        fittedVertex = *fitRes;
+        fittedVertices.push_back(*fitRes);
       } else {
         ACTS_ERROR("Error in vertex fit.");
         ACTS_ERROR(fitRes.error().message());
@@ -109,15 +110,19 @@ ActsExamples::ProcessCode ActsExamples::VertexFitterAlgorithm::execute(
       auto fitRes = vertexFitter.fit(inputTrackPtrCollection, linearizer,
                                      vfOptionsConstr, state);
       if (fitRes.ok()) {
-        fittedVertex = *fitRes;
+        fittedVertices.push_back(*fitRes);
       } else {
         ACTS_ERROR("Error in vertex fit with constraint.");
         ACTS_ERROR(fitRes.error().message());
       }
     }
 
-    ACTS_INFO("Fitted Vertex " << fittedVertex.fullPosition().transpose());
-    ACTS_INFO("Tracks at fitted Vertex: " << fittedVertex.tracks().size());
+    ACTS_INFO("Fitted Vertex "
+              << fittedVertices.back().fullPosition().transpose());
+    ACTS_INFO(
+        "Tracks at fitted Vertex: " << fittedVertices.back().tracks().size());
   }
+
+  ctx.eventStore.add(m_cfg.outputVertices, std::move(fittedVertices));
   return ProcessCode::SUCCESS;
 }

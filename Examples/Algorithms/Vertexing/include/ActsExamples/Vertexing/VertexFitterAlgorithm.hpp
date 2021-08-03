@@ -24,6 +24,8 @@ class VertexFitterAlgorithm final : public BareAlgorithm {
     std::string inputTrackParameters;
     /// Input proto vertex collection
     std::string inputProtoVertices;
+    /// Output vertex collection
+    std::string outputVertices;
     /// The magnetic field
     std::shared_ptr<Acts::MagneticFieldProvider> bField;
     /// Constraint vertex fit bool
