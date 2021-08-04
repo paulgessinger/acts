@@ -59,9 +59,6 @@ ActsExamples::RootVertexPerformanceWriter::RootVertexPerformanceWriter(
     throw std::invalid_argument(
         "Collection with all fitted track parameters missing");
   }
-  if (m_cfg.inputTime.empty()) {
-    throw std::invalid_argument("Input reconstruction time missing");
-  }
 
   // Setup ROOT I/O
   auto path = m_cfg.filePath;
@@ -200,6 +197,9 @@ ActsExamples::ProcessCode ActsExamples::RootVertexPerformanceWriter::writeT(
       ctx.eventStore.get<std::vector<Acts::BoundTrackParameters>>(
           m_cfg.inputFittedTracks);
 
+  ACTS_INFO(
+      "Total number of reconstructed tracks : " << inputFittedTracks.size());
+
   if (associatedTruthParticles.size() != inputFittedTracks.size()) {
     ACTS_WARNING(
         "Number of fitted tracks and associated truth particles do not match. "
@@ -274,8 +274,12 @@ ActsExamples::ProcessCode ActsExamples::RootVertexPerformanceWriter::writeT(
   }
 
   // Retrieve and set reconstruction time
-  const auto& reconstructionTimeMS = ctx.eventStore.get<int>(m_cfg.inputTime);
-  m_timeMS = reconstructionTimeMS;
+  if (!m_cfg.inputTime.empty()) {
+    const auto& reconstructionTimeMS = ctx.eventStore.get<int>(m_cfg.inputTime);
+    m_timeMS = reconstructionTimeMS;
+  } else {
+    m_timeMS = -1;
+  }
 
   // fill the variables
   m_outputTree->Fill();
