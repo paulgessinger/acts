@@ -223,7 +223,6 @@ void Acts::GeometryView3D::drawTrackingVolume(
       vcConfig = vConfig;
       vcConfig.outputName = vname + std::string("_boundaries") + tag;
     } else {
-      GeometryIdentifier id = tVolume.geometryId();
       std::stringstream vs;
       vs << "Container";
       std::vector<GeometryIdentifier::Value> ids{tVolume.geometryId().volume()};
