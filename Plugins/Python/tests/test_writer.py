@@ -505,15 +505,10 @@ def hepmc_data_impl(tmp_path_factory):
 
         assert outfile.exists()
 
-        raw = outfile.read_text().splitlines()
-        saw_error = False
-        with outfile.open("w") as fh:
-            for line in raw:
-                if line == "V -1 1 []":
-                    saw_error = True
-                    continue
-                fh.write(line)
-        assert saw_error
+        # raw = outfile.read_text().splitlines()
+        # with outfile.open("w") as fh:
+        #     for line in raw:
+        #         fh.write(line)
 
         yield outfile
 
@@ -530,6 +525,10 @@ def hepmc_data(hepmc_data_impl: Path, tmp_path):
 @pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
 @pytest.mark.skipif(not geant4Enabled, reason="Geant4 not set up")
 def test_hepmc3_histogram(hepmc_data, tmp_path):
+    pytest.skip(
+        "Excluding HepMC3 for now, see https://github.com/acts-project/acts/issues/877"
+    )
+
     from acts.examples.hepmc3 import HepMC3AsciiReader
 
     s = Sequencer(numThreads=1)
