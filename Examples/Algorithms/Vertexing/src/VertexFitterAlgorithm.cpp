@@ -61,10 +61,16 @@ ActsExamples::ProcessCode ActsExamples::VertexFitterAlgorithm::execute(
   Linearizer::Config ltConfig(m_cfg.bField, propagator);
   Linearizer linearizer(ltConfig);
 
+  ACTS_VERBOSE("Read from '" << m_cfg.inputTrackParameters << "'");
+  ACTS_VERBOSE("Read from '" << m_cfg.inputProtoVertices << "'");
+
   const auto& trackParameters =
       ctx.eventStore.get<TrackParametersContainer>(m_cfg.inputTrackParameters);
+  ACTS_VERBOSE("Have " << trackParameters.size() << " track parameters");
   const auto& protoVertices =
       ctx.eventStore.get<ProtoVertexContainer>(m_cfg.inputProtoVertices);
+  ACTS_VERBOSE("Have " << protoVertices.size() << " proto vertices");
+
   std::vector<const Acts::BoundTrackParameters*> inputTrackPtrCollection;
 
   std::vector<Acts::Vertex<Acts::BoundTrackParameters>> fittedVertices;
@@ -86,6 +92,7 @@ ActsExamples::ProcessCode ActsExamples::VertexFitterAlgorithm::execute(
     }
 
     if (!m_cfg.doConstrainedFit) {
+      ACTS_VERBOSE("Do unconstrained fit");
       VertexFitterOptions vfOptions(ctx.geoContext, ctx.magFieldContext);
 
       auto fitRes = vertexFitter.fit(inputTrackPtrCollection, linearizer,
@@ -97,6 +104,7 @@ ActsExamples::ProcessCode ActsExamples::VertexFitterAlgorithm::execute(
         ACTS_ERROR(fitRes.error().message());
       }
     } else {
+      ACTS_VERBOSE("Do constrained fit");
       // Vertex constraint
       Acts::Vertex<Acts::BoundTrackParameters> theConstraint;
 
@@ -117,9 +125,9 @@ ActsExamples::ProcessCode ActsExamples::VertexFitterAlgorithm::execute(
       }
     }
 
-    ACTS_INFO("Fitted Vertex "
-              << fittedVertices.back().fullPosition().transpose());
-    ACTS_INFO(
+    ACTS_DEBUG("Fitted Vertex "
+               << fittedVertices.back().fullPosition().transpose());
+    ACTS_DEBUG(
         "Tracks at fitted Vertex: " << fittedVertices.back().tracks().size());
   }
 
