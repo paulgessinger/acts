@@ -1187,7 +1187,9 @@ class KalmanFitter {
     }
 
     if (!kalmanResult.result.ok()) {
-      ACTS_ERROR("KalmanFilter failed: " << kalmanResult.result.error());
+      ACTS_ERROR("KalmanFilter failed: "
+                 << kalmanResult.result.error() << ", "
+                 << kalmanResult.result.error().message());
       return kalmanResult.result.error();
     }
 
