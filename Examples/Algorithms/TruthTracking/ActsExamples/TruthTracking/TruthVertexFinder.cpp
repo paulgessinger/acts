@@ -31,9 +31,11 @@ ActsExamples::TruthVertexFinder::TruthVertexFinder(const Config& cfg,
 ActsExamples::ProcessCode ActsExamples::TruthVertexFinder::execute(
     const AlgorithmContext& ctx) const {
   // prepare input and output collections
+  ACTS_VERBOSE("Reading particles from " << m_cfg.inputParticles);
   const auto& particles =
       ctx.eventStore.get<SimParticleContainer>(m_cfg.inputParticles);
   ProtoVertexContainer protoVertices;
+  ACTS_VERBOSE("Have " << particles.size() << " particles");
 
   // assumes the begin/end iterator references the particles container
   auto addProtoVertex = [&](SimParticleContainer::const_iterator begin,
@@ -71,6 +73,8 @@ ActsExamples::ProcessCode ActsExamples::TruthVertexFinder::execute(
     }
   }
 
+  ACTS_VERBOSE("Write " << protoVertices.size() << " proto vertex to "
+                        << m_cfg.outputProtoVertices);
   ctx.eventStore.add(m_cfg.outputProtoVertices, std::move(protoVertices));
   return ProcessCode::SUCCESS;
 }
