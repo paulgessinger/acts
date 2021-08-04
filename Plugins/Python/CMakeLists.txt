@@ -44,6 +44,7 @@ target_link_libraries(ActsPythonBindings PUBLIC
   ActsExamplesDetectorContextual
   ActsExamplesMagneticField
   ActsExamplesIoRoot
+  ActsExamplesIoNuclearInteractions
   ActsExamplesIoCsv
   ActsExamplesIoObj
   ActsExamplesIoJson

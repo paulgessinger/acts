@@ -13,6 +13,7 @@
 #include "ActsExamples/Io/Csv/CsvPlanarClusterWriter.hpp"
 #include "ActsExamples/Io/Csv/CsvSimHitWriter.hpp"
 #include "ActsExamples/Io/Csv/CsvTrackingGeometryWriter.hpp"
+#include "ActsExamples/Io/NuclearInteractions/RootNuclearInteractionParametersWriter.hpp"
 #include "ActsExamples/Io/Performance/CKFPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/SeedingPerformanceWriter.hpp"
 #include "ActsExamples/Io/Performance/TrackFinderPerformanceWriter.hpp"
@@ -576,6 +577,28 @@ void addOutput(Context& ctx) {
     ACTS_PYTHON_MEMBER(nMeasurementsMin);
     ACTS_PYTHON_MEMBER(ptMin);
     ACTS_PYTHON_MEMBER(duplicatedPredictor);
+    ACTS_PYTHON_STRUCT_END();
+  }
+
+  {
+    using Writer = ActsExamples::RootNuclearInteractionParametersWriter;
+    auto w = py::class_<Writer, IWriter, std::shared_ptr<Writer>>(
+                 mex, "RootNuclearInteractionParametersWriter")
+                 .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                      py::arg("config"), py::arg("level"))
+                 .def("write", &Writer::write);
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputSimulationProcesses);
+    ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(fileMode);
+    ACTS_PYTHON_MEMBER(interactionProbabilityBins);
+    ACTS_PYTHON_MEMBER(momentumBins);
+    ACTS_PYTHON_MEMBER(invariantMassBins);
+    ACTS_PYTHON_MEMBER(multiplicityMax);
+    ACTS_PYTHON_MEMBER(writeOptionalHistograms);
+    ACTS_PYTHON_MEMBER(nSimulatedEvents);
     ACTS_PYTHON_STRUCT_END();
   }
 }

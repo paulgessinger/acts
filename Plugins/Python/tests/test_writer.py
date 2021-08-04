@@ -7,7 +7,12 @@ import tempfile
 
 import pytest
 
-from helpers import dd4hepEnabled, hepmc3Enabled, geant4Enabled
+from helpers import (
+    dd4hepEnabled,
+    hepmc3Enabled,
+    geant4Enabled,
+    AssertCollectionExistsAlg,
+)
 
 
 import acts
@@ -42,6 +47,7 @@ from acts.examples import (
     JsonFormat,
     Sequencer,
     GenericDetector,
+    RootNuclearInteractionParametersWriter,
 )
 
 
@@ -505,11 +511,6 @@ def hepmc_data_impl(tmp_path_factory):
 
         assert outfile.exists()
 
-        # raw = outfile.read_text().splitlines()
-        # with outfile.open("w") as fh:
-        #     for line in raw:
-        #         fh.write(line)
-
         yield outfile
 
 
@@ -525,21 +526,41 @@ def hepmc_data(hepmc_data_impl: Path, tmp_path):
 @pytest.mark.skipif(not dd4hepEnabled, reason="DD4hep not set up")
 @pytest.mark.skipif(not geant4Enabled, reason="Geant4 not set up")
 def test_hepmc3_histogram(hepmc_data, tmp_path):
-    pytest.skip(
-        "Excluding HepMC3 for now, see https://github.com/acts-project/acts/issues/877"
-    )
 
-    from acts.examples.hepmc3 import HepMC3AsciiReader
+    from acts.examples.hepmc3 import (
+        HepMC3AsciiReader,
+        HepMCProcessExtractor,
+    )
 
     s = Sequencer(numThreads=1)
 
     s.addReader(
         HepMC3AsciiReader(
-            level=acts.logging.VERBOSE,
+            level=acts.logging.INFO,
             inputDir=str(hepmc_data.parent),
             inputStem="events",
             outputEvents="hepmc-events",
         )
     )
+
+    s.addAlgorithm(
+        HepMCProcessExtractor(
+            level=acts.logging.INFO,
+            inputEvents="hepmc-events",
+            extractionProcess="Inelastic",
+        )
+    )
+
+    # This segfaults, see https://github.com/acts-project/acts/issues/914
+    # s.addWriter(
+    #     RootNuclearInteractionParametersWriter(
+    #         level=acts.logging.INFO, inputSimulationProcesses="event-fraction"
+    #     )
+    # )
+
+    alg = AssertCollectionExistsAlg(
+        "hepmc-events", name="check_alg", level=acts.logging.INFO
+    )
+    s.addAlgorithm(alg)
 
     s.run()
