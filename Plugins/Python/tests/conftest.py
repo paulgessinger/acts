@@ -53,7 +53,7 @@ def conf_const(request):
 
 @pytest.fixture
 def rng():
-    return acts.examples.RandomNumbers()
+    return acts.examples.RandomNumbers(seed=42)
 
 
 @pytest.fixture
@@ -138,9 +138,9 @@ def ptcl_gun(rng):
                     particles=acts.examples.ParametricParticleGenerator(
                         p=(1 * u.GeV, 10 * u.GeV),
                         eta=(-2, 2),
-                        phi=(0, 90 * u.degree),
+                        phi=(0, 360 * u.degree),
                         randomizeCharge=True,
-                        numParticles=4,
+                        numParticles=2,
                     ),
                 )
             ],

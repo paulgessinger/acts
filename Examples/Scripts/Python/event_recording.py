@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+from pathlib import Path
 
 import acts
 import acts.examples
@@ -18,7 +19,9 @@ def runEventRecording(geoFactory, outputDir, s=None):
     if not os.path.exists(hepmc_dir):
         os.mkdir(hepmc_dir)
 
-    s = s or acts.examples.Sequencer(events=100, numThreads=1)
+    s = s or acts.examples.Sequencer(
+        events=int(os.environ.get("NEVENTS", 100)), numThreads=1
+    )
 
     rnd = acts.examples.RandomNumbers(seed=42)
     evGen = acts.examples.EventGenerator(
@@ -75,9 +78,12 @@ def runEventRecording(geoFactory, outputDir, s=None):
 
 
 if "__main__" == __name__:
-    dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
-        xmlFileNames=["thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"]
-    )
+    odd = (
+        Path(__file__).parent
+        / "../../../thirdparty/OpenDataDetector/xml/OpenDataDetector.xml"
+    ).resolve()
+
+    dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(xmlFileNames=[str(odd)])
 
     geoFactory = acts.examples.geant4.dd4hep.DD4hepDetectorConstructionFactory(
         dd4hepSvc

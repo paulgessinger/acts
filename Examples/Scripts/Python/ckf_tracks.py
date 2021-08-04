@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from pathlib import Path
+from typing import Optional
 
-from acts.examples import Sequencer, GenericDetector
+from acts.examples import Sequencer, GenericDetector, RootParticleReader
 
 import acts
 
@@ -11,11 +12,14 @@ from acts import UnitConstants as u
 def runCKFTracks(
     trackingGeometry,
     decorators,
+    geometrySelection: Path,
+    digiConfigFile: Path,
     field,
     outputDir: Path,
     truthSmearedSeeded=False,
     truthEstimatedSeeded=False,
     outputCsv=True,
+    inputParticlePath: Optional[Path] = None,
     s=None,
 ):
     s = s or Sequencer(events=100, numThreads=-1)
@@ -27,33 +31,48 @@ def runCKFTracks(
 
     rnd = acts.examples.RandomNumbers(seed=42)
 
-    evGen = acts.examples.EventGenerator(
-        level=acts.logging.INFO,
-        generators=[
-            acts.examples.EventGenerator.Generator(
-                multiplicity=acts.examples.FixedMultiplicityGenerator(n=2),
-                vertex=acts.examples.GaussianVertexGenerator(
-                    stddev=acts.Vector4(0, 0, 0, 0), mean=acts.Vector4(0, 0, 0, 0)
-                ),
-                particles=acts.examples.ParametricParticleGenerator(
-                    p=(1 * u.GeV, 10 * u.GeV),
-                    eta=(-2, 2),
-                    phi=(0, 360 * u.degree),
-                    randomizeCharge=True,
-                    numParticles=4,
-                ),
-            )
-        ],
-        outputParticles="particles_input",
-        randomNumbers=rnd,
-    )
+    if inputParticlePath is None:
+        logger.info("Generating particles using particle gun")
 
-    s.addReader(evGen)
+        evGen = acts.examples.EventGenerator(
+            level=acts.logging.INFO,
+            generators=[
+                acts.examples.EventGenerator.Generator(
+                    multiplicity=acts.examples.FixedMultiplicityGenerator(n=2),
+                    vertex=acts.examples.GaussianVertexGenerator(
+                        stddev=acts.Vector4(0, 0, 0, 0), mean=acts.Vector4(0, 0, 0, 0)
+                    ),
+                    particles=acts.examples.ParametricParticleGenerator(
+                        p=(1 * u.GeV, 10 * u.GeV),
+                        eta=(-2, 2),
+                        phi=(0, 360 * u.degree),
+                        randomizeCharge=True,
+                        numParticles=4,
+                    ),
+                )
+            ],
+            outputParticles="particles_input",
+            randomNumbers=rnd,
+        )
+        s.addReader(evGen)
+        inputParticles = evGen.config.outputParticles
+    else:
+        logger.info("Reading particles from %s", inputParticlePath.resolve())
+        assert inputParticlePath.exists()
+        inputParticles = "particles_read"
+        s.addReader(
+            RootParticleReader(
+                level=acts.logging.INFO,
+                filePath=str(inputParticlePath.resolve()),
+                particleCollection=inputParticles,
+                orderedEvents=False,
+            )
+        )
 
     # Selector
     selector = acts.examples.ParticleSelector(
         level=acts.logging.INFO,
-        inputParticles=evGen.config.outputParticles,
+        inputParticles=inputParticles,
         outputParticles="particles_selected",
     )
     s.addAlgorithm(selector)
@@ -74,9 +93,7 @@ def runCKFTracks(
 
     # Run the sim hits smearing
     digiCfg = acts.examples.DigitizationConfig(
-        acts.examples.readDigiConfigFromJson(
-            "Examples/Algorithms/Digitization/share/default-smearing-config-generic.json"
-        ),
+        acts.examples.readDigiConfigFromJson(str(digiConfigFile)),
         trackingGeometry=trackingGeometry,
         randomNumbers=rnd,
         inputSimHits=simAlg.config.outputSimHits,
@@ -134,7 +151,7 @@ def runCKFTracks(
             outputSpacePoints="spacepoints",
             trackingGeometry=trackingGeometry,
             geometrySelection=acts.examples.readJsonGeometryList(
-                "Examples/Algorithms/TrackFinding/share/geoSelection-genericDetector.json"
+                str(geometrySelection)
             ),
         )
         s.addAlgorithm(spAlg)
@@ -299,12 +316,23 @@ if "__main__" == __name__:
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
+    inputParticlePath = Path("particles.root")
+    if not inputParticlePath.exists():
+        inputParticlePath = None
+
     runCKFTracks(
         trackingGeometry,
         decorators,
-        field,
+        field=field,
+        geometrySelection=Path(
+            "Examples/Algorithms/TrackFinding/share/geoSelection-genericDetector.json"
+        ),
+        digiConfigFile=Path(
+            "Examples/Algorithms/Digitization/share/default-smearing-config-generic.json"
+        ),
         outputCsv=True,
         truthSmearedSeeded=False,
         truthEstimatedSeeded=False,
+        inputParticlePath=inputParticlePath,
         outputDir=Path.cwd(),
     ).run()

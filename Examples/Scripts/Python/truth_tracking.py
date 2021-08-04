@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+from Examples.Scripts.Python.common import getOpenDataDetector
 import os
+from pathlib import Path
 
 import acts
 import acts.examples
@@ -11,7 +13,8 @@ u = acts.UnitConstants
 def runTruthTracking(
     trackingGeometry,
     field,
-    outputDir,
+    outputDir: Path,
+    digiConfigFile: Path,
     directNavigation=False,
     s: acts.examples.Sequencer = None,
 ):
@@ -21,7 +24,7 @@ def runTruthTracking(
 
     # Sequencer
     s = s or acts.examples.Sequencer(
-        events=1000, numThreads=-1, logLevel=acts.logging.INFO
+        events=10, numThreads=-1, logLevel=acts.logging.INFO
     )
 
     # Input
@@ -29,7 +32,7 @@ def runTruthTracking(
     vtxGen.stddev = acts.Vector4(0, 0, 0, 0)
 
     ptclGen = acts.examples.ParametricParticleGenerator(
-        p=(1 * u.GeV, 10 * u.GeV), eta=(-2, 2)
+        p=(1 * u.GeV, 10 * u.GeV), eta=(-2, 2), numParticles=2
     )
 
     g = acts.examples.EventGenerator.Generator()
@@ -44,6 +47,14 @@ def runTruthTracking(
         randomNumbers=rnd,
     )
     s.addReader(evGen)
+
+    s.addWriter(
+        acts.examples.RootParticleWriter(
+            level=acts.logging.INFO,
+            inputParticles=evGen.config.outputParticles,
+            filePath=str(outputDir / "particles.root"),
+        )
+    )
 
     # Selector
     selector = acts.examples.ParticleSelector(
@@ -70,7 +81,7 @@ def runTruthTracking(
     # Digitization
     digiCfg = acts.examples.DigitizationConfig(
         acts.examples.readDigiConfigFromJson(
-            "thirdparty/OpenDataDetector/config/odd-digi-smearing-config.json",
+            str(digiConfigFile),
         ),
         trackingGeometry=trackingGeometry,
         randomNumbers=rnd,
@@ -161,7 +172,7 @@ def runTruthTracking(
             inputSimHits=simAlg.config.outputSimHits,
             inputMeasurementParticlesMap=digiAlg.config.outputMeasurementParticlesMap,
             inputMeasurementSimHitsMap=digiAlg.config.outputMeasurementSimHitsMap,
-            filePath=outputDir + "/trackstates_fitter.root",
+            filePath=str(outputDir / "trackstates_fitter.root"),
         )
     )
 
@@ -171,7 +182,7 @@ def runTruthTracking(
             inputTrajectories=fitAlg.config.outputTrajectories,
             inputParticles=inputParticles,
             inputMeasurementParticlesMap=digiAlg.config.outputMeasurementParticlesMap,
-            filePath=outputDir + "/tracksummary_fitter.root",
+            filePath=str(outputDir / "tracksummary_fitter.root"),
         )
     )
 
@@ -181,7 +192,7 @@ def runTruthTracking(
             inputProtoTracks=truthTrkFndAlg.config.outputProtoTracks,
             inputParticles=inputParticles,
             inputMeasurementParticlesMap=digiAlg.config.outputMeasurementParticlesMap,
-            filePath=outputDir + "/performance_track_finder.root",
+            filePath=str(outputDir / "performance_track_finder.root"),
         )
     )
 
@@ -191,7 +202,7 @@ def runTruthTracking(
             inputTrajectories=fitAlg.config.outputTrajectories,
             inputParticles=inputParticles,
             inputMeasurementParticlesMap=digiAlg.config.outputMeasurementParticlesMap,
-            filePath=outputDir + "/performance_track_fitter.root",
+            filePath=str(outputDir / "performance_track_fitter.root"),
         )
     )
 
@@ -200,8 +211,17 @@ def runTruthTracking(
 
 if "__main__" == __name__:
 
-    detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
+    # detector, trackingGeometry, _ = getOpenDataDetector()
+    detector, trackingGeometry, decorators = acts.examples.GenericDetector.create()
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
-    runTruthTracking(trackingGeometry, field, os.getcwd()).run()
+    runTruthTracking(
+        trackingGeometry,
+        field,
+        digiConfigFile=Path(
+            # "thirdparty/OpenDataDetector/config/odd-digi-smearing-config.json",
+            "Examples/Algorithms/Digitization/share/default-smearing-config-generic.json"
+        ),
+        outputDir=Path.cwd(),
+    ).run()

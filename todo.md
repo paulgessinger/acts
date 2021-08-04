@@ -7,25 +7,26 @@
 - [x] RootSimHitWriter
 - [x] RootTrajectoryStatesWriter
 - [x] RootTrajectorySummaryWriter
-- [ ] RootVertexPerformanceWriter
+- [x] RootVertexPerformanceWriter
 - [x] SeedingPerformanceWriter
 - [x] TrackFinderPerformanceWriter
 - [x] RootMeasurementWriter
 - [x] RootPropagationStepsWriter
 - [x] RootParticleWriter
 - [x] CKFPerformanceWriter
+- [ ] RootNuclearInteractionParametersWriter
 
 ## CSV
 - [x] CsvParticleWriter
 - [x] CsvPlanarClusterWriter
 - [x] CsvSimHitWriter
-- [ ] CsvMultiTrajectoryWriter
-- [ ] CsvTrackingGeometryWriter
+- [x] CsvMultiTrajectoryWriter
+- [x] CsvTrackingGeometryWriter
 - [x] CsvMeasurementWriter
 
 ## JSON
 - [x] JsonMaterialWriter
-- [ ] JsonSurfacesWriter
+- [x] JsonSurfacesWriter
 
 ## HepMC3
 - [x] HepMC3Writer
@@ -34,7 +35,7 @@
 ## Root
 - [x] RootParticleReader
 - [x] RootMaterialTrackReader
-- [ ] RootTrajectorySummaryReader
+- [x] RootTrajectorySummaryReader
 
 ## CSV
 - [x] CsvParticleReader
@@ -78,8 +79,8 @@
 
 # Examples
 
-- [ ] AdaptiveMultiVertexFinder
-- [ ] CKFTracks
+- [x] AdaptiveMultiVertexFinder
+- [x] CKFTracks
 - [x] DigitizationConfig
 - [x] Digitization
 - [x] EventRecording
@@ -88,7 +89,7 @@
 - [x] Geometry
 - [ ] HepMC3Exe
 - [ ] HepMC3Histogram
-- [ ] IterativeVertexFinder
+- [x] IterativeVertexFinder
 - [ ] MagneticField
 - [ ] MagneticFieldAccess
 - [x] MaterialMapping
@@ -100,6 +101,6 @@
 - [ ] ShowFatras
 - [ ] ShowParticles
 - [x] TruthTracks
-- [ ] VertexFinderParticleReader
-- [ ] VertexFinderTrackReaderPerformanceWriter
-- [ ] VertexFitter
+- [x] VertexFinderParticleReader
+- [x] VertexFinderTrackReaderPerformanceWriter
+- [x] VertexFitter

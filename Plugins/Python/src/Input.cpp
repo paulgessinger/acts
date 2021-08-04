@@ -48,6 +48,7 @@ void addInput(Context& ctx) {
     ACTS_PYTHON_MEMBER(vertexSecondaryCollection);
     ACTS_PYTHON_MEMBER(treeName);
     ACTS_PYTHON_MEMBER(filePath);
+    ACTS_PYTHON_MEMBER(orderedEvents);
     ACTS_PYTHON_STRUCT_END();
   }
 
