@@ -19,6 +19,8 @@
 
 #include <boost/program_options.hpp>
 
+using namespace Acts::UnitLiterals;
+
 void AlignedDetector::addOptions(
     boost::program_options::options_description& opt) const {
   // Add the generic geometry options
@@ -82,10 +84,10 @@ auto AlignedDetector::finalize(
   cfg.flushSize = vm["align-flushsize"].template as<size_t>();
 
   // The misalingments
-  cfg.sigmaInPlane = vm["align-sigma-iplane"].template as<double>();
-  cfg.sigmaOutPlane = vm["align-sigma-oplane"].template as<double>();
-  cfg.sigmaInRot = vm["align-sigma-irot"].template as<double>();
-  cfg.sigmaOutRot = vm["align-sigma-orot"].template as<double>();
+  cfg.sigmaInPlane = vm["align-sigma-iplane"].template as<double>() * 1_um;
+  cfg.sigmaOutPlane = vm["align-sigma-oplane"].template as<double>() * 1_um;
+  cfg.sigmaInRot = vm["align-sigma-irot"].template as<double>() * 0.001;
+  cfg.sigmaOutRot = vm["align-sigma-orot"].template as<double>() * 0.001;
   cfg.firstIovNominal = vm["align-firstnominal"].template as<bool>();
 
   return finalize(cfg, mdecorator);
