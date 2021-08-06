@@ -8,6 +8,7 @@
 
 #include "Acts/Definitions/Units.hpp"
 #include "ActsExamples/Framework/Sequencer.hpp"
+#include "ActsExamples/Io/Root/RootParticleReader.hpp"
 #include "ActsExamples/MagneticField/MagneticFieldOptions.hpp"
 #include "ActsExamples/Options/CommonOptions.hpp"
 #include "ActsExamples/Options/Pythia8Options.hpp"
@@ -46,14 +47,21 @@ int main(int argc, char* argv[]) {
   auto magneticField = Options::readMagneticField(vars);
 
   // setup event generator
-  EventGenerator::Config evgen = Options::readPythia8Options(vars, logLevel);
-  evgen.outputParticles = "particles_generated";
-  evgen.randomNumbers = rnd;
-  sequencer.addReader(std::make_shared<EventGenerator>(evgen, logLevel));
+  // EventGenerator::Config evgen = Options::readPythia8Options(vars,
+  //   logLevel); evgen.outputParticles = "particles_generated";
+  //   evgen.randomNumbers = rnd;
+  //   sequencer.addReader(std::make_shared<EventGenerator>(evgen, logLevel));
+
+  RootParticleReader::Config rprCfg;
+  rprCfg.particleCollection = "particles_generated";
+  rprCfg.inputFile = "particles.root";
+  rprCfg.treeName = "particles";
+  rprCfg.inputDir = ".";
+  sequencer.addReader(std::make_shared<RootParticleReader>(rprCfg));
 
   // pre-select particles
   ParticleSelector::Config selectParticles = ParticleSelector::readConfig(vars);
-  selectParticles.inputParticles = evgen.outputParticles;
+  selectParticles.inputParticles = rprCfg.particleCollection;
   selectParticles.outputParticles = "particles_selected";
   // smearing only works with charge particles for now
   selectParticles.removeNeutral = true;

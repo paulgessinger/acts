@@ -257,15 +257,17 @@ Acts::Result<void> Acts::
     AdaptiveMultiVertexFitter<input_track_t, linearizer_t>::setWeightsAndUpdate(
         State& state, const linearizer_t& linearizer,
         const VertexingOptions<input_track_t>& vertexingOptions) const {
+  std::vector<double> weights;
   for (auto vtx : state.vertexCollection) {
     VertexInfo<input_track_t>& currentVtxInfo = state.vtxInfoMap[vtx];
     for (const auto& trk : currentVtxInfo.trackLinks) {
       auto& trkAtVtx = state.tracksAtVerticesMap.at(std::make_pair(trk, vtx));
 
+      collectTrackToVertexCompatibilities(state, trk, weights);
+
       // Set trackWeight for current track
       double currentTrkWeight = m_cfg.annealingTool.getWeight(
-          state.annealingState, trkAtVtx.vertexCompatibility,
-          collectTrackToVertexCompatibilities(state, trk));
+          state.annealingState, trkAtVtx.vertexCompatibility, weights);
       trkAtVtx.trackWeight = currentTrkWeight;
 
       if (trkAtVtx.trackWeight > m_cfg.minWeight) {
@@ -300,21 +302,18 @@ Acts::Result<void> Acts::
 }
 
 template <typename input_track_t, typename linearizer_t>
-std::vector<double>
-Acts::AdaptiveMultiVertexFitter<input_track_t, linearizer_t>::
-    collectTrackToVertexCompatibilities(State& state,
-                                        const input_track_t* trk) const {
-  std::vector<double> trkToVtxCompatibilities;
-  trkToVtxCompatibilities.reserve(state.vertexCollection.size());
+void Acts::AdaptiveMultiVertexFitter<input_track_t, linearizer_t>::
+    collectTrackToVertexCompatibilities(State& state, const input_track_t* trk,
+                                        std::vector<double>& output) const {
+  output.clear();
+  output.reserve(state.vertexCollection.size());
   auto range = state.trackToVerticesMultiMap.equal_range(trk);
 
   for (auto vtxIter = range.first; vtxIter != range.second; ++vtxIter) {
-    trkToVtxCompatibilities.push_back(
+    output.push_back(
         state.tracksAtVerticesMap.at(std::make_pair(trk, vtxIter->second))
             .vertexCompatibility);
   }
-
-  return trkToVtxCompatibilities;
 }
 
 template <typename input_track_t, typename linearizer_t>

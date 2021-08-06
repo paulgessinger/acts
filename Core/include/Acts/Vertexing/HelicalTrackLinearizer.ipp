@@ -20,7 +20,7 @@ Acts::Result<Acts::LinearizedTrack> Acts::
       Surface::makeShared<PerigeeSurface>(linPointPos);
 
   // Create propagator options
-  auto logger = getDefaultLogger("HelTrkLinProp", Logging::INFO);
+  static const auto logger = getDefaultLogger("HelTrkLinProp", Logging::INFO);
   propagator_options_t pOptions(gctx, mctx, LoggerWrapper{*logger});
   pOptions.direction = backward;
 

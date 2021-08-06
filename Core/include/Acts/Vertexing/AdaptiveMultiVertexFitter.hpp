@@ -289,8 +289,9 @@ class AdaptiveMultiVertexFitter {
   /// @param trk The track
   ///
   /// @return Vector of compatibility values
-  std::vector<double> collectTrackToVertexCompatibilities(
-      State& state, const InputTrack_t* trk) const;
+  void collectTrackToVertexCompatibilities(State& state,
+                                           const InputTrack_t* trk,
+                                           std::vector<double>& output) const;
 
   /// @brief Determines if vertex position has shifted more than
   /// m_cfg.maxRelativeShift in last iteration

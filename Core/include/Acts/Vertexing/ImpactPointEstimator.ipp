@@ -72,7 +72,7 @@ Acts::ImpactPointEstimator<input_track_t, propagator_t, propagator_options_t>::
       Surface::makeShared<PlaneSurface>(thePlane);
 
   // Create propagator options
-  auto logger = getDefaultLogger("IPEstProp", Logging::INFO);
+  static const auto logger = getDefaultLogger("IPEstProp", Logging::INFO);
   propagator_options_t pOptions(gctx, mctx, LoggerWrapper{*logger});
   pOptions.direction = backward;
 
@@ -267,7 +267,7 @@ Acts::ImpactPointEstimator<input_track_t, propagator_t, propagator_options_t>::
       Surface::makeShared<PerigeeSurface>(vtx.position());
 
   // Create propagator options
-  auto logger = getDefaultLogger("IPEstProp", Logging::INFO);
+  static const auto logger = getDefaultLogger("IPEstProp", Logging::INFO);
   propagator_options_t pOptions(gctx, mctx, LoggerWrapper{*logger});
   pOptions.direction = backward;
 
