@@ -25,8 +25,6 @@ Acts::ObjectIntersection<Acts::Surface>
 Acts::GenericApproachDescriptor::approachSurface(
     const GeometryContext& gctx, const Vector3& position,
     const Vector3& direction, const BoundaryCheck& bcheck) const {
-  // std::vector<ObjectIntersection<Surface>> sIntersections;
-  // sIntersections.reserve(m_surfaceCache.size());
   ObjectIntersection<Surface> closest;
   for (auto& sf : m_surfaceCache) {
     auto sfIntersection = sf->intersect(gctx, position, direction, bcheck);
@@ -37,9 +35,6 @@ Acts::GenericApproachDescriptor::approachSurface(
     }
     closest = std::min(closest, sfIntersection);
   }
-  // // Sort them & return the closest
-  // std::sort(sIntersections.begin(), sIntersections.end());
-  // return (*sIntersections.begin());
   return closest;
 }
 
