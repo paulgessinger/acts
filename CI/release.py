@@ -8,6 +8,8 @@ from pathlib import Path
 import sys
 import http
 import json
+import yaml
+import datetime
 
 import aiohttp
 from gidgethub.aiohttp import GitHubAPI
@@ -140,13 +142,31 @@ def markdown_changelog(version: str, changelog: dict, header: bool = False) -> s
 
     return output
 
-def update_zenodo(zenodo_file: Path, repo: str, next_version):
-  data = json.loads(zenodo_file.read_text())
-  data["title"] = f"{repo}: v{next_version}"
-  data["version"] = f"v{next_version}"
-  zenodo_file.write_text(json.dumps(data, indent=2))
 
-async def main(draft, dry_run):
+def update_zenodo(zenodo_file: Path, repo: str, next_version):
+    data = json.loads(zenodo_file.read_text())
+    data["title"] = f"{repo}: v{next_version}"
+    data["version"] = f"v{next_version}"
+    zenodo_file.write_text(json.dumps(data, indent=2))
+
+
+def update_zenodo(zenodo_file: Path, repo: str, next_version):
+    data = json.loads(zenodo_file.read_text())
+    data["title"] = f"{repo}: v{next_version}"
+    data["version"] = f"v{next_version}"
+    zenodo_file.write_text(json.dumps(data, indent=2))
+
+
+def update_citation(citation_file: Path, next_version):
+    with citation_file.open() as fh:
+        data = yaml.safe_load(fh)
+    data["version"] = f"v{next_version}"
+    data["date-released"] = datetime.date.today().strftime("%Y-%m-%d")
+    with citation_file.open("w") as fh:
+        yaml.dump(data, fh, indent=2)
+
+
+async def main(draft: bool, dry_run: bool, edit: bool):
     token = os.environ["GH_TOKEN"]
     async with aiohttp.ClientSession(loop=asyncio.get_event_loop()) as session:
         gh = GitHubAPI(session, __name__, oauth_token=token)
@@ -168,28 +188,35 @@ async def main(draft, dry_run):
         commits = []
 
         try:
-          async for item in commits_iter:
-              commit_hash = item["sha"]
-              commit_message = item["commit"]["message"]
-              if commit_hash == tag_hash:
-                  break
+            async for item in commits_iter:
+                commit_hash = item["sha"]
+                commit_message = item["commit"]["message"]
+                if commit_hash == tag_hash:
+                    break
 
-              try:
-                  _default_parser(commit_message)
-                  # if this succeeds, do nothing
-              except UnknownCommitMessageStyleError as err:
-                print("Unkown commit message style:")
-                print(commit_message)
-                if sys.stdout.isatty() and click.confirm("Edit effective message?"):
-                  commit_message = click.edit(commit_message)
-                  _default_parser(commit_message)
+                invalid_message = False
+                try:
+                    _default_parser(commit_message)
+                    # if this succeeds, do nothing
+                except UnknownCommitMessageStyleError as err:
+                    print("Unknown commit message style!")
+                    invalid_message = True
+                if (
+                    (invalid_message or edit)
+                    and sys.stdout.isatty()
+                    and click.confirm(f"Edit effective message '{commit_message}'?")
+                ):
+                    commit_message = click.edit(commit_message)
+                    _default_parser(commit_message)
 
-              commit = Commit(commit_hash, commit_message)
-              commits.append(commit)
-              print("-", commit)
+                commit = Commit(commit_hash, commit_message)
+                commits.append(commit)
+                print("-", commit)
         except gidgethub.BadRequest:
-          print("BadRequest for commit retrieval. That is most likely because you forgot to push the merge commit.")
-          return
+            print(
+                "BadRequest for commit retrieval. That is most likely because you forgot to push the merge commit."
+            )
+            return
 
         if len(commits) > 100:
             print(len(commits), "are a lot. Aborting!")
@@ -210,57 +237,60 @@ async def main(draft, dry_run):
         print(md)
 
         if not dry_run:
-          version_file.write_text(next_version)
-          git.add(version_file)
+            version_file.write_text(next_version)
+            git.add(version_file)
 
-          zenodo_file = Path(".zenodo.json")
-          update_zenodo(zenodo_file, repo, next_version) 
-          git.add(zenodo_file)
+            zenodo_file = Path(".zenodo.json")
+            update_zenodo(zenodo_file, repo, next_version)
+            git.add(zenodo_file)
 
-          git.add()
+            citation_file = Path("CITATION.cff")
+            update_citation(citation_file, next_version)
+            git.add(citation_file)
 
-          git.commit(m=f"Bump to version {next_tag}")
+            git.commit(m=f"Bump to version {next_tag}")
 
-          # git.tag(next_tag)
-          target_hash = str(git("rev-parse", "HEAD")).strip()
-          print("target_hash:", target_hash)
+            # git.tag(next_tag)
+            target_hash = str(git("rev-parse", "HEAD")).strip()
+            print("target_hash:", target_hash)
 
-          git.push()
+            git.push()
 
-          commit_ok = False
-          print("Waiting for commit", target_hash[:8], "to be received")
-          for _ in range(10):
-              try:
-                url = f"/repos/{repo}/commits/{target_hash}"
-                await gh.getitem(url)
-                commit_ok = True
-                break
-              except InvalidField as e:
-                  print("Commit", target_hash[:8], "not received yet")
-                  pass # this is what we want
-              await asyncio.sleep(0.5)
+            commit_ok = False
+            print("Waiting for commit", target_hash[:8], "to be received")
+            for _ in range(10):
+                try:
+                    url = f"/repos/{repo}/commits/{target_hash}"
+                    await gh.getitem(url)
+                    commit_ok = True
+                    break
+                except InvalidField as e:
+                    print("Commit", target_hash[:8], "not received yet")
+                    pass  # this is what we want
+                await asyncio.sleep(0.5)
 
-          if not commit_ok:
-              print("Commit", target_hash[:8], "was not created on remote")
-              sys.exit(1)
+            if not commit_ok:
+                print("Commit", target_hash[:8], "was not created on remote")
+                sys.exit(1)
 
-          print("Commit", target_hash[:8], "received")
+            print("Commit", target_hash[:8], "received")
 
-          await gh.post(
-              f"/repos/{repo}/releases",
-              data={
-                  "body": md,
-                  "tag_name": next_tag,
-                  "name": next_tag,
-                  "draft": draft,
-                  "target_commitish": target_hash,
-              },
-          )
+            await gh.post(
+                f"/repos/{repo}/releases",
+                data={
+                    "body": md,
+                    "tag_name": next_tag,
+                    "name": next_tag,
+                    "draft": draft,
+                    "target_commitish": target_hash,
+                },
+            )
 
 
 @click.command()
 @click.option("--draft/--no-draft", default=True)
 @click.option("--dry-run/--no-dry-run", default=False)
+@click.option("--edit", "-e", is_flag=True, default=False)
 def main_sync(*args, **kwargs):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main(*args, **kwargs))
