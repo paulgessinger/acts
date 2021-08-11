@@ -72,11 +72,12 @@ class MeasurementSelector {
   /// @param logger The logger wrapper
   ///
   template <typename measurement_t>
-  Result<void> operator()(const BoundTrackParameters& predictedParams,
-                          const std::vector<measurement_t>& measurements,
-                          std::vector<std::pair<size_t, double>>& measChi2,
-                          std::vector<size_t>& measCandidateIndices,
-                          bool& isOutlier, LoggerWrapper logger) const {
+  Result<void> operator()(
+      const BoundTrackParameters& predictedParams,
+      const std::vector<measurement_t>& measurements,
+      boost::container::small_vector<std::pair<size_t, double>, 10>& measChi2,
+      boost::container::small_vector<size_t, 10>& measCandidateIndices,
+      bool& isOutlier, LoggerWrapper logger) const {
     ACTS_VERBOSE("Invoked MeasurementSelector");
 
     // Return error if no measurement

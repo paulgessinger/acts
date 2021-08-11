@@ -152,17 +152,19 @@ struct CombinatorialKalmanFilterResult {
 
   // This is the indices of the 'tip' of the tracks stored in multitrajectory.
   // This correspond to the last measurment state in the multitrajectory.
-  std::vector<size_t> lastMeasurementIndices;
+  boost::container::small_vector<size_t, 10> lastMeasurementIndices;
 
   // This is the indices of the 'tip' of the tracks stored in multitrajectory.
   // This correspond to the last state in the multitrajectory.
-  std::vector<size_t> lastTrackIndices;
+  boost::container::small_vector<size_t, 10> lastTrackIndices;
 
   // The Parameters at the provided surface for separate tracks
   std::unordered_map<size_t, BoundTrackParameters> fittedParameters;
 
   // The indices of the 'tip' of the unfinished tracks
-  std::vector<std::pair<size_t, CombinatorialKalmanFilterTipState>> activeTips;
+  boost::container::small_vector<
+      std::pair<size_t, CombinatorialKalmanFilterTipState>, 10>
+      activeTips;
 
   // The indices of track states and corresponding source links on different
   // surfaces
@@ -183,10 +185,10 @@ struct CombinatorialKalmanFilterResult {
 
   // Temporary container for index and chi2 of intermediate measurement
   // candidates
-  std::vector<std::pair<size_t, double>> measurementChi2;
+  boost::container::small_vector<std::pair<size_t, double>, 10> measurementChi2;
 
   // Temporary container for index of final measurement candidates
-  std::vector<size_t> measurementCandidateIndices;
+  boost::container::small_vector<size_t, 10> measurementCandidateIndices;
 
   Result<void> result{Result<void>::success()};
 };

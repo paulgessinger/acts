@@ -108,6 +108,12 @@ struct Types {
   using StorageCovariance =
       GrowableColumns<Eigen::Array<Scalar, Size * Size, Eigen::Dynamic, Flags>,
                       SizeIncrement>;
+
+  using StorageCoefficientsVector =
+      std::vector<Eigen::Matrix<Scalar, Size, 1, Flags>>;
+
+  using StorageCovarianceVector =
+      std::vector<Eigen::Matrix<Scalar, Size, Size, Flags>>;
 };
 
 struct IndexData {

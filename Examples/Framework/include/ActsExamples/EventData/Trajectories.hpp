@@ -16,6 +16,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/container/small_vector.hpp>
+
 namespace ActsExamples {
 
 /// Store reconstructed trajectories from track finding/fitting.
@@ -41,7 +43,7 @@ struct Trajectories final {
   /// @param tTips Tip indices that identify valid trajectories
   /// @param parameters Fitted track parameters indexed by trajectory index
   Trajectories(const MultiTrajectory& multiTraj,
-               const std::vector<size_t>& tTips,
+               const boost::container::small_vector<size_t, 10>& tTips,
                const IndexedParameters& parameters)
       : m_multiTrajectory(multiTraj),
         m_trackTips(tTips),
@@ -54,7 +56,9 @@ struct Trajectories final {
   const MultiTrajectory& multiTrajectory() const { return m_multiTrajectory; }
 
   /// Access the tip indices that identify valid trajectories.
-  const std::vector<size_t>& tips() const { return m_trackTips; }
+  const boost::container::small_vector<size_t, 10>& tips() const {
+    return m_trackTips;
+  }
 
   /// Check if a trajectory exists for the given index.
   ///
@@ -90,7 +94,7 @@ struct Trajectories final {
   // The multiTrajectory
   MultiTrajectory m_multiTrajectory;
   // The entry indices of trajectories stored in multiTrajectory
-  std::vector<size_t> m_trackTips = {};
+  boost::container::small_vector<size_t, 10> m_trackTips = {};
   // The fitted parameters at the provided surface for individual trajectories
   IndexedParameters m_trackParameters = {};
 };
