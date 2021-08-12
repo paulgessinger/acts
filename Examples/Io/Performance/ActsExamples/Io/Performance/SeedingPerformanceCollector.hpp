@@ -21,7 +21,7 @@ class TFile;
 class TTree;
 
 namespace ActsExamples {
-class SeedingPerformanceWriter final : public WriterT<ProtoTrackContainer> {
+class SeedingPerformanceCollector final : public WriterT<ProtoTrackContainer> {
  public:
   struct Config {
     /// Input reconstructed proto tracks collection.
@@ -30,39 +30,29 @@ class SeedingPerformanceWriter final : public WriterT<ProtoTrackContainer> {
     std::string inputMeasurementParticlesMap;
     /// Input truth particles collection.
     std::string inputParticles;
-    /// Output filename.
-    std::string filePath = "performance_track_seeding.root";
-    /// Output file mode
-    std::string fileMode = "RECREATE";
-    /// Plot tool configurations.
-    EffPlotTool::Config effPlotToolConfig;
-    DuplicationPlotTool::Config duplicationPlotToolConfig;
   };
 
   /// Construct from configuration and log level.
   /// @param config The configuration
   /// @param level
-  SeedingPerformanceWriter(Config config, Acts::Logging::Level level);
+  SeedingPerformanceCollector(Config config, Acts::Logging::Level level);
 
-  ~SeedingPerformanceWriter() override;
+  ~SeedingPerformanceCollector() override;
 
   /// Finalize plots.
   ProcessCode endRun() final override;
+
+  size_t nTotalSeeds() const;
+  size_t nTotalMatchedSeeds() const;
+  size_t nTotalParticles() const;
+  size_t nTotalMatchedParticles() const;
+  size_t nTotalDuplicatedParticles() const;
 
  private:
   ProcessCode writeT(const AlgorithmContext& ctx,
                      const ProtoTrackContainer& tracks) final override;
 
   Config m_cfg;
-  /// Mutex used to protect multi-threaded writes.
-  std::mutex m_writeMutex;
-  TFile* m_outputFile{nullptr};
-  /// Plot tool for efficiency
-  EffPlotTool m_effPlotTool;
-  EffPlotTool::EffPlotCache m_effPlotCache;
-  /// Plot tool for duplication rate
-  DuplicationPlotTool m_duplicationPlotTool;
-  DuplicationPlotTool::DuplicationPlotCache m_duplicationPlotCache{};
 
   std::atomic<size_t> m_nTotalSeeds = 0;
   std::atomic<size_t> m_nTotalMatchedSeeds = 0;

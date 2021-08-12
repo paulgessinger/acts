@@ -205,6 +205,28 @@ void addTrackFinding(Context& ctx) {
                      std::pair<GeometryIdentifier, MeasurementSelectorCuts>>>())
             .def(py::init(constructor));
   }
+
+  {
+    using Writer = ActsExamples::SeedingPerformanceCollector;
+    auto w = py::class_<Writer, ActsExamples::IWriter, std::shared_ptr<Writer>>(
+                 mex, "SeedingPerformanceCollector")
+                 .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
+                      py::arg("config"), py::arg("level"));
+    w.def_property_readonly("nTotalSeeds", &Writer::nTotalSeeds);
+    w.def_property_readonly("nTotalMatchedSeeds", &Writer::nTotalMatchedSeeds);
+    w.def_property_readonly("nTotalParticles", &Writer::nTotalParticles);
+    w.def_property_readonly("nTotalMatchedParticles",
+                            &Writer::nTotalMatchedParticles);
+    w.def_property_readonly("nTotalDuplicatedParticles",
+                            &Writer::nTotalDuplicatedParticles);
+
+    auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
+    ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);
+    ACTS_PYTHON_MEMBER(inputProtoTracks);
+    ACTS_PYTHON_MEMBER(inputMeasurementParticlesMap);
+    ACTS_PYTHON_MEMBER(inputParticles);
+    ACTS_PYTHON_STRUCT_END();
+  }
 }
 
 }  // namespace Acts::Python
