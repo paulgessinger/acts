@@ -158,6 +158,24 @@ int runSeedingExample(int argc, char* argv[],
 
   seedingCfg.seedFinderConfig.impactMax = 3._mm;
 
+  //   seedingCfg.outputSeeds = "seeds";
+  //   seedingCfg.outputProtoTracks = "prototracks";
+  //   seedingCfg.rMax = 100.;
+  //   seedingCfg.deltaRMax = 60.;
+  //   seedingCfg.collisionRegionMin = -250;
+  //   seedingCfg.collisionRegionMax = 250.;
+  //   seedingCfg.zMin = -2000.;
+  //   seedingCfg.zMax = 2000.;
+  //   seedingCfg.maxSeedsPerSpM = 1;
+  //   seedingCfg.cotThetaMax = 7.40627;  // 2.7 eta
+  //   seedingCfg.sigmaScattering = 50;
+  //   seedingCfg.radLengthPerSeed = 0.1;
+  //   seedingCfg.minPt = 500.;
+  //   seedingCfg.bFieldInZ = 0.00199724;
+  //   seedingCfg.beamPosX = 0;
+  //   seedingCfg.beamPosY = 0;
+  //   seedingCfg.impactMax = 3.;
+
   sequencer.addAlgorithm(
       std::make_shared<SeedingAlgorithm>(seedingCfg, logLevel));
 
@@ -191,8 +209,8 @@ int runSeedingExample(int argc, char* argv[],
   seedPerfCfg.inputMeasurementParticlesMap =
       digiCfg.outputMeasurementParticlesMap;
   seedPerfCfg.filePath = outputDir + "/performance_seeding_hists.root";
-  sequencer.addWriter(
-      std::make_shared<SeedingPerformanceWriter>(seedPerfCfg, logLevel));
+  sequencer.addWriter(std::make_shared<SeedingPerformanceWriter>(
+      seedPerfCfg, Acts::Logging::VERBOSE));
 
   // The track parameters estimation writer
   RootTrackParameterWriter::Config trackParamsWriterCfg;
