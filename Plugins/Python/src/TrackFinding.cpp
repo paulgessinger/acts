@@ -53,7 +53,7 @@ void addTrackFinding(Context& ctx) {
 
   {
     using Config = Acts::SeedFilterConfig;
-    auto c = py::class_<Config>(m, "SeedFilterConfig");
+    auto c = py::class_<Config>(m, "SeedFilterConfig").def(py::init<>());
     ACTS_PYTHON_STRUCT_BEGIN(c, Config);
     ACTS_PYTHON_MEMBER(deltaInvHelixDiameter);
     ACTS_PYTHON_MEMBER(impactWeightFactor);
@@ -62,11 +62,12 @@ void addTrackFinding(Context& ctx) {
     ACTS_PYTHON_MEMBER(maxSeedsPerSpM);
     ACTS_PYTHON_MEMBER(compatSeedLimit);
     ACTS_PYTHON_STRUCT_END();
+    patchKwargsConstructor(c);
   }
 
   {
     using Config = Acts::SeedfinderConfig<SimSpacePoint>;
-    auto c = py::class_<Config>(m, "SeedfinderConfig");
+    auto c = py::class_<Config>(m, "SeedfinderConfig").def(py::init<>());
     ACTS_PYTHON_STRUCT_BEGIN(c, Config);
     ACTS_PYTHON_MEMBER(minPt);
     ACTS_PYTHON_MEMBER(cotThetaMax);
@@ -99,6 +100,23 @@ void addTrackFinding(Context& ctx) {
     ACTS_PYTHON_MEMBER(nTrplPerSpBLimit);
     ACTS_PYTHON_MEMBER(nAvgTrplPerSpBLimit);
     ACTS_PYTHON_STRUCT_END();
+    patchKwargsConstructor(c);
+  }
+
+  {
+    using Config = Acts::SpacePointGridConfig;
+    auto c = py::class_<Config>(m, "SpacePointGridConfig").def(py::init<>());
+
+    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+    ACTS_PYTHON_MEMBER(bFieldInZ);
+    ACTS_PYTHON_MEMBER(minPt);
+    ACTS_PYTHON_MEMBER(rMax);
+    ACTS_PYTHON_MEMBER(zMax);
+    ACTS_PYTHON_MEMBER(zMin);
+    ACTS_PYTHON_MEMBER(deltaRMax);
+    ACTS_PYTHON_MEMBER(cotThetaMax);
+    ACTS_PYTHON_STRUCT_END();
+    patchKwargsConstructor(c);
   }
 
   {
@@ -118,6 +136,9 @@ void addTrackFinding(Context& ctx) {
     ACTS_PYTHON_MEMBER(inputSpacePoints);
     ACTS_PYTHON_MEMBER(outputSeeds);
     ACTS_PYTHON_MEMBER(outputProtoTracks);
+    ACTS_PYTHON_MEMBER(seedFilterConfig);
+    ACTS_PYTHON_MEMBER(seedFinderConfig);
+    ACTS_PYTHON_MEMBER(gridConfig);
     // ACTS_PYTHON_MEMBER(rMax);
     // ACTS_PYTHON_MEMBER(deltaRMin);
     // ACTS_PYTHON_MEMBER(deltaRMax);

@@ -94,11 +94,43 @@ def runSeeding(trackingGeometry, field, outputDir, s=None):
         ),
     )
 
+    gridConfig = acts.SpacePointGridConfig(
+        bFieldInZ=1.99724 * u.T,
+        minPt=500 * u.MeV,
+        rMax=100 * u.mm,
+        zMax=2000 * u.mm,
+        zMin=-2000 * u.mm,
+        deltaRMax=60 * u.mm,
+        cotThetaMax=7.40627,  # 2.7 eta
+    )
+
+    seedFilterConfig = acts.SeedFilterConfig(maxSeedsPerSpM=1)
+
+    seedFinderConfig = acts.SeedfinderConfig(
+        rMax=gridConfig.rMax,
+        deltaRMax=gridConfig.deltaRMax,
+        collisionRegionMin=-250 * u.mm,
+        collisionRegionMax=250 * u.mm,
+        zMin=gridConfig.zMin,
+        zMax=gridConfig.zMax,
+        maxSeedsPerSpM=seedFilterConfig.maxSeedsPerSpM,
+        cotThetaMax=gridConfig.cotThetaMax,
+        sigmaScattering=50,
+        radLengthPerSeed=0.1,
+        minPt=gridConfig.minPt,
+        bFieldInZ=gridConfig.bFieldInZ,
+        beamPos=acts.Vector2(0 * u.mm, 0 * u.mm),
+        impactMax=3 * u.mm,
+    )
+
     seedingAlg = acts.examples.SeedingAlgorithm(
         level=acts.logging.VERBOSE,
         inputSpacePoints=[spAlg.config.outputSpacePoints],
         outputSeeds="seeds",
         outputProtoTracks="prototracks",
+        gridConfig=gridConfig,
+        seedFilterConfig=seedFilterConfig,
+        seedFinderConfig=seedFinderConfig,
     )
 
     parEstimateAlg = acts.examples.TrackParamsEstimationAlgorithm(
