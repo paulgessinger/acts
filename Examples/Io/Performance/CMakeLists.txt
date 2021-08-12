@@ -4,6 +4,7 @@ add_library(
   ActsExamples/Io/Performance/TrackFitterPerformanceWriter.cpp
   ActsExamples/Io/Performance/CKFPerformanceWriter.cpp
   ActsExamples/Io/Performance/SeedingPerformanceWriter.cpp  
+  ActsExamples/Io/Performance/SeedingPerformanceCollector.cpp  
   )
 target_include_directories(
   ActsExamplesIoPerformance
