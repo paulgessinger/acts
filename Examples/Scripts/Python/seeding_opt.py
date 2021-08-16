@@ -83,11 +83,47 @@ def runSeeding(trackingGeometry, field, outputDir):
         ),
     )
 
+    gridConfig = acts.SpacePointGridConfig(
+        rMax=100 * u.mm,
+        deltaRMax=60 * u.mm,
+        zMin=-2000 * u.mm,
+        zMax=2000 * u.mm,
+        cotThetaMax=7.40627,
+        minPt=500 * u.MeV,
+        bFieldInZ=1.99724 * u.T,
+    )
+
+    seedFilterConfig = acts.SeedFilterConfig(
+        deltaRMin=1 * u.mm,
+        maxSeedsPerSpM=1,
+    )
+
+    seedFinderConfig = acts.SeedfinderConfig(
+        rMax=gridConfig.rMax,
+        deltaRMin=seedFilterConfig.deltaRMin,
+        deltaRMax=gridConfig.deltaRMax,
+        collisionRegionMin=-250 * u.mm,
+        collisionRegionMax=250 * u.mm,
+        zMin=gridConfig.zMin,
+        zMax=gridConfig.zMax,
+        maxSeedsPerSpM=seedFilterConfig.maxSeedsPerSpM,
+        cotThetaMax=gridConfig.cotThetaMax,
+        bFieldInZ=gridConfig.bFieldInZ,
+        minPt=gridConfig.minPt,
+        beamPos=acts.Vector2(0 * u.mm, 0 * u.mm),
+        sigmaScattering=50,
+        radLengthPerSeed=0.1,
+        impactMax=3 * u.mm,
+    )
+
     seedingAlg = acts.examples.SeedingAlgorithm(
         level=logLevel,
         inputSpacePoints=[spAlg.config.outputSpacePoints],
         outputSeeds="seeds",
         outputProtoTracks="prototracks",
+        gridConfig=gridConfig,
+        seedFilterConfig=seedFilterConfig,
+        seedFinderConfig=seedFinderConfig,
     )
 
     parEstimateAlg = acts.examples.TrackParamsEstimationAlgorithm(
@@ -151,18 +187,18 @@ if "__main__" == __name__:
         nTotalDuplicatedParticles,
     ) = runSeeding(trackingGeometry, field, outputDir=os.getcwd())
 
+    print("nTotalSeeds               = ", nTotalSeeds)
+    print("nTotalMatchedSeeds        = ", nTotalMatchedSeeds)
+    print("nTotalParticles           = ", nTotalParticles)
+    print("nTotalMatchedParticles    = ", nTotalMatchedParticles)
+    print("nTotalDuplicatedParticles = ", nTotalDuplicatedParticles)
+
     efficiency = nTotalMatchedParticles / nTotalParticles
     fakeRate = (nTotalSeeds - nTotalMatchedSeeds) / nTotalSeeds
     duplicationRate = nTotalDuplicatedParticles / nTotalMatchedParticles
     aveNDuplicatedSeeds = (
         nTotalMatchedSeeds - nTotalMatchedParticles
     ) / nTotalMatchedParticles
-
-    print("nTotalSeeds               = ", nTotalSeeds)
-    print("nTotalMatchedSeeds        = ", nTotalMatchedSeeds)
-    print("nTotalParticles           = ", nTotalParticles)
-    print("nTotalMatchedParticles    = ", nTotalMatchedParticles)
-    print("nTotalDuplicatedParticles = ", nTotalDuplicatedParticles)
 
     print("Efficiency (nMatchedParticles / nAllParticles) = ", efficiency)
     print("Fake rate (nUnMatchedSeeds / nAllSeeds) = ", fakeRate)
