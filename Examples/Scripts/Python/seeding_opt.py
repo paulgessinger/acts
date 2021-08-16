@@ -138,7 +138,7 @@ def runSeeding(trackingGeometry, field, outputDir):
     )
 
     s = acts.examples.Sequencer(
-        events=100,
+        events=10,
         numThreads=-1,
         logLevel=logLevel,
     )
@@ -171,14 +171,7 @@ def runSeeding(trackingGeometry, field, outputDir):
     )
 
 
-if "__main__" == __name__:
-    from common import getOpenDataDetector
-
-    # detector, trackingGeometry, _ = getOpenDataDetector()
-    detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
-
-    field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
-
+def run_trial(trk_geo, field):
     (
         nTotalSeeds,
         nTotalMatchedSeeds,
@@ -187,27 +180,120 @@ if "__main__" == __name__:
         nTotalDuplicatedParticles,
     ) = runSeeding(trackingGeometry, field, outputDir=os.getcwd())
 
-    print("nTotalSeeds               = ", nTotalSeeds)
-    print("nTotalMatchedSeeds        = ", nTotalMatchedSeeds)
-    print("nTotalParticles           = ", nTotalParticles)
-    print("nTotalMatchedParticles    = ", nTotalMatchedParticles)
-    print("nTotalDuplicatedParticles = ", nTotalDuplicatedParticles)
+    efficiency = 0
+    fakeRate = float("inf")
+    duplicationRate = float("inf")
+    aveNDuplicatedSeeds = float("inf")
 
-    efficiency = nTotalMatchedParticles / nTotalParticles
-    fakeRate = (nTotalSeeds - nTotalMatchedSeeds) / nTotalSeeds
-    duplicationRate = nTotalDuplicatedParticles / nTotalMatchedParticles
-    aveNDuplicatedSeeds = (
-        nTotalMatchedSeeds - nTotalMatchedParticles
-    ) / nTotalMatchedParticles
+    try:
+        efficiency = nTotalMatchedParticles / nTotalParticles
+    except:
+        pass
+    try:
+        fakeRate = (nTotalSeeds - nTotalMatchedSeeds) / nTotalSeeds
+    except:
+        pass
+    try:
+        duplicationRate = nTotalDuplicatedParticles / nTotalMatchedParticles
+    except:
+        pass
+    try:
+        aveNDuplicatedSeeds = (
+            nTotalMatchedSeeds - nTotalMatchedParticles
+        ) / nTotalMatchedParticles
+    except:
+        pass
 
-    print("Efficiency (nMatchedParticles / nAllParticles) = ", efficiency)
-    print("Fake rate (nUnMatchedSeeds / nAllSeeds) = ", fakeRate)
-    print(
-        "Duplication rate (nDuplicatedMatchedParticles / nMatchedParticles) = ",
+    return (
+        nTotalSeeds,
+        nTotalMatchedSeeds,
+        nTotalParticles,
+        nTotalMatchedParticles,
+        nTotalDuplicatedParticles,
+        efficiency,
+        fakeRate,
         duplicationRate,
-    )
-    print(
-        "Average number of duplicated seeds ((nMatchedSeeds - nMatchedParticles) "
-        "/ nMatchedParticles) = ",
         aveNDuplicatedSeeds,
     )
+
+
+from deap import algorithms, base, creator, tools
+import numpy
+import array
+import random
+
+
+if "__main__" == __name__:
+    detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
+
+    field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
+
+    toolbox = base.Toolbox()
+
+    def evalOneMax(individual):
+        return (sum(individual),)
+
+    creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+    creator.create("Individual", array.array, typecode="b", fitness=creator.FitnessMax)
+
+    # Attribute generator
+    toolbox.register("attr_bool", random.randint, 0, 1)
+    # Structure initializers
+    toolbox.register(
+        "individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, 100
+    )
+    toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+
+    toolbox.register("evaluate", evalOneMax)
+    toolbox.register("mate", tools.cxTwoPoint)
+    toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
+    toolbox.register("select", tools.selTournament, tournsize=3)
+
+    pop = toolbox.population(n=300)
+    hof = tools.HallOfFame(1)
+    stats = tools.Statistics(lambda ind: ind.fitness.values)
+    stats.register("avg", numpy.mean)
+    stats.register("std", numpy.std)
+    stats.register("min", numpy.min)
+    stats.register("max", numpy.max)
+
+    pop, log = algorithms.eaSimple(
+        pop,
+        toolbox,
+        cxpb=0.5,
+        mutpb=0.2,
+        ngen=40,
+        stats=stats,
+        halloffame=hof,
+        verbose=True,
+    )
+
+    # (
+    #     nTotalSeeds,
+    #     nTotalMatchedSeeds,
+    #     nTotalParticles,
+    #     nTotalMatchedParticles,
+    #     nTotalDuplicatedParticles,
+    #     efficiency,
+    #     fakeRate,
+    #     duplicationRate,
+    #     aveNDuplicatedSeeds,
+    # ) = run_trial(trackingGeometry, field)
+
+    # print("nTotalSeeds               = ", nTotalSeeds)
+    # print("nTotalMatchedSeeds        = ", nTotalMatchedSeeds)
+    # print("nTotalParticles           = ", nTotalParticles)
+    # print("nTotalMatchedParticles    = ", nTotalMatchedParticles)
+    # print("nTotalDuplicatedParticles = ", nTotalDuplicatedParticles)
+
+    # print("Efficiency (nMatchedParticles / nAllParticles) = ", efficiency)
+    # print("Fake rate (nUnMatchedSeeds / nAllSeeds) = ", fakeRate)
+    # print(
+    #     "Duplication rate (nDuplicatedMatchedParticles / nMatchedParticles) = ",
+    #     duplicationRate,
+    # )
+    # print(
+    #     "Average number of duplicated seeds ((nMatchedSeeds - nMatchedParticles) "
+    #     "/ nMatchedParticles) = ",
+    #     aveNDuplicatedSeeds,
+    # )
