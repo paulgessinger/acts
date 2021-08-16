@@ -108,6 +108,7 @@ ActsExamples::ProcessCode ActsExamples::SeedingPerformanceWriter::writeT(
   size_t nMatchedSeeds = 0;
   // Map from particles to how many times they were successfully found by a seed
   std::unordered_map<ActsFatras::Barcode, std::size_t> truthCount;
+  std::lock_guard guard{m_writeMutex};
 
   for (size_t itrack = 0; itrack < tracks.size(); ++itrack) {
     const auto& track = tracks[itrack];
