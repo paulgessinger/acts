@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+import dataclasses
+import functools
 
 import acts
 import acts.examples
@@ -8,7 +10,7 @@ import acts.examples
 u = acts.UnitConstants
 
 
-def runSeeding(trackingGeometry, field, outputDir):
+def runSeeding(trackingGeometry, field, gridConfig, seedFilterConfig, seedFinderConfig):
 
     logLevel = acts.logging.WARNING
 
@@ -83,39 +85,6 @@ def runSeeding(trackingGeometry, field, outputDir):
         ),
     )
 
-    gridConfig = acts.SpacePointGridConfig(
-        rMax=100 * u.mm,
-        deltaRMax=60 * u.mm,
-        zMin=-2000 * u.mm,
-        zMax=2000 * u.mm,
-        cotThetaMax=7.40627,
-        minPt=500 * u.MeV,
-        bFieldInZ=1.99724 * u.T,
-    )
-
-    seedFilterConfig = acts.SeedFilterConfig(
-        deltaRMin=1 * u.mm,
-        maxSeedsPerSpM=1,
-    )
-
-    seedFinderConfig = acts.SeedfinderConfig(
-        rMax=gridConfig.rMax,
-        deltaRMin=seedFilterConfig.deltaRMin,
-        deltaRMax=gridConfig.deltaRMax,
-        collisionRegionMin=-250 * u.mm,
-        collisionRegionMax=250 * u.mm,
-        zMin=gridConfig.zMin,
-        zMax=gridConfig.zMax,
-        maxSeedsPerSpM=seedFilterConfig.maxSeedsPerSpM,
-        cotThetaMax=gridConfig.cotThetaMax,
-        bFieldInZ=gridConfig.bFieldInZ,
-        minPt=gridConfig.minPt,
-        beamPos=acts.Vector2(0 * u.mm, 0 * u.mm),
-        sigmaScattering=50,
-        radLengthPerSeed=0.1,
-        impactMax=3 * u.mm,
-    )
-
     seedingAlg = acts.examples.SeedingAlgorithm(
         level=logLevel,
         inputSpacePoints=[spAlg.config.outputSpacePoints],
@@ -171,14 +140,70 @@ def runSeeding(trackingGeometry, field, outputDir):
     )
 
 
-def run_trial(trk_geo, field):
+class Attribute:
+    def __init__(self, _type, min, max):
+        assert isinstance(min, _type) and isinstance(max, _type)
+        assert type(min) == type(max), f"{type(min)}, {type(max)}"
+        self.min = min
+        self.max = max
+
+
+limits = {"maxSeedsPerSpM": Attribute(int, 1, 10)}
+
+
+@dataclasses.dataclass
+class SeedingConfig:
+    maxSeedsPerSpM: int = 1
+
+
+def run_trial(trk_geo, field, config: SeedingConfig):
+
+    gridConfig = acts.SpacePointGridConfig(
+        rMax=100 * u.mm,
+        deltaRMax=60 * u.mm,
+        zMin=-2000 * u.mm,
+        zMax=2000 * u.mm,
+        cotThetaMax=7.40627,
+        minPt=500 * u.MeV,
+        bFieldInZ=1.99724 * u.T,
+    )
+
+    seedFilterConfig = acts.SeedFilterConfig(
+        deltaRMin=1 * u.mm,
+        maxSeedsPerSpM=config.maxSeedsPerSpM,
+    )
+
+    seedFinderConfig = acts.SeedfinderConfig(
+        rMax=gridConfig.rMax,
+        deltaRMin=seedFilterConfig.deltaRMin,
+        deltaRMax=gridConfig.deltaRMax,
+        collisionRegionMin=-250 * u.mm,
+        collisionRegionMax=250 * u.mm,
+        zMin=gridConfig.zMin,
+        zMax=gridConfig.zMax,
+        maxSeedsPerSpM=seedFilterConfig.maxSeedsPerSpM,
+        cotThetaMax=gridConfig.cotThetaMax,
+        bFieldInZ=gridConfig.bFieldInZ,
+        minPt=gridConfig.minPt,
+        beamPos=acts.Vector2(0 * u.mm, 0 * u.mm),
+        sigmaScattering=50,
+        radLengthPerSeed=0.1,
+        impactMax=3 * u.mm,
+    )
+
     (
         nTotalSeeds,
         nTotalMatchedSeeds,
         nTotalParticles,
         nTotalMatchedParticles,
         nTotalDuplicatedParticles,
-    ) = runSeeding(trackingGeometry, field, outputDir=os.getcwd())
+    ) = runSeeding(
+        trackingGeometry,
+        field,
+        gridConfig=gridConfig,
+        seedFilterConfig=seedFilterConfig,
+        seedFinderConfig=seedFinderConfig,
+    )
 
     efficiency = 0
     fakeRate = float("inf")
@@ -223,6 +248,35 @@ import array
 import random
 
 
+def checkStrategy(minstrategy, maxstrategy):
+    def decorator(func):
+        def wrappper(*args, **kargs):
+            children = func(*args, **kargs)
+            for child in children:
+                for i, s in enumerate(child.strategy):
+                    if s < minstrategy:
+                        child.strategy[i] = minstrategy
+                    elif s > maxstrategy:
+                        child.strategy[i] = maxstrategy
+            return children
+
+        return wrappper
+
+    return decorator
+
+
+def checkBounds(func):
+    @functools.wraps(func)
+    def wrapped(*args, **kargs):
+        offspring = func(*args, **kargs)
+        for child in offspring:
+            for idx, (value, limit) in enumerate(zip(limits.values())):
+                child[idx] = limit.clamp(value)
+        return offspring
+
+    return wrapped
+
+
 if "__main__" == __name__:
     detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
 
@@ -230,8 +284,8 @@ if "__main__" == __name__:
 
     toolbox = base.Toolbox()
 
-    def evalOneMax(individual):
-        return (sum(individual),)
+    def evaluate(individual):
+        return (1,)
 
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
     creator.create("Individual", array.array, typecode="b", fitness=creator.FitnessMax)
@@ -244,9 +298,13 @@ if "__main__" == __name__:
     )
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-    toolbox.register("evaluate", evalOneMax)
-    toolbox.register("mate", tools.cxTwoPoint)
-    toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
+    toolbox.register("evaluate", evaluate)
+
+    # toolbox.register("mate", tools.cxTwoPoint)
+    toolbox.register("mutate", tools.mutESLogNormal, c=2, indpb=0.2)
+    toolbox.decorate("mutate", checkBounds)
+    toolbox.decorate("mutate", checkStrategy(0.02, 0.5))
+
     toolbox.register("select", tools.selTournament, tournsize=3)
 
     pop = toolbox.population(n=300)
