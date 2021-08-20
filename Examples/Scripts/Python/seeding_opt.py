@@ -107,7 +107,7 @@ def runSeeding(trackingGeometry, field, gridConfig, seedFilterConfig, seedFinder
     )
 
     s = acts.examples.Sequencer(
-        events=10,
+        events=100,
         numThreads=-1,
         logLevel=logLevel,
     )
@@ -154,22 +154,28 @@ limits = {"maxSeedsPerSpM": Attribute(int, 1, 10)}
 @dataclasses.dataclass
 class SeedingConfig:
     maxSeedsPerSpM: int = 1
+    rMax: float = 200 * u.mm
+    deltaRMin: float = 1 * u.mm
+    deltaRMax: float = 60 * u.mm
+    sigmaScattering: float = 10
+    impactMax: float = 3 * u.mm
+    minPt: float = 500 * u.MeV
 
 
 def run_trial(trk_geo, field, config: SeedingConfig):
 
     gridConfig = acts.SpacePointGridConfig(
         bFieldInZ=1.99724 * u.T,
-        minPt=500 * u.MeV,
-        rMax=200 * u.mm,
+        minPt=config.minPt,
+        rMax=config.rMax,
         zMax=2000 * u.mm,
         zMin=-2000 * u.mm,
-        deltaRMax=60 * u.mm,
+        deltaRMax=config.deltaRMax,
         cotThetaMax=7.40627,  # 2.7 eta
     )
 
     seedFilterConfig = acts.SeedFilterConfig(
-        maxSeedsPerSpM=config.maxSeedsPerSpM, deltaRMin=1 * u.mm
+        maxSeedsPerSpM=config.maxSeedsPerSpM, deltaRMin=config.deltaRMin
     )
 
     seedFinderConfig = acts.SeedfinderConfig(
@@ -182,12 +188,12 @@ def run_trial(trk_geo, field, config: SeedingConfig):
         zMax=gridConfig.zMax,
         maxSeedsPerSpM=seedFilterConfig.maxSeedsPerSpM,
         cotThetaMax=gridConfig.cotThetaMax,
-        sigmaScattering=50,
+        sigmaScattering=config.sigmaScattering,
         radLengthPerSeed=0.1,
         minPt=gridConfig.minPt,
         bFieldInZ=gridConfig.bFieldInZ,
         beamPos=acts.Vector2(0 * u.mm, 0 * u.mm),
-        impactMax=3 * u.mm,
+        impactMax=config.impactMax,
     )
 
     (
@@ -325,34 +331,110 @@ if "__main__" == __name__:
     #     verbose=True,
     # )
 
-    seedingConfig = SeedingConfig()
+    # seedingConfig = SeedingConfig()
 
-    (
-        nTotalSeeds,
-        nTotalMatchedSeeds,
-        nTotalParticles,
-        nTotalMatchedParticles,
-        nTotalDuplicatedParticles,
-        efficiency,
-        fakeRate,
-        duplicationRate,
-        aveNDuplicatedSeeds,
-    ) = run_trial(trackingGeometry, field, config=seedingConfig)
+    # (
+    #     nTotalSeeds,
+    #     nTotalMatchedSeeds,
+    #     nTotalParticles,
+    #     nTotalMatchedParticles,
+    #     nTotalDuplicatedParticles,
+    #     efficiency,
+    #     fakeRate,
+    #     duplicationRate,
+    #     aveNDuplicatedSeeds,
+    # ) = run_trial(trackingGeometry, field, config=seedingConfig)
 
-    print("nTotalSeeds               = ", nTotalSeeds)
-    print("nTotalMatchedSeeds        = ", nTotalMatchedSeeds)
-    print("nTotalParticles           = ", nTotalParticles)
-    print("nTotalMatchedParticles    = ", nTotalMatchedParticles)
-    print("nTotalDuplicatedParticles = ", nTotalDuplicatedParticles)
+    # print("nTotalSeeds               = ", nTotalSeeds)
+    # print("nTotalMatchedSeeds        = ", nTotalMatchedSeeds)
+    # print("nTotalParticles           = ", nTotalParticles)
+    # print("nTotalMatchedParticles    = ", nTotalMatchedParticles)
+    # print("nTotalDuplicatedParticles = ", nTotalDuplicatedParticles)
 
-    print("Efficiency (nMatchedParticles / nAllParticles) = ", efficiency)
-    print("Fake rate (nUnMatchedSeeds / nAllSeeds) = ", fakeRate)
-    print(
-        "Duplication rate (nDuplicatedMatchedParticles / nMatchedParticles) = ",
-        duplicationRate,
+    # print("Efficiency (nMatchedParticles / nAllParticles) = ", efficiency)
+    # print("Fake rate (nUnMatchedSeeds / nAllSeeds) = ", fakeRate)
+    # print(
+    #     "Duplication rate (nDuplicatedMatchedParticles / nMatchedParticles) = ",
+    #     duplicationRate,
+    # )
+    # print(
+    #     "Average number of duplicated seeds ((nMatchedSeeds - nMatchedParticles) "
+    #     "/ nMatchedParticles) = ",
+    #     aveNDuplicatedSeeds,
+    # )
+
+    from orion.client import build_experiment
+
+    storage = {
+        # "type": "legacy",
+        "database": {
+            "type": "ephemeraldb",
+        },
+    }
+
+    space = {
+        "maxSeedsPerSpM": "uniform(1, 10)",
+        "rMax": "uniform(100, 200)",
+        "deltaRMax": "uniform(10, 100)",
+        "deltaRMin": "uniform(1, 10)",
+    }
+
+    experiment = build_experiment(
+        "random-exp",
+        space=space,
+        storage=storage,
+        # algorithms={"tpe": {"n_initial_points": 5}},
     )
-    print(
-        "Average number of duplicated seeds ((nMatchedSeeds - nMatchedParticles) "
-        "/ nMatchedParticles) = ",
-        aveNDuplicatedSeeds,
-    )
+
+    def evaluate(maxSeedsPerSpM, rMax, deltaRMax, deltaRMin):
+        print("evaluate")
+
+        if deltaRMax < deltaRMin:
+            deltaRMin, deltaRMax = deltaRMax, deltaRMin
+
+        config = SeedingConfig(
+            maxSeedsPerSpM=round(maxSeedsPerSpM),
+            rMax=rMax * u.mm,
+            deltaRMax=deltaRMax * u.mm,
+            deltaRMin=deltaRMin * u.mm,
+        )
+        (
+            nTotalSeeds,
+            nTotalMatchedSeeds,
+            nTotalParticles,
+            nTotalMatchedParticles,
+            nTotalDuplicatedParticles,
+            efficiency,
+            fakeRate,
+            duplicationRate,
+            aveNDuplicatedSeeds,
+        ) = run_trial(trackingGeometry, field, config=config)
+
+        K = 1000
+        effScore = efficiency - 10 * (fakeRate * duplicationRate) / K
+        print(efficiency, fakeRate, duplicationRate, effScore)
+
+        objective = 1 - effScore
+
+        # if objective == float("inf"):
+        #     objective = 10
+
+        return [
+            {"name": "score", "type": "objective", "value": objective},
+            # {"name": "fakeRate", "type": "objective", "value": fakeRate},
+        ]
+
+        # y = maxSeedsPerSpM - 34.56789
+        # z = 4 * y ** 2 + 23.4
+        # return [{"name": "objective", "type": "objective", "value": z}]
+
+    print("begin workon")
+    experiment.workon(evaluate, max_trials=50)
+    print("workon done")
+
+    experiment.plot.regret().show()
+
+    df = experiment.to_pandas()
+
+    best = df.iloc[df.objective.idxmin()]
+    print(best)
