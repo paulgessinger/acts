@@ -721,7 +721,7 @@ BOOST_AUTO_TEST_CASE(Navigator_target_methods) {
 }
 
 BOOST_AUTO_TEST_CASE(Navigation) {
-  Navigator navigator(tGeometry);
+  Navigator navigator({tGeometry});
   PropagatorState::Stepper stepper;
   PropagatorState state;
 
