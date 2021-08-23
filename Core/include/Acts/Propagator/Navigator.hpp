@@ -218,6 +218,7 @@ class Navigator {
 
     // Check if the navigator is inactive
     if (inactive(state, stepper)) {
+      ACTS_VERBOSE("Navigator is inactive")
       return;
     }
 
@@ -350,6 +351,7 @@ class Navigator {
     const auto& logger = state.options.logger;
     // Check if the navigator is inactive
     if (inactive(state, stepper)) {
+      ACTS_VERBOSE("Navigator is inactive")
       return;
     }
 

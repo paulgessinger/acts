@@ -33,7 +33,8 @@ template <typename stepper_t>
 Acts::Intersection3D::Status updateSingleSurfaceStatus(
     const stepper_t& stepper, typename stepper_t::State& state,
     const Surface& surface, const BoundaryCheck& bcheck, LoggerWrapper logger) {
-  ACTS_VERBOSE("Update single surface status for surface: " << &surface);
+  ACTS_VERBOSE(
+      "Update single surface status for surface: " << surface.geometryId());
 
   auto sIntersection =
       surface.intersect(state.geoContext, stepper.position(state),
