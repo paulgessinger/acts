@@ -1,0 +1,22 @@
+name: Release PR
+
+on:
+  pull_request: # change to pull_request_target
+    types: [opened, edited, reopened]
+
+  
+
+jobs:
+  process_release_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: pip install gidgethub, aiohttp
+      - name: Run milestone script
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: CI/check_milestone.py
