@@ -38,7 +38,7 @@ def runSeeding(trackingGeometry, field, gridConfig, seedFilterConfig, seedFinder
     )
 
     # Simulation
-    simAlg = acts.examples.FatrasAlgorithm(
+    simAlg = acts.examples.FatrasSimulation(
         level=logLevel,
         inputParticles=evGen.config.outputParticles,
         # inputParticles=evGen.config.particleCollection,
