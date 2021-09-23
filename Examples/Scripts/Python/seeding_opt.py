@@ -247,126 +247,14 @@ def run_trial(trk_geo, field, config: SeedingConfig):
     )
 
 
-from deap import algorithms, base, creator, tools
-import numpy
-import array
-import random
-
-
-def checkStrategy(minstrategy, maxstrategy):
-    def decorator(func):
-        def wrappper(*args, **kargs):
-            children = func(*args, **kargs)
-            for child in children:
-                for i, s in enumerate(child.strategy):
-                    if s < minstrategy:
-                        child.strategy[i] = minstrategy
-                    elif s > maxstrategy:
-                        child.strategy[i] = maxstrategy
-            return children
-
-        return wrappper
-
-    return decorator
-
-
-def checkBounds(func):
-    @functools.wraps(func)
-    def wrapped(*args, **kargs):
-        offspring = func(*args, **kargs)
-        for child in offspring:
-            for idx, (value, limit) in enumerate(zip(limits.values())):
-                child[idx] = limit.clamp(value)
-        return offspring
-
-    return wrapped
-
-
 if "__main__" == __name__:
     detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
-    # toolbox = base.Toolbox()
-
-    # def evaluate(individual):
-    #     return (1,)
-
-    # creator.create("FitnessMax", base.Fitness, weights=(1.0,))
-    # creator.create("Individual", array.array, typecode="b", fitness=creator.FitnessMax)
-
-    # # Attribute generator
-    # toolbox.register("attr_bool", random.randint, 0, 1)
-    # # Structure initializers
-    # toolbox.register(
-    #     "individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, 100
-    # )
-    # toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
-    # toolbox.register("evaluate", evaluate)
-
-    # # toolbox.register("mate", tools.cxTwoPoint)
-    # toolbox.register("mutate", tools.mutESLogNormal, c=2, indpb=0.2)
-    # toolbox.decorate("mutate", checkBounds)
-    # toolbox.decorate("mutate", checkStrategy(0.02, 0.5))
-
-    # toolbox.register("select", tools.selTournament, tournsize=3)
-
-    # pop = toolbox.population(n=300)
-    # hof = tools.HallOfFame(1)
-    # stats = tools.Statistics(lambda ind: ind.fitness.values)
-    # stats.register("avg", numpy.mean)
-    # stats.register("std", numpy.std)
-    # stats.register("min", numpy.min)
-    # stats.register("max", numpy.max)
-
-    # pop, log = algorithms.eaSimple(
-    #     pop,
-    #     toolbox,
-    #     cxpb=0.5,
-    #     mutpb=0.2,
-    #     ngen=40,
-    #     stats=stats,
-    #     halloffame=hof,
-    #     verbose=True,
-    # )
-
-    # seedingConfig = SeedingConfig()
-
-    # (
-    #     nTotalSeeds,
-    #     nTotalMatchedSeeds,
-    #     nTotalParticles,
-    #     nTotalMatchedParticles,
-    #     nTotalDuplicatedParticles,
-    #     efficiency,
-    #     fakeRate,
-    #     duplicationRate,
-    #     aveNDuplicatedSeeds,
-    # ) = run_trial(trackingGeometry, field, config=seedingConfig)
-
-    # print("nTotalSeeds               = ", nTotalSeeds)
-    # print("nTotalMatchedSeeds        = ", nTotalMatchedSeeds)
-    # print("nTotalParticles           = ", nTotalParticles)
-    # print("nTotalMatchedParticles    = ", nTotalMatchedParticles)
-    # print("nTotalDuplicatedParticles = ", nTotalDuplicatedParticles)
-
-    # print("Efficiency (nMatchedParticles / nAllParticles) = ", efficiency)
-    # print("Fake rate (nUnMatchedSeeds / nAllSeeds) = ", fakeRate)
-    # print(
-    #     "Duplication rate (nDuplicatedMatchedParticles / nMatchedParticles) = ",
-    #     duplicationRate,
-    # )
-    # print(
-    #     "Average number of duplicated seeds ((nMatchedSeeds - nMatchedParticles) "
-    #     "/ nMatchedParticles) = ",
-    #     aveNDuplicatedSeeds,
-    # )
-
     from orion.client import build_experiment
 
     storage = {
-        # "type": "legacy",
         "database": {
             "type": "ephemeraldb",
         },
@@ -416,17 +304,10 @@ if "__main__" == __name__:
 
         objective = 1 - effScore
 
-        # if objective == float("inf"):
-        #     objective = 10
-
         return [
             {"name": "score", "type": "objective", "value": objective},
-            # {"name": "fakeRate", "type": "objective", "value": fakeRate},
         ]
 
-        # y = maxSeedsPerSpM - 34.56789
-        # z = 4 * y ** 2 + 23.4
-        # return [{"name": "objective", "type": "objective", "value": z}]
 
     print("begin workon")
     experiment.workon(evaluate, max_trials=50)
