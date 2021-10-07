@@ -52,11 +52,16 @@ using KalmanUpdater = Acts::GainMatrixUpdater;
 using KalmanSmoother = Acts::GainMatrixSmoother;
 using KalmanFitter = Acts::KalmanFitter<ConstantFieldPropagator>;
 
+KalmanUpdater kfUpdater;
+KalmanSmoother kfSmoother;
+
 KalmanFitterExtensions<TestSourceLink> getExtensions() {
   KalmanFitterExtensions<TestSourceLink> extensions;
-  extensions.calibrator = TestSourceLinkCalibrator{};
-  extensions.updater = KalmanUpdater{};
-  extensions.smoother = KalmanSmoother{};
+  extensions.calibrator.connect<&testSourceLinkCalibrator>();
+  extensions.updater.connect<&KalmanUpdater::operator()<TestSourceLink>>(
+      &kfUpdater);
+  extensions.smoother.connect<&KalmanSmoother::operator()<TestSourceLink>>(
+      &kfSmoother);
   return extensions;
 }
 
@@ -75,8 +80,8 @@ struct TestOutlierFinder {
   /// @param state The track state to classify
   /// @retval False if the measurement is not an outlier
   /// @retval True if the measurement is an outlier
-  template <typename track_state_t>
-  bool operator()(const track_state_t& state) const {
+  bool operator()(
+      MultiTrajectory<TestSourceLink>::TrackStateProxy state) const {
     // can't determine an outlier w/o a measurement or predicted parameters
     if (not state.hasCalibrated() or not state.hasPredicted()) {
       return false;
@@ -98,10 +103,10 @@ struct TestReverseFilteringLogic {
   /// @param trackState The trackState of the last measurement
   /// @retval False if we don't use the reverse filtering for the smoothing of the track
   /// @retval True if we use the reverse filtering for the smoothing of the track
-  template <typename track_state_t>
-  bool operator()(const track_state_t& trackState) const {
+  bool operator()(
+      MultiTrajectory<TestSourceLink>::TrackStateProxy state) const {
     // can't determine an outlier w/o a measurement or predicted parameters
-    auto momentum = fabs(1 / trackState.filtered()[Acts::eBoundQOverP]);
+    auto momentum = fabs(1 / state.filtered()[Acts::eBoundQOverP]);
     std::cout << "momentum : " << momentum << std::endl;
     return (momentum <= momentumMax);
   }
@@ -460,7 +465,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithOutliers) {
   // fitter options w/o target surface. outlier distance is set to be below the
   // default outlier distance in the `MeasurementsCreator`
   auto extensions = getExtensions();
-  extensions.outlierFinder = TestOutlierFinder{5_mm};
+  TestOutlierFinder tof{5_mm};
+  extensions.outlierFinder.connect<&TestOutlierFinder::operator()>(&tof);
 
   KalmanFitterOptions<TestSourceLink> kfOptions(
       geoCtx, magCtx, calCtx, extensions, LoggerWrapper{*kfLogger},
@@ -512,7 +518,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
   {
     // Reverse filtering threshold set at 0.5 GeV
     auto extensions = getExtensions();
-    extensions.reverseFilteringLogic = TestReverseFilteringLogic{0.1_GeV};
+    TestReverseFilteringLogic trfl{0.1_GeV};
+    extensions.reverseFilteringLogic
+        .connect<&TestReverseFilteringLogic::operator()>(&trfl);
 
     KalmanFitterOptions<TestSourceLink> kfOptions(
         geoCtx, magCtx, calCtx, extensions, LoggerWrapper{*kfLogger},
@@ -533,7 +541,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
   // Case with Reverse filtering
   {
     auto extensions = getExtensions();
-    extensions.reverseFilteringLogic = TestReverseFilteringLogic{10_GeV};
+    TestReverseFilteringLogic trfl{10_GeV};
+    extensions.reverseFilteringLogic
+        .connect<&TestReverseFilteringLogic::operator()>(&trfl);
 
     // Reverse filtering threshold set at 10 GeV
     KalmanFitterOptions<TestSourceLink> kfOptions(
@@ -554,7 +564,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
   }
   {
     auto extensions = getExtensions();
-    extensions.reverseFilteringLogic = TestReverseFilteringLogic{0.1_GeV};
+    TestReverseFilteringLogic trfl{0.1_GeV};
+    extensions.reverseFilteringLogic
+        .connect<&TestReverseFilteringLogic::operator()>(&trfl);
 
     // Reverse filtering threshold set at 0.1 GeV forcing the reversed filtering
     KalmanFitterOptions<TestSourceLink> kfOptions(

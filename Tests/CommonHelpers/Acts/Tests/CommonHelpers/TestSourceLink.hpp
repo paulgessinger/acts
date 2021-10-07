@@ -71,6 +71,25 @@ bool operator==(const TestSourceLink& lhs, const TestSourceLink& rhs);
 bool operator!=(const TestSourceLink& lhs, const TestSourceLink& rhs);
 std::ostream& operator<<(std::ostream& os, const TestSourceLink& sourceLink);
 
+void testSourceLinkCalibrator(
+    const GeometryContext& /*gctx*/,
+    MultiTrajectory<TestSourceLink>::TrackStateProxy trackState) {
+  TestSourceLink sl = trackState.uncalibrated();
+  if ((sl.indices[0] != eBoundSize) and (sl.indices[1] != eBoundSize)) {
+    auto meas = makeMeasurement(sl, sl.parameters, sl.covariance, sl.indices[0],
+                                sl.indices[1]);
+    trackState.setCalibrated(meas);
+  } else if (sl.indices[0] != eBoundSize) {
+    auto meas =
+        makeMeasurement(sl, sl.parameters.head<1>(),
+                        sl.covariance.topLeftCorner<1, 1>(), sl.indices[0]);
+    trackState.setCalibrated(meas);
+  } else {
+    throw std::runtime_error(
+        "Tried to extract measurement from invalid TestSourceLink");
+  }
+}
+
 /// Extract measurements from TestSourceLinks.
 struct TestSourceLinkCalibrator {
   /// Extract the measurement from a TestSourceLink.
@@ -88,25 +107,10 @@ struct TestSourceLinkCalibrator {
   //     const TestSourceLink& sl, const parameters_t& /* parameters */) const
   //     {}
 
-  template <size_t kMeasurementSizeMax>
   void operator()(
-      const GeometryContext& /*gctx*/,
-      detail_lt::TrackStateProxy<TestSourceLink, kMeasurementSizeMax, false>
-          trackState) const {
-    TestSourceLink sl = trackState.uncalibrated();
-    if ((sl.indices[0] != eBoundSize) and (sl.indices[1] != eBoundSize)) {
-      auto meas = makeMeasurement(sl, sl.parameters, sl.covariance,
-                                  sl.indices[0], sl.indices[1]);
-      trackState.setCalibrated(meas);
-    } else if (sl.indices[0] != eBoundSize) {
-      auto meas =
-          makeMeasurement(sl, sl.parameters.head<1>(),
-                          sl.covariance.topLeftCorner<1, 1>(), sl.indices[0]);
-      trackState.setCalibrated(meas);
-    } else {
-      throw std::runtime_error(
-          "Tried to extract measurement from invalid TestSourceLink");
-    }
+      const GeometryContext& gctx,
+      MultiTrajectory<TestSourceLink>::TrackStateProxy trackState) const {
+    return testSourceLinkCalibrator(gctx, trackState);
   }
 };
 

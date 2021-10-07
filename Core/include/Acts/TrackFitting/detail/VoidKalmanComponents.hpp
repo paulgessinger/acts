@@ -34,14 +34,20 @@ namespace Acts {
 // };
 
 struct VoidKalmanCalibrator {
-  template <typename source_link_t, size_t kMeasurementSizeMax>
-  void operator()(
-      const GeometryContext& gctx,
-      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
-          trackState) const {
+  template <typename source_link_t>
+  void operator()(const GeometryContext& gctx,
+                  typename MultiTrajectory<source_link_t>::TrackStateProxy
+                      trackState) const {
     throw std::runtime_error{"VoidKalmanCalibrator should not ever execute"};
   }
 };
+
+template <typename source_link_t>
+void voidKalmanCalibrator(
+    const GeometryContext& gctx,
+    typename MultiTrajectory<source_link_t>::TrackStateProxy trackState) {
+  throw std::runtime_error{"VoidKalmanCalibrator should not ever execute"};
+}
 
 /// @brief void Kalman updater
 struct VoidKalmanUpdater {
@@ -54,11 +60,10 @@ struct VoidKalmanUpdater {
   /// @param predicted The predicted parameters
   ///
   /// @return The copied predicted parameters
-  template <typename source_link_t, size_t kMeasurementSizeMax>
+  template <typename source_link_t>
   Result<void> operator()(
       const GeometryContext&,
-      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
-          trackState,
+      typename MultiTrajectory<source_link_t>::TrackStateProxy trackState,
       NavigationDirection direction,
       LoggerWrapper logger = getDummyLogger()) const {
     trackState.filtered() = trackState.predicted();
@@ -66,6 +71,16 @@ struct VoidKalmanUpdater {
     return Result<void>::success();
   }
 };
+
+template <typename source_link_t>
+Result<void> voidKalmanUpdater(
+    const GeometryContext&,
+    typename MultiTrajectory<source_link_t>::TrackStateProxy trackState,
+    NavigationDirection direction, LoggerWrapper logger = getDummyLogger()) {
+  trackState.filtered() = trackState.predicted();
+  trackState.filteredCovariance() = trackState.predictedCovariance();
+  return Result<void>::success();
+}
 
 /// @brief void Kalman smoother
 struct VoidKalmanSmoother {
@@ -87,6 +102,14 @@ struct VoidKalmanSmoother {
   }
 };
 
+template <typename source_link_t>
+Result<void> voidKalmanSmoother(const GeometryContext& gctx,
+                                MultiTrajectory<source_link_t>& trajectory,
+                                size_t entryIndex,
+                                LoggerWrapper logger = getDummyLogger()) {
+  return Result<void>::success();
+}
+
 /// @brief void outlier finder
 struct VoidOutlierFinder {
   /// @brief Public call mimicking an outlier finder
@@ -105,6 +128,14 @@ struct VoidOutlierFinder {
   }
 };
 
+template <typename source_link_t, size_t kMeasurementSizeMax>
+bool voidOutlierFinder(
+    detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
+        trackState) {
+  (void)trackState;
+  return false;
+}
+
 /// @brief void smoothing logic
 struct VoidReverseFilteringLogic {
   /// @brief Public call mimicking an outlier finder
@@ -122,5 +153,13 @@ struct VoidReverseFilteringLogic {
     return false;
   }
 };
+
+template <typename source_link_t, size_t kMeasurementSizeMax>
+constexpr bool voidReverseFilteringLogic(
+    detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
+        trackState) {
+  (void)trackState;
+  return false;
+}
 
 }  // namespace Acts

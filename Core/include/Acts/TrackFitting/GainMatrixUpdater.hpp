@@ -29,11 +29,10 @@ class GainMatrixUpdater {
   /// @param[in,out] trackState The track state
   /// @param[in] direction The navigation direction
   /// @param[in] logger Where to write logging information to
-  template <typename source_link_t, size_t kMeasurementSizeMax>
+  template <typename source_link_t>
   Result<void> operator()(
       const GeometryContext& gctx,
-      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
-          trackState,
+      typename MultiTrajectory<source_link_t>::TrackStateProxy trackState,
       NavigationDirection direction = forward,
       LoggerWrapper logger = getDummyLogger()) const {
     (void)gctx;

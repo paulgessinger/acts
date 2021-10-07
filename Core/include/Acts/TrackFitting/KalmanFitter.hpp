@@ -40,6 +40,46 @@
 
 namespace Acts {
 
+template <typename>
+struct Delegate;
+
+template <typename Ret, typename... Args>
+struct Delegate<Ret(Args...)> {
+  using function_type = Ret (*)(const void*, Args...);
+  using type = Ret(Args...);
+  using return_type = Ret;
+
+ public:
+  Delegate() = default;
+  // template <auto Callable>
+  // Delegate() {
+  // }
+
+  template <auto Callable>
+  void connect() {
+    m_function = [](const void* payload, Args... args) -> Ret {
+      return std::invoke(Callable, std::forward<Args>(args)...);
+    };
+  }
+
+  template <auto Callable, typename Type>
+  void connect(Type* type) {
+    m_payload = type;
+    m_function = [](const void* payload, Args... args) -> Ret {
+      const auto* type = static_cast<const Type*>(payload);
+      return std::invoke(Callable, type, std::forward<Args>(args)...);
+    };
+  }
+
+  Ret operator()(Args... args) const {
+    return std::invoke(m_function, m_payload, std::forward<Args>(args)...);
+  }
+
+ private:
+  void* m_payload;
+  function_type m_function;
+};
+
 template <typename source_link_t>
 struct KalmanFitterExtensions {
   using MultiTrajectory = MultiTrajectory<source_link_t>;
@@ -47,25 +87,39 @@ struct KalmanFitterExtensions {
   using ConstTrackStateProxy = typename MultiTrajectory::ConstTrackStateProxy;
   using Parameters = typename TrackStateProxy::Parameters;
 
-  using Calibrator =
-      std::function<void(const GeometryContext&, TrackStateProxy)>;
+  using Calibrator = Delegate<void(const GeometryContext&, TrackStateProxy)>;
 
-  using Smoother = std::function<Result<void>(
+  using Smoother = Delegate<Result<void>(
       const GeometryContext&, MultiTrajectory&, size_t, LoggerWrapper)>;
 
   using Updater =
-      std::function<Result<void>(const GeometryContext&, TrackStateProxy,
-                                 const NavigationDirection&, LoggerWrapper)>;
+      Delegate<Result<void>(const GeometryContext&, TrackStateProxy,
+                            const NavigationDirection&, LoggerWrapper)>;
 
   // @TODO: Change these two to ConstTrackStateProxy
-  using OutlierFinder = std::function<bool(TrackStateProxy)>;
-  using ReverseFilteringLogic = std::function<bool(TrackStateProxy)>;
+  // using OutlierFinder = std::function<bool(TrackStateProxy)>;
+  using OutlierFinder = Delegate<bool(TrackStateProxy)>;
 
-  Calibrator calibrator{VoidKalmanCalibrator{}};
-  Updater updater{VoidKalmanUpdater{}};
-  Smoother smoother{VoidKalmanSmoother{}};
-  OutlierFinder outlierFinder{VoidOutlierFinder{}};
-  ReverseFilteringLogic reverseFilteringLogic{VoidReverseFilteringLogic{}};
+  // using ReverseFilteringLogic = std::function<bool(TrackStateProxy)>;
+  using ReverseFilteringLogic = Delegate<bool(TrackStateProxy)>;
+
+  Calibrator calibrator;
+  Updater updater;
+  Smoother smoother;
+  OutlierFinder outlierFinder;
+  ReverseFilteringLogic reverseFilteringLogic;
+
+  KalmanFitterExtensions() {
+    calibrator.template connect<&voidKalmanCalibrator<source_link_t>>();
+    updater.template connect<&voidKalmanUpdater<source_link_t>>();
+    smoother.template connect<&voidKalmanSmoother<source_link_t>>();
+
+    outlierFinder.template connect<&voidOutlierFinder<
+        source_link_t, MultiTrajectory::MeasurementSizeMax>>();
+
+    reverseFilteringLogic.template connect<&voidReverseFilteringLogic<
+        source_link_t, MultiTrajectory::MeasurementSizeMax>>();
+  }
 };
 
 /// Combined options for the Kalman fitter.
