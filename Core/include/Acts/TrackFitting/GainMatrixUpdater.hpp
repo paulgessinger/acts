@@ -32,9 +32,9 @@ class GainMatrixUpdater {
   template <typename source_link_t, size_t kMeasurementSizeMax>
   Result<void> operator()(
       const GeometryContext& gctx,
-      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>&
+      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
           trackState,
-      const NavigationDirection& direction = forward,
+      NavigationDirection direction = forward,
       LoggerWrapper logger = getDummyLogger()) const {
     (void)gctx;
     ACTS_VERBOSE("Invoked GainMatrixUpdater");

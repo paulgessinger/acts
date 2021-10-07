@@ -50,8 +50,15 @@ using ConstantFieldPropagator =
 
 using KalmanUpdater = Acts::GainMatrixUpdater;
 using KalmanSmoother = Acts::GainMatrixSmoother;
-using KalmanFitter =
-    Acts::KalmanFitter<ConstantFieldPropagator, KalmanUpdater, KalmanSmoother>;
+using KalmanFitter = Acts::KalmanFitter<ConstantFieldPropagator>;
+
+KalmanFitterExtensions<TestSourceLink> getExtensions() {
+  KalmanFitterExtensions<TestSourceLink> extensions;
+  extensions.calibrator = TestSourceLinkCalibrator{};
+  extensions.updater = KalmanUpdater{};
+  extensions.smoother = KalmanSmoother{};
+  return extensions;
+}
 
 /// Find outliers using plain distance for testing purposes.
 ///
@@ -187,11 +194,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldNoSurfaceForward) {
   const auto& sourceLinks = measurements.sourceLinks;
   BOOST_REQUIRE_EQUAL(sourceLinks.size(), nMeasurements);
 
-  KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                      VoidReverseFilteringLogic>
-      kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                VoidOutlierFinder(), VoidReverseFilteringLogic(),
-                LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+  KalmanFitterOptions<TestSourceLink> kfOptions(
+      geoCtx, magCtx, calCtx, getExtensions(), LoggerWrapper{*kfLogger},
+      PropagatorPlainOptions());
   // this is the default option. set anyways for consistency
   kfOptions.referenceSurface = nullptr;
 
@@ -218,11 +223,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithSurfaceForward) {
 
   // initial fitter options configured for backward filtereing mode
   // backward filtering requires a reference surface
-  KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                      VoidReverseFilteringLogic>
-      kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                VoidOutlierFinder(), VoidReverseFilteringLogic(),
-                LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+  KalmanFitterOptions<TestSourceLink> kfOptions(
+      geoCtx, magCtx, calCtx, getExtensions(), LoggerWrapper{*kfLogger},
+      PropagatorPlainOptions());
   kfOptions.referenceSurface = &start.referenceSurface();
   // this is the default option. set anyways for consistency
   kfOptions.propagatorPlainOptions.direction = forward;
@@ -281,11 +284,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithSurfaceBackward) {
                                         start.absoluteMomentum(),
                                         start.charge(), start.covariance());
 
-  KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                      VoidReverseFilteringLogic>
-      kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                VoidOutlierFinder(), VoidReverseFilteringLogic(),
-                LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+  KalmanFitterOptions<TestSourceLink> kfOptions(
+      geoCtx, magCtx, calCtx, getExtensions(), LoggerWrapper{*kfLogger},
+      PropagatorPlainOptions());
   kfOptions.referenceSurface = &startOuter.referenceSurface();
   kfOptions.propagatorPlainOptions.direction = backward;
 
@@ -341,11 +342,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithSurfaceAtExit) {
   Vector3 normal(1., 0., 0.);
   auto targetSurface = Surface::makeShared<PlaneSurface>(center, normal);
 
-  KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                      VoidReverseFilteringLogic>
-      kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                VoidOutlierFinder(), (VoidReverseFilteringLogic()),
-                LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+  KalmanFitterOptions<TestSourceLink> kfOptions(
+      geoCtx, magCtx, calCtx, getExtensions(), LoggerWrapper{*kfLogger},
+      PropagatorPlainOptions());
   kfOptions.referenceSurface = targetSurface.get();
 
   auto res = kfZero.fit(sourceLinks, start, kfOptions);
@@ -369,11 +368,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldShuffled) {
   const auto& sourceLinks = measurements.sourceLinks;
   BOOST_REQUIRE_EQUAL(sourceLinks.size(), nMeasurements);
 
-  KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                      VoidReverseFilteringLogic>
-      kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                VoidOutlierFinder(), VoidReverseFilteringLogic(),
-                LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+  KalmanFitterOptions<TestSourceLink> kfOptions(
+      geoCtx, magCtx, calCtx, getExtensions(), LoggerWrapper{*kfLogger},
+      PropagatorPlainOptions());
   kfOptions.referenceSurface = &start.referenceSurface();
 
   BoundVector parameters = BoundVector::Zero();
@@ -423,11 +420,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithHole) {
   BOOST_REQUIRE_EQUAL(sourceLinks.size(), nMeasurements);
 
   // fitter options w/o target surface
-  KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                      VoidReverseFilteringLogic>
-      kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                VoidOutlierFinder(), VoidReverseFilteringLogic(),
-                LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+  KalmanFitterOptions<TestSourceLink> kfOptions(
+      geoCtx, magCtx, calCtx, getExtensions(), LoggerWrapper{*kfLogger},
+      PropagatorPlainOptions());
 
   // always keep the first and last measurement. leaving those in seems to not
   // count the respective surfaces as holes.
@@ -464,11 +459,12 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithOutliers) {
 
   // fitter options w/o target surface. outlier distance is set to be below the
   // default outlier distance in the `MeasurementsCreator`
-  KalmanFitterOptions<TestSourceLinkCalibrator, TestOutlierFinder,
-                      VoidReverseFilteringLogic>
-      kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                TestOutlierFinder{5_mm}, VoidReverseFilteringLogic(),
-                LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+  auto extensions = getExtensions();
+  extensions.outlierFinder = TestOutlierFinder{5_mm};
+
+  KalmanFitterOptions<TestSourceLink> kfOptions(
+      geoCtx, magCtx, calCtx, extensions, LoggerWrapper{*kfLogger},
+      PropagatorPlainOptions());
 
   for (size_t i = 0; i < sourceLinks.size(); ++i) {
     // replace the i-th measurement with an outlier
@@ -515,11 +511,12 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
   // Case without reverse filtering
   {
     // Reverse filtering threshold set at 0.5 GeV
-    KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                        TestReverseFilteringLogic>
-        kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                  VoidOutlierFinder(), TestReverseFilteringLogic{0.1_GeV},
-                  LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+    auto extensions = getExtensions();
+    extensions.reverseFilteringLogic = TestReverseFilteringLogic{0.1_GeV};
+
+    KalmanFitterOptions<TestSourceLink> kfOptions(
+        geoCtx, magCtx, calCtx, extensions, LoggerWrapper{*kfLogger},
+        PropagatorPlainOptions());
     kfOptions.reversedFiltering = false;
     kfOptions.referenceSurface = targetSurface.get();
 
@@ -535,12 +532,13 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
   }
   // Case with Reverse filtering
   {
+    auto extensions = getExtensions();
+    extensions.reverseFilteringLogic = TestReverseFilteringLogic{10_GeV};
+
     // Reverse filtering threshold set at 10 GeV
-    KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                        TestReverseFilteringLogic>
-        kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                  VoidOutlierFinder(), TestReverseFilteringLogic{10_GeV},
-                  LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+    KalmanFitterOptions<TestSourceLink> kfOptions(
+        geoCtx, magCtx, calCtx, extensions, LoggerWrapper{*kfLogger},
+        PropagatorPlainOptions());
     kfOptions.reversedFiltering = false;
     kfOptions.referenceSurface = targetSurface.get();
 
@@ -555,12 +553,13 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
     BOOST_CHECK(val.finished);
   }
   {
+    auto extensions = getExtensions();
+    extensions.reverseFilteringLogic = TestReverseFilteringLogic{0.1_GeV};
+
     // Reverse filtering threshold set at 0.1 GeV forcing the reversed filtering
-    KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                        TestReverseFilteringLogic>
-        kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                  VoidOutlierFinder(), TestReverseFilteringLogic{0.1_GeV},
-                  LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+    KalmanFitterOptions<TestSourceLink> kfOptions(
+        geoCtx, magCtx, calCtx, extensions, LoggerWrapper{*kfLogger},
+        PropagatorPlainOptions());
     kfOptions.reversedFiltering = true;
     kfOptions.referenceSurface = targetSurface.get();
 
@@ -586,11 +585,9 @@ BOOST_AUTO_TEST_CASE(GlobalCovariance) {
   BOOST_REQUIRE_EQUAL(sourceLinks.size(), nMeasurements);
 
   // fitter options w/o target surface
-  KalmanFitterOptions<TestSourceLinkCalibrator, VoidOutlierFinder,
-                      VoidReverseFilteringLogic>
-      kfOptions(geoCtx, magCtx, calCtx, TestSourceLinkCalibrator(),
-                VoidOutlierFinder(), VoidReverseFilteringLogic(),
-                LoggerWrapper{*kfLogger}, PropagatorPlainOptions());
+  KalmanFitterOptions<TestSourceLink> kfOptions(
+      geoCtx, magCtx, calCtx, getExtensions(), LoggerWrapper{*kfLogger},
+      PropagatorPlainOptions());
 
   auto res = kfZero.fit(sourceLinks, start, kfOptions);
   BOOST_REQUIRE(res.ok());

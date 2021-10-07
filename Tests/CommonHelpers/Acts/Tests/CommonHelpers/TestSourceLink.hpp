@@ -10,6 +10,8 @@
 
 #include "Acts/Definitions/TrackParametrization.hpp"
 #include "Acts/EventData/Measurement.hpp"
+#include "Acts/EventData/MultiTrajectory.hpp"
+#include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
 
 #include <array>
@@ -81,16 +83,26 @@ struct TestSourceLinkCalibrator {
   /// constructs the correct type from the stored data. Consequently, it does
   /// not depend on the track parameters, but they still must be part of the
   /// interface.
-  template <typename parameters_t>
-  BoundVariantMeasurement<TestSourceLink> operator()(
-      const TestSourceLink& sl, const parameters_t& /* parameters */) const {
+  // template <typename parameters_t>
+  // BoundVariantMeasurement<TestSourceLink> operator()(
+  //     const TestSourceLink& sl, const parameters_t& /* parameters */) const
+  //     {}
+
+  template <size_t kMeasurementSizeMax>
+  void operator()(
+      const GeometryContext& /*gctx*/,
+      detail_lt::TrackStateProxy<TestSourceLink, kMeasurementSizeMax, false>
+          trackState) const {
+    TestSourceLink sl = trackState.uncalibrated();
     if ((sl.indices[0] != eBoundSize) and (sl.indices[1] != eBoundSize)) {
-      return makeMeasurement(sl, sl.parameters, sl.covariance, sl.indices[0],
-                             sl.indices[1]);
+      auto meas = makeMeasurement(sl, sl.parameters, sl.covariance,
+                                  sl.indices[0], sl.indices[1]);
+      trackState.setCalibrated(meas);
     } else if (sl.indices[0] != eBoundSize) {
-      return makeMeasurement(sl, sl.parameters.head<1>(),
-                             sl.covariance.topLeftCorner<1, 1>(),
-                             sl.indices[0]);
+      auto meas =
+          makeMeasurement(sl, sl.parameters.head<1>(),
+                          sl.covariance.topLeftCorner<1, 1>(), sl.indices[0]);
+      trackState.setCalibrated(meas);
     } else {
       throw std::runtime_error(
           "Tried to extract measurement from invalid TestSourceLink");

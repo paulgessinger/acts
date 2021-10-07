@@ -14,22 +14,32 @@
 
 namespace Acts {
 
-/// @brief void Measurement calibrator and converter
-struct VoidKalmanComponents {
-  /// @brief Public call mimicking a calibrator
-  ///
-  /// @tparam measurement_t Type of the measurement
-  /// @tparam parameter_t Type of the parameters for calibration
-  ///
-  /// @param measurement Measurement to be moved through
-  /// @param parameters Parameters to be used for calibration
-  ///
-  /// @return void-calibrated measurement
-  template <typename measurement_t, typename parameters_t>
-  Result<measurement_t> operator()(measurement_t measurement,
-                                   const parameters_t& parameters) const {
-    (void)parameters;
-    return measurement;
+// /// @brief void Measurement calibrator and converter
+// struct VoidKalmanComponents {
+//   /// @brief Public call mimicking a calibrator
+//   ///
+//   /// @tparam measurement_t Type of the measurement
+//   /// @tparam parameter_t Type of the parameters for calibration
+//   ///
+//   /// @param measurement Measurement to be moved through
+//   /// @param parameters Parameters to be used for calibration
+//   ///
+//   /// @return void-calibrated measurement
+//   template <typename measurement_t, typename parameters_t>
+//   Result<measurement_t> operator()(measurement_t measurement,
+//                                    const parameters_t& parameters) const {
+//     (void)parameters;
+//     return measurement;
+//   }
+// };
+
+struct VoidKalmanCalibrator {
+  template <typename source_link_t, size_t kMeasurementSizeMax>
+  void operator()(
+      const GeometryContext& gctx,
+      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
+          trackState) const {
+    throw std::runtime_error{"VoidKalmanCalibrator should not ever execute"};
   }
 };
 
@@ -44,11 +54,16 @@ struct VoidKalmanUpdater {
   /// @param predicted The predicted parameters
   ///
   /// @return The copied predicted parameters
-  template <typename track_state_t, typename predicted_state_t>
-  auto operator()(track_state_t& trackState,
-                  const predicted_state_t& predicted) const {
-    (void)trackState;
-    return &(predicted.parameters);
+  template <typename source_link_t, size_t kMeasurementSizeMax>
+  Result<void> operator()(
+      const GeometryContext&,
+      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
+          trackState,
+      NavigationDirection direction,
+      LoggerWrapper logger = getDummyLogger()) const {
+    trackState.filtered() = trackState.predicted();
+    trackState.filteredCovariance() = trackState.predictedCovariance();
+    return Result<void>::success();
   }
 };
 
@@ -61,10 +76,14 @@ struct VoidKalmanSmoother {
   /// @param trackStates The track states to be smoothed
   ///
   /// @return The resulting
-  template <typename parameters_t, typename track_states_t>
-  const parameters_t* operator()(track_states_t& trackStates) const {
-    (void)trackStates;
-    return nullptr;
+  template <typename source_link_t>
+  Result<void> operator()(const GeometryContext& gctx,
+                          MultiTrajectory<source_link_t>& trajectory,
+                          size_t entryIndex,
+                          LoggerWrapper logger = getDummyLogger()) const {
+    // trackState.filtered() = trackState.predicted();
+    // trackState.filteredCovariance() = trackState.predictedCovariance();
+    return Result<void>::success();
   }
 };
 
@@ -77,8 +96,10 @@ struct VoidOutlierFinder {
   /// @param trackState The trackState to investigate
   ///
   /// @return Whether it's outlier or not
-  template <typename track_state_t>
-  constexpr bool operator()(const track_state_t& trackState) const {
+  template <typename source_link_t, size_t kMeasurementSizeMax>
+  constexpr bool operator()(
+      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
+          trackState) const {
     (void)trackState;
     return false;
   }
@@ -93,8 +114,10 @@ struct VoidReverseFilteringLogic {
   /// @param trackState The trackState of the last measurement
   ///
   /// @return Whether to run filtering in reversed direction as smoothing or not
-  template <typename track_state_t>
-  constexpr bool operator()(const track_state_t& trackState) const {
+  template <typename source_link_t, size_t kMeasurementSizeMax>
+  constexpr bool operator()(
+      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
+          trackState) const {
     (void)trackState;
     return false;
   }
