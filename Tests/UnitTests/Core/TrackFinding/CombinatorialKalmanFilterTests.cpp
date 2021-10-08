@@ -262,7 +262,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldForward) {
     val.fittedStates.visitBackwards(
         val.lastMeasurementIndices.front(), [&](const auto& trackState) {
           numHits += 1u;
-          nummismatchedHits += (trackId != trackState.uncalibrated().sourceId);
+          nummismatchedHits += (trackId != static_cast<const TestSourceLink&>(
+                                               trackState.uncalibrated())
+                                               .sourceId);
         });
     BOOST_CHECK_EQUAL(numHits, f.detector.numMeasurements);
     BOOST_CHECK_EQUAL(nummismatchedHits, 0u);
@@ -307,7 +309,9 @@ BOOST_AUTO_TEST_CASE(ZeroFieldBackward) {
     val.fittedStates.visitBackwards(
         val.lastMeasurementIndices.front(), [&](const auto& trackState) {
           numHits += 1u;
-          nummismatchedHits += (trackId != trackState.uncalibrated().sourceId);
+          nummismatchedHits += (trackId != static_cast<const TestSourceLink&>(
+                                               trackState.uncalibrated())
+                                               .sourceId);
         });
     BOOST_CHECK_EQUAL(numHits, f.detector.numMeasurements);
     BOOST_CHECK_EQUAL(nummismatchedHits, 0u);

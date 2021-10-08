@@ -135,12 +135,13 @@ void fillTrackState(const TestTrackState& pc, TrackStatePropMask mask,
   ts.pathLength() = pc.pathLength;
   // source link defines the uncalibrated measurement
   if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Uncalibrated)) {
-    ts.uncalibrated() = pc.sourceLink;
+    ts.setUncalibrated(pc.sourceLink);
   }
   // create calibrated measurements from source link
   if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Calibrated)) {
-    auto meas = TestSourceLinkCalibrator()(pc.sourceLink, nullptr);
-    std::visit([&](const auto& m) { ts.setCalibrated(m); }, meas);
+    TestSourceLinkCalibrator()(Acts::GeometryContext{}, ts);
+    // auto meas = TestSourceLinkCalibrator()(pc.sourceLink, nullptr);
+    // std::visit([&](const auto& m) { ts.setCalibrated(m); }, meas);
   }
 }
 
@@ -156,7 +157,7 @@ BOOST_AUTO_TEST_CASE(Build) {
   constexpr TrackStatePropMask kMask = TrackStatePropMask::Predicted;
 
   // construct trajectory w/ multiple components
-  MultiTrajectory<TestSourceLink> t;
+  MultiTrajectory t;
   auto i0 = t.addTrackState(kMask);
   // trajectory bifurcates here into multiple hypotheses
   auto i1a = t.addTrackState(kMask, i0);
@@ -194,7 +195,7 @@ BOOST_AUTO_TEST_CASE(ApplyWithAbort) {
   constexpr TrackStatePropMask kMask = TrackStatePropMask::Predicted;
 
   // construct trajectory with three components
-  MultiTrajectory<TestSourceLink> t;
+  MultiTrajectory t;
   auto i0 = t.addTrackState(kMask);
   auto i1 = t.addTrackState(kMask, i0);
   auto i2 = t.addTrackState(kMask, i1);
@@ -300,7 +301,7 @@ BOOST_AUTO_TEST_CASE(BitmaskOperators) {
 BOOST_AUTO_TEST_CASE(AddTrackStateWithBitMask) {
   using PM = TrackStatePropMask;
 
-  MultiTrajectory<TestSourceLink> t;
+  MultiTrajectory t;
 
   auto ts = t.getTrackState(t.addTrackState(PM::All));
   BOOST_CHECK(ts.hasPredicted());
@@ -380,7 +381,7 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCrossTalk) {
   TestTrackState pc(rng, 2u);
 
   // multi trajectory w/ a single, fully set, track state
-  MultiTrajectory<TestSourceLink> traj;
+  MultiTrajectory traj;
   size_t index = traj.addTrackState();
   {
     auto ts = traj.getTrackState(index);
@@ -420,11 +421,11 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCrossTalk) {
   {
     // create a new (invalid) source link
     TestSourceLink invalid;
-    BOOST_CHECK_NE(tsa.uncalibrated(), invalid);
-    BOOST_CHECK_NE(tsb.uncalibrated(), invalid);
-    tsb.uncalibrated() = invalid;
-    BOOST_CHECK_EQUAL(tsa.uncalibrated(), invalid);
-    BOOST_CHECK_EQUAL(tsb.uncalibrated(), invalid);
+    BOOST_CHECK_NE(&tsa.uncalibrated(), &invalid);
+    BOOST_CHECK_NE(&tsb.uncalibrated(), &invalid);
+    tsb.setUncalibrated(invalid);
+    BOOST_CHECK_EQUAL(&tsa.uncalibrated(), &invalid);
+    BOOST_CHECK_EQUAL(&tsb.uncalibrated(), &invalid);
   }
   {
     // reset measurements w/ full parameters
@@ -472,7 +473,7 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCrossTalk) {
 BOOST_AUTO_TEST_CASE(TrackStateReassignment) {
   TestTrackState pc(rng, 1u);
 
-  MultiTrajectory<TestSourceLink> t;
+  MultiTrajectory t;
   size_t index = t.addTrackState();
   auto ts = t.getTrackState(index);
   fillTrackState(pc, TrackStatePropMask::All, ts);
@@ -487,10 +488,10 @@ BOOST_AUTO_TEST_CASE(TrackStateReassignment) {
   // use temporary measurement to reset calibrated data
   TestTrackState ttsb(rng, 2u);
   auto meas = TestSourceLinkCalibrator()(ttsb.sourceLink, nullptr);
-  auto m2 = std::get<Measurement<TestSourceLink, BoundIndices, 2u>>(meas);
+  auto m2 = std::get<Measurement<BoundIndices, 2u>>(meas);
   ts.setCalibrated(m2);
 
-  BOOST_CHECK_EQUAL(ts.calibratedSize(), m2.size());
+  BOOST_CHECK_EQUAL(ts.calibratedSize(), 2);
   BOOST_CHECK_EQUAL(ts.effectiveCalibrated(), m2.parameters());
   BOOST_CHECK_EQUAL(ts.effectiveCalibratedCovariance(), m2.covariance());
   BOOST_CHECK_EQUAL(ts.effectiveProjector(), m2.projector());
@@ -498,12 +499,11 @@ BOOST_AUTO_TEST_CASE(TrackStateReassignment) {
   // check that the overallocated parts are zeroed
   ParametersVector mParFull = ParametersVector::Zero();
   CovarianceMatrix mCovFull = CovarianceMatrix::Zero();
-  ActsMatrix<MultiTrajectory<TestSourceLink>::MeasurementSizeMax, eBoundSize>
-      projFull;
-  mParFull.head<2>() = m2.parameters();
-  mCovFull.topLeftCorner<2, 2>() = m2.covariance();
+  ActsMatrix<MultiTrajectory::MeasurementSizeMax, eBoundSize> projFull;
+  mParFull.head<2>() = ts.effectiveCalibrated();
+  mCovFull.topLeftCorner<2, 2>() = ts.effectiveCalibratedCovariance();
   projFull.setZero();
-  projFull.topLeftCorner<2, eBoundSize>() = m2.projector();
+  projFull.topLeftCorner<2, eBoundSize>() = ts.effectiveProjector();
   BOOST_CHECK_EQUAL(ts.calibrated(), mParFull);
   BOOST_CHECK_EQUAL(ts.calibratedCovariance(), mCovFull);
   BOOST_CHECK_EQUAL(ts.projector(), projFull);
@@ -514,7 +514,7 @@ BOOST_DATA_TEST_CASE(TrackStateProxyStorage, bd::make({1u, 2u}),
   TestTrackState pc(rng, nMeasurements);
 
   // create trajectory with a single fully-filled random track state
-  MultiTrajectory<TestSourceLink> t;
+  MultiTrajectory t;
   size_t index = t.addTrackState();
   auto ts = t.getTrackState(index);
   fillTrackState(pc, TrackStatePropMask::All, ts);
@@ -547,11 +547,11 @@ BOOST_DATA_TEST_CASE(TrackStateProxyStorage, bd::make({1u, 2u}),
 
   // check that the uncalibrated source link is set
   BOOST_CHECK(ts.hasUncalibrated());
-  BOOST_CHECK_EQUAL(ts.uncalibrated(), pc.sourceLink);
+  BOOST_CHECK_EQUAL(&ts.uncalibrated(), &pc.sourceLink);
 
   // check that the calibrated measurement is set
   BOOST_CHECK(ts.hasCalibrated());
-  BOOST_CHECK_EQUAL(ts.calibratedSourceLink(), pc.sourceLink);
+  BOOST_CHECK_EQUAL(&ts.calibratedSourceLink(), &pc.sourceLink);
   BOOST_CHECK_EQUAL(ts.effectiveCalibrated(),
                     pc.sourceLink.parameters.head(nMeasurements));
   BOOST_CHECK_EQUAL(
@@ -568,8 +568,7 @@ BOOST_DATA_TEST_CASE(TrackStateProxyStorage, bd::make({1u, 2u}),
   }
 
   BOOST_CHECK(ts.hasProjector());
-  ActsMatrix<MultiTrajectory<TestSourceLink>::MeasurementSizeMax, eBoundSize>
-      fullProj;
+  ActsMatrix<MultiTrajectory::MeasurementSizeMax, eBoundSize> fullProj;
   fullProj.setZero();
   {
     // create a temporary measurement to extract the projector matrix
@@ -589,7 +588,7 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyAllocations) {
   TestTrackState pc(rng, 2u);
 
   // this should allocate for all components in the trackstate, plus filtered
-  MultiTrajectory<TestSourceLink> t;
+  MultiTrajectory t;
   size_t i = t.addTrackState(
       TrackStatePropMask::Predicted | TrackStatePropMask::Filtered |
       TrackStatePropMask::Uncalibrated | TrackStatePropMask::Jacobian);
@@ -615,7 +614,7 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyGetMask) {
   PM all = std::accumulate(values.begin(), values.end(), PM::None,
                            [](auto a, auto b) { return a | b; });
 
-  MultiTrajectory<TestSourceLink> mj;
+  MultiTrajectory mj;
   {
     auto ts = mj.getTrackState(mj.addTrackState(PM::All));
     BOOST_CHECK(ts.getMask() == all);
@@ -643,7 +642,7 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
   std::array<PM, 6> values{PM::Predicted, PM::Filtered,     PM::Smoothed,
                            PM::Jacobian,  PM::Uncalibrated, PM::Calibrated};
 
-  MultiTrajectory<TestSourceLink> mj;
+  MultiTrajectory mj;
   auto mkts = [&](PM mask) { return mj.getTrackState(mj.addTrackState(mask)); };
 
   // orthogonal ones
@@ -709,9 +708,9 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
   BOOST_CHECK_NE(ts1.smoothed(), ts2.smoothed());
   BOOST_CHECK_NE(ts1.smoothedCovariance(), ts2.smoothedCovariance());
 
-  BOOST_CHECK_NE(ts1.uncalibrated(), ts2.uncalibrated());
+  BOOST_CHECK_NE(&ts1.uncalibrated(), &ts2.uncalibrated());
 
-  BOOST_CHECK_NE(ts1.calibratedSourceLink(), ts2.calibratedSourceLink());
+  BOOST_CHECK_NE(&ts1.calibratedSourceLink(), &ts2.calibratedSourceLink());
   BOOST_CHECK_NE(ts1.calibrated(), ts2.calibrated());
   BOOST_CHECK_NE(ts1.calibratedCovariance(), ts2.calibratedCovariance());
   BOOST_CHECK_NE(ts1.calibratedSize(), ts2.calibratedSize());
@@ -731,9 +730,9 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
   BOOST_CHECK_EQUAL(ts1.smoothed(), ts2.smoothed());
   BOOST_CHECK_EQUAL(ts1.smoothedCovariance(), ts2.smoothedCovariance());
 
-  BOOST_CHECK_EQUAL(ts1.uncalibrated(), ts2.uncalibrated());
+  BOOST_CHECK_EQUAL(&ts1.uncalibrated(), &ts2.uncalibrated());
 
-  BOOST_CHECK_EQUAL(ts1.calibratedSourceLink(), ts2.calibratedSourceLink());
+  BOOST_CHECK_EQUAL(&ts1.calibratedSourceLink(), &ts2.calibratedSourceLink());
   BOOST_CHECK_EQUAL(ts1.calibrated(), ts2.calibrated());
   BOOST_CHECK_EQUAL(ts1.calibratedCovariance(), ts2.calibratedCovariance());
   BOOST_CHECK_EQUAL(ts1.calibratedSize(), ts2.calibratedSize());
@@ -753,7 +752,7 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
   BOOST_CHECK_NE(ts1.predicted(), ts2.predicted());
   BOOST_CHECK_NE(ts1.predictedCovariance(), ts2.predictedCovariance());
 
-  BOOST_CHECK_NE(ts1.calibratedSourceLink(), ts2.calibratedSourceLink());
+  BOOST_CHECK_NE(&ts1.calibratedSourceLink(), &ts2.calibratedSourceLink());
   BOOST_CHECK_NE(ts1.calibrated(), ts2.calibrated());
   BOOST_CHECK_NE(ts1.calibratedCovariance(), ts2.calibratedCovariance());
   BOOST_CHECK_NE(ts1.calibratedSize(), ts2.calibratedSize());
@@ -770,7 +769,7 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
   BOOST_CHECK_EQUAL(ts1.predicted(), ts2.predicted());
   BOOST_CHECK_EQUAL(ts1.predictedCovariance(), ts2.predictedCovariance());
 
-  BOOST_CHECK_EQUAL(ts1.calibratedSourceLink(), ts2.calibratedSourceLink());
+  BOOST_CHECK_EQUAL(&ts1.calibratedSourceLink(), &ts2.calibratedSourceLink());
   BOOST_CHECK_EQUAL(ts1.calibrated(), ts2.calibrated());
   BOOST_CHECK_EQUAL(ts1.calibratedCovariance(), ts2.calibratedCovariance());
   BOOST_CHECK_EQUAL(ts1.calibratedSize(), ts2.calibratedSize());

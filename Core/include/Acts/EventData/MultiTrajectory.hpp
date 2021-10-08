@@ -219,7 +219,7 @@ class TrackStateProxy {
     }
 
     if (ACTS_CHECK_BIT(src, PM::Uncalibrated)) {
-      uncalibrated() = other.uncalibrated();
+      setUncalibrated(other.uncalibrated());
     }
 
     if (ACTS_CHECK_BIT(src, PM::Jacobian)) {
@@ -227,7 +227,7 @@ class TrackStateProxy {
     }
 
     if (ACTS_CHECK_BIT(src, PM::Calibrated)) {
-      calibratedSourceLink() = other.calibratedSourceLink();
+      setCalibratedSourceLink(other.calibratedSourceLink());
       calibrated() = other.calibrated();
       calibratedCovariance() = other.calibratedCovariance();
       data().measdim = other.data().measdim;
@@ -409,6 +409,12 @@ class TrackStateProxy {
   /// @note This does not necessarily have to be the uncalibrated source link.
   /// @return The source link
   const SourceLink& calibratedSourceLink() const;
+
+  template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
+  void setCalibratedSourceLink(const SourceLink& sourceLink) {
+    assert(data().icalibratedsourcelink != IndexData::kInvalid);
+    m_traj->m_sourceLinks[data().icalibratedsourcelink] = &sourceLink;
+  }
 
   /// The source link of the calibrated measurement. Mutable version
   /// @note This does not necessarily have to be the uncalibrated source link.

@@ -9,6 +9,8 @@
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
+#include "Acts/EventData/MultiTrajectory.hpp"
+#include "Acts/EventData/TrackParameters.hpp"
 #include "Acts/Geometry/Polyhedron.hpp"
 #include "Acts/Surfaces/CylinderBounds.hpp"
 #include "Acts/Surfaces/CylinderSurface.hpp"
@@ -170,104 +172,99 @@ struct EventDataView3D {
     }
   }
 
-  // /// Helper method to draw one trajectory stored in a MultiTrajectory object
-  // ///
-  // /// @tparam source_link_t The source link type
-  // /// @param helper [in, out] The visualization helper
-  // /// @param multiTraj The MultiTrajectory storing the trajectory to be drawn
-  // /// @param entryIndex The trajectory entry index
-  // /// @param gctx The geometry context for which it is drawn
-  // /// @param momentumScale The scale of the momentum
-  // /// @param locErrorScale  The scale of the local error
-  // /// @param angularErrorScale The sclae of the angular error
-  // /// @param surfaceConfig The visualization options for the surface
-  // /// @param measurementConfig The visualization options for the measurement
-  // /// @param predictedConfig The visualization options for the predicted
-  // /// measurement
-  // /// @param filteredConfig The visualization options for the filtered
-  // /// parameters
-  // /// @param smoothedConfig The visualization options for the smoothed
-  // /// parameters
-  // template <typename source_link_t>
-  // static inline void drawMultiTrajectory(
-  //     IVisualization3D& helper,
-  //     const Acts::MultiTrajectory<source_link_t>& multiTraj,
-  //     const size_t& entryIndex, const GeometryContext& gctx =
-  //     GeometryContext(), double momentumScale = 1., double locErrorScale
-  //     = 1., double angularErrorScale = 1., const ViewConfig& surfaceConfig =
-  //     s_viewSensitive, const ViewConfig& measurementConfig =
-  //     s_viewMeasurement, const ViewConfig& predictedConfig = s_viewPredicted,
-  //     const ViewConfig& filteredConfig = s_viewFiltered,
-  //     const ViewConfig& smoothedConfig = s_viewSmoothed) {
-  //   // Visit the track states on the trajectory
-  //   multiTraj.visitBackwards(entryIndex, [&](const auto& state) {
-  //     // Only draw the measurement states
-  //     if (not state.typeFlags().test(Acts::TrackStateFlag::MeasurementFlag))
-  //     {
-  //       return true;
-  //     }
+  /// Helper method to draw one trajectory stored in a MultiTrajectory object
+  ///
+  /// @tparam source_link_t The source link type
+  /// @param helper [in, out] The visualization helper
+  /// @param multiTraj The MultiTrajectory storing the trajectory to be drawn
+  /// @param entryIndex The trajectory entry index
+  /// @param gctx The geometry context for which it is drawn
+  /// @param momentumScale The scale of the momentum
+  /// @param locErrorScale  The scale of the local error
+  /// @param angularErrorScale The sclae of the angular error
+  /// @param surfaceConfig The visualization options for the surface
+  /// @param measurementConfig The visualization options for the measurement
+  /// @param predictedConfig The visualization options for the predicted
+  /// measurement
+  /// @param filteredConfig The visualization options for the filtered
+  /// parameters
+  /// @param smoothedConfig The visualization options for the smoothed
+  /// parameters
+  static inline void drawMultiTrajectory(
+      IVisualization3D& helper, const Acts::MultiTrajectory& multiTraj,
+      const size_t& entryIndex, const GeometryContext& gctx = GeometryContext(),
+      double momentumScale = 1., double locErrorScale = 1.,
+      double angularErrorScale = 1.,
+      const ViewConfig& surfaceConfig = s_viewSensitive,
+      const ViewConfig& measurementConfig = s_viewMeasurement,
+      const ViewConfig& predictedConfig = s_viewPredicted,
+      const ViewConfig& filteredConfig = s_viewFiltered,
+      const ViewConfig& smoothedConfig = s_viewSmoothed) {
+    // Visit the track states on the trajectory
+    multiTraj.visitBackwards(entryIndex, [&](const auto& state) {
+      // Only draw the measurement states
+      if (not state.typeFlags().test(Acts::TrackStateFlag::MeasurementFlag)) {
+        return true;
+      }
 
-  //     // Use smaller scaling factors for the first state
-  //     // @Todo: add parameter for the first state error scaling
-  //     if (state.index() == 0) {
-  //       locErrorScale = locErrorScale * 0.1;
-  //       angularErrorScale = angularErrorScale * 0.1;
-  //     }
+      // Use smaller scaling factors for the first state
+      // @Todo: add parameter for the first state error scaling
+      if (state.index() == 0) {
+        locErrorScale = locErrorScale * 0.1;
+        angularErrorScale = angularErrorScale * 0.1;
+      }
 
-  //     // First, if necessary, draw the surface
-  //     if (surfaceConfig.visible) {
-  //       GeometryView3D::drawSurface(helper, state.referenceSurface(), gctx,
-  //                                   Transform3::Identity(), surfaceConfig);
-  //     }
+      // First, if necessary, draw the surface
+      if (surfaceConfig.visible) {
+        GeometryView3D::drawSurface(helper, state.referenceSurface(), gctx,
+                                    Transform3::Identity(), surfaceConfig);
+      }
 
-  //     // Second, if necessary and present, draw the calibrated measurement
-  //     (only
-  //     // draw 2D measurement here)
-  //     // @Todo: how to draw 1D measurement?
-  //     if (measurementConfig.visible and state.hasCalibrated() and
-  //         state.calibratedSize() == 2) {
-  //       const Vector2& lposition = state.calibrated().template head<2>();
-  //       const SymMatrix2 covariance =
-  //           state.calibratedCovariance().template topLeftCorner<2, 2>();
-  //       drawCovarianceCartesian(helper, lposition, covariance,
-  //                               state.referenceSurface().transform(gctx),
-  //                               locErrorScale, measurementConfig);
-  //     }
+      // Second, if necessary and present, draw the calibrated measurement (only
+      // draw 2D measurement here)
+      // @Todo: how to draw 1D measurement?
+      if (measurementConfig.visible and state.hasCalibrated() and
+          state.calibratedSize() == 2) {
+        const Vector2& lposition = state.calibrated().template head<2>();
+        const SymMatrix2 covariance =
+            state.calibratedCovariance().template topLeftCorner<2, 2>();
+        drawCovarianceCartesian(helper, lposition, covariance,
+                                state.referenceSurface().transform(gctx),
+                                locErrorScale, measurementConfig);
+      }
 
-  //     // Last, if necessary and present, draw the track parameters
-  //     // (a) predicted track parameters
-  //     if (predictedConfig.visible and state.hasPredicted()) {
-  //       drawBoundTrackParameters(
-  //           helper,
-  //           BoundTrackParameters(state.referenceSurface().getSharedPtr(),
-  //                                state.predicted(),
-  //                                state.predictedCovariance()),
-  //           gctx, momentumScale, locErrorScale, angularErrorScale,
-  //           predictedConfig, predictedConfig, ViewConfig(false));
-  //     }
-  //     // (b) filtered track parameters
-  //     if (filteredConfig.visible and state.hasFiltered()) {
-  //       drawBoundTrackParameters(
-  //           helper,
-  //           BoundTrackParameters(state.referenceSurface().getSharedPtr(),
-  //                                state.filtered(),
-  //                                state.filteredCovariance()),
-  //           gctx, momentumScale, locErrorScale, angularErrorScale,
-  //           filteredConfig, filteredConfig, ViewConfig(false));
-  //     }
-  //     // (c) smoothed track parameters
-  //     if (smoothedConfig.visible and state.hasSmoothed()) {
-  //       drawBoundTrackParameters(
-  //           helper,
-  //           BoundTrackParameters(state.referenceSurface().getSharedPtr(),
-  //                                state.smoothed(),
-  //                                state.smoothedCovariance()),
-  //           gctx, momentumScale, locErrorScale, angularErrorScale,
-  //           smoothedConfig, smoothedConfig, ViewConfig(false));
-  //     }
-  //     return true;
-  //   });
-  // }
+      // Last, if necessary and present, draw the track parameters
+      // (a) predicted track parameters
+      if (predictedConfig.visible and state.hasPredicted()) {
+        drawBoundTrackParameters(
+            helper,
+            BoundTrackParameters(state.referenceSurface().getSharedPtr(),
+                                 state.predicted(),
+                                 state.predictedCovariance()),
+            gctx, momentumScale, locErrorScale, angularErrorScale,
+            predictedConfig, predictedConfig, ViewConfig(false));
+      }
+      // (b) filtered track parameters
+      if (filteredConfig.visible and state.hasFiltered()) {
+        drawBoundTrackParameters(
+            helper,
+            BoundTrackParameters(state.referenceSurface().getSharedPtr(),
+                                 state.filtered(), state.filteredCovariance()),
+            gctx, momentumScale, locErrorScale, angularErrorScale,
+            filteredConfig, filteredConfig, ViewConfig(false));
+      }
+      // (c) smoothed track parameters
+      if (smoothedConfig.visible and state.hasSmoothed()) {
+        drawBoundTrackParameters(
+            helper,
+            BoundTrackParameters(state.referenceSurface().getSharedPtr(),
+                                 state.smoothed(), state.smoothedCovariance()),
+            gctx, momentumScale, locErrorScale, angularErrorScale,
+            smoothedConfig, smoothedConfig, ViewConfig(false));
+      }
+      return true;
+    });
+  }
 };
 
 }  // namespace Acts

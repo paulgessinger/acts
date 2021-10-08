@@ -9,6 +9,8 @@
 #include "ActsExamples/Alignment/AlignmentAlgorithm.hpp"
 
 #include "Acts/Surfaces/PerigeeSurface.hpp"
+#include "Acts/TrackFitting/GainMatrixSmoother.hpp"
+#include "Acts/TrackFitting/GainMatrixUpdater.hpp"
 #include "ActsExamples/EventData/ProtoTrack.hpp"
 #include "ActsExamples/EventData/Trajectories.hpp"
 #include "ActsExamples/Framework/WhiteBoard.hpp"
@@ -93,12 +95,20 @@ ActsExamples::ProcessCode ActsExamples::AlignmentAlgorithm::execute(
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
       Acts::Vector3{0., 0., 0.});
 
+  Acts::KalmanFitterExtensions extensions;
+  MeasurementCalibrator calibrator{measurements};
+  extensions.calibrator.connect<&MeasurementCalibrator::eval>(&calibrator);
+  Acts::GainMatrixUpdater kfUpdater;
+  Acts::GainMatrixSmoother kfSmoother;
+  extensions.updater.connect<&Acts::GainMatrixUpdater::operator()>(&kfUpdater);
+  extensions.smoother.connect<&Acts::GainMatrixSmoother::operator()>(
+      &kfSmoother);
+
   // Set the KalmanFitter options
-  TrackFitterOptions kfOptions(
-      ctx.geoContext, ctx.magFieldContext, ctx.calibContext,
-      MeasurementCalibrator(measurements), Acts::VoidOutlierFinder(),
-      Acts::VoidReverseFilteringLogic(), Acts::LoggerWrapper{logger()},
-      Acts::PropagatorPlainOptions(), &(*pSurface));
+  TrackFitterOptions kfOptions(ctx.geoContext, ctx.magFieldContext,
+                               ctx.calibContext, extensions,
+                               Acts::LoggerWrapper{logger()},
+                               Acts::PropagatorPlainOptions(), &(*pSurface));
 
   // Set the alignment options
   ActsAlignment::AlignmentOptions<TrackFitterOptions> alignOptions(

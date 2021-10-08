@@ -57,7 +57,7 @@ struct TestSourceLink final : public SourceLink {
         parameters(params),
         covariance(cov) {}
   /// Default-construct an invalid source link to satisfy SourceLinkConcept.
-  TestSourceLink() = default;
+  TestSourceLink() : SourceLink{GeometryIdentifier{}} {}
   TestSourceLink(const TestSourceLink&) = default;
   TestSourceLink(TestSourceLink&&) = default;
   TestSourceLink& operator=(const TestSourceLink&) = default;
@@ -111,10 +111,21 @@ struct TestSourceLinkCalibrator {
   /// constructs the correct type from the stored data. Consequently, it does
   /// not depend on the track parameters, but they still must be part of the
   /// interface.
-  // template <typename parameters_t>
-  // BoundVariantMeasurement<TestSourceLink> operator()(
-  //     const TestSourceLink& sl, const parameters_t& /* parameters */) const
-  //     {}
+  template <typename parameters_t>
+  BoundVariantMeasurement operator()(
+      const TestSourceLink& sl, const parameters_t& /* parameters */) const {
+    if ((sl.indices[0] != eBoundSize) and (sl.indices[1] != eBoundSize)) {
+      return makeMeasurement(sl, sl.parameters, sl.covariance, sl.indices[0],
+                             sl.indices[1]);
+    } else if (sl.indices[0] != eBoundSize) {
+      return makeMeasurement(sl, sl.parameters.head<1>(),
+                             sl.covariance.topLeftCorner<1, 1>(),
+                             sl.indices[0]);
+    } else {
+      throw std::runtime_error(
+          "Tried to extract measurement from invalid TestSourceLink");
+    }
+  }
 
   void operator()(const GeometryContext& gctx,
                   MultiTrajectory::TrackStateProxy trackState) const {

@@ -58,7 +58,7 @@ struct Delegate<Ret(Args...)> {
 
   template <auto Callable>
   void connect() {
-    m_function = [](const void* payload, Args... args) -> Ret {
+    m_function = [](const void*, Args... args) -> Ret {
       return std::invoke(Callable, std::forward<Args>(args)...);
     };
   }
@@ -77,7 +77,7 @@ struct Delegate<Ret(Args...)> {
   }
 
  private:
-  void* m_payload;
+  void* m_payload{nullptr};
   function_type m_function;
 };
 

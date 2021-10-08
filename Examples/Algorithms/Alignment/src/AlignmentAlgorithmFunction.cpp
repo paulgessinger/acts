@@ -26,7 +26,7 @@ using Updater = Acts::GainMatrixUpdater;
 using Smoother = Acts::GainMatrixSmoother;
 using Stepper = Acts::EigenStepper<>;
 using Propagator = Acts::Propagator<Stepper, Acts::Navigator>;
-using Fitter = Acts::KalmanFitter<Propagator, Updater, Smoother>;
+using Fitter = Acts::KalmanFitter<Propagator>;
 using Alignment = ActsAlignment::Alignment<Fitter>;
 
 struct AlignmentFunctionImpl

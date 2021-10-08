@@ -28,7 +28,7 @@ class DigitizationSourceLink final : public SourceLink {
 
   /// Construct and invalid source link. Must be default constructible to
   /// satisfy SourceLinkConcept.
-  DigitizationSourceLink() = default;
+  DigitizationSourceLink() : SourceLink{GeometryIdentifier{}} {}
   DigitizationSourceLink(const DigitizationSourceLink&) = default;
   DigitizationSourceLink(DigitizationSourceLink&&) = default;
   DigitizationSourceLink& operator=(const DigitizationSourceLink&) = default;
