@@ -16,6 +16,7 @@
 #include "Acts/EventData/MeasurementHelpers.hpp"
 #include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/EventData/MultiTrajectoryHelpers.hpp"
+#include "Acts/EventData/SourceLink.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/MagneticField/MagneticFieldContext.hpp"
@@ -63,11 +64,11 @@ struct Delegate<Ret(Args...)> {
   }
 
   template <auto Callable, typename Type>
-  void connect(Type* type) {
-    m_payload = type;
+  void connect(Type* _type) {
+    m_payload = _type;
     m_function = [](const void* payload, Args... args) -> Ret {
-      const auto* type = static_cast<const Type*>(payload);
-      return std::invoke(Callable, type, std::forward<Args>(args)...);
+      const auto* __type = static_cast<const Type*>(payload);
+      return std::invoke(Callable, __type, std::forward<Args>(args)...);
     };
   }
 
@@ -120,7 +121,7 @@ struct KalmanFitterExtensions {
 
 /// Combined options for the Kalman fitter.
 ///
-/// @tparam SOURCE_LINK Source link type
+/// @tparam SourceLink Source link type
 struct KalmanFitterOptions {
   /// PropagatorOptions with context.
   ///
@@ -271,7 +272,7 @@ class KalmanFitter {
 
   /// @brief Propagator Actor plugin for the KalmanFilter
   ///
-  /// @tparam SOURCE_LINK is an type fulfilling the @c SourceLinkConcept
+  /// @tparam SourceLink is an type fulfilling the @c SourceLinkConcept
   /// @tparam parameters_t The type of parameters used for "local" paremeters.
   /// @tparam calibrator_t The type of calibrator
   /// @tparam outlier_finder_t Type of the outlier finder class
@@ -288,8 +289,9 @@ class KalmanFitter {
     const Surface* targetSurface = nullptr;
 
     /// Allows retrieving measurements for a surface
-    const std::map<GeometryIdentifier, SOURCE_LINK>* inputMeasurements =
-        nullptr;
+    const std::map<GeometryIdentifier,
+                   std::reference_wrapper<const SourceLink>>*
+        inputMeasurements = nullptr;
 
     /// Whether to consider multiple scattering.
     bool multipleScattering = true;
@@ -563,7 +565,7 @@ class KalmanFitter {
         trackStateProxy.setReferenceSurface(surface->getSharedPtr());
 
         // assign the source link to the track state
-        trackStateProxy.uncalibrated() = sourcelink_it->second;
+        trackStateProxy.setUncalibrated(sourcelink_it->second);
 
         // Fill the track state
         trackStateProxy.predicted() = std::move(boundParams.parameters());
@@ -757,7 +759,8 @@ class KalmanFitter {
         trackStateProxy.setReferenceSurface(surface->getSharedPtr());
 
         // Assign the source link to the detached track state
-        trackStateProxy.uncalibrated() = sourcelink_it->second;
+        // trackStateProxy.uncalibrated() = sourcelink_it->second;
+        trackStateProxy.setUncalibrated(sourcelink_it->second);
 
         // Fill the track state
         trackStateProxy.predicted() = std::move(boundParams.parameters());
@@ -1052,7 +1055,7 @@ class KalmanFitter {
   /// the filter and smoother/reversed filter
   ///
   /// @tparam start_parameters_t Type of the initial parameters
-  /// @tparam SOURCE_LINK Type of the source link
+  /// @tparam SourceLink Type of the source link
   /// @tparam parameters_t Type of parameters used for local parameters
   ///
   /// @param sourcelinks The fittable uncalibrated measurements
@@ -1063,27 +1066,28 @@ class KalmanFitter {
   /// the fit.
   ///
   /// @return the output as an output track
-  template <typename start_parameters_t,
+  template <typename source_link_iterator_t, typename start_parameters_t,
             typename parameters_t = BoundTrackParameters,
             bool _isdn = isDirectNavigator>
-  auto fit(const std::vector<SOURCE_LINK>& sourcelinks,
+  auto fit(source_link_iterator_t it, source_link_iterator_t end,
            const start_parameters_t& sParameters,
            const KalmanFitterOptions& kfOptions) const
       -> std::enable_if_t<!_isdn, Result<KalmanFitterResult>> {
     const auto& logger = kfOptions.logger;
 
-    static_assert(SourceLinkConcept<SOURCE_LINK>,
-                  "Source link does not fulfill SourceLinkConcept");
-
     // To be able to find measurements later, we put them into a map
     // We need to copy input SourceLinks anyways, so the map can own them.
-    ACTS_VERBOSE("Preparing " << sourcelinks.size() << " input measurements");
-    std::map<GeometryIdentifier, SOURCE_LINK> inputMeasurements;
-    for (const auto& sl : sourcelinks) {
+    ACTS_VERBOSE("Preparing " << std::distance(it, end)
+                              << " input measurements");
+    std::map<GeometryIdentifier, std::reference_wrapper<const SourceLink>>
+        inputMeasurements;
+    // for (const auto& sl : sourcelinks) {
+    for (; it != end; ++it) {
+      const SourceLink& sl = *it;
       inputMeasurements.emplace(sl.geometryId(), sl);
     }
 
-    // Create the ActionList and AbortList
+    // // Create the ActionList and AbortList
     using KalmanAborter = Aborter<parameters_t>;
     using KalmanActor = Actor<parameters_t>;
     using KalmanResult = typename KalmanActor::result_type;
@@ -1094,7 +1098,7 @@ class KalmanFitter {
     PropagatorOptions<Actors, Aborters> kalmanOptions(
         kfOptions.geoContext, kfOptions.magFieldContext, logger);
 
-    // Set the trivial propagator options
+    // // Set the trivial propagator options
     kalmanOptions.setPlainOptions(kfOptions.propagatorPlainOptions);
 
     // Catch the actor and set the measurements
@@ -1142,7 +1146,7 @@ class KalmanFitter {
   /// Fit implementation of the foward filter, calls the
   /// the filter and smoother/reversed filter
   ///
-  /// @tparam SOURCE_LINK Type of the source link
+  /// @tparam SourceLink Type of the source link
   /// @tparam start_parameters_t Type of the initial parameters
   /// @tparam parameters_t Type of parameters used for local parameters
   ///
@@ -1156,23 +1160,24 @@ class KalmanFitter {
   /// the fit.
   ///
   /// @return the output as an output track
-  template <typename start_parameters_t,
+  template <typename source_link_iterator_t, typename start_parameters_t,
             typename parameters_t = BoundTrackParameters,
             bool _isdn = isDirectNavigator>
-  auto fit(const std::vector<SOURCE_LINK>& sourcelinks,
+  auto fit(source_link_iterator_t it, source_link_iterator_t end,
            const start_parameters_t& sParameters,
            const KalmanFitterOptions& kfOptions,
            const std::vector<const Surface*>& sSequence) const
       -> std::enable_if_t<_isdn, Result<KalmanFitterResult>> {
     const auto& logger = kfOptions.logger;
-    static_assert(SourceLinkConcept<SOURCE_LINK>,
-                  "Source link does not fulfill SourceLinkConcept");
 
     // To be able to find measurements later, we put them into a map
     // We need to copy input SourceLinks anyways, so the map can own them.
-    ACTS_VERBOSE("Preparing " << sourcelinks.size() << " input measurements");
-    std::map<GeometryIdentifier, SOURCE_LINK> inputMeasurements;
-    for (const auto& sl : sourcelinks) {
+    ACTS_VERBOSE("Preparing " << std::distance(it, end)
+                              << " input measurements");
+    std::map<GeometryIdentifier, std::reference_wrapper<const SourceLink>>
+        inputMeasurements;
+    for (; it != end; ++it) {
+      const SourceLink& sl = *it;
       inputMeasurements.emplace(sl.geometryId(), sl);
     }
 

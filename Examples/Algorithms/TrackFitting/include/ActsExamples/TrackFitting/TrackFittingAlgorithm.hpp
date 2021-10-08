@@ -30,11 +30,9 @@ class TrackFittingAlgorithm final : public BareAlgorithm {
  public:
   /// Track fitter function that takes input measurements, initial trackstate
   /// and fitter options and returns some track-fitter-specific result.
-  using TrackFitterOptions =
-      Acts::KalmanFitterOptions<MeasurementCalibrator, Acts::VoidOutlierFinder,
-                                Acts::VoidReverseFilteringLogic>;
-  using TrackFitterResult =
-      Acts::Result<Acts::KalmanFitterResult<IndexSourceLink>>;
+  using TrackFitterOptions = Acts::KalmanFitterOptions;
+
+  using TrackFitterResult = Acts::Result<Acts::KalmanFitterResult>;
 
   /// Fit function that takes the above parameters and runs a fit
   /// @note This is separated into a virtual interface to keep compilation units
@@ -128,9 +126,7 @@ inline ActsExamples::TrackFittingAlgorithm::TrackFitterResult
 ActsExamples::TrackFittingAlgorithm::fitTrack(
     const std::vector<ActsExamples::IndexSourceLink>& sourceLinks,
     const ActsExamples::TrackParameters& initialParameters,
-    const Acts::KalmanFitterOptions<MeasurementCalibrator,
-                                    Acts::VoidOutlierFinder,
-                                    Acts::VoidReverseFilteringLogic>& options,
+    const Acts::KalmanFitterOptions& options,
     const std::vector<const Acts::Surface*>& surfSequence) const {
   if (m_cfg.directNavigation) {
     return (*m_cfg.dFit)(sourceLinks, initialParameters, options, surfSequence);

@@ -34,14 +34,15 @@ namespace Acts {
 // };
 
 struct VoidKalmanCalibrator {
-  void operator()(const GeometryContext& gctx,
-                  MultiTrajectory::TrackStateProxy trackState) const {
+  void operator()(const GeometryContext& /*gctx*/,
+                  MultiTrajectory::TrackStateProxy /*trackState*/) const {
     throw std::runtime_error{"VoidKalmanCalibrator should not ever execute"};
   }
 };
 
-void voidKalmanCalibrator(const GeometryContext& gctx,
-                          MultiTrajectory::TrackStateProxy trackState) {
+inline void voidKalmanCalibrator(
+    const GeometryContext& /*gctx*/,
+    MultiTrajectory::TrackStateProxy /*trackState*/) {
   throw std::runtime_error{"VoidKalmanCalibrator should not ever execute"};
 }
 
@@ -58,18 +59,16 @@ struct VoidKalmanUpdater {
   /// @return The copied predicted parameters
   Result<void> operator()(const GeometryContext&,
                           MultiTrajectory::TrackStateProxy trackState,
-                          NavigationDirection direction,
-                          LoggerWrapper logger = getDummyLogger()) const {
+                          NavigationDirection, LoggerWrapper) const {
     trackState.filtered() = trackState.predicted();
     trackState.filteredCovariance() = trackState.predictedCovariance();
     return Result<void>::success();
   }
 };
 
-Result<void> voidKalmanUpdater(const GeometryContext&,
-                               MultiTrajectory::TrackStateProxy trackState,
-                               NavigationDirection direction,
-                               LoggerWrapper logger = getDummyLogger()) {
+inline Result<void> voidKalmanUpdater(
+    const GeometryContext&, MultiTrajectory::TrackStateProxy trackState,
+    NavigationDirection, LoggerWrapper) {
   trackState.filtered() = trackState.predicted();
   trackState.filteredCovariance() = trackState.predictedCovariance();
   return Result<void>::success();
@@ -84,18 +83,16 @@ struct VoidKalmanSmoother {
   /// @param trackStates The track states to be smoothed
   ///
   /// @return The resulting
-  Result<void> operator()(const GeometryContext& gctx,
-                          MultiTrajectory& trajectory, size_t entryIndex,
-                          LoggerWrapper logger = getDummyLogger()) const {
+  Result<void> operator()(const GeometryContext&, MultiTrajectory&, size_t,
+                          LoggerWrapper) const {
     // trackState.filtered() = trackState.predicted();
     // trackState.filteredCovariance() = trackState.predictedCovariance();
     return Result<void>::success();
   }
 };
 
-Result<void> voidKalmanSmoother(const GeometryContext& gctx,
-                                MultiTrajectory& trajectory, size_t entryIndex,
-                                LoggerWrapper logger = getDummyLogger()) {
+inline Result<void> voidKalmanSmoother(const GeometryContext&, MultiTrajectory&,
+                                       size_t, LoggerWrapper) {
   return Result<void>::success();
 }
 
@@ -114,7 +111,7 @@ struct VoidOutlierFinder {
   }
 };
 
-bool voidOutlierFinder(MultiTrajectory::TrackStateProxy trackState) {
+inline bool voidOutlierFinder(MultiTrajectory::TrackStateProxy trackState) {
   (void)trackState;
   return false;
 }
@@ -134,7 +131,8 @@ struct VoidReverseFilteringLogic {
   }
 };
 
-bool voidReverseFilteringLogic(MultiTrajectory::TrackStateProxy trackState) {
+inline bool voidReverseFilteringLogic(
+    MultiTrajectory::TrackStateProxy trackState) {
   (void)trackState;
   return false;
 }

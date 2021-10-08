@@ -26,9 +26,9 @@ using Updater = Acts::GainMatrixUpdater;
 using Smoother = Acts::GainMatrixSmoother;
 using Stepper = Acts::EigenStepper<>;
 using Propagator = Acts::Propagator<Stepper, Acts::Navigator>;
-using Fitter = Acts::KalmanFitter<Propagator, Updater, Smoother>;
+using Fitter = Acts::KalmanFitter<Propagator>;
 using DirectPropagator = Acts::Propagator<Stepper, Acts::DirectNavigator>;
-using DirectFitter = Acts::KalmanFitter<DirectPropagator, Updater, Smoother>;
+using DirectFitter = Acts::KalmanFitter<DirectPropagator>;
 
 struct TrackFitterFunctionImpl
     : public ActsExamples::TrackFittingAlgorithm::TrackFitterFunction {
@@ -41,7 +41,8 @@ struct TrackFitterFunctionImpl
       const ActsExamples::TrackParameters& initialParameters,
       const ActsExamples::TrackFittingAlgorithm::TrackFitterOptions& options)
       const override {
-    return trackFitter.fit(sourceLinks, initialParameters, options);
+    return trackFitter.fit(sourceLinks.begin(), sourceLinks.end(),
+                           initialParameters, options);
   };
 };
 
@@ -55,7 +56,8 @@ struct DirectedFitterFunctionImpl
       const ActsExamples::TrackParameters& initialParameters,
       const ActsExamples::TrackFittingAlgorithm::TrackFitterOptions& options,
       const std::vector<const Acts::Surface*>& sSequence) const override {
-    return fitter.fit(sourceLinks, initialParameters, options, sSequence);
+    return fitter.fit(sourceLinks.begin(), sourceLinks.end(), initialParameters,
+                      options, sSequence);
   };
 };
 

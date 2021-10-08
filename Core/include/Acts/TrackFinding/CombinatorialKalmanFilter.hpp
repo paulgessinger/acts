@@ -148,7 +148,7 @@ struct CombinatorialKalmanFilterOptions {
 template <typename source_link_t>
 struct CombinatorialKalmanFilterResult {
   // Fitted states that the actor has handled.
-  MultiTrajectory<source_link_t> fittedStates;
+  MultiTrajectory fittedStates;
 
   // This is the indices of the 'tip' of the tracks stored in multitrajectory.
   // This correspond to the last measurment state in the multitrajectory.
@@ -539,7 +539,7 @@ class CombinatorialKalmanFilter {
             m_sourcelinkAccessor.range(surface->geometryId());
         // Calibrate all the source links on the surface since the selection has
         // to be done based on calibrated measurement
-        std::vector<BoundVariantMeasurement<SourceLink>> measurements;
+        std::vector<BoundVariantMeasurement> measurements;
         measurements.reserve(nSourcelinks);
         for (auto it = lower_it; it != upper_it; ++it) {
           measurements.emplace_back(
@@ -776,7 +776,7 @@ class CombinatorialKalmanFilter {
     Result<std::pair<size_t, TipState>> addSourcelinkState(
         const TrackStatePropMask& stateMask, const BoundState& boundState,
         const SourceLink& sourcelink,
-        const BoundVariantMeasurement<SourceLink>& measurement, bool isOutlier,
+        const BoundVariantMeasurement& measurement, bool isOutlier,
         result_type& result, const GeometryContext& geoContext,
         const size_t& prevTip, const TipState& prevTipState,
         size_t neighborTip = SIZE_MAX, size_t sharedTip = SIZE_MAX,
@@ -820,7 +820,8 @@ class CombinatorialKalmanFilter {
         auto shared = result.fittedStates.getTrackState(sharedTip);
         trackStateProxy.data().iuncalibrated = shared.data().iuncalibrated;
       } else {
-        trackStateProxy.uncalibrated() = sourcelink;
+        // trackStateProxy.uncalibrated() = sourcelink;
+        trackStateProxy.setUncalibrated(sourcelink);
       }
       std::visit(
           [&](const auto& calibrated) {
@@ -1177,9 +1178,8 @@ class CombinatorialKalmanFilter {
     static_assert(
         SourceLinkAccessorConcept<source_link_accessor_t>,
         "The source link accessor does not fullfill SourceLinkAccessorConcept");
-    using SourceLink = typename source_link_accessor_t::Value;
-    static_assert(SourceLinkConcept<SourceLink>,
-                  "Source link does not fulfill SourceLinkConcept");
+    // static_assert(SourceLinkConcept<SourceLink>,
+    //               "Source link does not fulfill SourceLinkConcept");
     static_assert(
         std::is_same_v<GeometryIdentifier,
                        typename source_link_accessor_t::Key>,

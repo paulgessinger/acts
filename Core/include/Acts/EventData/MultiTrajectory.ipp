@@ -129,9 +129,10 @@ inline auto TrackStateProxy<M, ReadOnly>::projector() const -> Projector {
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::uncalibrated() const
-    -> const SOURCE_LINK& {
+    -> const SourceLink& {
   assert(data().iuncalibrated != IndexData::kInvalid);
-  return m_traj->m_sourceLinks[data().iuncalibrated];
+  assert(m_traj->m_sourceLinks[data().iuncalibrated] != nullptr);
+  return *m_traj->m_sourceLinks[data().iuncalibrated];
 }
 
 template <size_t M, bool ReadOnly>
@@ -142,9 +143,10 @@ inline auto TrackStateProxy<M, ReadOnly>::calibrated() const -> Measurement {
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::calibratedSourceLink() const
-    -> const SOURCE_LINK& {
+    -> const SourceLink& {
   assert(data().icalibratedsourcelink != IndexData::kInvalid);
-  return m_traj->m_sourceLinks[data().icalibratedsourcelink];
+  assert(m_traj->m_sourceLinks[data().icalibratedsourcelink] != nullptr);
+  return *m_traj->m_sourceLinks[data().icalibratedsourcelink];
 }
 
 template <size_t M, bool ReadOnly>

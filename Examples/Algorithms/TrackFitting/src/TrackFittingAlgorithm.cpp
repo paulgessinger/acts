@@ -67,13 +67,14 @@ ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
       Acts::Vector3{0., 0., 0.});
 
   // Set the KalmanFitter options
-  Acts::KalmanFitterOptions<MeasurementCalibrator, Acts::VoidOutlierFinder,
-                            Acts::VoidReverseFilteringLogic>
-      kfOptions(ctx.geoContext, ctx.magFieldContext, ctx.calibContext,
-                MeasurementCalibrator(measurements), Acts::VoidOutlierFinder(),
-                Acts::VoidReverseFilteringLogic(),
-                Acts::LoggerWrapper{logger()}, Acts::PropagatorPlainOptions(),
-                &(*pSurface));
+  Acts::KalmanFitterExtensions extensions;
+  MeasurementCalibrator calibrator{measurements};
+  extensions.calibrator.connect<&MeasurementCalibrator::eval>(&calibrator);
+
+  Acts::KalmanFitterOptions kfOptions(
+      ctx.geoContext, ctx.magFieldContext, ctx.calibContext, extensions,
+      Acts::LoggerWrapper{logger()}, Acts::PropagatorPlainOptions(),
+      &(*pSurface));
 
   kfOptions.multipleScattering = m_cfg.multipleScattering;
   kfOptions.energyLoss = m_cfg.energyLoss;

@@ -3,4 +3,5 @@ target_sources(
   PRIVATE
     KalmanFitterError.cpp
     GainMatrixUpdater.cpp
+    GainMatrixSmoother.cpp
 )

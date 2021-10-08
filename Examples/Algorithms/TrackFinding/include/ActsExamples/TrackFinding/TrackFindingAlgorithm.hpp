@@ -107,8 +107,8 @@ void TrackFindingAlgorithm::computeSharedHits(
   // Compute shared hits from all the reconstructed tracks
   // Compute nSharedhits and Update ckf results
   // hit index -> list of multi traj indexes [traj, meas]
-  static_assert(Acts::SourceLinkConcept<source_link_accessor_value_t>,
-                "Source link does not fulfill SourceLinkConcept");
+  // static_assert(Acts::SourceLinkConcept<source_link_accessor_value_t>,
+  //               "Source link does not fulfill SourceLinkConcept");
 
   std::vector<std::size_t> firstTrackOnTheHit(
       sourceLinks.size(), std::numeric_limits<std::size_t>::max());
@@ -128,7 +128,8 @@ void TrackFindingAlgorithm::computeSharedHits(
         if (not state.typeFlags().test(Acts::TrackStateFlag::MeasurementFlag))
           return;
 
-        std::size_t hitIndex = state.uncalibrated().index();
+        std::size_t hitIndex =
+            static_cast<const IndexSourceLink&>(state.uncalibrated()).index();
 
         // Check if hit not already used
         if (firstTrackOnTheHit.at(hitIndex) ==

@@ -8,11 +8,9 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "Acts/Tests/CommonHelpers/TestSourceLink.hpp"
-//
-
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/EventData/Measurement.hpp"
+#include "Acts/EventData/SourceLink.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
@@ -203,7 +201,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldNoSurfaceForward) {
   // this is the default option. set anyways for consistency
   kfOptions.referenceSurface = nullptr;
 
-  auto res = kfZero.fit(sourceLinks, start, kfOptions);
+  auto res =
+      kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
   BOOST_REQUIRE(res.ok());
 
   const auto& val = res.value();
@@ -236,7 +235,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithSurfaceForward) {
   // regular smoothing
   {
     kfOptions.reversedFiltering = false;
-    auto res = kfZero.fit(sourceLinks, start, kfOptions);
+    auto res =
+        kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
     BOOST_CHECK(res.ok());
 
     const auto& val = res.value();
@@ -252,7 +252,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithSurfaceForward) {
   // reverse filtering instead of smoothing
   {
     kfOptions.reversedFiltering = true;
-    auto res = kfZero.fit(sourceLinks, start, kfOptions);
+    auto res =
+        kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
     BOOST_REQUIRE(res.ok());
 
     const auto& val = res.value();
@@ -296,7 +297,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithSurfaceBackward) {
   // regular smoothing
   {
     kfOptions.reversedFiltering = false;
-    auto res = kfZero.fit(sourceLinks, startOuter, kfOptions);
+    auto res = kfZero.fit(sourceLinks.begin(), sourceLinks.end(), startOuter,
+                          kfOptions);
     BOOST_CHECK(res.ok());
 
     const auto& val = res.value();
@@ -312,7 +314,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithSurfaceBackward) {
   // reverse filtering instead of smoothing
   {
     kfOptions.reversedFiltering = true;
-    auto res = kfZero.fit(sourceLinks, startOuter, kfOptions);
+    auto res = kfZero.fit(sourceLinks.begin(), sourceLinks.end(), startOuter,
+                          kfOptions);
     BOOST_CHECK(res.ok());
 
     const auto& val = res.value();
@@ -350,7 +353,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithSurfaceAtExit) {
                                 PropagatorPlainOptions());
   kfOptions.referenceSurface = targetSurface.get();
 
-  auto res = kfZero.fit(sourceLinks, start, kfOptions);
+  auto res =
+      kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
   BOOST_REQUIRE(res.ok());
 
   const auto& val = res.value();
@@ -380,7 +384,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldShuffled) {
 
   // fit w/ all hits in order
   {
-    auto res = kfZero.fit(sourceLinks, start, kfOptions);
+    auto res =
+        kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
     BOOST_REQUIRE(res.ok());
 
     const auto& val = res.value();
@@ -398,7 +403,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldShuffled) {
   {
     auto shuffledSourceLinks = sourceLinks;
     std::shuffle(shuffledSourceLinks.begin(), shuffledSourceLinks.end(), rng);
-    auto res = kfZero.fit(shuffledSourceLinks, start, kfOptions);
+    auto res = kfZero.fit(shuffledSourceLinks.begin(),
+                          shuffledSourceLinks.end(), start, kfOptions);
     BOOST_REQUIRE(res.ok());
 
     const auto& val = res.value();
@@ -436,7 +442,7 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithHole) {
     BOOST_REQUIRE_EQUAL(withHole.size() + 1u, sourceLinks.size());
     BOOST_TEST_INFO("Removed measurement " << i);
 
-    auto res = kfZero.fit(withHole, start, kfOptions);
+    auto res = kfZero.fit(withHole.begin(), withHole.end(), start, kfOptions);
     BOOST_REQUIRE(res.ok());
 
     const auto& val = res.value();
@@ -477,7 +483,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithOutliers) {
     BOOST_REQUIRE_EQUAL(withOutlier.size(), sourceLinks.size());
     BOOST_TEST_INFO("Replaced measurement " << i << " with outlier");
 
-    auto res = kfZero.fit(withOutlier, start, kfOptions);
+    auto res =
+        kfZero.fit(withOutlier.begin(), withOutlier.end(), start, kfOptions);
     BOOST_REQUIRE(res.ok());
 
     const auto& val = res.value();
@@ -526,7 +533,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
     kfOptions.reversedFiltering = false;
     kfOptions.referenceSurface = targetSurface.get();
 
-    auto res = kfZero.fit(sourceLinks, start, kfOptions);
+    auto res =
+        kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
     BOOST_REQUIRE(res.ok());
     const auto& val = res.value();
 
@@ -550,7 +558,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
     kfOptions.reversedFiltering = false;
     kfOptions.referenceSurface = targetSurface.get();
 
-    auto res = kfZero.fit(sourceLinks, start, kfOptions);
+    auto res =
+        kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
     BOOST_REQUIRE(res.ok());
     const auto& val = res.value();
 
@@ -573,7 +582,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldWithReverseFiltering) {
     kfOptions.reversedFiltering = true;
     kfOptions.referenceSurface = targetSurface.get();
 
-    auto res = kfZero.fit(sourceLinks, start, kfOptions);
+    auto res =
+        kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
     BOOST_REQUIRE(res.ok());
     const auto& val = res.value();
 
@@ -599,7 +609,8 @@ BOOST_AUTO_TEST_CASE(GlobalCovariance) {
                                 LoggerWrapper{*kfLogger},
                                 PropagatorPlainOptions());
 
-  auto res = kfZero.fit(sourceLinks, start, kfOptions);
+  auto res =
+      kfZero.fit(sourceLinks.begin(), sourceLinks.end(), start, kfOptions);
   BOOST_REQUIRE(res.ok());
 
   // Calculate global track parameters covariance matrix

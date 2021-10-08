@@ -10,6 +10,7 @@
 
 #include "Acts/Definitions/TrackParametrization.hpp"
 #include "Acts/EventData/Measurement.hpp"
+#include "Acts/EventData/SourceLink.hpp"
 #include "Acts/EventData/TrackStatePropMask.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Utilities/Helpers.hpp"
@@ -137,7 +138,7 @@ struct IndexData {
 
 /// Proxy object to access a single point on the trajectory.
 ///
-/// @tparam SOURCE_LINK Type to link back to an original measurement
+/// @tparam SourceLink Type to link back to an original measurement
 /// @tparam M         Maximum number of measurement dimensions
 /// @tparam ReadOnly  true for read-only access to underlying storage
 template <size_t M, bool ReadOnly = true>
@@ -380,15 +381,22 @@ class TrackStateProxy {
 
   /// Uncalibrated measurement in the form of a source link. Const version
   /// @return The uncalibrated measurement source link
-  const SOURCE_LINK& uncalibrated() const;
+  const SourceLink& uncalibrated() const;
 
   /// Uncalibrated measurement in the form of a source link. Mutable version
   /// @note This overload is only available if @c ReadOnly is false
   /// @return The uncalibrated measurement source link
+  // template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
+  // SourceLink& uncalibrated() {
+  //   assert(data().iuncalibrated != IndexData::kInvalid);
+  //   assert(m_traj->m_sourceLinks[data().iuncalibrated] != nullptr);
+  //   return *m_traj->m_sourceLinks[data().iuncalibrated];
+  // }
+
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
-  SOURCE_LINK& uncalibrated() {
+  void setUncalibrated(const SourceLink& sourceLink) {
     assert(data().iuncalibrated != IndexData::kInvalid);
-    return m_traj->m_sourceLinks[data().iuncalibrated];
+    m_traj->m_sourceLinks[data().iuncalibrated] = &sourceLink;
   }
 
   /// Check if the point has an associated calibrated measurement.
@@ -400,17 +408,18 @@ class TrackStateProxy {
   /// The source link of the calibrated measurement. Const version
   /// @note This does not necessarily have to be the uncalibrated source link.
   /// @return The source link
-  const SOURCE_LINK& calibratedSourceLink() const;
+  const SourceLink& calibratedSourceLink() const;
 
   /// The source link of the calibrated measurement. Mutable version
   /// @note This does not necessarily have to be the uncalibrated source link.
   /// @note This overload is only available if @c ReadOnly is false
   /// @return The source link
-  template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
-  SOURCE_LINK& calibratedSourceLink() {
-    assert(data().icalibratedsourcelink != IndexData::kInvalid);
-    return m_traj->m_sourceLinks[data().icalibratedsourcelink];
-  }
+  // template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
+  // SourceLink& calibratedSourceLink() {
+  //   assert(data().icalibratedsourcelink != IndexData::kInvalid);
+  //   assert(m_traj->m_sourceLinks[data().icalibratedsourcelink] != nullptr);
+  //   return *m_traj->m_sourceLinks[data().icalibratedsourcelink];
+  // }
 
   /// Full calibrated measurement vector. Might contain additional zeroed
   /// dimensions.
@@ -450,8 +459,8 @@ class TrackStateProxy {
   /// @note This does not set the reference surface.
   template <size_t kMeasurementSize, bool RO = ReadOnly,
             typename = std::enable_if_t<!RO>>
-  void setCalibrated(const Acts::Measurement<SOURCE_LINK, BoundIndices,
-                                             kMeasurementSize>& meas) {
+  void setCalibrated(
+      const Acts::Measurement<BoundIndices, kMeasurementSize>& meas) {
     static_assert(kMeasurementSize <= M,
                   "Input measurement must be within the allowed size");
 
@@ -459,7 +468,8 @@ class TrackStateProxy {
     dataref.measdim = kMeasurementSize;
 
     assert(dataref.icalibratedsourcelink != IndexData::kInvalid);
-    calibratedSourceLink() = meas.sourceLink();
+    m_traj->m_sourceLinks[dataref.icalibratedsourcelink] = &meas.sourceLink();
+    // calibratedSourceLink() = meas.sourceLink();
 
     assert(hasCalibrated());
     calibrated().setZero();
@@ -482,8 +492,8 @@ class TrackStateProxy {
   /// @note This does not set the reference surface.
   template <size_t kMeasurementSize, bool RO = ReadOnly,
             typename = std::enable_if_t<!RO>>
-  void resetCalibrated(const Acts::Measurement<SOURCE_LINK, BoundIndices,
-                                               kMeasurementSize>& meas) {
+  void resetCalibrated(
+      const Acts::Measurement<BoundIndices, kMeasurementSize>& meas) {
     static_assert(kMeasurementSize <= M,
                   "Input measurement must be within the allowed size");
 
@@ -594,7 +604,7 @@ constexpr bool VisitorConcept = Concepts ::require<
 /// of sub-trajectories. From a set of endpoints, all possible sub-components
 /// can be easily identified. Some functionality is provided to simplify
 /// iterating over specific sub-components.
-/// @tparam SOURCE_LINK Type to link back to an original measurement
+/// @tparam SourceLink Type to link back to an original measurement
 class MultiTrajectory {
  public:
   enum {
@@ -653,7 +663,7 @@ class MultiTrajectory {
   typename detail_lt::Types<MeasurementSizeMax>::StorageCoefficients m_meas;
   typename detail_lt::Types<MeasurementSizeMax>::StorageCovariance m_measCov;
   typename detail_lt::Types<eBoundSize>::StorageCovariance m_jac;
-  std::vector<SOURCE_LINK> m_sourceLinks;
+  std::vector<const SourceLink*> m_sourceLinks;
   std::vector<ProjectorBitset> m_projectors;
 
   // owning vector of shared pointers to surfaces
