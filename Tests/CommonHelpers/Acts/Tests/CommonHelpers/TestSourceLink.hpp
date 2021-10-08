@@ -10,7 +10,6 @@
 
 #include "Acts/Definitions/TrackParametrization.hpp"
 #include "Acts/EventData/Measurement.hpp"
-#include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
 
@@ -67,13 +66,21 @@ struct TestSourceLink {
   std::size_t index() const { return sourceId; }
 };
 
+}  // namespace Test
+}  // namespace Acts
+
+#define SOURCE_LINK Acts::Test::TestSourceLink
+#include "Acts/EventData/MultiTrajectory.hpp"
+
+namespace Acts {
+namespace Test {
+
 bool operator==(const TestSourceLink& lhs, const TestSourceLink& rhs);
 bool operator!=(const TestSourceLink& lhs, const TestSourceLink& rhs);
 std::ostream& operator<<(std::ostream& os, const TestSourceLink& sourceLink);
 
-void testSourceLinkCalibrator(
-    const GeometryContext& /*gctx*/,
-    MultiTrajectory<TestSourceLink>::TrackStateProxy trackState) {
+void testSourceLinkCalibrator(const GeometryContext& /*gctx*/,
+                              MultiTrajectory::TrackStateProxy trackState) {
   TestSourceLink sl = trackState.uncalibrated();
   if ((sl.indices[0] != eBoundSize) and (sl.indices[1] != eBoundSize)) {
     auto meas = makeMeasurement(sl, sl.parameters, sl.covariance, sl.indices[0],
@@ -107,9 +114,8 @@ struct TestSourceLinkCalibrator {
   //     const TestSourceLink& sl, const parameters_t& /* parameters */) const
   //     {}
 
-  void operator()(
-      const GeometryContext& gctx,
-      MultiTrajectory<TestSourceLink>::TrackStateProxy trackState) const {
+  void operator()(const GeometryContext& gctx,
+                  MultiTrajectory::TrackStateProxy trackState) const {
     return testSourceLinkCalibrator(gctx, trackState);
   }
 };

@@ -41,9 +41,10 @@ enum TrackStateFlag {
 using TrackStateType = std::bitset<TrackStateFlag::NumTrackStateFlags>;
 
 // forward declarations
-template <typename source_link_t>
 class MultiTrajectory;
 class Surface;
+
+using ProjectorBitset = std::bitset<eBoundSize * eBoundSize>;
 
 namespace detail_lt {
 /// Either type T or const T depending on the boolean.
@@ -136,13 +137,12 @@ struct IndexData {
 
 /// Proxy object to access a single point on the trajectory.
 ///
-/// @tparam source_link_t Type to link back to an original measurement
+/// @tparam SOURCE_LINK Type to link back to an original measurement
 /// @tparam M         Maximum number of measurement dimensions
 /// @tparam ReadOnly  true for read-only access to underlying storage
-template <typename source_link_t, size_t M, bool ReadOnly = true>
+template <size_t M, bool ReadOnly = true>
 class TrackStateProxy {
  public:
-  using SourceLink = source_link_t;
   using Parameters = typename Types<eBoundSize, ReadOnly>::CoefficientsMap;
   using Covariance = typename Types<eBoundSize, ReadOnly>::CovarianceMap;
   using Measurement = typename Types<M, ReadOnly>::CoefficientsMap;
@@ -189,7 +189,7 @@ class TrackStateProxy {
   ///       not allocated in the source track state proxy.
   template <bool RO = ReadOnly, bool ReadOnlyOther,
             typename = std::enable_if<!RO>>
-  void copyFrom(const TrackStateProxy<source_link_t, M, ReadOnlyOther>& other,
+  void copyFrom(const TrackStateProxy<M, ReadOnlyOther>& other,
                 TrackStatePropMask mask = TrackStatePropMask::All) {
     using PM = TrackStatePropMask;
     auto dest = getMask();
@@ -380,13 +380,13 @@ class TrackStateProxy {
 
   /// Uncalibrated measurement in the form of a source link. Const version
   /// @return The uncalibrated measurement source link
-  const SourceLink& uncalibrated() const;
+  const SOURCE_LINK& uncalibrated() const;
 
   /// Uncalibrated measurement in the form of a source link. Mutable version
   /// @note This overload is only available if @c ReadOnly is false
   /// @return The uncalibrated measurement source link
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
-  SourceLink& uncalibrated() {
+  SOURCE_LINK& uncalibrated() {
     assert(data().iuncalibrated != IndexData::kInvalid);
     return m_traj->m_sourceLinks[data().iuncalibrated];
   }
@@ -400,14 +400,14 @@ class TrackStateProxy {
   /// The source link of the calibrated measurement. Const version
   /// @note This does not necessarily have to be the uncalibrated source link.
   /// @return The source link
-  const SourceLink& calibratedSourceLink() const;
+  const SOURCE_LINK& calibratedSourceLink() const;
 
   /// The source link of the calibrated measurement. Mutable version
   /// @note This does not necessarily have to be the uncalibrated source link.
   /// @note This overload is only available if @c ReadOnly is false
   /// @return The source link
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
-  SourceLink& calibratedSourceLink() {
+  SOURCE_LINK& calibratedSourceLink() {
     assert(data().icalibratedsourcelink != IndexData::kInvalid);
     return m_traj->m_sourceLinks[data().icalibratedsourcelink];
   }
@@ -450,7 +450,7 @@ class TrackStateProxy {
   /// @note This does not set the reference surface.
   template <size_t kMeasurementSize, bool RO = ReadOnly,
             typename = std::enable_if_t<!RO>>
-  void setCalibrated(const Acts::Measurement<SourceLink, BoundIndices,
+  void setCalibrated(const Acts::Measurement<SOURCE_LINK, BoundIndices,
                                              kMeasurementSize>& meas) {
     static_assert(kMeasurementSize <= M,
                   "Input measurement must be within the allowed size");
@@ -482,7 +482,7 @@ class TrackStateProxy {
   /// @note This does not set the reference surface.
   template <size_t kMeasurementSize, bool RO = ReadOnly,
             typename = std::enable_if_t<!RO>>
-  void resetCalibrated(const Acts::Measurement<SourceLink, BoundIndices,
+  void resetCalibrated(const Acts::Measurement<SOURCE_LINK, BoundIndices,
                                                kMeasurementSize>& meas) {
     static_assert(kMeasurementSize <= M,
                   "Input measurement must be within the allowed size");
@@ -550,7 +550,7 @@ class TrackStateProxy {
 
  private:
   // Private since it can only be created by the trajectory.
-  TrackStateProxy(ConstIf<MultiTrajectory<SourceLink>, ReadOnly>& trajectory,
+  TrackStateProxy(ConstIf<MultiTrajectory, ReadOnly>& trajectory,
                   size_t istate);
 
   const std::shared_ptr<const Surface>& referenceSurfacePointer() const {
@@ -558,23 +558,21 @@ class TrackStateProxy {
     return m_traj->m_referenceSurfaces[data().irefsurface];
   }
 
-  typename MultiTrajectory<SourceLink>::ProjectorBitset projectorBitset()
-      const {
+  ProjectorBitset projectorBitset() const {
     assert(data().iprojector != IndexData::kInvalid);
     return m_traj->m_projectors[data().iprojector];
   }
 
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
-  void setProjectorBitset(
-      typename MultiTrajectory<SourceLink>::ProjectorBitset proj) {
+  void setProjectorBitset(ProjectorBitset proj) {
     assert(data().iprojector != IndexData::kInvalid);
     m_traj->m_projectors[data().iprojector] = proj;
   }
 
-  ConstIf<MultiTrajectory<SourceLink>, ReadOnly>* m_traj;
+  ConstIf<MultiTrajectory, ReadOnly>* m_traj;
   size_t m_istate;
 
-  friend class Acts::MultiTrajectory<SourceLink>;
+  friend class Acts::MultiTrajectory;
 };
 
 // implement track state visitor concept
@@ -596,19 +594,15 @@ constexpr bool VisitorConcept = Concepts ::require<
 /// of sub-trajectories. From a set of endpoints, all possible sub-components
 /// can be easily identified. Some functionality is provided to simplify
 /// iterating over specific sub-components.
-/// @tparam source_link_t Type to link back to an original measurement
-template <typename source_link_t>
+/// @tparam SOURCE_LINK Type to link back to an original measurement
 class MultiTrajectory {
  public:
   enum {
     MeasurementSizeMax = eBoundSize,
   };
-  using SourceLink = source_link_t;
   using ConstTrackStateProxy =
-      detail_lt::TrackStateProxy<SourceLink, MeasurementSizeMax, true>;
-  using TrackStateProxy =
-      detail_lt::TrackStateProxy<SourceLink, MeasurementSizeMax, false>;
-  using ProjectorBitset = std::bitset<eBoundSize * MeasurementSizeMax>;
+      detail_lt::TrackStateProxy<MeasurementSizeMax, true>;
+  using TrackStateProxy = detail_lt::TrackStateProxy<MeasurementSizeMax, false>;
 
   /// Create an empty trajectory.
   MultiTrajectory() = default;
@@ -659,7 +653,7 @@ class MultiTrajectory {
   typename detail_lt::Types<MeasurementSizeMax>::StorageCoefficients m_meas;
   typename detail_lt::Types<MeasurementSizeMax>::StorageCovariance m_measCov;
   typename detail_lt::Types<eBoundSize>::StorageCovariance m_jac;
-  std::vector<SourceLink> m_sourceLinks;
+  std::vector<SOURCE_LINK> m_sourceLinks;
   std::vector<ProjectorBitset> m_projectors;
 
   // owning vector of shared pointers to surfaces
@@ -668,9 +662,8 @@ class MultiTrajectory {
   // be handled in a smart way by moving but not sure.
   std::vector<std::shared_ptr<const Surface>> m_referenceSurfaces;
 
-  friend class detail_lt::TrackStateProxy<SourceLink, MeasurementSizeMax, true>;
-  friend class detail_lt::TrackStateProxy<SourceLink, MeasurementSizeMax,
-                                          false>;
+  friend class detail_lt::TrackStateProxy<MeasurementSizeMax, true>;
+  friend class detail_lt::TrackStateProxy<MeasurementSizeMax, false>;
 };
 
 }  // namespace Acts

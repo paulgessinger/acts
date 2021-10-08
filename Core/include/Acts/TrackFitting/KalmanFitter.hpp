@@ -80,12 +80,10 @@ struct Delegate<Ret(Args...)> {
   function_type m_function;
 };
 
-template <typename source_link_t>
 struct KalmanFitterExtensions {
-  using MultiTrajectory = MultiTrajectory<source_link_t>;
-  using TrackStateProxy = typename MultiTrajectory::TrackStateProxy;
-  using ConstTrackStateProxy = typename MultiTrajectory::ConstTrackStateProxy;
-  using Parameters = typename TrackStateProxy::Parameters;
+  using TrackStateProxy = MultiTrajectory::TrackStateProxy;
+  using ConstTrackStateProxy = MultiTrajectory::ConstTrackStateProxy;
+  using Parameters = TrackStateProxy::Parameters;
 
   using Calibrator = Delegate<void(const GeometryContext&, TrackStateProxy)>;
 
@@ -110,22 +108,19 @@ struct KalmanFitterExtensions {
   ReverseFilteringLogic reverseFilteringLogic;
 
   KalmanFitterExtensions() {
-    calibrator.template connect<&voidKalmanCalibrator<source_link_t>>();
-    updater.template connect<&voidKalmanUpdater<source_link_t>>();
-    smoother.template connect<&voidKalmanSmoother<source_link_t>>();
+    calibrator.template connect<&voidKalmanCalibrator>();
+    updater.template connect<&voidKalmanUpdater>();
+    smoother.template connect<&voidKalmanSmoother>();
 
-    outlierFinder.template connect<&voidOutlierFinder<
-        source_link_t, MultiTrajectory::MeasurementSizeMax>>();
+    outlierFinder.template connect<&voidOutlierFinder>();
 
-    reverseFilteringLogic.template connect<&voidReverseFilteringLogic<
-        source_link_t, MultiTrajectory::MeasurementSizeMax>>();
+    reverseFilteringLogic.template connect<&voidReverseFilteringLogic>();
   }
 };
 
 /// Combined options for the Kalman fitter.
 ///
-/// @tparam source_link_t Source link type
-template <typename source_link_t>
+/// @tparam SOURCE_LINK Source link type
 struct KalmanFitterOptions {
   /// PropagatorOptions with context.
   ///
@@ -143,7 +138,7 @@ struct KalmanFitterOptions {
   KalmanFitterOptions(
       const GeometryContext& gctx, const MagneticFieldContext& mctx,
       std::reference_wrapper<const CalibrationContext> cctx,
-      KalmanFitterExtensions<source_link_t> extenstions_, LoggerWrapper logger_,
+      KalmanFitterExtensions extenstions_, LoggerWrapper logger_,
       const PropagatorPlainOptions& pOptions, const Surface* rSurface = nullptr,
       bool mScattering = true, bool eLoss = true, bool rFiltering = false)
       : geoContext(gctx),
@@ -166,7 +161,7 @@ struct KalmanFitterOptions {
   /// context object for the calibration
   std::reference_wrapper<const CalibrationContext> calibrationContext;
 
-  KalmanFitterExtensions<source_link_t> extensions;
+  KalmanFitterExtensions extensions;
 
   /// The trivial propagator options
   PropagatorPlainOptions propagatorPlainOptions;
@@ -188,10 +183,9 @@ struct KalmanFitterOptions {
   LoggerWrapper logger;
 };
 
-template <typename source_link_t>
 struct KalmanFitterResult {
   // Fitted states that the actor has handled.
-  MultiTrajectory<source_link_t> fittedStates;
+  MultiTrajectory fittedStates;
 
   // This is the index of the 'tip' of the track stored in multitrajectory.
   // This correspond to the last measurment state in the multitrajectory.
@@ -277,24 +271,24 @@ class KalmanFitter {
 
   /// @brief Propagator Actor plugin for the KalmanFilter
   ///
-  /// @tparam source_link_t is an type fulfilling the @c SourceLinkConcept
+  /// @tparam SOURCE_LINK is an type fulfilling the @c SourceLinkConcept
   /// @tparam parameters_t The type of parameters used for "local" paremeters.
   /// @tparam calibrator_t The type of calibrator
   /// @tparam outlier_finder_t Type of the outlier finder class
   ///
   /// The KalmanActor does not rely on the measurements to be
   /// sorted along the track.
-  template <typename source_link_t, typename parameters_t>
+  template <typename parameters_t>
   class Actor {
    public:
     /// Broadcast the result_type
-    using result_type = KalmanFitterResult<source_link_t>;
+    using result_type = KalmanFitterResult;
 
     /// The target surface
     const Surface* targetSurface = nullptr;
 
     /// Allows retrieving measurements for a surface
-    const std::map<GeometryIdentifier, source_link_t>* inputMeasurements =
+    const std::map<GeometryIdentifier, SOURCE_LINK>* inputMeasurements =
         nullptr;
 
     /// Whether to consider multiple scattering.
@@ -1030,17 +1024,17 @@ class KalmanFitter {
       return Result<void>::success();
     }
 
-    KalmanFitterExtensions<source_link_t> extensions;
+    KalmanFitterExtensions extensions;
 
     /// The Surface beeing
     SurfaceReached targetReached;
   };
 
-  template <typename source_link_t, typename parameters_t>
+  template <typename parameters_t>
   class Aborter {
    public:
     /// Broadcast the result_type
-    using action_type = Actor<source_link_t, parameters_t>;
+    using action_type = Actor<parameters_t>;
 
     template <typename propagator_state_t, typename stepper_t,
               typename result_t>
@@ -1058,7 +1052,7 @@ class KalmanFitter {
   /// the filter and smoother/reversed filter
   ///
   /// @tparam start_parameters_t Type of the initial parameters
-  /// @tparam source_link_t Type of the source link
+  /// @tparam SOURCE_LINK Type of the source link
   /// @tparam parameters_t Type of parameters used for local parameters
   ///
   /// @param sourcelinks The fittable uncalibrated measurements
@@ -1069,29 +1063,29 @@ class KalmanFitter {
   /// the fit.
   ///
   /// @return the output as an output track
-  template <typename source_link_t, typename start_parameters_t,
-            typename parameters_t = BoundTrackParameters>
-  auto fit(const std::vector<source_link_t>& sourcelinks,
+  template <typename start_parameters_t,
+            typename parameters_t = BoundTrackParameters,
+            bool _isdn = isDirectNavigator>
+  auto fit(const std::vector<SOURCE_LINK>& sourcelinks,
            const start_parameters_t& sParameters,
-           const KalmanFitterOptions<source_link_t>& kfOptions) const
-      -> std::enable_if_t<!isDirectNavigator,
-                          Result<KalmanFitterResult<source_link_t>>> {
+           const KalmanFitterOptions& kfOptions) const
+      -> std::enable_if_t<!_isdn, Result<KalmanFitterResult>> {
     const auto& logger = kfOptions.logger;
 
-    static_assert(SourceLinkConcept<source_link_t>,
+    static_assert(SourceLinkConcept<SOURCE_LINK>,
                   "Source link does not fulfill SourceLinkConcept");
 
     // To be able to find measurements later, we put them into a map
     // We need to copy input SourceLinks anyways, so the map can own them.
     ACTS_VERBOSE("Preparing " << sourcelinks.size() << " input measurements");
-    std::map<GeometryIdentifier, source_link_t> inputMeasurements;
+    std::map<GeometryIdentifier, SOURCE_LINK> inputMeasurements;
     for (const auto& sl : sourcelinks) {
       inputMeasurements.emplace(sl.geometryId(), sl);
     }
 
     // Create the ActionList and AbortList
-    using KalmanAborter = Aborter<source_link_t, parameters_t>;
-    using KalmanActor = Actor<source_link_t, parameters_t>;
+    using KalmanAborter = Aborter<parameters_t>;
+    using KalmanActor = Actor<parameters_t>;
     using KalmanResult = typename KalmanActor::result_type;
     using Actors = ActionList<KalmanActor>;
     using Aborters = AbortList<KalmanAborter>;
@@ -1148,7 +1142,7 @@ class KalmanFitter {
   /// Fit implementation of the foward filter, calls the
   /// the filter and smoother/reversed filter
   ///
-  /// @tparam source_link_t Type of the source link
+  /// @tparam SOURCE_LINK Type of the source link
   /// @tparam start_parameters_t Type of the initial parameters
   /// @tparam parameters_t Type of parameters used for local parameters
   ///
@@ -1162,29 +1156,29 @@ class KalmanFitter {
   /// the fit.
   ///
   /// @return the output as an output track
-  template <typename source_link_t, typename start_parameters_t,
-            typename parameters_t = BoundTrackParameters>
-  auto fit(const std::vector<source_link_t>& sourcelinks,
+  template <typename start_parameters_t,
+            typename parameters_t = BoundTrackParameters,
+            bool _isdn = isDirectNavigator>
+  auto fit(const std::vector<SOURCE_LINK>& sourcelinks,
            const start_parameters_t& sParameters,
-           const KalmanFitterOptions<source_link_t>& kfOptions,
+           const KalmanFitterOptions& kfOptions,
            const std::vector<const Surface*>& sSequence) const
-      -> std::enable_if_t<isDirectNavigator,
-                          Result<KalmanFitterResult<source_link_t>>> {
+      -> std::enable_if_t<_isdn, Result<KalmanFitterResult>> {
     const auto& logger = kfOptions.logger;
-    static_assert(SourceLinkConcept<source_link_t>,
+    static_assert(SourceLinkConcept<SOURCE_LINK>,
                   "Source link does not fulfill SourceLinkConcept");
 
     // To be able to find measurements later, we put them into a map
     // We need to copy input SourceLinks anyways, so the map can own them.
     ACTS_VERBOSE("Preparing " << sourcelinks.size() << " input measurements");
-    std::map<GeometryIdentifier, source_link_t> inputMeasurements;
+    std::map<GeometryIdentifier, SOURCE_LINK> inputMeasurements;
     for (const auto& sl : sourcelinks) {
       inputMeasurements.emplace(sl.geometryId(), sl);
     }
 
     // Create the ActionList and AbortList
-    using KalmanAborter = Aborter<source_link_t, parameters_t>;
-    using KalmanActor = Actor<source_link_t, parameters_t>;
+    using KalmanAborter = Aborter<parameters_t>;
+    using KalmanActor = Actor<parameters_t>;
     using KalmanResult = typename KalmanActor::result_type;
     using Actors = ActionList<DirectNavigator::Initializer, KalmanActor>;
     using Aborters = AbortList<KalmanAborter>;

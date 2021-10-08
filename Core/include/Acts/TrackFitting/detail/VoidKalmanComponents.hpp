@@ -34,18 +34,14 @@ namespace Acts {
 // };
 
 struct VoidKalmanCalibrator {
-  template <typename source_link_t>
   void operator()(const GeometryContext& gctx,
-                  typename MultiTrajectory<source_link_t>::TrackStateProxy
-                      trackState) const {
+                  MultiTrajectory::TrackStateProxy trackState) const {
     throw std::runtime_error{"VoidKalmanCalibrator should not ever execute"};
   }
 };
 
-template <typename source_link_t>
-void voidKalmanCalibrator(
-    const GeometryContext& gctx,
-    typename MultiTrajectory<source_link_t>::TrackStateProxy trackState) {
+void voidKalmanCalibrator(const GeometryContext& gctx,
+                          MultiTrajectory::TrackStateProxy trackState) {
   throw std::runtime_error{"VoidKalmanCalibrator should not ever execute"};
 }
 
@@ -60,23 +56,20 @@ struct VoidKalmanUpdater {
   /// @param predicted The predicted parameters
   ///
   /// @return The copied predicted parameters
-  template <typename source_link_t>
-  Result<void> operator()(
-      const GeometryContext&,
-      typename MultiTrajectory<source_link_t>::TrackStateProxy trackState,
-      NavigationDirection direction,
-      LoggerWrapper logger = getDummyLogger()) const {
+  Result<void> operator()(const GeometryContext&,
+                          MultiTrajectory::TrackStateProxy trackState,
+                          NavigationDirection direction,
+                          LoggerWrapper logger = getDummyLogger()) const {
     trackState.filtered() = trackState.predicted();
     trackState.filteredCovariance() = trackState.predictedCovariance();
     return Result<void>::success();
   }
 };
 
-template <typename source_link_t>
-Result<void> voidKalmanUpdater(
-    const GeometryContext&,
-    typename MultiTrajectory<source_link_t>::TrackStateProxy trackState,
-    NavigationDirection direction, LoggerWrapper logger = getDummyLogger()) {
+Result<void> voidKalmanUpdater(const GeometryContext&,
+                               MultiTrajectory::TrackStateProxy trackState,
+                               NavigationDirection direction,
+                               LoggerWrapper logger = getDummyLogger()) {
   trackState.filtered() = trackState.predicted();
   trackState.filteredCovariance() = trackState.predictedCovariance();
   return Result<void>::success();
@@ -91,10 +84,8 @@ struct VoidKalmanSmoother {
   /// @param trackStates The track states to be smoothed
   ///
   /// @return The resulting
-  template <typename source_link_t>
   Result<void> operator()(const GeometryContext& gctx,
-                          MultiTrajectory<source_link_t>& trajectory,
-                          size_t entryIndex,
+                          MultiTrajectory& trajectory, size_t entryIndex,
                           LoggerWrapper logger = getDummyLogger()) const {
     // trackState.filtered() = trackState.predicted();
     // trackState.filteredCovariance() = trackState.predictedCovariance();
@@ -102,10 +93,8 @@ struct VoidKalmanSmoother {
   }
 };
 
-template <typename source_link_t>
 Result<void> voidKalmanSmoother(const GeometryContext& gctx,
-                                MultiTrajectory<source_link_t>& trajectory,
-                                size_t entryIndex,
+                                MultiTrajectory& trajectory, size_t entryIndex,
                                 LoggerWrapper logger = getDummyLogger()) {
   return Result<void>::success();
 }
@@ -119,19 +108,13 @@ struct VoidOutlierFinder {
   /// @param trackState The trackState to investigate
   ///
   /// @return Whether it's outlier or not
-  template <typename source_link_t, size_t kMeasurementSizeMax>
-  constexpr bool operator()(
-      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
-          trackState) const {
+  bool operator()(MultiTrajectory::TrackStateProxy trackState) const {
     (void)trackState;
     return false;
   }
 };
 
-template <typename source_link_t, size_t kMeasurementSizeMax>
-bool voidOutlierFinder(
-    detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
-        trackState) {
+bool voidOutlierFinder(MultiTrajectory::TrackStateProxy trackState) {
   (void)trackState;
   return false;
 }
@@ -145,19 +128,13 @@ struct VoidReverseFilteringLogic {
   /// @param trackState The trackState of the last measurement
   ///
   /// @return Whether to run filtering in reversed direction as smoothing or not
-  template <typename source_link_t, size_t kMeasurementSizeMax>
-  constexpr bool operator()(
-      detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
-          trackState) const {
+  bool operator()(MultiTrajectory::TrackStateProxy trackState) const {
     (void)trackState;
     return false;
   }
 };
 
-template <typename source_link_t, size_t kMeasurementSizeMax>
-constexpr bool voidReverseFilteringLogic(
-    detail_lt::TrackStateProxy<source_link_t, kMeasurementSizeMax, false>
-        trackState) {
+bool voidReverseFilteringLogic(MultiTrajectory::TrackStateProxy trackState) {
   (void)trackState;
   return false;
 }
