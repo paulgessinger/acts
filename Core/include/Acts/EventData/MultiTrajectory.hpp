@@ -160,6 +160,18 @@ class TrackStateProxy {
       Eigen::Matrix<typename Projector::Scalar, Eigen::Dynamic, Eigen::Dynamic,
                     ProjectorFlags, M, eBoundSize>;
 
+  // Constructor and assignment operator to construct ReadOnly TrackStateProxy
+  // from ReadWrite (mutable -> const)
+  TrackStateProxy(const TrackStateProxy<M, false>& other)
+      : m_traj{other.m_traj}, m_istate{other.m_istate} {}
+
+  TrackStateProxy& operator=(const TrackStateProxy<M, false>& other) {
+    m_traj = other.m_traj;
+    m_istate = other.m_istate;
+
+    return *this;
+  }
+
   /// Index within the trajectory.
   /// @return the index
   size_t index() const { return m_istate; }
@@ -589,6 +601,7 @@ class TrackStateProxy {
   size_t m_istate;
 
   friend class Acts::MultiTrajectory;
+  friend class TrackStateProxy<M, true>;
 };
 
 // implement track state visitor concept

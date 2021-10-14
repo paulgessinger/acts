@@ -105,13 +105,14 @@ struct VoidOutlierFinder {
   /// @param trackState The trackState to investigate
   ///
   /// @return Whether it's outlier or not
-  bool operator()(MultiTrajectory::TrackStateProxy trackState) const {
+  bool operator()(MultiTrajectory::ConstTrackStateProxy trackState) const {
     (void)trackState;
     return false;
   }
 };
 
-inline bool voidOutlierFinder(MultiTrajectory::TrackStateProxy trackState) {
+inline bool voidOutlierFinder(
+    MultiTrajectory::ConstTrackStateProxy trackState) {
   (void)trackState;
   return false;
 }
@@ -125,14 +126,14 @@ struct VoidReverseFilteringLogic {
   /// @param trackState The trackState of the last measurement
   ///
   /// @return Whether to run filtering in reversed direction as smoothing or not
-  bool operator()(MultiTrajectory::TrackStateProxy trackState) const {
+  bool operator()(MultiTrajectory::ConstTrackStateProxy trackState) const {
     (void)trackState;
     return false;
   }
 };
 
 inline bool voidReverseFilteringLogic(
-    MultiTrajectory::TrackStateProxy trackState) {
+    MultiTrajectory::ConstTrackStateProxy trackState) {
   (void)trackState;
   return false;
 }

@@ -782,4 +782,16 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
                     &ts2.referenceSurface());  // always copied
 }
 
+BOOST_AUTO_TEST_CASE(ProxyAssignment) {
+  constexpr TrackStatePropMask kMask = TrackStatePropMask::Predicted;
+  MultiTrajectory t;
+  auto i0 = t.addTrackState(kMask);
+
+  MultiTrajectory::TrackStateProxy tp = t.getTrackState(i0);  // mutable
+  MultiTrajectory::TrackStateProxy tp2{tp};       // mutable to mutable
+  MultiTrajectory::ConstTrackStateProxy tp3{tp};  // mutable to const
+  // const to mutable: this won't compile
+  // MultiTrajectory::TrackStateProxy tp4{tp3};
+}
+
 BOOST_AUTO_TEST_SUITE_END()

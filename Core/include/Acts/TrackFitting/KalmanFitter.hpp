@@ -97,10 +97,10 @@ struct KalmanFitterExtensions {
 
   // @TODO: Change these two to ConstTrackStateProxy
   // using OutlierFinder = std::function<bool(TrackStateProxy)>;
-  using OutlierFinder = Delegate<bool(TrackStateProxy)>;
+  using OutlierFinder = Delegate<bool(ConstTrackStateProxy)>;
 
   // using ReverseFilteringLogic = std::function<bool(TrackStateProxy)>;
-  using ReverseFilteringLogic = Delegate<bool(TrackStateProxy)>;
+  using ReverseFilteringLogic = Delegate<bool(ConstTrackStateProxy)>;
 
   Calibrator calibrator;
   Updater updater;
