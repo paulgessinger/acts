@@ -32,6 +32,7 @@
 #include "Acts/TrackFitting/KalmanFitterError.hpp"
 #include "Acts/TrackFitting/detail/VoidKalmanComponents.hpp"
 #include "Acts/Utilities/CalibrationContext.hpp"
+#include "Acts/Utilities/Delegate.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "Acts/Utilities/Result.hpp"
 
@@ -40,46 +41,6 @@
 #include <memory>
 
 namespace Acts {
-
-template <typename>
-struct Delegate;
-
-template <typename Ret, typename... Args>
-struct Delegate<Ret(Args...)> {
-  using function_type = Ret (*)(const void*, Args...);
-  using type = Ret(Args...);
-  using return_type = Ret;
-
- public:
-  Delegate() = default;
-  // template <auto Callable>
-  // Delegate() {
-  // }
-
-  template <auto Callable>
-  void connect() {
-    m_function = [](const void*, Args... args) -> Ret {
-      return std::invoke(Callable, std::forward<Args>(args)...);
-    };
-  }
-
-  template <auto Callable, typename Type>
-  void connect(Type* _type) {
-    m_payload = _type;
-    m_function = [](const void* payload, Args... args) -> Ret {
-      const auto* __type = static_cast<const Type*>(payload);
-      return std::invoke(Callable, __type, std::forward<Args>(args)...);
-    };
-  }
-
-  Ret operator()(Args... args) const {
-    return std::invoke(m_function, m_payload, std::forward<Args>(args)...);
-  }
-
- private:
-  void* m_payload{nullptr};
-  function_type m_function;
-};
 
 struct KalmanFitterExtensions {
   using TrackStateProxy = MultiTrajectory::TrackStateProxy;
@@ -95,11 +56,8 @@ struct KalmanFitterExtensions {
       Delegate<Result<void>(const GeometryContext&, TrackStateProxy,
                             const NavigationDirection&, LoggerWrapper)>;
 
-  // @TODO: Change these two to ConstTrackStateProxy
-  // using OutlierFinder = std::function<bool(TrackStateProxy)>;
   using OutlierFinder = Delegate<bool(ConstTrackStateProxy)>;
 
-  // using ReverseFilteringLogic = std::function<bool(TrackStateProxy)>;
   using ReverseFilteringLogic = Delegate<bool(ConstTrackStateProxy)>;
 
   Calibrator calibrator;
