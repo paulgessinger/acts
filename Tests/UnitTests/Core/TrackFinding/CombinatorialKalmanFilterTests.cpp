@@ -105,15 +105,12 @@ struct Fixture {
   using KalmanUpdater = Acts::GainMatrixUpdater;
   using KalmanSmoother = Acts::GainMatrixSmoother;
   using CombinatorialKalmanFilter =
-      Acts::CombinatorialKalmanFilter<ConstantFieldPropagator, KalmanUpdater,
-                                      KalmanSmoother>;
+      Acts::CombinatorialKalmanFilter<ConstantFieldPropagator>;
   using TestSourceLinkContainer =
       std::unordered_multimap<Acts::GeometryIdentifier, TestSourceLink>;
   using TestSourceLinkAccessor = TestContainerAccessor<TestSourceLinkContainer>;
   using CombinatorialKalmanFilterOptions =
-      Acts::CombinatorialKalmanFilterOptions<TestSourceLinkAccessor,
-                                             TestSourceLinkCalibrator,
-                                             Acts::MeasurementSelector>;
+      Acts::CombinatorialKalmanFilterOptions<TestSourceLinkAccessor>;
 
   Acts::GeometryContext geoCtx;
   Acts::MagneticFieldContext magCtx;

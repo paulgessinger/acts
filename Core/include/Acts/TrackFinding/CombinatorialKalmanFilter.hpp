@@ -30,6 +30,7 @@
 #include "Acts/TrackFinding/CombinatorialKalmanFilterError.hpp"
 #include "Acts/TrackFinding/SourceLinkAccessorConcept.hpp"
 #include "Acts/TrackFinding/detail/VoidTrackFinderComponents.hpp"
+#include "Acts/TrackFitting/KalmanFitter.hpp"
 #include "Acts/TrackFitting/detail/VoidKalmanComponents.hpp"
 #include "Acts/Utilities/CalibrationContext.hpp"
 #include "Acts/Utilities/Helpers.hpp"
@@ -60,18 +61,24 @@ struct CombinatorialKalmanFilterTipState {
   size_t nHoles = 0;
 };
 
+struct CombinatorialKalmanFilterExtensions : public KalmanFitterExtensions {
+  using MeasurementSelector = Delegate<Result<void>(
+      const BoundTrackParameters&, const std::vector<BoundVariantMeasurement>&,
+      std::vector<std::pair<size_t, double>>&, std::vector<size_t>&, bool&,
+      LoggerWrapper)>;
+
+  MeasurementSelector measurementSelector;
+};
+
 /// Combined options for the combinatorial Kalman filter.
 ///
 /// @tparam source_link_accessor_t Source link accessor type, should be
 /// semiregular.
 /// @tparam calibrator_t Source link calibrator type, should be semiregular.
 /// @tparam measurement_selector_t Selector type, should be semiregular.
-template <typename source_link_accessor_t, typename calibrator_t,
-          typename measurement_selector_t>
+template <typename source_link_accessor_t>
 struct CombinatorialKalmanFilterOptions {
   using SourceLinkAccessor = source_link_accessor_t;
-  using Calibrator = calibrator_t;
-  using MeasurementSelector = measurement_selector_t;
 
   /// PropagatorOptions with context
   ///
@@ -91,16 +98,15 @@ struct CombinatorialKalmanFilterOptions {
   CombinatorialKalmanFilterOptions(
       const GeometryContext& gctx, const MagneticFieldContext& mctx,
       std::reference_wrapper<const CalibrationContext> cctx,
-      SourceLinkAccessor accessor_, Calibrator calibrator_,
-      MeasurementSelector measurementSelector_, LoggerWrapper logger_,
+      SourceLinkAccessor accessor_,
+      CombinatorialKalmanFilterExtensions extensions_, LoggerWrapper logger_,
       const PropagatorPlainOptions& pOptions, const Surface* rSurface = nullptr,
       bool mScattering = true, bool eLoss = true, bool rSmoothing = true)
       : geoContext(gctx),
         magFieldContext(mctx),
         calibrationContext(cctx),
         sourcelinkAccessor(std::move(accessor_)),
-        calibrator(std::move(calibrator_)),
-        measurementSelector(std::move(measurementSelector_)),
+        extensions(std::move(extensions_)),
         propagatorPlainOptions(pOptions),
         referenceSurface(rSurface),
         multipleScattering(mScattering),
@@ -120,11 +126,8 @@ struct CombinatorialKalmanFilterOptions {
   /// The source link accessor
   SourceLinkAccessor sourcelinkAccessor;
 
-  /// The source link calibrator
-  Calibrator calibrator;
-
-  /// The measurement selector
-  MeasurementSelector measurementSelector;
+  /// The filter extensions
+  CombinatorialKalmanFilterExtensions extensions;
 
   /// The trivial propagator options
   PropagatorPlainOptions propagatorPlainOptions;
@@ -145,7 +148,6 @@ struct CombinatorialKalmanFilterOptions {
   LoggerWrapper logger;
 };
 
-template <typename source_link_t>
 struct CombinatorialKalmanFilterResult {
   // Fitted states that the actor has handled.
   MultiTrajectory fittedStates;
@@ -195,7 +197,6 @@ struct CombinatorialKalmanFilterResult {
 ///
 ///
 /// @tparam propagator_t Type of the propagator
-/// @tparam updater_t Type of the Kalman updater
 /// @tparam smoother_t Type of the Kalman smoother
 /// @tparam branch_stopper_t Type of the branch stopper
 ///
@@ -216,9 +217,7 @@ struct CombinatorialKalmanFilterResult {
 /// the navigation of the propagator.
 ///
 /// The void components are provided mainly for unit testing.
-template <typename propagator_t, typename updater_t = VoidKalmanUpdater,
-          typename smoother_t = VoidKalmanSmoother,
-          typename branch_stopper_t = VoidBranchStopper>
+template <typename propagator_t, typename branch_stopper_t = VoidBranchStopper>
 class CombinatorialKalmanFilter {
  public:
   /// Default constructor is deleted
@@ -247,8 +246,7 @@ class CombinatorialKalmanFilter {
   ///
   /// The CombinatorialKalmanFilter Actor does not rely on the measurements to
   /// be sorted along the track.
-  template <typename source_link_accessor_t, typename parameters_t,
-            typename calibrator_t, typename measurement_selector_t>
+  template <typename source_link_accessor_t, typename parameters_t>
   class Actor {
    public:
     using TipState = CombinatorialKalmanFilterTipState;
@@ -260,7 +258,7 @@ class CombinatorialKalmanFilter {
     // The SourceLink type fulfilling the @c SourceLinkConcept
     using SourceLink = typename source_link_accessor_t::Value;
     /// Broadcast the result_type
-    using result_type = CombinatorialKalmanFilterResult<SourceLink>;
+    using result_type = CombinatorialKalmanFilterResult;
 
     /// The target surface
     const Surface* targetSurface = nullptr;
@@ -514,7 +512,7 @@ class CombinatorialKalmanFilter {
 
       // Count the number of source links on the surface
       size_t nSourcelinks = m_sourcelinkAccessor.count(surface->geometryId());
-      if (nSourcelinks) {
+      if (nSourcelinks > 0) {
         // Screen output message
         ACTS_VERBOSE("Measurement surface " << surface->geometryId()
                                             << " detected.");
@@ -542,8 +540,8 @@ class CombinatorialKalmanFilter {
         std::vector<BoundVariantMeasurement> measurements;
         measurements.reserve(nSourcelinks);
         for (auto it = lower_it; it != upper_it; ++it) {
-          measurements.emplace_back(
-              m_calibrator(m_sourcelinkAccessor.at(it), boundParams));
+          measurements.emplace_back(m_extensions.calibrator(
+              m_sourcelinkAccessor.at(it), boundParams));
         }
 
         // Invoke the measurement selector to select compatible measurements
@@ -852,7 +850,7 @@ class CombinatorialKalmanFilter {
         trackStateProxy.data().ifiltered = trackStateProxy.data().ipredicted;
       } else {
         // Kalman update
-        auto updateRes = m_updater(geoContext, trackStateProxy);
+        auto updateRes = m_extensions.updater(geoContext, trackStateProxy);
         if (!updateRes.ok()) {
           ACTS_ERROR("Update step failed: " << updateRes.error());
           return updateRes.error();
@@ -1017,8 +1015,8 @@ class CombinatorialKalmanFilter {
       ACTS_VERBOSE("Apply smoothing on " << nStates
                                          << " filtered track states.");
       // Smooth the track states
-      auto smoothRes = m_smoother(state.geoContext, result.fittedStates,
-                                  lastMeasurementIndex);
+      auto smoothRes = m_extensions.smoother(
+          state.geoContext, result.fittedStates, lastMeasurementIndex);
       if (!smoothRes.ok()) {
         ACTS_ERROR("Smoothing step failed: " << smoothRes.error());
         return smoothRes.error();
@@ -1101,20 +1099,10 @@ class CombinatorialKalmanFilter {
       return Result<void>::success();
     }
 
-    /// The CombinatorialKalmanFilter updater
-    updater_t m_updater;
-
-    /// The CombinatorialKalmanFilter smoother
-    smoother_t m_smoother;
+    CombinatorialKalmanFilterExtensions m_extensions;
 
     /// The source link accesor
     source_link_accessor_t m_sourcelinkAccessor;
-
-    /// The source link calibrator
-    calibrator_t m_calibrator;
-
-    /// The measurement selector
-    measurement_selector_t m_measurementSelector;
 
     /// The branch propagation stopper
     branch_stopper_t m_branchStopper;
@@ -1123,13 +1111,11 @@ class CombinatorialKalmanFilter {
     SurfaceReached targetReached;
   };
 
-  template <typename source_link_accessor_t, typename parameters_t,
-            typename calibrator_t, typename measurement_selector_t>
+  template <typename source_link_accessor_t, typename parameters_t>
   class Aborter {
    public:
     /// Broadcast the result_type
-    using action_type = Actor<source_link_accessor_t, parameters_t,
-                              calibrator_t, measurement_selector_t>;
+    using action_type = Actor<source_link_accessor_t, parameters_t>;
 
     template <typename propagator_state_t, typename stepper_t,
               typename result_t>
@@ -1165,16 +1151,13 @@ class CombinatorialKalmanFilter {
   /// @return a container of track finding result for all the initial track
   /// parameters
   template <typename source_link_accessor_t,
-            typename start_parameters_container_t, typename calibrator_t,
-            typename measurement_selector_t,
+            typename start_parameters_container_t,
             typename parameters_t = BoundTrackParameters>
-  std::vector<Result<
-      CombinatorialKalmanFilterResult<typename source_link_accessor_t::Value>>>
-  findTracks(const typename source_link_accessor_t::Container& sourcelinks,
-             const start_parameters_container_t& initialParameters,
-             const CombinatorialKalmanFilterOptions<
-                 source_link_accessor_t, calibrator_t, measurement_selector_t>&
-                 tfOptions) const {
+  std::vector<Result<CombinatorialKalmanFilterResult>> findTracks(
+      const typename source_link_accessor_t::Container& sourcelinks,
+      const start_parameters_container_t& initialParameters,
+      const CombinatorialKalmanFilterOptions<source_link_accessor_t>& tfOptions)
+      const {
     static_assert(
         SourceLinkAccessorConcept<source_link_accessor_t>,
         "The source link accessor does not fullfill SourceLinkAccessorConcept");
@@ -1192,13 +1175,9 @@ class CombinatorialKalmanFilter {
 
     // Create the ActionList and AbortList
     using CombinatorialKalmanFilterAborter =
-        Aborter<source_link_accessor_t, parameters_t, calibrator_t,
-                measurement_selector_t>;
+        Aborter<source_link_accessor_t, parameters_t>;
     using CombinatorialKalmanFilterActor =
-        Actor<source_link_accessor_t, parameters_t, calibrator_t,
-              measurement_selector_t>;
-    using CombinatorialKalmanFilterResult =
-        typename CombinatorialKalmanFilterActor::result_type;
+        Actor<source_link_accessor_t, parameters_t>;
     using Actors = ActionList<CombinatorialKalmanFilterActor>;
     using Aborters = AbortList<CombinatorialKalmanFilterAborter>;
 
@@ -1221,8 +1200,7 @@ class CombinatorialKalmanFilter {
     combKalmanActor.m_sourcelinkAccessor = tfOptions.sourcelinkAccessor;
     // set the pointer to the source links
     combKalmanActor.m_sourcelinkAccessor.container = &sourcelinks;
-    combKalmanActor.m_calibrator = tfOptions.calibrator;
-    combKalmanActor.m_measurementSelector = tfOptions.measurementSelector;
+    combKalmanActor.m_extensions = tfOptions.extensions;
 
     // Run the CombinatorialKalmanFilter.
     // @todo The same target surface is used for all the initial track
