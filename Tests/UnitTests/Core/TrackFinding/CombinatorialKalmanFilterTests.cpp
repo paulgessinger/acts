@@ -112,6 +112,9 @@ struct Fixture {
   using CombinatorialKalmanFilterOptions =
       Acts::CombinatorialKalmanFilterOptions<TestSourceLinkAccessor>;
 
+  KalmanUpdater kfUpdater;
+  KalmanSmoother kfSmoother;
+
   Acts::GeometryContext geoCtx;
   Acts::MagneticFieldContext magCtx;
   Acts::CalibrationContext calCtx;
@@ -133,12 +136,24 @@ struct Fixture {
       {Acts::GeometryIdentifier(), {std::numeric_limits<double>::max(), 1u}},
   };
 
+  Acts::MeasurementSelector measSel{measurementSelectorCfg};
+
+  Acts::CombinatorialKalmanFilterExtensions getExtensions() const {
+    Acts::CombinatorialKalmanFilterExtensions extensions;
+    extensions.calibrator.connect<&testSourceLinkCalibrator>();
+    extensions.updater.connect<&KalmanUpdater::operator()>(&kfUpdater);
+    extensions.smoother.connect<&KalmanSmoother::operator()>(&kfSmoother);
+    extensions.measurementSelector.connect<&Acts::MeasurementSelector::select>(
+        &measSel);
+    return extensions;
+  }
+
   std::unique_ptr<const Acts::Logger> logger;
 
   Fixture(double bz)
       : detector(geoCtx),
         ckf(makeConstantFieldPropagator(detector.geometry, bz)),
-        logger(Acts::getDefaultLogger("CkfTest", Acts::Logging::INFO)) {
+        logger(Acts::getDefaultLogger("CkfTest", Acts::Logging::VERBOSE)) {
     // construct initial parameters
     // create common covariance matrix from reasonable standard deviations
     Acts::BoundVector stddev;
@@ -209,9 +224,7 @@ struct Fixture {
 
   CombinatorialKalmanFilterOptions makeCkfOptions() const {
     return CombinatorialKalmanFilterOptions(
-        geoCtx, magCtx, calCtx, TestSourceLinkAccessor(),
-        TestSourceLinkCalibrator(),
-        Acts::MeasurementSelector(measurementSelectorCfg),
+        geoCtx, magCtx, calCtx, TestSourceLinkAccessor(), getExtensions(),
         Acts::LoggerWrapper{*logger}, Acts::PropagatorPlainOptions());
   }
 };
@@ -231,6 +244,12 @@ BOOST_AUTO_TEST_CASE(ZeroFieldForward) {
       Acts::Vector3{-3_m, 0., 0.}, Acts::Vector3{1., 0., 0});
   // Set the target surface
   options.referenceSurface = &(*pSurface);
+
+  std::cout << " input source links: " << std::endl;
+  for (auto& [geoId, sl] : f.sourceLinks) {
+    std::cout << "" << geoId << " : " << sl.sourceId << " (&: " << &sl << " )"
+              << std::endl;
+  }
 
   // run the CKF for all initial track states
   auto results = f.ckf.findTracks(f.sourceLinks, f.startParameters, options);
@@ -259,10 +278,16 @@ BOOST_AUTO_TEST_CASE(ZeroFieldForward) {
     val.fittedStates.visitBackwards(
         val.lastMeasurementIndices.front(), [&](const auto& trackState) {
           numHits += 1u;
-          nummismatchedHits += (trackId != static_cast<const TestSourceLink&>(
-                                               trackState.uncalibrated())
-                                               .sourceId);
+          const auto& sl =
+              static_cast<const TestSourceLink&>(trackState.uncalibrated());
+          nummismatchedHits += (trackId != sl.sourceId);
+
+          std::cout << "sl: " << trackId << " - " << sl.sourceId
+                    << "(&: " << &sl << " )" << std::endl;
         });
+
+    std::cout << "numHits: " << numHits << " / " << f.detector.numMeasurements
+              << std::endl;
     BOOST_CHECK_EQUAL(numHits, f.detector.numMeasurements);
     BOOST_CHECK_EQUAL(nummismatchedHits, 0u);
   }

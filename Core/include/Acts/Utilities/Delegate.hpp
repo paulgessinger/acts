@@ -31,6 +31,18 @@ struct Delegate<Ret(Args...)> {
   void connect(Type* _type) {
     m_payload = _type;
     m_function = [](const void* payload, Args... args) -> Ret {
+      const auto* __type_const = static_cast<const Type*>(payload);
+      // was originally given as mutable pointer, so const_cast should be safe
+      auto* __type = const_cast<Type*>(payload);
+      return std::invoke(Callable, __type, std::forward<Args>(args)...);
+    };
+  }
+
+  template <auto Callable, typename Type>
+  void connect(const Type* _type) {
+    m_payload = _type;
+    m_function = [](const void* payload, Args... args) -> Ret {
+      // was originally given as const, so keep as is
       const auto* __type = static_cast<const Type*>(payload);
       return std::invoke(Callable, __type, std::forward<Args>(args)...);
     };
@@ -42,7 +54,7 @@ struct Delegate<Ret(Args...)> {
   }
 
  private:
-  void* m_payload{nullptr};
+  const void* m_payload{nullptr};
   function_type m_function{nullptr};
 };
 }  // namespace Acts

@@ -33,7 +33,7 @@ class IndexSourceLink final : public Acts::SourceLink {
 
   // Construct an invalid source link. Must be default constructible to
   /// satisfy SourceLinkConcept.
-  IndexSourceLink() = default;
+  IndexSourceLink() : SourceLink{Acts::GeometryIdentifier{}} {}
   IndexSourceLink(const IndexSourceLink&) = default;
   IndexSourceLink(IndexSourceLink&&) = default;
   IndexSourceLink& operator=(const IndexSourceLink&) = default;

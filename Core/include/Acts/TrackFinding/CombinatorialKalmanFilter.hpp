@@ -62,10 +62,16 @@ struct CombinatorialKalmanFilterTipState {
 };
 
 struct CombinatorialKalmanFilterExtensions : public KalmanFitterExtensions {
-  using MeasurementSelector = Delegate<Result<void>(
-      const BoundTrackParameters&, const std::vector<BoundVariantMeasurement>&,
-      std::vector<std::pair<size_t, double>>&, std::vector<size_t>&, bool&,
-      LoggerWrapper)>;
+  // using MeasurementSelector = Delegate<Result<void>(
+  //     const BoundTrackParameters&, const
+  //     std::vector<BoundVariantMeasurement>&, std::vector<std::pair<size_t,
+  //     double>>&, std::vector<size_t>&, bool&, LoggerWrapper)>;
+
+  using candidate_container_t = std::vector<MultiTrajectory::TrackStateProxy>;
+  using MeasurementSelector =
+      Delegate<Result<std::pair<candidate_container_t::iterator,
+                                candidate_container_t::iterator>>(
+          candidate_container_t& trackStates, bool&, LoggerWrapper)>;
 
   MeasurementSelector measurementSelector;
 };
@@ -530,32 +536,7 @@ class CombinatorialKalmanFilter {
           return boundStateRes.error();
         }
         auto boundState = *boundStateRes;
-        const auto& boundParams = std::get<BoundTrackParameters>(boundState);
-
-        // Get all source links on the surface
-        auto [lower_it, upper_it] =
-            m_sourcelinkAccessor.range(surface->geometryId());
-        // Calibrate all the source links on the surface since the selection has
-        // to be done based on calibrated measurement
-        std::vector<BoundVariantMeasurement> measurements;
-        measurements.reserve(nSourcelinks);
-        for (auto it = lower_it; it != upper_it; ++it) {
-          measurements.emplace_back(m_extensions.calibrator(
-              m_sourcelinkAccessor.at(it), boundParams));
-        }
-
-        // Invoke the measurement selector to select compatible measurements
-        // with the predicted track parameter. It could return either the
-        // compatible measurement indices or an outlier index.
-        bool isOutlier = false;
-        auto measurementSelectionRes = m_measurementSelector(
-            boundParams, measurements, result.measurementChi2,
-            result.measurementCandidateIndices, isOutlier, logger);
-        if (!measurementSelectionRes.ok()) {
-          ACTS_ERROR("Selection of calibrated measurements failed: "
-                     << measurementSelectionRes.error());
-          return measurementSelectionRes.error();
-        }
+        const auto& [boundParams, jacobian, pathLength] = boundState;
 
         // Retrieve the previous tip and its state
         // The states created on this surface will have the common previous tip
@@ -568,6 +549,138 @@ class CombinatorialKalmanFilter {
           result.activeTips.erase(result.activeTips.end() - 1);
         }
 
+        // Get all source links on the surface
+        auto [lower_it, upper_it] =
+            m_sourcelinkAccessor.range(surface->geometryId());
+        // Calibrate all the source links on the surface since the selection has
+        // to be done based on calibrated measurement
+
+        // @TODO: This adds track states for all measurements, including the ones
+        // we are going to reject. This needs to be refactored!
+        // std::vector<BoundVariantMeasurement> measurements;
+        // measurements.reserve(nSourcelinks);
+        // for (auto it = lower_it; it != upper_it; ++it) {
+        //   measurements.emplace_back(m_extensions.calibrator(
+        //       m_sourcelinkAccessor.at(it), boundParams));
+        // }
+
+        std::vector<MultiTrajectory::TrackStateProxy> trackStateCandidates;
+        trackStateCandidates.reserve(std::distance(lower_it, upper_it));
+        for (auto it = lower_it; it != upper_it; ++it) {
+          // get the source link
+          const auto& sourceLink = m_sourcelinkAccessor.at(it);
+
+          // prepare the track state
+          // @TODO: Optimize: shared predicted storage
+          size_t tsi = result.fittedStates.addTrackState(
+              TrackStatePropMask::All, prevTip);
+          auto ts = result.fittedStates.getTrackState(tsi);
+          ts.predicted() = boundParams.parameters();
+          if (boundParams.covariance()) {
+            ts.predictedCovariance() = *boundParams.covariance();
+          }
+          ts.pathLength() = pathLength;
+
+          // @TODO: Can probably optimize these two too
+          ts.jacobian() = jacobian;
+          ts.setReferenceSurface(boundParams.referenceSurface().getSharedPtr());
+
+          ts.setUncalibrated(sourceLink);
+
+          // now calibrate the track state
+          m_extensions.calibrator(state.geoContext, ts);
+
+          trackStateCandidates.push_back(ts);
+        }
+
+        // Invoke the measurement selector to select compatible measurements
+        // with the predicted track parameter. It could return either the
+        // compatible measurement indices or an outlier index.
+        bool isOutlier = false;
+        // auto measurementSelectionRes = m_measurementSelector(
+        //     boundParams, measurements, result.measurementChi2,
+        //     result.measurementCandidateIndices, isOutlier, logger);
+        // if (!measurementSelectionRes.ok()) {
+        //   ACTS_ERROR("Selection of calibrated measurements failed: "
+        //              << measurementSelectionRes.error());
+        //   return measurementSelectionRes.error();
+        // }
+
+        // Temporarily: accept ALL measurements
+        // @TODO: Reintegrate measurement selector
+        auto selectorResult = m_extensions.measurementSelector(
+            trackStateCandidates, isOutlier, logger);
+
+        if (!selectorResult.ok()) {
+          ACTS_ERROR("Selection of calibrated measurements failed: "
+                     << selectorResult.error());
+          return selectorResult.error();
+        }
+
+        auto [selected_ts_begin, selected_ts_end] = *selectorResult;
+
+        // auto selected_ts_begin = trackStateCandidates.begin();
+        // auto selected_ts_end = trackStateCandidates.end();
+
+        for (auto it = selected_ts_begin; it != selected_ts_end; ++it) {
+          auto& trackState = *it;
+          auto& typeFlags = trackState.typeFlags();
+          if (trackState.referenceSurface().surfaceMaterial() != nullptr) {
+            typeFlags.set(TrackStateFlag::MaterialFlag);
+          }
+          typeFlags.set(TrackStateFlag::ParameterFlag);
+
+          // Inherit the tip state from the previous and will be updated
+          // later
+          TipState tipState = prevTipState;
+          size_t currentTip = trackState.index();
+
+          // Increment of number of processedState and passed sensitive surfaces
+          tipState.nSensitiveSurfaces++;
+          tipState.nStates++;
+
+          if (isOutlier) {
+            ACTS_VERBOSE(
+                "Creating outlier track state with tip = " << currentTip);
+            // Set the outlier flag
+            typeFlags.set(TrackStateFlag::OutlierFlag);
+            // Increment number of outliers
+            tipState.nOutliers++;
+            // No Kalman update for outlier
+            // Set the filtered parameter index to be the same with predicted
+            // parameter
+            // @TODO: Optimize to not do a copy using:
+            // trackStateProxy.data().ifiltered =
+            //     trackStateProxy.data().ipredicted;
+            trackState.filtered() = trackState.predicted();
+            trackState.filteredCovariance() = trackState.predictedCovariance();
+          } else {
+            // Kalman update
+            auto updateRes = m_extensions.updater(state.geoContext, trackState,
+                                                  forward, getDummyLogger());
+            if (!updateRes.ok()) {
+              ACTS_ERROR("Update step failed: " << updateRes.error());
+              return updateRes.error();
+            }
+            ACTS_VERBOSE(
+                "Creating measurement track state with tip = " << currentTip);
+            // Set the measurement flag
+            typeFlags.set(TrackStateFlag::MeasurementFlag);
+            // Increment number of measurements
+            tipState.nMeasurements++;
+          }
+
+          // Check if need to stop this branch
+          if (not m_branchStopper(tipState)) {
+            // Put tipstate back into active tips to continue with it
+            result.activeTips.emplace_back(std::move(currentTip),
+                                           std::move(tipState));
+            // Record the number of branches on surface
+            nBranchesOnSurface++;
+          }
+        }
+
+#if 0
         // Remember the tip of the neighbor state on this surface
         size_t neighborTip = SIZE_MAX;
         // Loop over the selected measurements
@@ -629,6 +742,7 @@ class CombinatorialKalmanFilter {
             }
           }
         }  // end of loop for all selected measurements on this surface
+#endif
 
         if (nBranchesOnSurface > 0 and not isOutlier) {
           // If there are measurement track states on this surface
@@ -642,10 +756,10 @@ class CombinatorialKalmanFilter {
                          MultiTrajectoryHelpers::freeFiltered(
                              state.options.geoContext, ts),
                          ts.filtered(), ts.filteredCovariance(), *surface);
-          ACTS_VERBOSE("Stepping state is updated with filtered parameter: \n"
-                       << ts.filtered().transpose()
-                       << " of track state with tip = "
-                       << result.activeTips.back().first);
+          ACTS_VERBOSE("Stepping state is updated with filtered parameter:");
+          ACTS_VERBOSE("-> " << ts.filtered().transpose()
+                             << " of track state with tip = "
+                             << result.activeTips.back().first);
         }
         // Update state and stepper with post material effects
         materialInteractor(surface, state, stepper, postUpdate);
@@ -752,25 +866,26 @@ class CombinatorialKalmanFilter {
       return Result<void>::success();
     }
 
-    /// @brief CombinatorialKalmanFilter actor operation : add track state with
-    /// source link: measurement or outlier
-    ///
-    /// @param stateMask The bitmask that instructs which components to allocate
-    /// and which to leave invalid
-    /// @param boundState The bound state on current surface
-    /// @param sourcelink The source link to be stored
-    /// @param measurement The calibrated measurement to be stored
-    /// @param isOutlier Indicator for outlier or not
-    /// @param result is the mutable result state object
-    /// @param geoContext The geometry context (needed for Kalman update)
-    /// @param prevTip Previous tip index
-    /// @param prevTipState Previous tip state
-    /// @param neighborTip The neighbor state tip on this surface (the predicted
-    /// parameters could be shared between neighbors)
-    /// @param sharedTip The tip of state with shared source link
-    /// @param logger The logger wrapper
-    ///
-    /// @return The tip of added state and its state
+/// @brief CombinatorialKalmanFilter actor operation : add track state with
+/// source link: measurement or outlier
+///
+/// @param stateMask The bitmask that instructs which components to allocate
+/// and which to leave invalid
+/// @param boundState The bound state on current surface
+/// @param sourcelink The source link to be stored
+/// @param measurement The calibrated measurement to be stored
+/// @param isOutlier Indicator for outlier or not
+/// @param result is the mutable result state object
+/// @param geoContext The geometry context (needed for Kalman update)
+/// @param prevTip Previous tip index
+/// @param prevTipState Previous tip state
+/// @param neighborTip The neighbor state tip on this surface (the predicted
+/// parameters could be shared between neighbors)
+/// @param sharedTip The tip of state with shared source link
+/// @param logger The logger wrapper
+///
+/// @return The tip of added state and its state
+#if 0
     Result<std::pair<size_t, TipState>> addSourcelinkState(
         const TrackStatePropMask& stateMask, const BoundState& boundState,
         const SourceLink& sourcelink,
@@ -864,6 +979,7 @@ class CombinatorialKalmanFilter {
       }
       return std::make_pair(std::move(currentTip), std::move(tipState));
     }
+#endif
 
     /// @brief CombinatorialKalmanFilter actor operation : add hole or material track state
     ///
@@ -1015,8 +1131,9 @@ class CombinatorialKalmanFilter {
       ACTS_VERBOSE("Apply smoothing on " << nStates
                                          << " filtered track states.");
       // Smooth the track states
-      auto smoothRes = m_extensions.smoother(
-          state.geoContext, result.fittedStates, lastMeasurementIndex);
+      auto smoothRes =
+          m_extensions.smoother(state.geoContext, result.fittedStates,
+                                lastMeasurementIndex, getDummyLogger());
       if (!smoothRes.ok()) {
         ACTS_ERROR("Smoothing step failed: " << smoothRes.error());
         return smoothRes.error();
