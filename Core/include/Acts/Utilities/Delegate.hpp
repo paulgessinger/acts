@@ -33,7 +33,7 @@ struct Delegate<Ret(Args...)> {
     m_function = [](const void* payload, Args... args) -> Ret {
       const auto* __type_const = static_cast<const Type*>(payload);
       // was originally given as mutable pointer, so const_cast should be safe
-      auto* __type = const_cast<Type*>(payload);
+      auto* __type = const_cast<Type*>(__type_const);
       return std::invoke(Callable, __type, std::forward<Args>(args)...);
     };
   }
