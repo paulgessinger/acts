@@ -109,7 +109,7 @@ ActsExamples::ProcessCode ActsExamples::SpacePointMaker::execute(
         return ProcessCode::ABORT;
       }
 
-      for (auto sourceLink : moduleSourceLinks) {
+      for (auto& sourceLink : moduleSourceLinks) {
         // extract a local position/covariance independent from the concrecte
         // measurement content. since we do not know if and where the local
         // parameters are contained in the measurement parameters vector, they

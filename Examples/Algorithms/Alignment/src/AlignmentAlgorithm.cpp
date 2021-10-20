@@ -63,9 +63,10 @@ ActsExamples::ProcessCode ActsExamples::AlignmentAlgorithm::execute(
   }
 
   // Prepare the input track collection
-  std::vector<std::vector<IndexSourceLink>> sourceLinkTrackContainer;
+  std::vector<std::vector<std::reference_wrapper<const IndexSourceLink>>>
+      sourceLinkTrackContainer;
   sourceLinkTrackContainer.reserve(numTracksUsed);
-  std::vector<IndexSourceLink> trackSourceLinks;
+  std::vector<std::reference_wrapper<const IndexSourceLink>> trackSourceLinks;
   for (std::size_t itrack = 0; itrack < numTracksUsed; ++itrack) {
     // The list of hits and the initial start parameters
     const auto& protoTrack = protoTracks[itrack];
@@ -82,7 +83,7 @@ ActsExamples::ProcessCode ActsExamples::AlignmentAlgorithm::execute(
                                   << hitIndex);
         return ProcessCode::ABORT;
       }
-      trackSourceLinks.push_back(*sourceLink);
+      trackSourceLinks.push_back(std::ref(*sourceLink));
     }
     sourceLinkTrackContainer.push_back(trackSourceLinks);
   }

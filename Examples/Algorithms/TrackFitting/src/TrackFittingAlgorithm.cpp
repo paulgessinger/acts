@@ -87,7 +87,7 @@ ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
   kfOptions.energyLoss = m_cfg.energyLoss;
 
   // Perform the fit for each input track
-  std::vector<IndexSourceLink> trackSourceLinks;
+  std::vector<std::reference_wrapper<const IndexSourceLink>> trackSourceLinks;
   std::vector<const Acts::Surface*> surfSequence;
   for (std::size_t itrack = 0; itrack < protoTracks.size(); ++itrack) {
     // Check if you are not in picking mode
@@ -124,7 +124,7 @@ ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
                                   << hitIndex);
         return ProcessCode::ABORT;
       }
-      trackSourceLinks.push_back(*sourceLink);
+      trackSourceLinks.push_back(std::ref(*sourceLink));
       surfSequence.push_back(m_cfg.trackingGeometry->findSurface(geoId));
     }
 

@@ -37,7 +37,8 @@ struct TrackFitterFunctionImpl
   TrackFitterFunctionImpl(Fitter&& f) : trackFitter(std::move(f)) {}
 
   ActsExamples::TrackFittingAlgorithm::TrackFitterResult operator()(
-      const std::vector<ActsExamples::IndexSourceLink>& sourceLinks,
+      const std::vector<std::reference_wrapper<
+          const ActsExamples::IndexSourceLink>>& sourceLinks,
       const ActsExamples::TrackParameters& initialParameters,
       const ActsExamples::TrackFittingAlgorithm::TrackFitterOptions& options)
       const override {
@@ -52,7 +53,8 @@ struct DirectedFitterFunctionImpl
   DirectedFitterFunctionImpl(DirectFitter&& f) : fitter(std::move(f)) {}
 
   ActsExamples::TrackFittingAlgorithm::TrackFitterResult operator()(
-      const std::vector<ActsExamples::IndexSourceLink>& sourceLinks,
+      const std::vector<std::reference_wrapper<
+          const ActsExamples::IndexSourceLink>>& sourceLinks,
       const ActsExamples::TrackParameters& initialParameters,
       const ActsExamples::TrackFittingAlgorithm::TrackFitterOptions& options,
       const std::vector<const Acts::Surface*>& sSequence) const override {
