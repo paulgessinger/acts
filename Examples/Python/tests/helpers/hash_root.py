@@ -60,6 +60,12 @@ def hash_root_file(path: Path, ordering_invariant: bool = True) -> str:
     return gh.hexdigest()
 
 
+def assert_root_hash(file: Path, refhash: str):
+    __tracebackhide__ = True
+    act_hash = hash_root_file(file)
+    assert refhash == act_hash, f"{refhash} != {act_hash}"
+
+
 if "__main__" == __name__:
     p = argparse.ArgumentParser(
         description="Calculate a hash of the numeric content of a root file"
