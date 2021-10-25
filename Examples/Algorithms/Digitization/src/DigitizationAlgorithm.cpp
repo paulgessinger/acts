@@ -118,7 +118,7 @@ ActsExamples::ProcessCode ActsExamples::DigitizationAlgorithm::execute(
   // Prepare output containers
   // need list here for stable addresses
   std::list<IndexSourceLink> sourceLinkStorage;
-  GeometryIdMultiset<std::reference_wrapper<IndexSourceLink>> sourceLinks;
+  IndexSourceLinkContainer sourceLinks;
   MeasurementContainer measurements;
   ClusterContainer clusters;
   IndexMultimap<ActsFatras::Barcode> measurementParticlesMap;

@@ -60,11 +60,13 @@ class IndexSourceLink final : public Acts::SourceLink {
 ///
 /// Since the source links provide a `.geometryId()` accessor, they can be
 /// stored in an ordered geometry container.
-using IndexSourceLinkContainer = GeometryIdMultiset<IndexSourceLink>;
+using IndexSourceLinkContainer =
+    GeometryIdMultiset<std::reference_wrapper<const IndexSourceLink>>;
 /// Accessor for the above source link container
 ///
 /// It wraps up a few lookup methods to be used in the Combinatorial Kalman
 /// Filter
-using IndexSourceLinkAccessor = GeometryIdMultisetAccessor<IndexSourceLink>;
+using IndexSourceLinkAccessor =
+    GeometryIdMultisetAccessor<std::reference_wrapper<const IndexSourceLink>>;
 
 }  // namespace ActsExamples

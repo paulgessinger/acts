@@ -117,15 +117,16 @@ ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
 
     // Fill the source links via their indices from the container
     for (auto hitIndex : protoTrack) {
-      auto sourceLink = sourceLinks.nth(hitIndex);
-      auto geoId = sourceLink->geometryId();
-      if (sourceLink == sourceLinks.end()) {
+      if (auto it = sourceLinks.nth(hitIndex); it != sourceLinks.end()) {
+        const IndexSourceLink& sourceLink = *it;
+        auto geoId = sourceLink.geometryId();
+        trackSourceLinks.push_back(std::cref(sourceLink));
+        surfSequence.push_back(m_cfg.trackingGeometry->findSurface(geoId));
+      } else {
         ACTS_FATAL("Proto track " << itrack << " contains invalid hit index"
                                   << hitIndex);
         return ProcessCode::ABORT;
       }
-      trackSourceLinks.push_back(std::ref(*sourceLink));
-      surfSequence.push_back(m_cfg.trackingGeometry->findSurface(geoId));
     }
 
     ACTS_DEBUG("Invoke fitter");
