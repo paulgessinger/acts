@@ -571,27 +571,45 @@ class CombinatorialKalmanFilter {
         trackStateCandidates.reserve(std::distance(lower_it, upper_it));
         result.stateBuffer.clear();
 
+        using PM = TrackStatePropMask;
+
         for (auto it = lower_it; it != upper_it; ++it) {
           // get the source link
           const auto& sourceLink = m_sourcelinkAccessor.at(it);
 
           // prepare the track state
           // @TODO: Optimize: shared predicted storage
-          size_t tsi = result.stateBuffer.addTrackState(TrackStatePropMask::All,
-                                                        prevTip);
+
+          PM mask =
+              PM::Predicted | PM::Jacobian | PM::Uncalibrated | PM::Calibrated;
+
+          if (it != lower_it) {
+            // not the first TrackState, only need uncalibrated and calibrated
+            mask = PM::Uncalibrated | PM::Calibrated;
+          }
+
+          size_t tsi = result.stateBuffer.addTrackState(mask, prevTip);
           // CAREFUL! This trackstate has a previous index that is not in this
           // MultiTrajectory Visiting brackwards from this track state will
           // fail!
           auto ts = result.stateBuffer.getTrackState(tsi);
 
-          ts.predicted() = boundParams.parameters();
-          if (boundParams.covariance()) {
-            ts.predictedCovariance() = *boundParams.covariance();
+          if (it == lower_it) {
+            // only set these for first
+            ts.predicted() = boundParams.parameters();
+            if (boundParams.covariance()) {
+              ts.predictedCovariance() = *boundParams.covariance();
+            }
+            ts.jacobian() = jacobian;
+          } else {
+            // subsequent track states can reuse
+            auto& first = trackStateCandidates.front();
+            ts.data().ipredicted = first.data().ipredicted;
+            ts.data().ijacobian = first.data().ijacobian;
           }
+
           ts.pathLength() = pathLength;
 
-          // @TODO: Can probably optimize these two too
-          ts.jacobian() = jacobian;
           ts.setReferenceSurface(boundParams.referenceSurface().getSharedPtr());
 
           ts.setUncalibrated(sourceLink);
@@ -617,14 +635,35 @@ class CombinatorialKalmanFilter {
 
         auto [selected_ts_begin, selected_ts_end] = *selectorResult;
 
+        // auto& firstTrackState = *selected_ts_begin;
+        std::optional<MultiTrajectory::TrackStateProxy> firstTrackState{
+            std::nullopt};
         for (auto it = selected_ts_begin; it != selected_ts_end; ++it) {
           auto& candidateTrackState = *it;
           // copy this trackstate into fitted states MultiTrajectory
+
+          PM mask = PM::All;
+
+          if (it != selected_ts_begin) {
+            // subsequent track states don't need storage for these
+            mask = ~PM::Predicted & ~PM::Jacobian;
+          }
+
           MultiTrajectory::TrackStateProxy trackState =
               result.fittedStates.getTrackState(
                   result.fittedStates.addTrackState(
-                      TrackStatePropMask::All, candidateTrackState.previous()));
-          trackState.copyFrom(candidateTrackState, TrackStatePropMask::All);
+                      mask, candidateTrackState.previous()));
+
+          if (it != selected_ts_begin) {
+            // assign indices pointing to first track state
+            trackState.data().ipredicted = firstTrackState->data().ipredicted;
+            trackState.data().ijacobian = firstTrackState->data().ijacobian;
+          } else {
+            firstTrackState = trackState;
+          }
+
+          // either copy ALL or everything except for predicted and jacobian
+          trackState.copyFrom(candidateTrackState, mask, false);
 
           auto& typeFlags = trackState.typeFlags();
           if (trackState.referenceSurface().surfaceMaterial() != nullptr) {

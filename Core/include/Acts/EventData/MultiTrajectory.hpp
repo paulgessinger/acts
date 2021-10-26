@@ -211,47 +211,96 @@ class TrackStateProxy {
   template <bool RO = ReadOnly, bool ReadOnlyOther,
             typename = std::enable_if<!RO>>
   void copyFrom(const TrackStateProxy<M, ReadOnlyOther>& other,
-                TrackStatePropMask mask = TrackStatePropMask::All) {
+                TrackStatePropMask mask = TrackStatePropMask::All,
+                bool onlyAllocated = true) {
     using PM = TrackStatePropMask;
-    auto dest = getMask();
-    auto src = other.getMask() &
-               mask;  // combine what we have with what we want to copy
-    if (static_cast<std::underlying_type_t<TrackStatePropMask>>((src ^ dest) &
-                                                                src) != 0) {
-      throw std::runtime_error(
-          "Attempt track state copy with incompatible allocations");
-    }
 
-    // we're sure now this has correct allocations, so just copy
-    if (ACTS_CHECK_BIT(src, PM::Predicted)) {
-      predicted() = other.predicted();
-      predictedCovariance() = other.predictedCovariance();
-    }
+    if (onlyAllocated) {
+      auto dest = getMask();
+      auto src = other.getMask() &
+                 mask;  // combine what we have with what we want to copy
+      if (static_cast<std::underlying_type_t<TrackStatePropMask>>((src ^ dest) &
+                                                                  src) != 0) {
+        throw std::runtime_error(
+            "Attempt track state copy with incompatible allocations");
+      }
 
-    if (ACTS_CHECK_BIT(src, PM::Filtered)) {
-      filtered() = other.filtered();
-      filteredCovariance() = other.filteredCovariance();
-    }
+      // we're sure now this has correct allocations, so just copy
+      if (ACTS_CHECK_BIT(src, PM::Predicted)) {
+        predicted() = other.predicted();
+        predictedCovariance() = other.predictedCovariance();
+      }
 
-    if (ACTS_CHECK_BIT(src, PM::Smoothed)) {
-      smoothed() = other.smoothed();
-      smoothedCovariance() = other.smoothedCovariance();
-    }
+      if (ACTS_CHECK_BIT(src, PM::Filtered)) {
+        filtered() = other.filtered();
+        filteredCovariance() = other.filteredCovariance();
+      }
 
-    if (ACTS_CHECK_BIT(src, PM::Uncalibrated)) {
-      setUncalibrated(other.uncalibrated());
-    }
+      if (ACTS_CHECK_BIT(src, PM::Smoothed)) {
+        smoothed() = other.smoothed();
+        smoothedCovariance() = other.smoothedCovariance();
+      }
 
-    if (ACTS_CHECK_BIT(src, PM::Jacobian)) {
-      jacobian() = other.jacobian();
-    }
+      if (ACTS_CHECK_BIT(src, PM::Uncalibrated)) {
+        setUncalibrated(other.uncalibrated());
+      }
 
-    if (ACTS_CHECK_BIT(src, PM::Calibrated)) {
-      setCalibratedSourceLink(other.calibratedSourceLink());
-      calibrated() = other.calibrated();
-      calibratedCovariance() = other.calibratedCovariance();
-      data().measdim = other.data().measdim;
-      setProjectorBitset(other.projectorBitset());
+      if (ACTS_CHECK_BIT(src, PM::Jacobian)) {
+        jacobian() = other.jacobian();
+      }
+
+      if (ACTS_CHECK_BIT(src, PM::Calibrated)) {
+        setCalibratedSourceLink(other.calibratedSourceLink());
+        calibrated() = other.calibrated();
+        calibratedCovariance() = other.calibratedCovariance();
+        data().measdim = other.data().measdim;
+        setProjectorBitset(other.projectorBitset());
+      }
+    } else {
+      if (ACTS_CHECK_BIT(mask, PM::Predicted) &&
+          data().ipredicted != IndexData::kInvalid &&
+          other.data().ipredicted != IndexData::kInvalid) {
+        predicted() = other.predicted();
+        predictedCovariance() = other.predictedCovariance();
+      }
+
+      if (ACTS_CHECK_BIT(mask, PM::Filtered) &&
+          data().ifiltered != IndexData::kInvalid &&
+          other.data().ifiltered != IndexData::kInvalid) {
+        filtered() = other.filtered();
+        filteredCovariance() = other.filteredCovariance();
+      }
+
+      if (ACTS_CHECK_BIT(mask, PM::Smoothed) &&
+          data().ismoothed != IndexData::kInvalid &&
+          other.data().ismoothed != IndexData::kInvalid) {
+        smoothed() = other.smoothed();
+        smoothedCovariance() = other.smoothedCovariance();
+      }
+
+      if (ACTS_CHECK_BIT(mask, PM::Uncalibrated) &&
+          data().iuncalibrated != IndexData::kInvalid &&
+          other.data().iuncalibrated != IndexData::kInvalid) {
+        setUncalibrated(other.uncalibrated());
+      }
+
+      if (ACTS_CHECK_BIT(mask, PM::Jacobian) &&
+          data().ijacobian != IndexData::kInvalid &&
+          other.data().ijacobian != IndexData::kInvalid) {
+        jacobian() = other.jacobian();
+      }
+
+      if (ACTS_CHECK_BIT(mask, PM::Calibrated) &&
+          data().icalibrated != IndexData::kInvalid &&
+          other.data().icalibrated != IndexData::kInvalid &&
+          data().icalibratedsourcelink != IndexData::kInvalid &&
+          other.data().icalibratedsourcelink != IndexData::kInvalid) {
+        setCalibratedSourceLink(other.calibratedSourceLink());
+        calibrated() = other.calibrated();
+        calibratedCovariance() = other.calibratedCovariance();
+        data().measdim = other.data().measdim;
+        setProjectorBitset(other.projectorBitset());
+      }
     }
 
     chi2() = other.chi2();
