@@ -84,7 +84,15 @@ struct GrowableColumns {
   /// Return the current allocated storage capacity
   size_t capacity() const { return static_cast<size_t>(data.cols()); }
 
+  /// Return the size of the storage column
   size_t size() const { return m_size; }
+
+  /// Resize the storage column, without changing the allocated capacity
+  void resize(size_t size) { size = 0; }
+
+  /// Clear the storage of the storage column
+  /// Equivalent to ``resize(0)``
+  void clear() { resize(0); }
 
  private:
   Storage data;
@@ -673,6 +681,22 @@ class MultiTrajectory {
   ///          points, this can have an impact on the other components.
   template <typename F>
   void applyBackwards(size_t iendpoint, F&& callable);
+
+  /// Clear the @c MultiTrajectory. Leaves the underlying storage untouched
+  void clear() {
+    m_index.clear();
+    m_params.clear();
+    m_cov.clear();
+    m_meas.clear();
+    m_measCov.clear();
+    m_jac.clear();
+    m_sourceLinks.clear();
+    m_projectors.clear();
+    m_referenceSurfaces.clear();
+  }
+
+  /// Returns the number of track states contained
+  size_t size() const { return m_index.size(); }
 
  private:
   /// index to map track states to the corresponding
