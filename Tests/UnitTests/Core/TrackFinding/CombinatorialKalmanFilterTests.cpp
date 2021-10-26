@@ -153,7 +153,7 @@ struct Fixture {
   Fixture(double bz)
       : detector(geoCtx),
         ckf(makeConstantFieldPropagator(detector.geometry, bz)),
-        logger(Acts::getDefaultLogger("CkfTest", Acts::Logging::VERBOSE)) {
+        logger(Acts::getDefaultLogger("CkfTest", Acts::Logging::INFO)) {
     // construct initial parameters
     // create common covariance matrix from reasonable standard deviations
     Acts::BoundVector stddev;
@@ -245,12 +245,6 @@ BOOST_AUTO_TEST_CASE(ZeroFieldForward) {
   // Set the target surface
   options.referenceSurface = &(*pSurface);
 
-  std::cout << " input source links: " << std::endl;
-  for (auto& [geoId, sl] : f.sourceLinks) {
-    std::cout << "" << geoId << " : " << sl.sourceId << " (&: " << &sl << " )"
-              << std::endl;
-  }
-
   // run the CKF for all initial track states
   auto results = f.ckf.findTracks(f.sourceLinks, f.startParameters, options);
   // There should be three track finding results with three initial track states
@@ -268,6 +262,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldForward) {
     BOOST_REQUIRE(res.ok());
 
     auto val = *res;
+    BOOST_CHECK_EQUAL(val.fittedStates.size(), f.detector.numMeasurements);
+
     // with the given measurement selection cuts, only one trajectory for the
     // given input parameters should be found.
     BOOST_CHECK_EQUAL(val.lastMeasurementIndices.size(), 1u);
@@ -281,13 +277,8 @@ BOOST_AUTO_TEST_CASE(ZeroFieldForward) {
           const auto& sl =
               static_cast<const TestSourceLink&>(trackState.uncalibrated());
           nummismatchedHits += (trackId != sl.sourceId);
-
-          std::cout << "sl: " << trackId << " - " << sl.sourceId
-                    << "(&: " << &sl << " )" << std::endl;
         });
 
-    std::cout << "numHits: " << numHits << " / " << f.detector.numMeasurements
-              << std::endl;
     BOOST_CHECK_EQUAL(numHits, f.detector.numMeasurements);
     BOOST_CHECK_EQUAL(nummismatchedHits, 0u);
   }
@@ -321,6 +312,7 @@ BOOST_AUTO_TEST_CASE(ZeroFieldBackward) {
     BOOST_REQUIRE(res.ok());
 
     auto val = *res;
+    BOOST_CHECK_EQUAL(val.fittedStates.size(), f.detector.numMeasurements);
     // with the given measurement selection cuts, only one trajectory for the
     // given input parameters should be found.
     BOOST_CHECK_EQUAL(val.lastMeasurementIndices.size(), 1u);
