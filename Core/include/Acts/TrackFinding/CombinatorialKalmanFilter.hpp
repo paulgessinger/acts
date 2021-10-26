@@ -158,6 +158,9 @@ struct CombinatorialKalmanFilterResult {
   // Fitted states that the actor has handled.
   MultiTrajectory fittedStates;
 
+  // This is used internally to store candidate trackstates
+  MultiTrajectory stateBuffer;
+
   // This is the indices of the 'tip' of the tracks stored in multitrajectory.
   // This correspond to the last measurment state in the multitrajectory.
   std::vector<size_t> lastMeasurementIndices;
@@ -566,15 +569,21 @@ class CombinatorialKalmanFilter {
 
         std::vector<MultiTrajectory::TrackStateProxy> trackStateCandidates;
         trackStateCandidates.reserve(std::distance(lower_it, upper_it));
+        result.stateBuffer.clear();
+
         for (auto it = lower_it; it != upper_it; ++it) {
           // get the source link
           const auto& sourceLink = m_sourcelinkAccessor.at(it);
 
           // prepare the track state
           // @TODO: Optimize: shared predicted storage
-          size_t tsi = result.fittedStates.addTrackState(
-              TrackStatePropMask::All, prevTip);
-          auto ts = result.fittedStates.getTrackState(tsi);
+          size_t tsi = result.stateBuffer.addTrackState(TrackStatePropMask::All,
+                                                        prevTip);
+          // CAREFUL! This trackstate has a previous index that is not in this
+          // MultiTrajectory Visiting brackwards from this track state will
+          // fail!
+          auto ts = result.stateBuffer.getTrackState(tsi);
+
           ts.predicted() = boundParams.parameters();
           if (boundParams.covariance()) {
             ts.predictedCovariance() = *boundParams.covariance();
@@ -597,17 +606,6 @@ class CombinatorialKalmanFilter {
         // with the predicted track parameter. It could return either the
         // compatible measurement indices or an outlier index.
         bool isOutlier = false;
-        // auto measurementSelectionRes = m_measurementSelector(
-        //     boundParams, measurements, result.measurementChi2,
-        //     result.measurementCandidateIndices, isOutlier, logger);
-        // if (!measurementSelectionRes.ok()) {
-        //   ACTS_ERROR("Selection of calibrated measurements failed: "
-        //              << measurementSelectionRes.error());
-        //   return measurementSelectionRes.error();
-        // }
-
-        // Temporarily: accept ALL measurements
-        // @TODO: Reintegrate measurement selector
         auto selectorResult = m_extensions.measurementSelector(
             trackStateCandidates, isOutlier, logger);
 
@@ -619,11 +617,15 @@ class CombinatorialKalmanFilter {
 
         auto [selected_ts_begin, selected_ts_end] = *selectorResult;
 
-        // auto selected_ts_begin = trackStateCandidates.begin();
-        // auto selected_ts_end = trackStateCandidates.end();
-
         for (auto it = selected_ts_begin; it != selected_ts_end; ++it) {
-          auto& trackState = *it;
+          auto& candidateTrackState = *it;
+          // copy this trackstate into fitted states MultiTrajectory
+          MultiTrajectory::TrackStateProxy trackState =
+              result.fittedStates.getTrackState(
+                  result.fittedStates.addTrackState(
+                      TrackStatePropMask::All, candidateTrackState.previous()));
+          trackState.copyFrom(candidateTrackState, TrackStatePropMask::All);
+
           auto& typeFlags = trackState.typeFlags();
           if (trackState.referenceSurface().surfaceMaterial() != nullptr) {
             typeFlags.set(TrackStateFlag::MaterialFlag);
