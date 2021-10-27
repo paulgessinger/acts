@@ -60,10 +60,23 @@ struct KalmanFitterExtensions {
 
   using ReverseFilteringLogic = Delegate<bool(ConstTrackStateProxy)>;
 
+  /// The Calibrator is a dedicated calibration algorithm that allows
+  /// to calibrate measurements using track information, this could be
+  /// e.g. sagging for wires, module deformations, etc.
   Calibrator calibrator;
+
+  /// The updater incorporates measurement information into the track parameters
   Updater updater;
+
+  /// The smoother back-propagates measurement information along the track
   Smoother smoother;
+
+  /// Determines whether a measurement is supposed to be considered as an
+  /// outlier
   OutlierFinder outlierFinder;
+
+  /// Decides whether the smoothing stage uses linearized transport or full
+  /// reverse propagation
   ReverseFilteringLogic reverseFilteringLogic;
 
   KalmanFitterExtensions() {
