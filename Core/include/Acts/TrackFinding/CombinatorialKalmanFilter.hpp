@@ -697,6 +697,7 @@ class CombinatorialKalmanFilter {
             // Set the filtered parameter index to be the same with predicted
             // parameter
             trackState.data().ifiltered = trackState.data().ipredicted;
+
           } else {
             // Kalman update
             auto updateRes = m_extensions.updater(state.geoContext, trackState,
