@@ -10,14 +10,17 @@
 
 #include <algorithm>
 #include <functional>
+#include <iostream>
 #include <optional>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
+#include <boost/container/small_vector.hpp>
+
 namespace Acts {
 
-template <typename identifier_t, typename value_t>
+template <typename identifier_t, typename value_t, size_t inline_size = 10>
 class IdentifyableContainer {
  public:
   using value_store_t = std::vector<value_t>;
@@ -33,7 +36,7 @@ class IdentifyableContainer {
       : m_valueStore{std::move(values)} {
     // std::sort(m_valueStore.begin(), m_valueStore.end());
 
-    std::optional<identifier_t> prev = nullptr;
+    std::optional<identifier_t> prev = std::nullopt;
     Iterator groupStart = m_valueStore.begin();
     // Iterator groupEnd;
     for (Iterator it = m_valueStore.begin(); it != m_valueStore.end(); ++it) {
@@ -41,16 +44,28 @@ class IdentifyableContainer {
       // const auto& value = *it;
       if (prev && (*prev) != id) {
         // new range
-        m_ranges[id] = {groupStart, it};
+        std::cout << "add range: " << *prev << ": "
+                  << std::distance(m_valueStore.begin(), groupStart) << " -> "
+                  << std::distance(m_valueStore.begin(), it) << std::endl;
+        m_ranges[*prev].emplace_back(groupStart, it);
         groupStart = it;
       }
+      prev = id;
     }
     // close the last range
-    m_ranges[mapper(m_valueStore.back())] = {groupStart, m_valueStore.end()};
+    std::cout << "add range: " << *prev << ": "
+              << std::distance(m_valueStore.begin(), groupStart) << " -> "
+              << std::distance(m_valueStore.begin(), m_valueStore.end())
+              << std::endl;
+    m_ranges[*prev].emplace_back(groupStart, m_valueStore.end());
   }
 
+  using Range = std::pair<Iterator, Iterator>;
+
  private:
-  std::unordered_map<identifier_t, std::pair<Iterator, Iterator>> m_ranges;
+  std::unordered_map<identifier_t,
+                     boost::container::small_vector<Range, inline_size>>
+      m_ranges;
   std::vector<value_t> m_valueStore;
 };
 

@@ -34,16 +34,30 @@ class PseudoSourceLink {
   int value() const { return m_value; }
 
  private:
+  int m_id;
   int m_value;
-  GeometryIdentifier m_id;
 };
 
 BOOST_AUTO_TEST_CASE(AccessPattern) {
-  using container_t = IdentifyableContainer<int, int>;
+  using container_t = IdentifyableContainer<int, PseudoSourceLink>;
 
   std::vector<PseudoSourceLink> values = {{1, 1}, {1, 2},  {1, 3},  {1, 4},
                                           {2, 5}, {2, 6},  {2, 7},  {1, 8},
                                           {1, 9}, {3, 10}, {3, 11}, {2, 12}};
+
+  container_t container{
+      values, [](const PseudoSourceLink& sl) { return sl.identifier(); }};
+
+  for (int i = 1; i < 4; i++) {
+    std::cout << "lookup: " << i << std::endl;
+    auto ranges = container.rangesForIdentifier(i);
+    for (auto& [it, end] : ranges) {
+      for (; it != end; ++it) {
+        const auto& sl = *it;
+        std::cout << sl.identifier() << " " << sl.value() << std::endl;
+      }
+    }
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
