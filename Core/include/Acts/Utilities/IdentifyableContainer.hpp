@@ -26,6 +26,7 @@ class IdentifyableContainer {
   using value_store_t = std::vector<value_t>;
 
   using Iterator = typename value_store_t::iterator;
+  using Range = std::pair<Iterator, Iterator>;
 
   auto rangesForIdentifier(const identifier_t& identifier) const {
     return m_ranges.at(identifier);
@@ -59,8 +60,6 @@ class IdentifyableContainer {
               << std::endl;
     m_ranges[*prev].emplace_back(groupStart, m_valueStore.end());
   }
-
-  using Range = std::pair<Iterator, Iterator>;
 
  private:
   std::unordered_map<identifier_t,
