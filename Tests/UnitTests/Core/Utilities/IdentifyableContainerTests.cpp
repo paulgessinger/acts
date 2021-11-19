@@ -20,6 +20,8 @@
 #include <random>
 #include <tuple>
 
+#include <boost/container/small_vector.hpp>
+
 using namespace Acts;
 
 namespace bd = boost::unit_test::data;
@@ -81,14 +83,14 @@ BOOST_AUTO_TEST_CASE(Identifier) {
   rdo_container_t rdoContainer{rdos,
                                [](const RDO& sl) { return sl.module_id; }};
 
-  struct Cluster {
-    rdo_container_t::Range rdoRange;
+  struct PRD {
+    boost::container::small_vector<RDO, 10> rdos;
     Vector2 localPosition;
     SymMatrix2 localCovariance;
     module_identifier_t module_id;
   };
 
-  std::vector<Cluster> clusters;
+  std::vector<PRD> clusters;
 
   // loop over modules
   for (int i = 0; i < 10; i++) {
@@ -101,38 +103,29 @@ BOOST_AUTO_TEST_CASE(Identifier) {
         const auto& rdo = *it;
         std::cout << " - " << rdo.module_id << " " << rdo.rdo_id << std::endl;
       }
-      clusters.push_back(Cluster{
-          {start, std::next(start, 3)}, Vector2{1, 2}, SymMatrix2{}, i});
       clusters.push_back(
-          Cluster{{std::next(start, 3), end}, Vector2{1, 2}, SymMatrix2{}, i});
+          PRD{{start, std::next(start, 3)}, Vector2{1, 2}, SymMatrix2{}, i});
+      clusters.push_back(
+          PRD{{std::next(start, 3), end}, Vector2{1, 2}, SymMatrix2{}, i});
     }
-    // for (auto& [it, end] : ranges) {
-    // clusters.push_back(Cluster{{it, end}, Vector2{1, 2}, SymMatrix2{}, i});
-    // clusters.push_back(
-    // Cluster{{it, std::next(it, 3)}, Vector2{1, 2}, SymMatrix2{}, i});
-    // clusters.push_back(
-    // Cluster{{std::next(it, 3), end}, Vector2{1, 2}, SymMatrix2{}, i});
-    // }
   }
 
-  using cluster_container_t =
-      IdentifyableContainer<module_identifier_t, Cluster>;
+  using prd_container_t = IdentifyableContainer<module_identifier_t, PRD>;
 
-  cluster_container_t clusterConainer{
-      clusters, [](const Cluster& c) { return c.module_id; }};
+  prd_container_t prdContainer{clusters,
+                               [](const PRD& c) { return c.module_id; }};
 
   // loop over modules
   for (int i = 0; i < 10; i++) {
     std::cout << "lookup clusters for module: " << i << std::endl;
-    auto ranges = clusterConainer.rangesForIdentifier(i);
+    auto ranges = prdContainer.rangesForIdentifier(i);
     int c = 1;
     for (auto& [it, end] : ranges) {
       for (; it != end; ++it) {
         auto& cluster = *it;
         std::cout << "- cluster " << c << std::endl;
-        auto [rdo_it, rdo_end] = cluster.rdoRange;
-        for (; rdo_it != rdo_end; ++rdo_it) {
-          std::cout << "  - rdo: " << rdo_it->rdo_id << std::endl;
+        for (const auto rdo : cluster.rdos) {
+          std::cout << "  - rdo: " << rdo.rdo_id << std::endl;
         }
         c++;
       }
