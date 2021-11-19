@@ -20,16 +20,73 @@
 
 namespace Acts {
 
+template <typename T>
+struct RangeTag {};
+
+template <typename value_t>
+struct RangeProxy {
+  struct iterator {
+    uint8_t* ptr;
+    size_t size;
+
+    value_t& operator*() { return *reinterpret_cast<value_t*>(ptr); }
+
+    void operator++() { ptr += size; }
+
+    bool operator==(const iterator& other) { return ptr == other.ptr; }
+    bool operator!=(const iterator& other) { return !(*this == other); }
+  };
+
+  iterator start;
+  iterator stop;
+
+  iterator begin() { return start; }
+  iterator end() { return stop; }
+};
+
 template <typename identifier_t, typename value_t, size_t inline_size = 10>
-class IdentifyableContainer {
+class IdentifyableContainerAccess {
+ public:
+  virtual boost::container::small_vector<RangeProxy<value_t>, inline_size>
+  rangesForIdentifier(const identifier_t& identifier,
+                      RangeTag<value_t>) const = 0;
+
+  virtual ~IdentifyableContainerAccess() = 0;
+};
+
+template <typename identifier_t, typename value_t, size_t inline_size>
+inline IdentifyableContainerAccess<
+    identifier_t, value_t, inline_size>::~IdentifyableContainerAccess() =
+    default;
+
+template <typename identifier_t, typename value_t, size_t inline_size = 10>
+class IdentifyableContainer
+    : public IdentifyableContainerAccess<identifier_t, value_t, inline_size> {
  public:
   using value_store_t = std::vector<value_t>;
 
   using Iterator = typename value_store_t::iterator;
   using Range = std::pair<Iterator, Iterator>;
 
-  auto rangesForIdentifier(const identifier_t& identifier) const {
+  auto rangesForIdentifierDirect(const identifier_t& identifier) const {
     return m_ranges.at(identifier);
+  }
+
+  boost::container::small_vector<RangeProxy<value_t>, inline_size>
+  rangesForIdentifier(const identifier_t& identifier,
+                      RangeTag<value_t>) const override {
+    boost::container::small_vector<RangeProxy<value_t>, inline_size> ranges;
+
+    for (auto [r_start, r_end] : rangesForIdentifierDirect(identifier)) {
+      typename RangeProxy<value_t>::iterator start{
+          reinterpret_cast<uint8_t*>(&*r_start), sizeof(value_t)};
+      typename RangeProxy<value_t>::iterator end{
+          reinterpret_cast<uint8_t*>(&*r_end), sizeof(value_t)};
+
+      ranges.push_back(RangeProxy<value_t>{start, end});
+    }
+
+    return ranges;
   }
 
   IdentifyableContainer(value_store_t values,
