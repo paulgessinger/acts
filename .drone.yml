@@ -33,8 +33,3 @@ steps:
       - cmakeperf print perf.csv
 
 
----
-kind: signature
-hmac: 180fb6a97d3e8e64f4bccb23c072605545f10eebd406ee01e838c64c3037b931
-
-...
