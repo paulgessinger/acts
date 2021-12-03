@@ -31,5 +31,7 @@ steps:
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - cmakeperf collect build/compile_commands.json -o perf.csv -j$(nproc)
       - cmakeperf print perf.csv
-
-
+    trigger:
+      event:
+      - push
+      - pull_request
