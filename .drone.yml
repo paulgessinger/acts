@@ -19,7 +19,7 @@ kind: pipeline
 name: analysis
 steps:
   - name: analysis
-    image: ghcr.io/acts-project/ubuntu2004:v9
+    image: ghcr.io/acts-project/ubuntu2004:v15
     commands:
       - pip3 install git+https://github.com/paulgessinger/cmakeperf.git@4cc3c8a
       - >
