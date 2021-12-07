@@ -22,7 +22,7 @@ def runTruthTracking(
 
     # Sequencer
     s = s or acts.examples.Sequencer(
-        events=10, numThreads=-1, logLevel=acts.logging.INFO
+        events=1, numThreads=-1, logLevel=acts.logging.INFO
     )
 
     # Input
@@ -142,7 +142,7 @@ def runTruthTracking(
         inputProtoTracks = truthTrkFndAlg.config.outputProtoTracks
 
     fitAlg = acts.examples.TrackFittingAlgorithm(
-        level=acts.logging.INFO,
+        level=acts.logging.VERBOSE,
         inputMeasurements=digiAlg.config.outputMeasurements,
         inputSourceLinks=digiAlg.config.outputSourceLinks,
         inputProtoTracks=inputProtoTracks,

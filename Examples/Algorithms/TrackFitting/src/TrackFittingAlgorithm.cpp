@@ -8,6 +8,7 @@
 
 #include "ActsExamples/TrackFitting/TrackFittingAlgorithm.hpp"
 
+#include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/Surfaces/PerigeeSurface.hpp"
 #include "Acts/TrackFitting/GainMatrixSmoother.hpp"
 #include "Acts/TrackFitting/GainMatrixUpdater.hpp"
@@ -41,6 +42,13 @@ ActsExamples::TrackFittingAlgorithm::TrackFittingAlgorithm(
     throw std::invalid_argument("Missing output trajectories collection");
   }
 }
+
+namespace {
+bool reverseFilterAlways(
+    Acts::MultiTrajectory::ConstTrackStateProxy /*trackState*/) {
+  return true;
+}
+}  // namespace
 
 ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
     const ActsExamples::AlgorithmContext& ctx) const {
@@ -77,6 +85,7 @@ ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
   extensions.updater.connect<&Acts::GainMatrixUpdater::operator()>(&kfUpdater);
   extensions.smoother.connect<&Acts::GainMatrixSmoother::operator()>(
       &kfSmoother);
+  extensions.reverseFilteringLogic.connect<&reverseFilterAlways>();
 
   Acts::KalmanFitterOptions kfOptions(
       ctx.geoContext, ctx.magFieldContext, ctx.calibContext, extensions,

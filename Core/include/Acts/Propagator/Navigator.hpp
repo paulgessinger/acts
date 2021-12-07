@@ -561,9 +561,11 @@ class Navigator {
               navigation_surfaces_t& navSurfaces,
               const navigation_iter_t& navIter) const {
     const auto& logger = state.options.logger;
+    ACTS_VERBOSE("-> status surface");
 
     // No surfaces, status check will be done on layer
     if (navSurfaces.empty() or navIter == navSurfaces.end()) {
+      ACTS_VERBOSE("Nav surface is empty, or nav iterator is at end");
       return false;
     }
     // Take the current surface

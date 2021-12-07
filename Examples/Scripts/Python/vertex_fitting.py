@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 from pathlib import Path
 from typing import Optional
 import enum
@@ -23,7 +24,7 @@ import acts
 
 from acts import UnitConstants as u
 
-from common import addPythia8
+from common import addPythia8, getOpenDataDetector
 
 
 class VertexFinder(enum.Enum):
@@ -41,7 +42,7 @@ def runVertexFitting(
     vertexFinder: VertexFinder = VertexFinder.Truth,
     s=None,
 ):
-    s = s or Sequencer(events=100, numThreads=-1)
+    s = s or Sequencer(events=int(sys.argv[1]), numThreads=1)
 
     logger = acts.logging.getLogger("VertexFittingExample")
 
@@ -63,6 +64,31 @@ def runVertexFitting(
                 orderedEvents=False,
             )
         )
+
+    #  evGen = acts.examples.EventGenerator(
+    #  level=acts.logging.INFO,
+    #  generators=[
+    #  acts.examples.EventGenerator.Generator(
+    #  multiplicity=acts.examples.FixedMultiplicityGenerator(n=2),
+    #  vertex=acts.examples.GaussianVertexGenerator(
+    #  stddev=acts.Vector4(0, 0, 0, 0), mean=acts.Vector4(0, 0, 0, 0)
+    #  ),
+    #  particles=acts.examples.ParametricParticleGenerator(
+    #  p=(1 * u.GeV, 10 * u.GeV),
+    #  eta=(-2, 2),
+    #  phi=(0, 360 * u.degree),
+    #  randomizeCharge=True,
+    #  numParticles=2,
+    #  ),
+    #  )
+    #  ],
+    #  outputParticles="particles_input",
+    #  randomNumbers=rnd,
+    #  )
+
+    #  s.addReader(evGen)
+
+    #  inputParticles = evGen.config.outputParticles
 
     selectedParticles = "particles_selected"
     ptclSelector = ParticleSelector(
@@ -93,7 +119,7 @@ def runVertexFitting(
         assert inputTrackSummary.exists()
         associatedParticles = "associatedTruthParticles"
         trackSummaryReader = RootTrajectorySummaryReader(
-            level=acts.logging.VERBOSE,
+            level=acts.logging.INFO,
             outputTracks="fittedTrackParameters",
             outputParticles=associatedParticles,
             filePath=str(inputTrackSummary.resolve()),
@@ -120,14 +146,14 @@ def runVertexFitting(
     outputTime = ""
     if vertexFinder == VertexFinder.Truth:
         findVertices = TruthVertexFinder(
-            level=acts.logging.VERBOSE,
+            level=acts.logging.INFO,
             inputParticles=selectedParticles,
             outputProtoVertices="protovertices",
             excludeSecondaries=True,
         )
         s.addAlgorithm(findVertices)
         fitVertices = VertexFitterAlgorithm(
-            level=acts.logging.VERBOSE,
+            level=acts.logging.INFO,
             bField=field,
             inputTrackParameters=trackParameters,
             inputProtoVertices=findVertices.config.outputProtoVertices,
@@ -184,14 +210,14 @@ def runVertexFitting(
 
 
 if "__main__" == __name__:
-    detector, trackingGeometry, decorators = GenericDetector.create()
+    #  detector, trackingGeometry, decorators = GenericDetector.create()
+    detector, trackingGeometry, decorators = getOpenDataDetector()
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
     inputParticlePath = Path("particles.root")
     if not inputParticlePath.exists():
         inputParticlePath = None
-    inputParticlePath = None
 
     inputTrackSummary = None
     for p in ("tracksummary_fitter.root", "tracksummary_ckf.root"):
@@ -202,7 +228,7 @@ if "__main__" == __name__:
 
     runVertexFitting(
         field,
-        vertexFinder=VertexFinder.Truth,
+        vertexFinder=VertexFinder.Iterative,
         inputParticlePath=inputParticlePath,
         inputTrackSummary=inputTrackSummary,
         outputDir=Path.cwd(),
