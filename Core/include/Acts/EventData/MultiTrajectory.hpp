@@ -76,10 +76,16 @@ struct GrowableColumns {
   }
 
   /// Writable access to a column w/o checking its existence first.
-  auto col(size_t index) { return data.col(index); }
+  auto col(size_t index) {
+    assert(index < m_size);
+    return data.col(index);
+  }
 
   /// Read-only access to a column w/o checking its existence first.
-  auto col(size_t index) const { return data.col(index); }
+  auto col(size_t index) const {
+    assert(index < m_size);
+    return data.col(index);
+  }
 
   /// Return the current allocated storage capacity
   size_t capacity() const { return static_cast<size_t>(data.cols()); }
@@ -153,7 +159,6 @@ struct IndexData {
 
 /// Proxy object to access a single point on the trajectory.
 ///
-/// @tparam SourceLink Type to link back to an original measurement
 /// @tparam M         Maximum number of measurement dimensions
 /// @tparam ReadOnly  true for read-only access to underlying storage
 template <size_t M, bool ReadOnly = true>
@@ -733,8 +738,12 @@ class MultiTrajectory {
   /// Clear the @c MultiTrajectory. Leaves the underlying storage untouched
   void clear() {
     m_index.clear();
-    m_params.clear();
-    m_cov.clear();
+    m_pred.clear();
+    m_predCov.clear();
+    m_filt.clear();
+    m_filtCov.clear();
+    m_smth.clear();
+    m_smthCov.clear();
     m_meas.clear();
     m_measCov.clear();
     m_jac.clear();
@@ -749,8 +758,14 @@ class MultiTrajectory {
  private:
   /// index to map track states to the corresponding
   std::vector<detail_lt::IndexData> m_index;
-  typename detail_lt::Types<eBoundSize>::StorageCoefficients m_params;
-  typename detail_lt::Types<eBoundSize>::StorageCovariance m_cov;
+
+  typename detail_lt::Types<eBoundSize>::StorageCoefficients m_pred;
+  typename detail_lt::Types<eBoundSize>::StorageCovariance m_predCov;
+  typename detail_lt::Types<eBoundSize>::StorageCoefficients m_filt;
+  typename detail_lt::Types<eBoundSize>::StorageCovariance m_filtCov;
+  typename detail_lt::Types<eBoundSize>::StorageCoefficients m_smth;
+  typename detail_lt::Types<eBoundSize>::StorageCovariance m_smthCov;
+
   typename detail_lt::Types<MeasurementSizeMax>::StorageCoefficients m_meas;
   typename detail_lt::Types<MeasurementSizeMax>::StorageCovariance m_measCov;
   typename detail_lt::Types<eBoundSize>::StorageCovariance m_jac;
