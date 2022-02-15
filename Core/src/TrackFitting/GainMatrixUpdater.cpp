@@ -22,8 +22,9 @@ Result<void> GainMatrixUpdater::operator()(
   assert(trackState.hasCalibrated());
   // we should have predicted state set
   assert(trackState.hasPredicted());
+
+  trackState.mask() |= TrackStatePropMask::Filtered;
   // filtering should not have happened yet, but is allocated, therefore set
-  assert(trackState.hasFiltered());
 
   // read-only handles. Types are eigen maps to backing storage
   const auto predicted = trackState.predicted();

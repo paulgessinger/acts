@@ -421,8 +421,8 @@ class KalmanFitter {
                   if (surface_it == result.passedAgainSurfaces.end()) {
                     // If reversed filtering missed this surface, then there is
                     // no smoothed parameter
-                    trackState.data().ismoothed =
-                        detail_lt::IndexData::kInvalid;
+                    // flip smoothed to off in the mask
+                    trackState.mask() &= (~TrackStatePropMask::Smoothed);
                   }
                 });
           }
