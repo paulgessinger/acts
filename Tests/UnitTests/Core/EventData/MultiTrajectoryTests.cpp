@@ -632,21 +632,21 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyGetMask) {
   MultiTrajectory mj;
   {
     auto ts = mj.getTrackState(mj.addTrackState(PM::All));
-    BOOST_CHECK(ts.getMask() == all);
+    BOOST_CHECK(ts.mask() == all);
   }
   {
     auto ts = mj.getTrackState(mj.addTrackState(PM::Filtered | PM::Calibrated));
-    BOOST_CHECK(ts.getMask() == (PM::Filtered | PM::Calibrated));
+    BOOST_CHECK(ts.mask() == (PM::Filtered | PM::Calibrated));
   }
   {
     auto ts = mj.getTrackState(
         mj.addTrackState(PM::Filtered | PM::Smoothed | PM::Predicted));
-    BOOST_CHECK(ts.getMask() == (PM::Filtered | PM::Smoothed | PM::Predicted));
+    BOOST_CHECK(ts.mask() == (PM::Filtered | PM::Smoothed | PM::Predicted));
   }
   {
     for (PM mask : values) {
       auto ts = mj.getTrackState(mj.addTrackState(mask));
-      BOOST_CHECK(ts.getMask() == mask);
+      BOOST_CHECK(ts.mask() == mask);
     }
   }
 }

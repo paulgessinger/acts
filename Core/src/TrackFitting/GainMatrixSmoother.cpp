@@ -21,6 +21,7 @@ Result<void> GainMatrixSmoother::operator()(const GeometryContext& gctx,
   ACTS_VERBOSE("Getting previous track state");
   auto prev_ts = trajectory.getTrackState(entryIndex);
 
+  prev_ts.mask() |= TrackStatePropMask::Smoothed;
   prev_ts.smoothed() = prev_ts.filtered();
   prev_ts.smoothedCovariance() = prev_ts.filteredCovariance();
 
@@ -46,6 +47,8 @@ Result<void> GainMatrixSmoother::operator()(const GeometryContext& gctx,
     // previous trackstate should have smoothed and predicted
     assert(prev_ts.hasSmoothed());
     assert(prev_ts.hasPredicted());
+
+    ts.mask() |= TrackStatePropMask::Smoothed;
 
     ACTS_VERBOSE("Calculate smoothing matrix:");
     ACTS_VERBOSE("Filtered covariance:\n" << ts.filteredCovariance());

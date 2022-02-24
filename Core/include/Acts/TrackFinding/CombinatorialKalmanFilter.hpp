@@ -764,11 +764,6 @@ class CombinatorialKalmanFilter {
         PM mask =
             PM::Predicted | PM::Jacobian | PM::Uncalibrated | PM::Calibrated;
 
-        if (it != lower_it) {
-          // not the first TrackState, only need uncalibrated and calibrated
-          mask = PM::Uncalibrated | PM::Calibrated;
-        }
-
         size_t tsi = result.stateBuffer.addTrackState(mask, prevTip);
         // CAREFUL! This trackstate has a previous index that is not in this
         // MultiTrajectory Visiting brackwards from this track state will
@@ -783,12 +778,12 @@ class CombinatorialKalmanFilter {
           }
           ts.jacobian() = jacobian;
         } else {
-          // subsequent track states can reuse
-          // @FIXME: MTJ direct index access
-          // auto& first = result.trackStateCandidates.front();
-          // ts.data().ipredicted = first.data().ipredicted;
-          // ts.data().ijacobian = first.data().ijacobian;
+          ts.predicted() = boundParams.parameters();
+          if (boundParams.covariance()) {
+            ts.predictedCovariance() = *boundParams.covariance();
+          }
         }
+        ts.jacobian() = jacobian;
 
         ts.pathLength() = pathLength;
 
@@ -820,21 +815,15 @@ class CombinatorialKalmanFilter {
         size_t& nBranchesOnSurface, LoggerWrapper logger) const {
       using PM = TrackStatePropMask;
 
-      std::optional<MultiTrajectory::TrackStateProxy> firstTrackState{
-          std::nullopt};
       for (auto it = begin; it != end; ++it) {
         auto& candidateTrackState = *it;
 
         PM mask = PM::All;
 
-        if (it != begin) {
-          // subsequent track states don't need storage for these
-          mask = ~PM::Predicted & ~PM::Jacobian;
-        }
-
+        mask &= ~PM::Filtered;
         if (isOutlier) {
-          mask &= ~PM::Filtered;  // outlier won't have separate filtered
-                                  // parameters
+          mask &= ~PM::Smoothed;  // outlier won't have separate filtered
+                                  // or smoothed parameters
         }
 
         // copy this trackstate into fitted states MultiTrajectory
@@ -842,17 +831,8 @@ class CombinatorialKalmanFilter {
             result.fittedStates.getTrackState(result.fittedStates.addTrackState(
                 mask, candidateTrackState.previous()));
 
-        if (it != begin) {
-          // assign indices pointing to first track state
-          // @FIXME: MTJ direct index access
-          // trackState.data().ipredicted = firstTrackState->data().ipredicted;
-          // trackState.data().ijacobian = firstTrackState->data().ijacobian;
-        } else {
-          firstTrackState = trackState;
-        }
-
-        // either copy ALL or everything except for predicted and jacobian
-        trackState.copyFrom(candidateTrackState, mask, false);
+        // copy over everything
+        trackState.copyFrom(candidateTrackState, mask);
 
         auto& typeFlags = trackState.typeFlags();
         if (trackState.referenceSurface().surfaceMaterial() != nullptr) {
@@ -879,8 +859,9 @@ class CombinatorialKalmanFilter {
           // No Kalman update for outlier
           // Set the filtered parameter index to be the same with predicted
           // parameter
-          // @FIXME: MTJ direct index access
-          // trackState.data().ifiltered = trackState.data().ipredicted;
+          trackState.mask() |= TrackStatePropMask::Filtered;
+          trackState.filtered() = trackState.predicted();
+          trackState.filteredCovariance() = trackState.predictedCovariance();
 
         } else {
           // Kalman update
@@ -959,8 +940,9 @@ class CombinatorialKalmanFilter {
         typeFlags.set(TrackStateFlag::HoleFlag);
       }
 
-      // @FIXME: MTJ direct index access
-      // trackStateProxy.data().ifiltered = trackStateProxy.data().ipredicted;
+      trackStateProxy.filtered() = trackStateProxy.predicted();
+      trackStateProxy.filteredCovariance() =
+          trackStateProxy.predictedCovariance();
 
       return currentTip;
     }

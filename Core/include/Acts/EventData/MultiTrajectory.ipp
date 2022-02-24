@@ -24,32 +24,6 @@ inline TrackStateProxy<M, ReadOnly>::TrackStateProxy(
     : m_traj(&trajectory), m_istate(istate) {}
 
 template <size_t M, bool ReadOnly>
-TrackStatePropMask TrackStateProxy<M, ReadOnly>::getMask() const {
-  using PM = TrackStatePropMask;
-
-  PM mask = PM::None;
-  if (hasPredicted()) {
-    mask |= PM::Predicted;
-  }
-  if (hasFiltered()) {
-    mask |= PM::Filtered;
-  }
-  if (hasSmoothed()) {
-    mask |= PM::Smoothed;
-  }
-  if (hasJacobian()) {
-    mask |= PM::Jacobian;
-  }
-  if (hasUncalibrated()) {
-    mask |= PM::Uncalibrated;
-  }
-  if (hasCalibrated()) {
-    mask |= PM::Calibrated;
-  }
-  return mask;
-}
-
-template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::parameters() const -> Parameters {
   IndexData::IndexType idx;
   if (hasSmoothed()) {
@@ -81,73 +55,72 @@ inline auto TrackStateProxy<M, ReadOnly>::covariance() const -> Covariance {
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::predicted() const -> Parameters {
-  assert(data().ipredicted != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Predicted));
   return Parameters(m_traj->m_pred.col(data().ipredicted).data());
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::predictedCovariance() const
     -> Covariance {
-  assert(data().ipredicted != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Predicted));
   return Covariance(m_traj->m_predCov.col(data().ipredicted).data());
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::filtered() const -> Parameters {
-  assert(data().ifiltered != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Filtered));
   return Parameters(m_traj->m_filt.col(data().ifiltered).data());
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::filteredCovariance() const
     -> Covariance {
-  assert(data().ifiltered != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Filtered));
   return Covariance(m_traj->m_filtCov.col(data().ifiltered).data());
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::smoothed() const -> Parameters {
-  assert(data().ismoothed != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Smoothed));
   return Parameters(m_traj->m_smth.col(data().ismoothed).data());
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::smoothedCovariance() const
     -> Covariance {
-  assert(data().ismoothed != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Smoothed));
   return Covariance(m_traj->m_smthCov.col(data().ismoothed).data());
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::jacobian() const -> Covariance {
-  assert(data().ijacobian != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Jacobian));
   return Covariance(m_traj->m_jac.col(data().ijacobian).data());
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::projector() const -> Projector {
-  assert(data().iprojector != IndexData::kInvalid);
   return bitsetToMatrix<Projector>(m_traj->m_projectors[data().iprojector]);
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::uncalibrated() const
     -> const SourceLink& {
-  assert(data().iuncalibrated != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Uncalibrated));
   assert(m_traj->m_sourceLinks[data().iuncalibrated] != nullptr);
   return *m_traj->m_sourceLinks[data().iuncalibrated];
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::calibrated() const -> Measurement {
-  assert(data().icalibrated != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Calibrated));
   return Measurement(m_traj->m_meas.col(data().icalibrated).data());
 }
 
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::calibratedSourceLink() const
     -> const SourceLink& {
-  assert(data().icalibratedsourcelink != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Calibrated));
   assert(m_traj->m_sourceLinks[data().icalibratedsourcelink] != nullptr);
   return *m_traj->m_sourceLinks[data().icalibratedsourcelink];
 }
@@ -155,7 +128,7 @@ inline auto TrackStateProxy<M, ReadOnly>::calibratedSourceLink() const
 template <size_t M, bool ReadOnly>
 inline auto TrackStateProxy<M, ReadOnly>::calibratedCovariance() const
     -> MeasurementCovariance {
-  assert(data().icalibrated != IndexData::kInvalid);
+  assert(ACTS_CHECK_BIT(data().mask, TrackStatePropMask::Calibrated));
   return MeasurementCovariance(
       m_traj->m_measCov.col(data().icalibrated).data());
 }
@@ -164,10 +137,10 @@ inline auto TrackStateProxy<M, ReadOnly>::calibratedCovariance() const
 
 inline size_t MultiTrajectory::addTrackState(TrackStatePropMask mask,
                                              size_t iprevious) {
-  using PropMask = TrackStatePropMask;
-
   m_index.emplace_back();
   detail_lt::IndexData& p = m_index.back();
+  p.mask = mask;
+
   size_t index = m_index.size() - 1;
 
   if (iprevious != SIZE_MAX) {
@@ -178,45 +151,33 @@ inline size_t MultiTrajectory::addTrackState(TrackStatePropMask mask,
   m_referenceSurfaces.emplace_back(nullptr);
   p.irefsurface = m_referenceSurfaces.size() - 1;
 
-  if (ACTS_CHECK_BIT(mask, PropMask::Predicted)) {
-    m_pred.addCol();
-    m_predCov.addCol();
-    p.ipredicted = m_pred.size() - 1;
-  }
+  m_pred.addCol();
+  m_predCov.addCol();
+  p.ipredicted = m_pred.size() - 1;
 
-  if (ACTS_CHECK_BIT(mask, PropMask::Filtered)) {
-    m_filt.addCol();
-    m_filtCov.addCol();
-    p.ifiltered = m_filt.size() - 1;
-  }
+  m_filt.addCol();
+  m_filtCov.addCol();
+  p.ifiltered = m_filt.size() - 1;
 
-  if (ACTS_CHECK_BIT(mask, PropMask::Smoothed)) {
-    m_smth.addCol();
-    m_smthCov.addCol();
-    p.ismoothed = m_smth.size() - 1;
-  }
+  m_smth.addCol();
+  m_smthCov.addCol();
+  p.ismoothed = m_smth.size() - 1;
 
-  if (ACTS_CHECK_BIT(mask, PropMask::Jacobian)) {
-    m_jac.addCol();
-    p.ijacobian = m_jac.size() - 1;
-  }
+  m_jac.addCol();
+  p.ijacobian = m_jac.size() - 1;
 
-  if (ACTS_CHECK_BIT(mask, PropMask::Uncalibrated)) {
-    m_sourceLinks.emplace_back();
-    p.iuncalibrated = m_sourceLinks.size() - 1;
-  }
+  m_sourceLinks.emplace_back();
+  p.iuncalibrated = m_sourceLinks.size() - 1;
 
-  if (ACTS_CHECK_BIT(mask, PropMask::Calibrated)) {
-    m_meas.addCol();
-    m_measCov.addCol();
-    p.icalibrated = m_meas.size() - 1;
+  m_meas.addCol();
+  m_measCov.addCol();
+  p.icalibrated = m_meas.size() - 1;
 
-    m_sourceLinks.emplace_back();
-    p.icalibratedsourcelink = m_sourceLinks.size() - 1;
+  m_sourceLinks.emplace_back();
+  p.icalibratedsourcelink = m_sourceLinks.size() - 1;
 
-    m_projectors.emplace_back();
-    p.iprojector = m_projectors.size() - 1;
-  }
+  m_projectors.emplace_back();
+  p.iprojector = m_projectors.size() - 1;
 
   return index;
 }

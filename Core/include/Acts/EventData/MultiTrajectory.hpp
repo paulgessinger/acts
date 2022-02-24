@@ -139,6 +139,8 @@ struct IndexData {
 
   static constexpr IndexType kInvalid = UINT16_MAX;
 
+  TrackStatePropMask mask;
+
   IndexType irefsurface = kInvalid;
   IndexType iprevious = kInvalid;
   IndexType ipredicted = kInvalid;
@@ -200,11 +202,15 @@ class TrackStateProxy {
   /// @return The index of the previous track state.
   size_t previous() const { return data().iprevious; }
 
+  template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
+  TrackStatePropMask& mask() {
+    return data().mask;
+  }
 
   /// Build a mask that represents all the allocated components of this track
   /// state proxy
   /// @return The generated mask
-  TrackStatePropMask getMask() const;
+  TrackStatePropMask mask() const { return data().mask; }
 
   /// Copy the contents of another track state proxy into this one
   /// @param other The other track state to copy from
@@ -218,106 +224,51 @@ class TrackStateProxy {
   template <bool RO = ReadOnly, bool ReadOnlyOther,
             typename = std::enable_if<!RO>>
   void copyFrom(const TrackStateProxy<M, ReadOnlyOther>& other,
-                TrackStatePropMask mask = TrackStatePropMask::All,
-                bool onlyAllocated = true) {
+                TrackStatePropMask cpMask = TrackStatePropMask::All) {
     using PM = TrackStatePropMask;
 
-    if (onlyAllocated) {
-      auto dest = getMask();
-      auto src = other.getMask() &
-                 mask;  // combine what we have with what we want to copy
-      if (static_cast<std::underlying_type_t<TrackStatePropMask>>((src ^ dest) &
-                                                                  src) != 0) {
-        throw std::runtime_error(
-            "Attempt track state copy with incompatible allocations");
-      }
+    auto src =
+        other.mask() &
+        cpMask;  // combine what we have in source with what we want to copy
 
-      // we're sure now this has correct allocations, so just copy
-      if (ACTS_CHECK_BIT(src, PM::Predicted)) {
-        predicted() = other.predicted();
-        predictedCovariance() = other.predictedCovariance();
-      }
+    mask() |= src;  // combine with existing components
 
-      if (ACTS_CHECK_BIT(src, PM::Filtered)) {
-        filtered() = other.filtered();
-        filteredCovariance() = other.filteredCovariance();
-      }
-
-      if (ACTS_CHECK_BIT(src, PM::Smoothed)) {
-        smoothed() = other.smoothed();
-        smoothedCovariance() = other.smoothedCovariance();
-      }
-
-      if (ACTS_CHECK_BIT(src, PM::Uncalibrated)) {
-        // need to do it this way since other might be nullptr
-        m_traj->m_sourceLinks[data().iuncalibrated] =
-            other.m_traj->m_sourceLinks[other.data().iuncalibrated];
-      }
-
-      if (ACTS_CHECK_BIT(src, PM::Jacobian)) {
-        jacobian() = other.jacobian();
-      }
-
-      if (ACTS_CHECK_BIT(src, PM::Calibrated)) {
-        // need to do it this way since other might be nullptr
-        m_traj->m_sourceLinks[data().icalibratedsourcelink] =
-            other.m_traj->m_sourceLinks[other.data().icalibratedsourcelink];
-        calibrated() = other.calibrated();
-        calibratedCovariance() = other.calibratedCovariance();
-        data().measdim = other.data().measdim;
-        setProjectorBitset(other.projectorBitset());
-      }
-    } else {
-      if (ACTS_CHECK_BIT(mask, PM::Predicted) &&
-          data().ipredicted != IndexData::kInvalid &&
-          other.data().ipredicted != IndexData::kInvalid) {
-        predicted() = other.predicted();
-        predictedCovariance() = other.predictedCovariance();
-      }
-
-      if (ACTS_CHECK_BIT(mask, PM::Filtered) &&
-          data().ifiltered != IndexData::kInvalid &&
-          other.data().ifiltered != IndexData::kInvalid) {
-        filtered() = other.filtered();
-        filteredCovariance() = other.filteredCovariance();
-      }
-
-      if (ACTS_CHECK_BIT(mask, PM::Smoothed) &&
-          data().ismoothed != IndexData::kInvalid &&
-          other.data().ismoothed != IndexData::kInvalid) {
-        smoothed() = other.smoothed();
-        smoothedCovariance() = other.smoothedCovariance();
-      }
-
-      if (ACTS_CHECK_BIT(mask, PM::Uncalibrated) &&
-          data().iuncalibrated != IndexData::kInvalid &&
-          other.data().iuncalibrated != IndexData::kInvalid) {
-        // need to do it this way since other might be nullptr
-        m_traj->m_sourceLinks[data().iuncalibrated] =
-            other.m_traj->m_sourceLinks[other.data().iuncalibrated];
-      }
-
-      if (ACTS_CHECK_BIT(mask, PM::Jacobian) &&
-          data().ijacobian != IndexData::kInvalid &&
-          other.data().ijacobian != IndexData::kInvalid) {
-        jacobian() = other.jacobian();
-      }
-
-      if (ACTS_CHECK_BIT(mask, PM::Calibrated) &&
-          data().icalibrated != IndexData::kInvalid &&
-          other.data().icalibrated != IndexData::kInvalid &&
-          data().icalibratedsourcelink != IndexData::kInvalid &&
-          other.data().icalibratedsourcelink != IndexData::kInvalid) {
-        // need to do it this way since other might be nullptr
-        m_traj->m_sourceLinks[data().icalibratedsourcelink] =
-            other.m_traj->m_sourceLinks[other.data().icalibratedsourcelink];
-        calibrated() = other.calibrated();
-        calibratedCovariance() = other.calibratedCovariance();
-        data().measdim = other.data().measdim;
-        setProjectorBitset(other.projectorBitset());
-      }
+    if (ACTS_CHECK_BIT(src, PM::Predicted)) {
+      predicted() = other.predicted();
+      predictedCovariance() = other.predictedCovariance();
     }
 
+    if (ACTS_CHECK_BIT(src, PM::Filtered)) {
+      filtered() = other.filtered();
+      filteredCovariance() = other.filteredCovariance();
+    }
+
+    if (ACTS_CHECK_BIT(src, PM::Smoothed)) {
+      smoothed() = other.smoothed();
+      smoothedCovariance() = other.smoothedCovariance();
+    }
+
+    if (ACTS_CHECK_BIT(src, PM::Uncalibrated)) {
+      // need to do it this way since other might be nullptr
+      m_traj->m_sourceLinks[data().iuncalibrated] =
+          other.m_traj->m_sourceLinks[other.data().iuncalibrated];
+    }
+
+    if (ACTS_CHECK_BIT(src, PM::Jacobian)) {
+      jacobian() = other.jacobian();
+    }
+
+    if (ACTS_CHECK_BIT(src, PM::Calibrated)) {
+      // need to do it this way since other might be nullptr
+      m_traj->m_sourceLinks[data().icalibratedsourcelink] =
+          other.m_traj->m_sourceLinks[other.data().icalibratedsourcelink];
+      calibrated() = other.calibrated();
+      calibratedCovariance() = other.calibratedCovariance();
+      data().measdim = other.data().measdim;
+      setProjectorBitset(other.projectorBitset());
+    }
+
+    mask() = other.mask();
     chi2() = other.chi2();
     pathLength() = other.pathLength();
     typeFlags() = other.typeFlags();
@@ -364,7 +315,9 @@ class TrackStateProxy {
 
   /// Check whether the predicted parameters+covariance is set
   /// @return Whether it is set or not
-  bool hasPredicted() const { return data().ipredicted != IndexData::kInvalid; }
+  bool hasPredicted() const {
+    return ACTS_CHECK_BIT(mask(), TrackStatePropMask::Predicted);
+  }
 
   /// Filtered track parameters vector
   /// @return The filtered parameters
@@ -376,7 +329,9 @@ class TrackStateProxy {
 
   /// Return whether filtered parameters+covariance is set
   /// @return Whether it is set
-  bool hasFiltered() const { return data().ifiltered != IndexData::kInvalid; }
+  bool hasFiltered() const {
+    return ACTS_CHECK_BIT(mask(), TrackStatePropMask::Filtered);
+  }
 
   /// Smoothed track parameters vector
   /// @return The smoothed parameters
@@ -388,7 +343,9 @@ class TrackStateProxy {
 
   /// Return whether smoothed parameters+covariance is set
   /// @return Whether it is set
-  bool hasSmoothed() const { return data().ismoothed != IndexData::kInvalid; }
+  bool hasSmoothed() const {
+    return ACTS_CHECK_BIT(mask(), TrackStatePropMask::Smoothed);
+  }
 
   /// Returns the jacobian from the previous trackstate to this one
   /// @return The jacobian matrix
@@ -396,7 +353,9 @@ class TrackStateProxy {
 
   /// Returns whether a jacobian is set for this trackstate
   /// @return Whether it is set
-  bool hasJacobian() const { return data().ijacobian != IndexData::kInvalid; }
+  bool hasJacobian() const {
+    return ACTS_CHECK_BIT(mask(), TrackStatePropMask::Jacobian);
+  }
 
   /// Returns the projector (measurement mapping function) for this track
   /// state. It is derived from the uncalibrated measurement
@@ -644,18 +603,17 @@ class TrackStateProxy {
                   size_t istate);
 
   const std::shared_ptr<const Surface>& referenceSurfacePointer() const {
-    assert(data().irefsurface != IndexData::kInvalid);
+    assert(ACTS_CHECK_BIT(mask(), (TrackStatePropMask::Calibrated |
+                                   TrackStatePropMask::Uncalibrated)));
     return m_traj->m_referenceSurfaces[data().irefsurface];
   }
 
   ProjectorBitset projectorBitset() const {
-    assert(data().iprojector != IndexData::kInvalid);
     return m_traj->m_projectors[data().iprojector];
   }
 
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
   void setProjectorBitset(ProjectorBitset proj) {
-    assert(data().iprojector != IndexData::kInvalid);
     m_traj->m_projectors[data().iprojector] = proj;
   }
 
