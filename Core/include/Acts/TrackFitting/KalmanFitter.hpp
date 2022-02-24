@@ -603,9 +603,9 @@ class KalmanFitter {
               "be an outlier. Stepping state is not updated.")
           // Set the outlier type flag
           typeFlags.set(TrackStateFlag::OutlierFlag);
-          // @FIXME: MTJ direct index access
-          // trackStateProxy.data().ifiltered =
-          // trackStateProxy.data().ipredicted;
+          trackStateProxy.filtered() = trackStateProxy.predicted();
+          trackStateProxy.filteredCovariance() =
+              trackStateProxy.predictedCovariance();
         }
 
         // Update state and stepper with post material effects
@@ -630,8 +630,9 @@ class KalmanFitter {
           // TrackState entry multi trajectory. No storage allocation for
           // uncalibrated/calibrated measurement and filtered parameter
           result.lastTrackIndex = result.fittedStates.addTrackState(
-              ~(TrackStatePropMask::Uncalibrated |
-                TrackStatePropMask::Calibrated | TrackStatePropMask::Filtered),
+              TrackStatePropMask::All,
+              // ~(TrackStatePropMask::Uncalibrated |
+              // TrackStatePropMask::Calibrated | TrackStatePropMask::Filtered),
               result.lastTrackIndex);
 
           // now get track state proxy back
@@ -679,9 +680,10 @@ class KalmanFitter {
 
           // Set the filtered parameter index to be the same with predicted
           // parameter
-          // @FIXME: MTJ direct index access
-          // trackStateProxy.data().ifiltered =
-          // trackStateProxy.data().ipredicted; We count the processed state
+          trackStateProxy.filtered() = trackStateProxy.predicted();
+          trackStateProxy.filteredCovariance() =
+              trackStateProxy.predictedCovariance();
+          // We count the processed state
           ++result.processedStates;
         }
         if (surface->surfaceMaterial() != nullptr) {
