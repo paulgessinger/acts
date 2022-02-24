@@ -431,8 +431,9 @@ class KalmanFitter {
                   if (surface_it == result.passedAgainSurfaces.end()) {
                     // If reversed filtering missed this surface, then there is
                     // no smoothed parameter
-                    trackState.data().ismoothed =
-                        detail_lt::IndexData::kInvalid;
+                    // @FIXME: MTJ direct index access
+                    // trackState.data().ismoothed =
+                    // detail_lt::IndexData::kInvalid;
                   }
                 });
           }
@@ -602,7 +603,9 @@ class KalmanFitter {
               "be an outlier. Stepping state is not updated.")
           // Set the outlier type flag
           typeFlags.set(TrackStateFlag::OutlierFlag);
-          trackStateProxy.data().ifiltered = trackStateProxy.data().ipredicted;
+          // @FIXME: MTJ direct index access
+          // trackStateProxy.data().ifiltered =
+          // trackStateProxy.data().ipredicted;
         }
 
         // Update state and stepper with post material effects
@@ -676,8 +679,9 @@ class KalmanFitter {
 
           // Set the filtered parameter index to be the same with predicted
           // parameter
-          trackStateProxy.data().ifiltered = trackStateProxy.data().ipredicted;
-          // We count the processed state
+          // @FIXME: MTJ direct index access
+          // trackStateProxy.data().ifiltered =
+          // trackStateProxy.data().ipredicted; We count the processed state
           ++result.processedStates;
         }
         if (surface->surfaceMaterial() != nullptr) {
