@@ -30,6 +30,19 @@ namespace Acts {
 /// As a consequence the methods can be located in a seperate file.
 namespace detail {
 
+void boundToCurvilinearJacobian(const Vector3& direction,
+                                const BoundToFreeMatrix& boundToFreeJacobian,
+                                const FreeMatrix& freeTransportJacobian,
+                                const FreeVector& freeToPathDerivatives,
+                                BoundMatrix& fullTransportJacobian);
+
+void reinitializeJacobians(FreeMatrix& freeTransportJacobian,
+                           FreeVector& freeToPathDerivatives,
+                           BoundToFreeMatrix& boundToFreeJacobian,
+                           const Vector3& direction);
+
+FreeToBoundMatrix CEfreeToCurvilinearJacobian(const Vector3& direction);
+
 /// Create and return the bound state at the current position
 ///
 /// @brief It does not check if the transported state is at the surface, this

@@ -14,7 +14,7 @@
 #include "Acts/Utilities/Result.hpp"
 
 namespace Acts {
-namespace {
+namespace detail {
 /// Some type defs
 using Jacobian = BoundMatrix;
 
@@ -27,7 +27,7 @@ using CurvilinearState =
 /// @param [in] direction Normalised direction vector
 ///
 /// @return Projection Jacobian
-FreeToBoundMatrix freeToCurvilinearJacobian(const Vector3& direction) {
+FreeToBoundMatrix CEfreeToCurvilinearJacobian(const Vector3& direction) {
   // Optimized trigonometry on the propagation direction
   const double x = direction(0);  // == cos(phi) * sin(theta)
   const double y = direction(1);  // == sin(phi) * sin(theta)
@@ -148,7 +148,8 @@ void boundToCurvilinearJacobian(const Vector3& direction,
   FreeToPathMatrix freeToPath = FreeToPathMatrix::Zero();
   freeToPath.segment<3>(eFreePos0) = -1.0 * direction;
   // Calculate the jacobian from global to local at the curvilinear surface
-  FreeToBoundMatrix freeToBoundJacobian = freeToCurvilinearJacobian(direction);
+  FreeToBoundMatrix freeToBoundJacobian =
+      CEfreeToCurvilinearJacobian(direction);
   // Calculate the full jocobian from the local parameters at the start surface
   // to curvilinear parameters
   // @note jac(locA->locB) = jac(gloB->locB)*(1+
@@ -205,7 +206,6 @@ Result<void> reinitializeJacobians(const GeometryContext& geoContext,
       surface.boundToFreeJacobian(geoContext, *boundParameters);
   return Result<void>::success();
 }
-
 /// @brief This function reinitialises the state members required for the
 /// covariance transport
 ///
@@ -249,9 +249,6 @@ void reinitializeJacobians(FreeMatrix& freeTransportJacobian,
   boundToFreeJacobian(eFreeDir2, eBoundTheta) = -sinTheta;
   boundToFreeJacobian(eFreeQOverP, eBoundQOverP) = 1;
 }
-}  // namespace
-
-namespace detail {
 
 Result<BoundState> boundState(const GeometryContext& geoContext,
                               BoundSymMatrix& covarianceMatrix,

@@ -93,9 +93,85 @@ void Acts::EigenStepper<E, A>::update(State& state, const Vector3& uposition,
 template <typename E, typename A>
 void Acts::EigenStepper<E, A>::transportCovarianceToCurvilinear(
     State& state) const {
-  detail::transportCovarianceToCurvilinear(state.cov, state.jacobian,
-                                           state.jacTransport, state.derivative,
-                                           state.jacToGlobal, direction(state));
+  // detail::transportCovarianceToCurvilinear(state.cov, state.jacobian,
+  // state.jacTransport, state.derivative,
+  // state.jacToGlobal, direction(state));
+
+  BoundSymMatrix& boundCovariance = state.cov;
+  BoundMatrix& fullTransportJacobian = state.jacobian;
+  FreeMatrix& freeTransportJacobian = state.jacTransport;
+  FreeVector& freeToPathDerivatives = state.derivative;
+  BoundToFreeMatrix& boundToFreeJacobian = state.jacToGlobal;
+  const Vector3& _direction = direction(state);
+
+  // Calculate the full jacobian from local parameters at the start surface to
+  // current curvilinear parameters
+  // detail::boundToCurvilinearJacobian(
+  // _direction, boundToFreeJacobian, freeTransportJacobian,
+  // freeToPathDerivatives, fullTransportJacobian);
+
+  FreeToPathMatrix freeToPath = FreeToPathMatrix::Zero();
+  freeToPath.segment<3>(eFreePos0) = -1.0 * _direction;
+  // FreeToBoundMatrix freeToBoundJacobian =
+  // detail::CEfreeToCurvilinearJacobian(_direction);
+
+  // Optimized trigonometry on the propagation direction
+  const double x = _direction(0);  // == cos(phi) * sin(theta)
+  const double y = _direction(1);  // == sin(phi) * sin(theta)
+  const double z = _direction(2);  // == cos(theta)
+  // can be turned into cosine/sine
+  const double cosTheta = z;
+  const double sinTheta = sqrt(x * x + y * y);
+  const double invSinTheta = 1. / sinTheta;
+  const double cosPhi = x * invSinTheta;
+  const double sinPhi = y * invSinTheta;
+  // prepare the jacobian to curvilinear
+  FreeToBoundMatrix freeToBoundJacobian = FreeToBoundMatrix::Zero();
+  if (std::abs(cosTheta) < s_curvilinearProjTolerance) {
+    // We normally operate in curvilinear coordinates defined as follows
+    freeToBoundJacobian(0, 0) = -sinPhi;
+    freeToBoundJacobian(0, 1) = cosPhi;
+    freeToBoundJacobian(1, 0) = -cosPhi * cosTheta;
+    freeToBoundJacobian(1, 1) = -sinPhi * cosTheta;
+    freeToBoundJacobian(1, 2) = sinTheta;
+  } else {
+    // Under grazing incidence to z, the above coordinate system definition
+    // becomes numerically unstable, and we need to switch to another one
+    const double c = sqrt(y * y + z * z);
+    const double invC = 1. / c;
+    freeToBoundJacobian(0, 1) = -z * invC;
+    freeToBoundJacobian(0, 2) = y * invC;
+    freeToBoundJacobian(1, 0) = c;
+    freeToBoundJacobian(1, 1) = -x * y * invC;
+    freeToBoundJacobian(1, 2) = -x * z * invC;
+  }
+  // Time parameter
+  freeToBoundJacobian(5, 3) = 1.;
+  // Directional and momentum parameters for curvilinear
+  freeToBoundJacobian(2, 4) = -sinPhi * invSinTheta;
+  freeToBoundJacobian(2, 5) = cosPhi * invSinTheta;
+  freeToBoundJacobian(3, 4) = cosPhi * cosTheta;
+  freeToBoundJacobian(3, 5) = sinPhi * cosTheta;
+  freeToBoundJacobian(3, 6) = -sinTheta;
+  freeToBoundJacobian(4, 7) = 1.;
+
+  fullTransportJacobian =
+      freeToBoundJacobian *
+      (FreeMatrix::Identity() + freeToPathDerivatives * freeToPath) *
+      freeTransportJacobian * boundToFreeJacobian;
+
+  // Apply the actual covariance transport to get covariance of the current
+  // curvilinear parameters
+  boundCovariance = fullTransportJacobian * boundCovariance *
+                    fullTransportJacobian.transpose();
+
+  // Reinitialize jacobian components:
+  // ->The free transportJacobian is reinitialized to Identity
+  // ->The path derivatives is reinitialized to Zero
+  // ->The boundToFreeJacobian is reinitialized to that at the current
+  // curvilinear surface
+  detail::reinitializeJacobians(freeTransportJacobian, freeToPathDerivatives,
+                                boundToFreeJacobian, _direction);
 }
 
 template <typename E, typename A>
