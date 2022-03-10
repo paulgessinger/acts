@@ -8,6 +8,8 @@
 
 #include "Acts/TrackFitting/GainMatrixSmoother.hpp"
 
+#include "Acts/Surfaces/Surface.hpp"
+
 namespace Acts {
 
 Result<void> GainMatrixSmoother::operator()(const GeometryContext& gctx,
@@ -47,6 +49,8 @@ Result<void> GainMatrixSmoother::operator()(const GeometryContext& gctx,
     assert(prev_ts.hasSmoothed());
     assert(prev_ts.hasPredicted());
 
+    ACTS_VERBOSE(
+        "Smoothing state on surface: " << ts.referenceSurface().geometryId());
     ACTS_VERBOSE("Calculate smoothing matrix:");
     ACTS_VERBOSE("Filtered covariance:\n" << ts.filteredCovariance());
     ACTS_VERBOSE("Jacobian:\n" << ts.jacobian());

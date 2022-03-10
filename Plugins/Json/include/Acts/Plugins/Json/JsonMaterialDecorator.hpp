@@ -74,14 +74,15 @@ class JsonMaterialDecorator : public IMaterialDecorator {
   void decorate(Surface& surface) const final {
     ACTS_VERBOSE("Processing surface: " << surface.geometryId());
     // Clear the material if registered to do so
-    if (m_clearSurfaceMaterial) {
+    if (m_clearSurfaceMaterial && surface.surfaceMaterial() != nullptr) {
       ACTS_VERBOSE("-> Clearing surface material");
       surface.assignSurfaceMaterial(nullptr);
     }
     // Try to find the surface in the map
     auto sMaterial = m_surfaceMaterialMap.find(surface.geometryId());
     if (sMaterial != m_surfaceMaterialMap.end()) {
-      ACTS_VERBOSE("-> Found material for surface, assigning");
+      ACTS_VERBOSE(
+          "-> Found material for surface, assigning: " << sMaterial->second);
       surface.assignSurfaceMaterial(sMaterial->second);
     }
   }
@@ -92,7 +93,7 @@ class JsonMaterialDecorator : public IMaterialDecorator {
   void decorate(TrackingVolume& volume) const final {
     ACTS_VERBOSE("Processing volume: " << volume.geometryId());
     // Clear the material if registered to do so
-    if (m_clearVolumeMaterial) {
+    if (m_clearVolumeMaterial && volume.volumeMaterial() != nullptr) {
       ACTS_VERBOSE("-> Clearing volume material");
       volume.assignVolumeMaterial(nullptr);
     }

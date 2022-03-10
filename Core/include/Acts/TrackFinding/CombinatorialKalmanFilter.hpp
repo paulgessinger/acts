@@ -21,6 +21,7 @@
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/MagneticField/MagneticFieldContext.hpp"
 #include "Acts/Material/MaterialSlab.hpp"
+#include "Acts/Material/ProtoSurfaceMaterial.hpp"
 #include "Acts/Propagator/AbortList.hpp"
 #include "Acts/Propagator/ActionList.hpp"
 #include "Acts/Propagator/ConstrainedStep.hpp"
@@ -990,6 +991,15 @@ class CombinatorialKalmanFilter {
       bool hasMaterial = false;
 
       if (surface and surface->surfaceMaterial()) {
+        if (dynamic_cast<const Acts::ProtoSurfaceMaterial*>(
+                surface->surfaceMaterial()) != nullptr) {
+          ACTS_VERBOSE("PROTO MATERIAL");
+        }
+        // ACTS_VERBOSE("Surface material: " << ([&]() -> std::string {
+        // std::stringstream ss;
+        // surface->surfaceMaterial()->toStream(ss);
+        // return ss.str();
+        // }()));
         // Prepare relevant input particle properties
         detail::PointwiseMaterialInteraction interaction(surface, state,
                                                          stepper);
@@ -1082,22 +1092,23 @@ class CombinatorialKalmanFilter {
             st.typeFlags().test(TrackStateFlag::MeasurementFlag);
         bool isMaterial = st.typeFlags().test(TrackStateFlag::MaterialFlag);
         bool isOutlier = st.typeFlags().test(TrackStateFlag::OutlierFlag);
-        ACTS_VERBOSE("Measurement State: "
-                     << (isMeasurement ? "measurement" : "")
-                     << (isMaterial ? "material" : "")
-                     << (isOutlier ? "outlier" : ""));
-        ACTS_VERBOSE("-> Pred: " << st.predicted().transpose());
-        ACTS_VERBOSE("->       " << MultiTrajectoryHelpers::freePredicted(
-                                        state.geoContext, st)
-                                        .transpose());
-        ACTS_VERBOSE("-> Filt: " << st.filtered().transpose());
-        ACTS_VERBOSE("->       " << MultiTrajectoryHelpers::freeFiltered(
-                                        state.geoContext, st)
-                                        .transpose());
-        ACTS_VERBOSE("-> Smth: " << st.smoothed().transpose());
-        ACTS_VERBOSE("->       " << MultiTrajectoryHelpers::freeSmoothed(
-                                        state.geoContext, st)
-                                        .transpose());
+        ACTS_VERBOSE("Track State on " << st.referenceSurface().geometryId()
+                                       << " , "
+                                       << (isMeasurement ? "measurement" : "")
+                                       << (isMaterial ? "material" : "")
+                                       << (isOutlier ? "outlier" : ""));
+        ACTS_VERBOSE("->  Pred: " << st.predicted().transpose());
+        ACTS_VERBOSE("-> gpred: " << MultiTrajectoryHelpers::freePredicted(
+                                         state.geoContext, st)
+                                         .transpose());
+        ACTS_VERBOSE("->  Filt: " << st.filtered().transpose());
+        ACTS_VERBOSE("-> gfilt: " << MultiTrajectoryHelpers::freeFiltered(
+                                         state.geoContext, st)
+                                         .transpose());
+        ACTS_VERBOSE("->  Smth: " << st.smoothed().transpose());
+        ACTS_VERBOSE("-> gsmth: " << MultiTrajectoryHelpers::freeSmoothed(
+                                         state.geoContext, st)
+                                         .transpose());
       });
 
       // Return in case no target surface
