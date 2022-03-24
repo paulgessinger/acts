@@ -6,9 +6,16 @@ configure_file(
 add_library(
   ActsCore SHARED "")
 
-target_compile_features(
-  ActsCore
-  PUBLIC cxx_std_20)
+if(ACTS_CPP20_CONCEPTS_SUPPORTED)
+  target_compile_features(
+    ActsCore
+    PUBLIC cxx_std_20)
+  target_compile_definitions(ActsCore PUBLIC ACTS_CPP20_CONCEPTS_SUPPORTED)
+else()
+  target_compile_features(
+    ActsCore
+    PUBLIC cxx_std_17)
+endif()
 
 target_include_directories(
   ActsCore
