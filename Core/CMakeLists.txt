@@ -5,9 +5,11 @@ configure_file(
 # source files will be added later
 add_library(
   ActsCore SHARED "")
+
 target_compile_features(
   ActsCore
-  PUBLIC cxx_std_17)
+  PUBLIC cxx_std_20)
+
 target_include_directories(
   ActsCore
   PUBLIC
