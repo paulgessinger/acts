@@ -63,7 +63,7 @@ class JsonSurfacesWriter : public IWriter {
   std::string name() const final override;
 
   /// Write geometry using the per-event context (optional).
-  ProcessCode write(const AlgorithmContext& context) final override;
+  ProcessCode write(const AlgorithmContext& ctx) final override;
 
   /// Write geometry using the default context.
   ProcessCode endRun() final override;

@@ -44,12 +44,13 @@ class GenericDetectorElement : public Acts::IdentifiedDetectorElement {
   /// @param pBounds is the planar bounds for the planar detector element
   /// @param thickness is the module thickness
   /// @param material is the (optional) Surface material associated to it
+  /// @param digitizationModule Optional pointer to a digitization module
   GenericDetectorElement(
       const Identifier identifier,
       std::shared_ptr<const Acts::Transform3> transform,
       std::shared_ptr<const Acts::PlanarBounds> pBounds, double thickness,
       std::shared_ptr<const Acts::ISurfaceMaterial> material = nullptr,
-      std::shared_ptr<const Acts::DigitizationModule> digitzationModule =
+      std::shared_ptr<const Acts::DigitizationModule> digitizationModule =
           nullptr);
 
   /// Constructor for single sided detector element
@@ -60,12 +61,13 @@ class GenericDetectorElement : public Acts::IdentifiedDetectorElement {
   /// @param dBounds is the planar bounds for the disc like detector element
   /// @param thickness is the module thickness
   /// @param material is the (optional) Surface material associated to it
+  /// @param digitizationModule Optional pointer to a digitization module
   GenericDetectorElement(
       const Identifier identifier,
       std::shared_ptr<const Acts::Transform3> transform,
       std::shared_ptr<const Acts::DiscBounds> dBounds, double thickness,
       std::shared_ptr<const Acts::ISurfaceMaterial> material = nullptr,
-      std::shared_ptr<const Acts::DigitizationModule> digitzationModule =
+      std::shared_ptr<const Acts::DigitizationModule> digitizationModule =
           nullptr);
 
   /// Identifier

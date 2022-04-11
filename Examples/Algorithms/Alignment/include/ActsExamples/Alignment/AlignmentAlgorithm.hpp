@@ -84,7 +84,7 @@ class AlignmentAlgorithm final : public BareAlgorithm {
   ///
   /// @param cfg is the config struct to configure the algorihtm
   /// @param level is the logging level
-  AlignmentAlgorithm(Config cfg, Acts::Logging::Level lvl);
+  AlignmentAlgorithm(Config cfg, Acts::Logging::Level level);
 
   /// Framework execute method of the alignment algorithm
   ///

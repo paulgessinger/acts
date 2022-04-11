@@ -37,7 +37,7 @@ struct TGeoDetector : public ActsExamples::IBaseDetector {
     Acts::Logging::Level layerLogLevel = Acts::Logging::WARNING;
     Acts::Logging::Level volumeLogLevel = Acts::Logging::WARNING;
 
-    void readJson(const std::string& fileName);
+    void readJson(const std::string& jsonFile);
 
     std::string fileName;
     bool buildBeamPipe = false;
@@ -122,7 +122,7 @@ struct TGeoDetector : public ActsExamples::IBaseDetector {
   };
 
   void addOptions(
-      boost::program_options::options_description& opt) const override;
+      boost::program_options::options_description& desc) const override;
 
   std::pair<ActsExamples::IBaseDetector::TrackingGeometryPtr, ContextDecorators>
   finalize(const boost::program_options::variables_map& vm,

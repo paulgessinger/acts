@@ -22,7 +22,7 @@ class TrackParametersPrinter : public BareAlgorithm {
     std::string inputTrackParameters;
   };
 
-  TrackParametersPrinter(const Config& cfg, Acts::Logging::Level level);
+  TrackParametersPrinter(const Config& config, Acts::Logging::Level level);
 
   ProcessCode execute(const AlgorithmContext& ctx) const;
 

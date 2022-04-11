@@ -60,9 +60,10 @@ class RootPropagationStepsWriter
   /// and is called by the WriterT<>::write interface
   ///
   /// @param context The Algorithm context with per event information
-  /// @param steps is the data to be written out
-  ProcessCode writeT(const AlgorithmContext& context,
-                     const std::vector<PropagationSteps>& steps) final override;
+  /// @param stepCollection is the data to be written out
+  ProcessCode writeT(
+      const AlgorithmContext& context,
+      const std::vector<PropagationSteps>& stepCollection) final override;
 
  private:
   Config m_cfg;                    ///< the configuration object

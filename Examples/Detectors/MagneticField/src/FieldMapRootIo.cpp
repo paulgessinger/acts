@@ -21,7 +21,7 @@ ActsExamples::makeMagneticFieldMapRzFromRoot(
                          std::array<size_t, 2> nBinsRZ)>
         localToGlobalBin,
     std::string fieldMapFile, std::string treeName, Acts::ActsScalar lengthUnit,
-    Acts::ActsScalar BFieldUnit, bool firstQuadrant) {
+    Acts::ActsScalar BFieldUnit, bool firstOctant) {
   /// [1] Read in field map file
   // Grid position points in r and z
   std::vector<double> rPos;
@@ -56,7 +56,7 @@ ActsExamples::makeMagneticFieldMapRzFromRoot(
   inputFile->Close();
   /// [2] use helper function in core
   return Acts::fieldMapRZ(localToGlobalBin, rPos, zPos, bField, lengthUnit,
-                          BFieldUnit, firstQuadrant);
+                          BFieldUnit, firstOctant);
 }
 
 ActsExamples::detail::InterpolatedMagneticField3

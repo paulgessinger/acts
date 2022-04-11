@@ -177,9 +177,10 @@ void filterAndSort(
 ActsExamples::HepMCProcessExtractor::~HepMCProcessExtractor() {}
 
 ActsExamples::HepMCProcessExtractor::HepMCProcessExtractor(
-    ActsExamples::HepMCProcessExtractor::Config cfg, Acts::Logging::Level level)
+    ActsExamples::HepMCProcessExtractor::Config config,
+    Acts::Logging::Level level)
     : ActsExamples::BareAlgorithm("HepMCProcessExtractor", level),
-      m_cfg(std::move(cfg)) {
+      m_cfg(std::move(config)) {
   if (m_cfg.inputEvents.empty()) {
     throw std::invalid_argument("Missing input event collection");
   }

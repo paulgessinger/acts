@@ -42,7 +42,7 @@ namespace detail {
 /// @param [in, out] transportJacobian Global jacobian since the last reset
 /// @param [in, out] derivatives Path length derivatives of the free, nominal
 /// parameters
-/// @param [in, out] jacToGlobal Projection jacobian of the last bound
+/// @param [in, out] boundToFreeJacobian Projection jacobian of the last bound
 /// parametrisation to free parameters
 /// @param [in, out] parameters Free, nominal parametrisation
 /// @param [in] covTransport Decision whether the covariance transport should be
@@ -58,7 +58,7 @@ namespace detail {
 Result<std::tuple<BoundTrackParameters, BoundMatrix, double>> boundState(
     const GeometryContext& geoContext, BoundSymMatrix& covarianceMatrix,
     BoundMatrix& jacobian, FreeMatrix& transportJacobian,
-    FreeVector& derivatives, BoundToFreeMatrix& jacToGlobal,
+    FreeVector& derivatives, BoundToFreeMatrix& boundToFreeJacobian,
     FreeVector& parameters, bool covTransport, double accumulatedPath,
     const Surface& surface,
     const FreeToBoundCorrection& freeToBoundCorrection =
@@ -73,7 +73,7 @@ Result<std::tuple<BoundTrackParameters, BoundMatrix, double>> boundState(
 /// @param [in, out] transportJacobian Global jacobian since the last reset
 /// @param [in, out] derivatives Path length derivatives of the free, nominal
 /// parameters
-/// @param [in, out] jacToGlobal Projection jacobian of the last bound
+/// @param [in, out] boundToFreeJacobian Projection jacobian of the last bound
 /// parametrisation to free parameters
 /// @param [in] parameters Free, nominal parametrisation
 /// @param [in] covTransport Decision whether the covariance transport should be
@@ -87,7 +87,7 @@ Result<std::tuple<BoundTrackParameters, BoundMatrix, double>> boundState(
 std::tuple<CurvilinearTrackParameters, BoundMatrix, double> curvilinearState(
     BoundSymMatrix& covarianceMatrix, BoundMatrix& jacobian,
     FreeMatrix& transportJacobian, FreeVector& derivatives,
-    BoundToFreeMatrix& jacToGlobal, const FreeVector& parameters,
+    BoundToFreeMatrix& boundToFreeJacobian, const FreeVector& parameters,
     bool covTransport, double accumulatedPath);
 
 /// @brief Method for on-demand covariance transport of a bound/curvilinear to
