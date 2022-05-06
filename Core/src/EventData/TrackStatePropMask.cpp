@@ -16,22 +16,23 @@ namespace Acts {
 
 std::ostream& operator<<(std::ostream& os, TrackStatePropMask mask) {
   using PM = TrackStatePropMask;
+  auto check = [mask](auto attrib) -> const char* {
+    if (ACTS_CHECK_BIT(mask, attrib)) {
+      return "x";
+    }
+
+    return " ";
+  };
   os << "TrackStatePropMask(";
   if (mask == PM::None) {
     os << "None";
   } else {
-    os << "\n  [" << (ACTS_CHECK_BIT(mask, PM::Predicted) ? "x" : " ")
-       << "] predicted";
-    os << "\n  [" << (ACTS_CHECK_BIT(mask, PM::Filtered) ? "x" : " ")
-       << "] filtered";
-    os << "\n  [" << (ACTS_CHECK_BIT(mask, PM::Smoothed) ? "x" : " ")
-       << "] smoothed";
-    os << "\n  [" << (ACTS_CHECK_BIT(mask, PM::Jacobian) ? "x" : " ")
-       << "] jacobian";
-    os << "\n  [" << (ACTS_CHECK_BIT(mask, PM::Uncalibrated) ? "x" : " ")
-       << "] uncalibrated";
-    os << "\n  [" << (ACTS_CHECK_BIT(mask, PM::Calibrated) ? "x" : " ")
-       << "] calibrated";
+    os << "\n  [" << check(PM::Predicted) << "] predicted";
+    os << "\n  [" << check(PM::Filtered) << "] filtered";
+    os << "\n  [" << check(PM::Smoothed) << "] smoothed";
+    os << "\n  [" << check(PM::Jacobian) << "] jacobian";
+    os << "\n  [" << check(PM::Uncalibrated) << "] uncalibrated";
+    os << "\n  [" << check(PM::Calibrated) << "] calibrated";
     os << "\n";
   }
   os << ")";

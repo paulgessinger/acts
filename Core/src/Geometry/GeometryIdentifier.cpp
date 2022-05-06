@@ -12,7 +12,7 @@
 
 std::ostream& Acts::operator<<(std::ostream& os, Acts::GeometryIdentifier id) {
   // zero represents an invalid/undefined identifier
-  if (not id.value()) {
+  if (id.value() == 0) {
     return (os << "undefined");
   }
 
@@ -25,7 +25,7 @@ std::ostream& Acts::operator<<(std::ostream& os, Acts::GeometryIdentifier id) {
 
   bool writeSeparator = false;
   for (auto i = 0u; i < 5u; ++i) {
-    if (levels[i]) {
+    if (levels[i] != 0) {
       if (writeSeparator) {
         os << '|';
       }
