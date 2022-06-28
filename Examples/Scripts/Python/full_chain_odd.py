@@ -27,13 +27,13 @@ from seeding import addSeeding, TruthSeedRanges
 from ckf_tracks import addCKFTracks, CKFPerformanceConfig
 from vertex_fitting import addVertexFitting, VertexFinder
 
-s = acts.examples.Sequencer(events=100, numThreads=-1, logLevel=acts.logging.INFO)
+s = acts.examples.Sequencer(events=1, skip=47, numThreads=1, logLevel=acts.logging.INFO)
 
 s = addParticleGun(
     s,
     MomentumConfig(1.0 * u.GeV, 10.0 * u.GeV, True),
     EtaConfig(-3.0, 3.0, True),
-    ParticleConfig(1, acts.PdgParticle.eMuon, True),
+    ParticleConfig(2, acts.PdgParticle.eMuon, True),
     rnd=rnd,
 )
 s = addFatras(
