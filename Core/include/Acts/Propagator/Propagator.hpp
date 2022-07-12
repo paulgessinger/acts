@@ -367,6 +367,14 @@ class Propagator final {
   propagate(const parameters_t& start,
             const propagator_options_t& options) const;
 
+  template <typename parameters_t, typename propagator_options_t,
+            typename path_aborter_t = PathLimitReached>
+  Result<
+      action_list_t_result_t<CurvilinearTrackParameters,
+                             typename propagator_options_t::action_list_type>>
+  propagatex(const parameters_t& start,
+             const propagator_options_t& options) const;
+
   /// @brief Propagate track parameters - User method
   ///
   /// This function performs the propagation of the track parameters according
@@ -393,6 +401,14 @@ class Propagator final {
       BoundTrackParameters, typename propagator_options_t::action_list_type>>
   propagate(const parameters_t& start, const Surface& target,
             const propagator_options_t& options) const;
+
+  template <typename parameters_t, typename propagator_options_t,
+            typename target_aborter_t = SurfaceReached,
+            typename path_aborter_t = PathLimitReached>
+  Result<action_list_t_result_t<
+      BoundTrackParameters, typename propagator_options_t::action_list_type>>
+  propagatex(const parameters_t& start, const Surface& target,
+             const propagator_options_t& options) const;
 
  private:
   /// Implementation of propagation algorithm

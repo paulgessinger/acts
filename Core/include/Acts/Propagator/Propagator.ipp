@@ -93,6 +93,17 @@ auto Acts::Propagator<S, N>::propagate(
     -> Result<action_list_t_result_t<
         CurvilinearTrackParameters,
         typename propagator_options_t::action_list_type>> {
+  return propagatex(start, options);
+}
+
+template <typename S, typename N>
+template <typename parameters_t, typename propagator_options_t,
+          typename path_aborter_t>
+auto Acts::Propagator<S, N>::propagatex(
+    const parameters_t& start, const propagator_options_t& options) const
+    -> Result<action_list_t_result_t<
+        CurvilinearTrackParameters,
+        typename propagator_options_t::action_list_type>> {
   static_assert(Concepts::BoundTrackParametersConcept<parameters_t>,
                 "Parameters do not fulfill bound parameters concept.");
 
@@ -161,6 +172,18 @@ template <typename S, typename N>
 template <typename parameters_t, typename propagator_options_t,
           typename target_aborter_t, typename path_aborter_t>
 auto Acts::Propagator<S, N>::propagate(
+    const parameters_t& start, const Surface& target,
+    const propagator_options_t& options) const
+    -> Result<action_list_t_result_t<
+        BoundTrackParameters,
+        typename propagator_options_t::action_list_type>> {
+  return propagatex(start, target, options);
+}
+
+template <typename S, typename N>
+template <typename parameters_t, typename propagator_options_t,
+          typename target_aborter_t, typename path_aborter_t>
+auto Acts::Propagator<S, N>::propagatex(
     const parameters_t& start, const Surface& target,
     const propagator_options_t& options) const
     -> Result<action_list_t_result_t<
