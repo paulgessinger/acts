@@ -48,7 +48,8 @@ def getOpenDataDetector(mdecorator=None):
     import acts.examples.dd4hep
 
     dd4hepConfig = acts.examples.dd4hep.DD4hepGeometryService.Config(
-        xmlFileNames=[str(odd_xml)]
+        xmlFileNames=[str(odd_xml)],
+        logLevel=acts.logging.VERBOSE,
     )
     detector = acts.examples.dd4hep.DD4hepDetector()
 

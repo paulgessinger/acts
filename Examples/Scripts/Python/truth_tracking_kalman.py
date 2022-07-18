@@ -192,9 +192,14 @@ def runTruthTrackingKalman(
 if "__main__" == __name__:
 
     srcdir = Path(__file__).resolve().parent.parent.parent.parent
+    from common import getOpenDataDetectorDirectory, getOpenDataDetector
 
-    # detector, trackingGeometry, _ = getOpenDataDetector()
-    detector, trackingGeometry, decorators = acts.examples.GenericDetector.create()
+    oddDir = getOpenDataDetectorDirectory()
+    oddMaterialMap = oddDir / "data/odd-material-maps.root"
+    detector, trackingGeometry, _ = getOpenDataDetector(
+        mdecorator=acts.IMaterialDecorator.fromFile(oddMaterialMap)
+    )
+    #  detector, trackingGeometry, decorators = acts.examples.GenericDetector.create()
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
