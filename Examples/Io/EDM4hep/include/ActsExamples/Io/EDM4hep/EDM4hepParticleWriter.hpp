@@ -37,9 +37,9 @@ class EDM4hepParticleWriter final : public WriterT<SimParticleContainer> {
 
   /// Construct the particle writer.
   ///
-  /// @params cfg is the configuration object
-  /// @params lvl is the logging level
-  EDM4hepParticleWriter(const Config& cfg, Acts::Logging::Level lvl);
+  /// @param config is the configuration object
+  /// @param lvl is the logging level
+  EDM4hepParticleWriter(const Config& config, Acts::Logging::Level lvl);
 
   ProcessCode endRun() final;
 

@@ -43,7 +43,7 @@ namespace ActsExamples {
 /// @note This information is only used as a hint for the required size of
 ///       the internal vectors. A correct value is not needed, but will help
 ///       to speed up the field map initialization process.
-/// @param[in] firstOctant Flag if set to true indicating that only the
+/// @param[in] firstQuadrant Flag if set to true indicating that only the
 /// first
 /// quadrant of the grid points and the BField values has been given and
 /// that
@@ -58,7 +58,7 @@ detail::InterpolatedMagneticField2 makeMagneticFieldMapRzFromText(
                          std::array<size_t, 2> nBinsRZ)>
         localToGlobalBin,
     std::string fieldMapFile, Acts::ActsScalar lengthUnit,
-    Acts::ActsScalar BFieldUnit, bool firstOctant = false);
+    Acts::ActsScalar BFieldUnit, bool firstQuadrant = false);
 
 /// Method to setup the FieldMapper
 /// @param localToGlobalBin Function mapping the local bins of x,y,z to the

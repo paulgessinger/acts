@@ -63,9 +63,9 @@ class PlaneSurface : public Surface {
 
   /// Constructor for Planes with (optional) shared bounds object
   ///
-  /// @param htrans transform in 3D that positions this surface
+  /// @param transform transform in 3D that positions this surface
   /// @param pbounds bounds object to describe the actual surface area
-  PlaneSurface(const Transform3& htrans,
+  PlaneSurface(const Transform3& transform,
                std::shared_ptr<const PlanarBounds> pbounds = nullptr);
 
  public:

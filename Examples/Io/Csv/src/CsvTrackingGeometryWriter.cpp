@@ -347,26 +347,28 @@ void writeVolume(SurfaceWriter& sfWriter, SurfaceGridWriter& sfGridWriter,
 }
 }  // namespace
 
-ProcessCode CsvTrackingGeometryWriter::write(const AlgorithmContext& ctx) {
+ProcessCode CsvTrackingGeometryWriter::write(const AlgorithmContext& context) {
   if (not m_cfg.writePerEvent) {
     return ProcessCode::SUCCESS;
   }
 
   SurfaceWriter sfWriter(
-      perEventFilepath(m_cfg.outputDir, "detectors.csv", ctx.eventNumber),
+      perEventFilepath(m_cfg.outputDir, "detectors.csv", context.eventNumber),
       m_cfg.outputPrecision);
 
   SurfaceGridWriter sfGridWriter(
-      perEventFilepath(m_cfg.outputDir, "surface-grids.csv", ctx.eventNumber),
+      perEventFilepath(m_cfg.outputDir, "surface-grids.csv",
+                       context.eventNumber),
       m_cfg.outputPrecision);
 
   LayerVolumeWriter lvWriter(
-      perEventFilepath(m_cfg.outputDir, "layer-volumes.csv", ctx.eventNumber),
+      perEventFilepath(m_cfg.outputDir, "layer-volumes.csv",
+                       context.eventNumber),
       m_cfg.outputPrecision);
 
   writeVolume(sfWriter, sfGridWriter, lvWriter, *m_world, m_cfg.writeSensitive,
               m_cfg.writeBoundary, m_cfg.writeSurfaceGrid,
-              m_cfg.writeLayerVolume, ctx.geoContext);
+              m_cfg.writeLayerVolume, context.geoContext);
   return ProcessCode::SUCCESS;
 }
 

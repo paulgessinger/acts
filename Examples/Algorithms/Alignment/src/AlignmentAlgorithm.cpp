@@ -15,10 +15,10 @@
 #include "ActsExamples/EventData/Trajectories.hpp"
 #include "ActsExamples/Framework/WhiteBoard.hpp"
 
-ActsExamples::AlignmentAlgorithm::AlignmentAlgorithm(Config cfg,
+ActsExamples::AlignmentAlgorithm::AlignmentAlgorithm(Config config,
                                                      Acts::Logging::Level level)
     : ActsExamples::BareAlgorithm("AlignmentAlgorithm", level),
-      m_cfg(std::move(cfg)) {
+      m_cfg(std::move(config)) {
   if (m_cfg.inputMeasurements.empty()) {
     throw std::invalid_argument("Missing input measurement collection");
   }

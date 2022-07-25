@@ -38,10 +38,10 @@ std::pair<size_t, size_t> ActsExamples::EventGenerator::availableEvents()
 }
 
 ActsExamples::ProcessCode ActsExamples::EventGenerator::read(
-    const AlgorithmContext& ctx) {
+    const AlgorithmContext& context) {
   SimParticleContainer particles;
 
-  auto rng = m_cfg.randomNumbers->spawnGenerator(ctx);
+  auto rng = m_cfg.randomNumbers->spawnGenerator(context);
 
   size_t nPrimaryVertices = 0;
   for (size_t iGenerate = 0; iGenerate < m_cfg.generators.size(); ++iGenerate) {
@@ -75,7 +75,7 @@ ActsExamples::ProcessCode ActsExamples::EventGenerator::read(
         updateParticleInPlace(vertexParticle);
       }
 
-      ACTS_VERBOSE("event=" << ctx.eventNumber << " generator=" << iGenerate
+      ACTS_VERBOSE("event=" << context.eventNumber << " generator=" << iGenerate
                             << " primary_vertex=" << nPrimaryVertices
                             << " n_particles=" << vertexParticles.size());
 
@@ -83,11 +83,11 @@ ActsExamples::ProcessCode ActsExamples::EventGenerator::read(
     }
   }
 
-  ACTS_DEBUG("event=" << ctx.eventNumber
+  ACTS_DEBUG("event=" << context.eventNumber
                       << " n_primary_vertices=" << nPrimaryVertices
                       << " n_particles=" << particles.size());
 
   // move generated event to the store
-  ctx.eventStore.add(m_cfg.outputParticles, std::move(particles));
+  context.eventStore.add(m_cfg.outputParticles, std::move(particles));
   return ProcessCode::SUCCESS;
 }

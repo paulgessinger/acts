@@ -67,7 +67,7 @@ ActsExamples::CsvParticleReader::Config setupParticleReading(
 ActsExamples::DigitizationConfig setupDigitization(
     const ActsExamples::Options::Variables& vars,
     ActsExamples::Sequencer& sequencer,
-    std::shared_ptr<const ActsExamples::RandomNumbers> rnd,
+    std::shared_ptr<const ActsExamples::RandomNumbers> randomNumbers,
     std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry,
     const std::string& inputSimHits) {
   using namespace ActsExamples;
@@ -80,7 +80,7 @@ ActsExamples::DigitizationConfig setupDigitization(
                 vars["digi-config-file"].as<std::string>()));
   // Common options for digitization
   digiCfg.inputSimHits = inputSimHits;
-  digiCfg.randomNumbers = rnd;
+  digiCfg.randomNumbers = randomNumbers;
   digiCfg.trackingGeometry = trackingGeometry;
   sequencer.addAlgorithm(
       std::make_shared<DigitizationAlgorithm>(digiCfg, logLevel));
@@ -96,7 +96,7 @@ ActsExamples::DigitizationConfig setupDigitization(
 ActsExamples::ParticleSmearing::Config setupParticleSmearing(
     const ActsExamples::Options::Variables& vars,
     ActsExamples::Sequencer& sequencer,
-    std::shared_ptr<const ActsExamples::RandomNumbers> rnd,
+    std::shared_ptr<const ActsExamples::RandomNumbers> randomNumbers,
     const std::string& inputParticles) {
   using namespace ActsExamples;
   using namespace Acts::UnitLiterals;
@@ -109,7 +109,7 @@ ActsExamples::ParticleSmearing::Config setupParticleSmearing(
       Options::readParticleSmearingOptions(vars);
   particleSmearingCfg.inputParticles = inputParticles;
   particleSmearingCfg.outputTrackParameters = "smearedparameters";
-  particleSmearingCfg.randomNumbers = rnd;
+  particleSmearingCfg.randomNumbers = randomNumbers;
   sequencer.addAlgorithm(
       std::make_shared<ParticleSmearing>(particleSmearingCfg, logLevel));
 

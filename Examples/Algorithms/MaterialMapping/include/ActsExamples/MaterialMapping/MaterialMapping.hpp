@@ -83,9 +83,9 @@ class MaterialMapping : public ActsExamples::BareAlgorithm {
 
   /// Constructor
   ///
-  /// @param cfg The configuration struct carrying the used tools
+  /// @param config The configuration struct carrying the used tools
   /// @param level The output logging level
-  MaterialMapping(const Config& cfg,
+  MaterialMapping(const Config& config,
                   Acts::Logging::Level level = Acts::Logging::INFO);
 
   /// Destructor
