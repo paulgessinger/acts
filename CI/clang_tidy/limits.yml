@@ -8,8 +8,8 @@ limits:
   "modernize-use-equals-default" : 0
   "readability-implicit-bool-cast": 0
   "readability-implicit-bool-conversion": 0
-  # "modernize-use-default-member-init": 0
   # "performance-unnecessary-value-param": 0
   # "modernize-use-equals-default": 0
   "modernize-use-nullptr": 0
   "performance-move-const-arg": 0
+  "modernize-use-default-member-init": 0
