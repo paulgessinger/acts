@@ -101,7 +101,7 @@ int runRecCKFTracks(int argc, char* argv[],
   auto geometry = Geometry::build(vm, *detector);
   auto trackingGeometry = geometry.first;
   // Add context decorators
-  for (auto cdr : geometry.second) {
+  for (const auto& cdr : geometry.second) {
     sequencer.addContextDecorator(cdr);
   }
   // Setup the magnetic field

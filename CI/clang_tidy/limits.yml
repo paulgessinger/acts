@@ -13,3 +13,4 @@ limits:
   "modernize-use-nullptr": 0
   "performance-move-const-arg": 0
   "modernize-use-default-member-init": 0
+  "performance-for-range-copy": 0

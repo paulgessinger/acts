@@ -165,7 +165,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
   // vertices
   while (true) {
     bool sane = true;
-    for (auto v : m_event.vertices()) {
+    for (const auto& v : m_event.vertices()) {
       if (!v) {
         continue;
       }
@@ -174,7 +174,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
         sane = false;
       }
     }
-    for (auto p : m_event.particles()) {
+    for (const auto& p : m_event.particles()) {
       if (!p) {
         continue;
       }

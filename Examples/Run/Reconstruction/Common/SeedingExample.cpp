@@ -69,7 +69,7 @@ int runSeedingExample(int argc, char* argv[],
       std::make_shared<RandomNumbers>(Options::readRandomNumbersConfig(vm));
 
   // Add the decorator to the sequencer
-  for (auto cdr : contextDecorators) {
+  for (const auto& cdr : contextDecorators) {
     sequencer.addContextDecorator(cdr);
   }
 

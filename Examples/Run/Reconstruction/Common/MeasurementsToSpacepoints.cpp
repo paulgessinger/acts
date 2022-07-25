@@ -78,7 +78,7 @@ int runMeasurementsToSP(int argc, char* argv[],
   ACTS_INFO("after building geometry");
 
   // Add the decorator to the sequencer
-  for (auto cdr : contextDecorators) {
+  for (const auto& cdr : contextDecorators) {
     sequencer.addContextDecorator(cdr);
   }
 

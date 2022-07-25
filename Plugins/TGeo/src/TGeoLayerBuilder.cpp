@@ -238,7 +238,7 @@ void Acts::TGeoLayerBuilder::buildLayers(const GeometryContext& gctx,
                           const Acts::TGeoDetectorElement>>{tgElement}
                     : m_cfg.detectorElementSplitter->split(gctx, tgElement);
 
-        for (auto tge : tgElements) {
+        for (const auto& tge : tgElements) {
           m_elementStore.push_back(tge);
           layerSurfaces.push_back(tge->surface().getSharedPtr());
         }

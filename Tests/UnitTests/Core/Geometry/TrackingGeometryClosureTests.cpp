@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(GeometryIdentifier_closeGeometry_test) {
     // check the geometry id of all boundary surfaces of the volume
     // - this is strictly only possible when glueing is OFF
     GeometryIdentifier::Value bsurface_id = 0;
-    for (auto bSf : vol.boundarySurfaces()) {
+    for (const auto& bSf : vol.boundarySurfaces()) {
       // check the bsurface volume id
       auto bs_vol_id = bSf->surfaceRepresentation().geometryId().volume();
       BOOST_CHECK_EQUAL(geoid, bs_vol_id);
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(GeometryIdentifier_closeGeometry_test) {
     if (vol.confinedLayers() != nullptr) {
       // layers start are counted from 1 - n
       GeometryIdentifier::Value layer_id = 0;
-      for (auto lay : vol.confinedLayers()->arrayObjects()) {
+      for (const auto& lay : vol.confinedLayers()->arrayObjects()) {
         // check the layer volume id and layer layer id
         auto lay_vol_id = lay->geometryId().volume();
         auto lay_lay_id = lay->geometryId().layer();

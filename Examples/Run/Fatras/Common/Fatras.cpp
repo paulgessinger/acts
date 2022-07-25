@@ -93,7 +93,7 @@ int runFatras(int argc, char* argv[],
   Sequencer sequencer(Options::readSequencerConfig(vars));
   // Setup detector geometry and material and the magnetic field
   auto [trackingGeometry, contextDecorators] = Geometry::build(vars, *detector);
-  for (auto cdr : contextDecorators) {
+  for (const auto& cdr : contextDecorators) {
     sequencer.addContextDecorator(cdr);
   }
   // Setup input, algorithm chain, output

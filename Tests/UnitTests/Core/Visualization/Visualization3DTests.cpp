@@ -51,7 +51,7 @@ l 4 1
   // Valid obj, but triangular mesh is requested
   objErrors = testObjString(validObj, true);
   BOOST_CHECK(objErrors.size() == 1);
-  for (auto objerr : objErrors) {
+  for (const auto& objerr : objErrors) {
     std::cout << objerr << std::endl;
   }
 
@@ -76,7 +76,7 @@ l 4 1
 
   objErrors = testObjString(invalidObj);
   BOOST_CHECK(objErrors.size() == 4);
-  for (auto objerr : objErrors) {
+  for (const auto& objerr : objErrors) {
     std::cout << objerr << std::endl;
   }
 }
@@ -84,7 +84,7 @@ l 4 1
 BOOST_AUTO_TEST_CASE(Visualization3DTesterPly) {
   // Test the tester
   std::string validPly = R"(ply
-format ascii 1.0		
+format ascii 1.0
 comment made by Greg Turk
 comment this file is a cube
 element vertex 8
@@ -117,13 +117,13 @@ end_header
   // Valid ply, but triangular mesh is requested
   plyErrors = testPlyString(validPly, true);
   BOOST_CHECK(plyErrors.empty());
-  for (auto plyerr : plyErrors) {
+  for (const auto& plyerr : plyErrors) {
     std::cout << plyerr << std::endl;
   }
 
   // Test the tester - contains 3 errors
   std::string invalidPly = R"(ply
-format ascii 1.0		
+format ascii 1.0
 comment made by Greg Turk
 comment this file is a cube
 element vertex 8
@@ -153,7 +153,7 @@ end_header
   // Valid ply, but triangular mesh is requested
   plyErrors = testPlyString(invalidPly);
   BOOST_CHECK(plyErrors.size() == 3);
-  for (auto plyerr : plyErrors) {
+  for (const auto& plyerr : plyErrors) {
     std::cout << plyerr << std::endl;
   }
 }

@@ -51,9 +51,9 @@ auto iVolume = constructCylinderVolume(
 BOOST_AUTO_TEST_CASE(GeometryIdentifier_innervolume_test) {
   BOOST_CHECK_EQUAL(0ul, iVolume->geometryId().value());
   // check the boundary surfaces
-  for (auto bSf : iVolume->boundarySurfaces()) {
+  for (const auto& bSf : iVolume->boundarySurfaces()) {
     BOOST_CHECK_EQUAL(0ul, bSf->surfaceRepresentation().geometryId().value());
-    for (auto lay : iVolume->confinedLayers()->arrayObjects()) {
+    for (const auto& lay : iVolume->confinedLayers()->arrayObjects()) {
       BOOST_CHECK_EQUAL(0ul, lay->geometryId().value());
       // check the approach surfaces
       for (auto asf : lay->approachDescriptor()->containedSurfaces()) {
@@ -76,9 +76,9 @@ auto oVolume = constructCylinderVolume(
 BOOST_AUTO_TEST_CASE(GeometryIdentifier_outervolume_test) {
   BOOST_CHECK_EQUAL(0ul, oVolume->geometryId().value());
   // check the boundary surfaces
-  for (auto bSf : iVolume->boundarySurfaces()) {
+  for (const auto& bSf : iVolume->boundarySurfaces()) {
     BOOST_CHECK_EQUAL(0ul, bSf->surfaceRepresentation().geometryId().value());
-    for (auto lay : oVolume->confinedLayers()->arrayObjects()) {
+    for (const auto& lay : oVolume->confinedLayers()->arrayObjects()) {
       BOOST_CHECK_EQUAL(0ul, lay->geometryId().value());
       // check the approach surfaces
       for (auto asf : lay->approachDescriptor()->containedSurfaces()) {
@@ -103,17 +103,17 @@ BOOST_AUTO_TEST_CASE(GeometryIdentifier_containervolume_test) {
   ///  let's check that the geometry ID values are all 0
   BOOST_CHECK_EQUAL(0ul, hVolume->geometryId().value());
   /// check the boundaries of the hVolume, should also be 0
-  for (auto hbsf : hVolume->boundarySurfaces()) {
+  for (const auto& hbsf : hVolume->boundarySurfaces()) {
     BOOST_CHECK_EQUAL(0ul, hbsf->surfaceRepresentation().geometryId().value());
   }
-  for (auto cVol : hVolume->confinedVolumes()->arrayObjects()) {
+  for (const auto& cVol : hVolume->confinedVolumes()->arrayObjects()) {
     /// let's check everything is set to 0
     BOOST_CHECK_EQUAL(0ul, cVol->geometryId().value());
     // check the boundary surfaces
-    for (auto bSf : cVol->boundarySurfaces()) {
+    for (const auto& bSf : cVol->boundarySurfaces()) {
       BOOST_CHECK_EQUAL(0ul, bSf->surfaceRepresentation().geometryId().value());
     }
-    for (auto lay : cVol->confinedLayers()->arrayObjects()) {
+    for (const auto& lay : cVol->confinedLayers()->arrayObjects()) {
       BOOST_CHECK_EQUAL(0ul, lay->geometryId().value());
       // check the approach surfaces
       for (auto asf : lay->approachDescriptor()->containedSurfaces()) {

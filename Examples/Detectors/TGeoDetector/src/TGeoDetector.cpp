@@ -508,8 +508,8 @@ auto TGeoDetector::finalize(
       std::move(tgeoTrackingGeometry), std::move(tgeoContextDeocrators));
 }
 
-void TGeoDetector::Config::readJson(const std::string& fileName) {
-  readTGeoLayerBuilderConfigsFile(fileName, *this);
+void TGeoDetector::Config::readJson(const std::string& jsonFile) {
+  readTGeoLayerBuilderConfigsFile(jsonFile, *this);
 }
 
 }  // namespace ActsExamples

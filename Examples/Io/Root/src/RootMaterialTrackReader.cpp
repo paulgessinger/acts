@@ -53,7 +53,7 @@ ActsExamples::RootMaterialTrackReader::RootMaterialTrackReader(
   }
 
   // loop over the input files
-  for (auto inputFile : m_cfg.fileList) {
+  for (const auto& inputFile : m_cfg.fileList) {
     // add file to the input chain
     m_inputChain->Add(inputFile.c_str());
     ACTS_DEBUG("Adding File " << inputFile << " to tree '" << m_cfg.treeName
