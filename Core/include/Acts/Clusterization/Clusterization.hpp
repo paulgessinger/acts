@@ -33,7 +33,7 @@ struct DefaultConnect {
   bool conn8;
   DefaultConnect() : conn8{true} {}
   DefaultConnect(bool commonCorner) : conn8{commonCorner} {}
-  ConnectResult operator()(const Cell& ref, const Cell& iter);
+  ConnectResult operator()(const Cell& a, const Cell& b);
 };
 
 /// @brief labelClusters
