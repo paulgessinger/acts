@@ -39,7 +39,7 @@ class AnyVector {
   }
 
   // Default-construct a null type-erased vector
-  AnyVector() : {}
+  AnyVector() = default;
 
   // Move-construct a type-erased vector
   AnyVector(AnyVector&& other)
