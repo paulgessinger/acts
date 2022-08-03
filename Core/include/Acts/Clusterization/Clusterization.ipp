@@ -74,8 +74,7 @@ struct Compare {
 class DisjointSets {
  public:
   DisjointSets(size_t initial_size = 128)
-      : m_globalId(1),
-        m_size(initial_size),
+      : m_size(initial_size),
         m_rank(m_size),
         m_parent(m_size),
         m_ds(&m_rank[0], &m_parent[0]) {}
@@ -97,7 +96,7 @@ class DisjointSets {
   Label findSet(size_t x) { return static_cast<Label>(m_ds.find_set(x)); }
 
  private:
-  size_t m_globalId;
+  size_t m_globalId{1};
   size_t m_size;
   std::vector<size_t> m_rank;
   std::vector<size_t> m_parent;

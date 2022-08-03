@@ -30,9 +30,9 @@ enum ConnectResult {
 // Default connection type: 4- or 8-cell connectivity
 template <typename Cell>
 struct DefaultConnect {
-  bool conn8;
-  DefaultConnect() : conn8{true} {}
-  DefaultConnect(bool commonCorner) : conn8{commonCorner} {}
+  bool conn8{true};
+  DefaultConnect() = default;
+  explicit DefaultConnect(bool commonCorner) : conn8{commonCorner} {}
   ConnectResult operator()(const Cell& a, const Cell& b);
 };
 
