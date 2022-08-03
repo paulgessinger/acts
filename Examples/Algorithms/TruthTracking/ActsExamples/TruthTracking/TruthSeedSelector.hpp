@@ -60,7 +60,7 @@ class TruthSeedSelector final : public BareAlgorithm {
 
   TruthSeedSelector(const Config& config, Acts::Logging::Level level);
 
-  ProcessCode execute(const AlgorithmContext& ctx) const override final;
+  ProcessCode execute(const AlgorithmContext& ctx) const final;
 
   /// Add options for the particle selector.
   static void addOptions(Options::Description& desc);

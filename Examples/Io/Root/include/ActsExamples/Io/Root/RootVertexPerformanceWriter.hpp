@@ -62,10 +62,10 @@ class RootVertexPerformanceWriter final
   /// @param level Message level declaration
   RootVertexPerformanceWriter(const Config& config, Acts::Logging::Level level);
 
-  ~RootVertexPerformanceWriter() final override;
+  ~RootVertexPerformanceWriter() override;
 
   /// End-of-run hook
-  ProcessCode endRun() final override;
+  ProcessCode endRun() override;
 
  protected:
   /// @brief Write method called by the base class
@@ -73,7 +73,7 @@ class RootVertexPerformanceWriter final
   ProcessCode writeT(
       const AlgorithmContext& ctx,
       const std::vector<Acts::Vertex<Acts::BoundTrackParameters>>& vertices)
-      final override;
+      override;
 
  private:
   Config m_cfg;             ///< The config class

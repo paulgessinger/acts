@@ -53,10 +53,10 @@ class CsvSpacepointWriter final : public WriterT<SimSpacePointContainer> {
   CsvSpacepointWriter(const Config& config, Acts::Logging::Level level);
 
   /// Virtual destructor
-  ~CsvSpacepointWriter() final override;
+  ~CsvSpacepointWriter() override;
 
   /// End-of-run hook
-  ProcessCode endRun() final override;
+  ProcessCode endRun() override;
 
  protected:
   /// This implementation holds the actual writing method
@@ -65,7 +65,7 @@ class CsvSpacepointWriter final : public WriterT<SimSpacePointContainer> {
   /// @param ctx The Algorithm context with per event information
   /// @param spacepoints is the data to be written out
   ProcessCode writeT(const AlgorithmContext& ctx,
-                     const SimSpacePointContainer& spacepoints) final override;
+                     const SimSpacePointContainer& spacepoints) override;
 
  private:
   Config m_cfg;

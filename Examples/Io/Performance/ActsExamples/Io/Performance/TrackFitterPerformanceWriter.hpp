@@ -52,14 +52,14 @@ class TrackFitterPerformanceWriter final
   /// @param level The logger level
   TrackFitterPerformanceWriter(Config config, Acts::Logging::Level level);
 
-  ~TrackFitterPerformanceWriter() final override;
+  ~TrackFitterPerformanceWriter() override;
 
   /// Finalize plots.
-  ProcessCode endRun() final override;
+  ProcessCode endRun() override;
 
  private:
   ProcessCode writeT(const AlgorithmContext& ctx,
-                     const TrajectoriesContainer& trajectories) final override;
+                     const TrajectoriesContainer& trajectories) override;
 
   Config m_cfg;
   /// Mutex used to protect multi-threaded writes.

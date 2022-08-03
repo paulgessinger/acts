@@ -53,7 +53,7 @@ class RootPropagationStepsWriter
   ~RootPropagationStepsWriter() override;
 
   /// End-of-run hook
-  ProcessCode endRun() final override;
+  ProcessCode endRun() override;
 
  protected:
   /// This implementation holds the actual writing method
@@ -63,7 +63,7 @@ class RootPropagationStepsWriter
   /// @param stepCollection is the data to be written out
   ProcessCode writeT(
       const AlgorithmContext& context,
-      const std::vector<PropagationSteps>& stepCollection) final override;
+      const std::vector<PropagationSteps>& stepCollection) override;
 
  private:
   Config m_cfg;                    ///< the configuration object
