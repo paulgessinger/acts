@@ -40,8 +40,6 @@ jobs:
           key: ${{ runner.os  }}-ccache-${{ matrix.image }}_${{ env.CCACHE_KEY_SUFFIX }}_${{ github.sha }}
           restore-keys: |
             ${{ runner.os  }}-ccache-${{ matrix.image }}_${{ env.CCACHE_KEY_SUFFIX }}_
-     
-      - run: "false"
 
       - name: Configure
         # setting CMAKE_CXX_STANDARD=17 is a workaround for a bug in the
