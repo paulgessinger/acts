@@ -1,1 +1,16 @@
-# bla bla bla
+rules:
+ - branch_filter:
+    - "main"
+    - "develop/*"
+   paths:
+    - "README.md" 
+
+   required_checks:
+    - "Analysis / build_debug"
+    - "Checks / format"
+    - Lint PR / Validate PR title
+    - codecov/project
+
+   required_pattern:
+    - "Builds / *"
+    - "Checks / *"
