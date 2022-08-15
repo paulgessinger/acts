@@ -14,3 +14,6 @@ limits:
   "performance-move-const-arg": 0
   "modernize-use-default-member-init": 0
   "performance-for-range-copy": 0
+  # "clang-analyzer-optin.cplusplus.UninitializedObject": 0
+  # "cppcoreguidelines-init-variables": 0
+  # "cppcoreguidelines-pro-type-member-init": 0
