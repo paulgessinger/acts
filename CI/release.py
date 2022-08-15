@@ -23,6 +23,7 @@ from semantic_release.history.parser_helpers import ParsedCommit
 import sh
 from dotenv import load_dotenv
 import functools
+import subprocess
 
 load_dotenv()
 
@@ -184,50 +185,72 @@ app = typer.Typer()
 async def get_parsed_commit_range(
     start: str, end: str, repo: str, gh: GitHubAPI, edit: bool = False
 ) -> Tuple[List[Commit], List[Commit]]:
-    commits_iter = gh.getiter(f"/repos/{repo}/commits?sha={start}")
+    try:
+        commits_in = []
+        async for commit in gh.getiter(f"/repos/{repo}/commits?sha={start}"):
+            if commit["sha"] == end:
+                break
+            commits_in.append(
+                Commit(
+                    commit["sha"],
+                    commit["commit"]["message"],
+                    commit["author"]["login"],
+                )
+            )
+    except gidgethub.BadRequest:
+        print(
+            "BadRequest for commit retrieval. That is most likely because you forgot to push the merge commit."
+            " Falling back to commit parsing, this won't include author info!"
+        )
+
+        commit_info = [
+            l.strip()
+            for l in subprocess.check_output(
+                ["git", "log", "--pretty=%H %s", f"{end}..HEAD"]
+            )
+            .decode()
+            .strip()
+            .split("\n")
+        ]
+
+        commits_in = [
+            Commit(sha, msg, None)
+            for sha, msg in [c.split(" ", 1) for c in commit_info]
+        ]
 
     commits = []
     unparsed_commits = []
 
-    try:
-        async for item in commits_iter:
-            commit_hash = item["sha"]
-            commit_message = item["commit"]["message"]
-            if commit_hash == end:
-                break
+    for commit in commits_in:
+        if commit.sha == end:
+            break
 
-            invalid_message = False
-            try:
-                _default_parser(commit_message)
-                # if this succeeds, do nothing
-            except UnknownCommitMessageStyleError as err:
-                print("Unknown commit message style!")
-                if not commit_message.startswith("Merge"):
-                    invalid_message = True
-            if (
-                (invalid_message or edit)
-                and sys.stdout.isatty()
-                and False
-                and typer.confirm(f"Edit effective message '{commit_message}'?")
-            ):
-                commit_message = typer.edit(commit_message)
-                _default_parser(commit_message)
+        invalid_message = False
+        try:
+            _default_parser(commit.message)
+            # if this succeeds, do nothing
+        except UnknownCommitMessageStyleError as err:
+            print("Unknown commit message style!")
+            if not commit.message.startswith("Merge"):
+                invalid_message = True
+        if (
+            (invalid_message or edit)
+            and sys.stdout.isatty()
+            and False
+            and typer.confirm(f"Edit effective message '{commit.message}'?")
+        ):
+            commit.message = typer.edit(commit.message)
+            _default_parser(commit.message)
 
-            commit = Commit(commit_hash, commit_message, item["author"]["login"])
-            commits.append(commit)
+        commits.append(commit)
 
-            if invalid_message:
-                unparsed_commits.append(commit)
+        if invalid_message:
+            unparsed_commits.append(commit)
 
-            print("-", commit)
-            if len(commits) > 200:
-                raise RuntimeError(f"{len(commits)} are a lot. Aborting!")
-        return commits, unparsed_commits
-    except gidgethub.BadRequest:
-        print(
-            "BadRequest for commit retrieval. That is most likely because you forgot to push the merge commit."
-        )
-        return
+        print("-", commit)
+        if len(commits) > 200:
+            raise RuntimeError(f"{len(commits)} are a lot. Aborting!")
+    return commits, unparsed_commits
 
 
 @app.command()
