@@ -101,6 +101,12 @@ ActsExamples::RootVertexPerformanceWriter::~RootVertexPerformanceWriter() {
 }
 
 ActsExamples::ProcessCode ActsExamples::RootVertexPerformanceWriter::endRun() {
+  ACTS_INFO("Total number of truth vertices: " << m_nTrueVtxAll);
+  ACTS_INFO("Total number of reconstructed vertices: " << m_nRecoVtxAll);
+
+  double efficiency = static_cast<double>(m_nRecoVtxAll) / m_nTrueVtxAll;
+  ACTS_INFO("-> global efficiency: " << efficiency);
+
   if (m_outputFile != nullptr) {
     m_outputFile->cd();
     m_outputTree->Write();
@@ -164,6 +170,7 @@ ActsExamples::ProcessCode ActsExamples::RootVertexPerformanceWriter::writeT(
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
   m_nrecoVtx = vertices.size();
+  m_nRecoVtxAll += m_nrecoVtx;
 
   ACTS_DEBUG("Number of reco vertices in event: " << m_nrecoVtx);
   if (m_outputFile == nullptr) {
@@ -175,6 +182,7 @@ ActsExamples::ProcessCode ActsExamples::RootVertexPerformanceWriter::writeT(
       ctx.eventStore.get<SimParticleContainer>(m_cfg.inputAllTruthParticles);
   // Get number of generated true primary vertices
   m_ntrueVtx = getNumberOfTruePriVertices(allTruthParticles);
+  m_nTrueVtxAll += m_ntrueVtx;
 
   ACTS_INFO("Total number of generated truth particles in event : "
             << allTruthParticles.size());

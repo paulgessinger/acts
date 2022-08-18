@@ -39,13 +39,20 @@ from acts.examples.reconstruction import (
     VertexFinder,
 )
 
-s = acts.examples.Sequencer(events=100, numThreads=-1, logLevel=acts.logging.INFO)
+s = acts.examples.Sequencer(events=1, numThreads=-1, logLevel=acts.logging.INFO)
+
+vtxGen = acts.examples.GaussianVertexGenerator(
+    stddev=acts.Vector4(10 * u.um, 10 * u.um, 50 * u.mm, 0),
+    mean=acts.Vector4(0, 0, 0, 0),
+)
 
 addParticleGun(
     s,
     MomentumConfig(1.0 * u.GeV, 10.0 * u.GeV, transverse=True),
     EtaConfig(-3.0, 3.0, uniform=True),
-    ParticleConfig(2, acts.PdgParticle.eMuon, randomizeCharge=True),
+    ParticleConfig(4, acts.PdgParticle.eMuon, randomizeCharge=True),
+    vtxGen=vtxGen,
+    multiplicity=50,
     rnd=rnd,
 )
 addFatras(
@@ -92,8 +99,9 @@ s.addAlgorithm(
 addVertexFitting(
     s,
     field,
-    vertexFinder=VertexFinder.Iterative,
+    vertexFinder=VertexFinder.AMVF,
     outputDirRoot=outputDir,
+    logLevel=acts.logging.DEBUG,
 )
 
 s.run()

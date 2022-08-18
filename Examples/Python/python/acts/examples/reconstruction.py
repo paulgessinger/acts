@@ -873,6 +873,7 @@ def addVertexFitting(
 
     def customLogLevel(custom: acts.logging.Level = acts.logging.INFO):
         """override logging level"""
+        return logLevel
         if logLevel is None:
             return s.config.logLevel
         return acts.logging.Level(max(custom.value, logLevel.value))

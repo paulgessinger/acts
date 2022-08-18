@@ -107,6 +107,7 @@ ActsExamples::AdaptiveMultiVertexFinderAlgorithm::execute(
                               linearizer, m_cfg.bField);
   // We do not want to use a beamspot constraint here
   finderConfig.useBeamSpotConstraint = false;
+  finderConfig.do3dSplitting = true;
 
   // Instantiate the finder
   Finder finder(finderConfig);
@@ -139,6 +140,16 @@ ActsExamples::AdaptiveMultiVertexFinderAlgorithm::execute(
   auto t2 = std::chrono::high_resolution_clock::now();
 
   // show some debug output
+  ACTS_DEBUG("Num vertex candidates: " << state.nVertexCandidates);
+  ACTS_DEBUG(
+      "Num vertex candidates after prep: " << state.nVertexCandidatesAfterPrep);
+  ACTS_DEBUG(
+      "Num vertex candidates after fit: " << state.nVertexCandidatesAfterFit);
+  ACTS_DEBUG(
+      "Num vertices w/ eligible tracks: " << state.nHasEligibleTrackVertices);
+  ACTS_DEBUG("Num good vertices: " << state.nGoodVertices);
+  ACTS_DEBUG("Num kept vertices: " << state.nKeptVertices);
+
   ACTS_INFO("Found " << vertices.size() << " vertices in event");
   for (const auto& vtx : vertices) {
     ACTS_DEBUG("Found vertex at " << vtx.fullPosition().transpose() << " with "

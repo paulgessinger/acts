@@ -429,6 +429,9 @@ void addOutput(Context& ctx) {
                  .def(py::init<const Writer::Config&, Acts::Logging::Level>(),
                       py::arg("config"), py::arg("level"));
 
+    w.def_property_readonly("nRecoVtxAll", &Writer::getNRecoVtxAll);
+    w.def_property_readonly("nTrueVtxAll", &Writer::getNTrueVtxAll);
+
     auto c = py::class_<Writer::Config>(w, "Config").def(py::init<>());
 
     ACTS_PYTHON_STRUCT_BEGIN(c, Writer::Config);

@@ -11,8 +11,8 @@
 template <typename vfitter_t, typename sfinder_t>
 auto Acts::AdaptiveMultiVertexFinder<vfitter_t, sfinder_t>::find(
     const std::vector<const InputTrack_t*>& allTracks,
-    const VertexingOptions<InputTrack_t>& vertexingOptions,
-    State& /*state*/) const -> Result<std::vector<Vertex<InputTrack_t>>> {
+    const VertexingOptions<InputTrack_t>& vertexingOptions, State& state) const
+    -> Result<std::vector<Vertex<InputTrack_t>>> {
   if (allTracks.empty()) {
     ACTS_ERROR("Empty track collection handed to find method");
     return VertexingError::EmptyInput;
@@ -66,6 +66,8 @@ auto Acts::AdaptiveMultiVertexFinder<vfitter_t, sfinder_t>::find(
       break;
     }
 
+    state.nVertexCandidates++;
+
     // Clear the seed track collection that has been removed in last iteration
     // now after seed finding is done
     removedSeedTracks.clear();
@@ -86,6 +88,8 @@ auto Acts::AdaptiveMultiVertexFinder<vfitter_t, sfinder_t>::find(
     // Update fitter state with all vertices
     fitterState.addVertexToMultiMap(vtxCandidate);
 
+    state.nVertexCandidatesAfterPrep++;
+
     // Perform the fit
     auto fitResult = m_cfg.vertexFitter.addVtxToFit(
         fitterState, vtxCandidate, m_cfg.linearizer, vertexingOptions);
@@ -94,11 +98,20 @@ auto Acts::AdaptiveMultiVertexFinder<vfitter_t, sfinder_t>::find(
     }
     ACTS_DEBUG("New position of current vertex candidate after fit: "
                << vtxCandidate.fullPosition());
+
+    state.nVertexCandidatesAfterFit++;
     // Check if vertex is good vertex
-    auto [nCompatibleTracks, isGoodVertex] =
+    auto [nCompatibleTracks, isGoodVertex, hasElibigleTracks] =
         checkVertexAndCompatibleTracks(vtxCandidate, seedTracks, fitterState);
 
+    if (hasElibigleTracks) {
+      state.nHasEligibleTrackVertices++;
+    }
+
     ACTS_DEBUG("Vertex is good vertex: " << isGoodVertex);
+    if (isGoodVertex) {
+      state.nGoodVertices++;
+    }
     if (nCompatibleTracks > 0) {
       removeCompatibleTracksFromSeedTracks(vtxCandidate, seedTracks,
                                            fitterState, removedSeedTracks);
@@ -117,6 +130,10 @@ auto Acts::AdaptiveMultiVertexFinder<vfitter_t, sfinder_t>::find(
     bool keepVertex = isGoodVertex &&
                       keepNewVertex(vtxCandidate, allVerticesPtr, fitterState);
     ACTS_DEBUG("New vertex will be saved: " << keepVertex);
+
+    if (keepVertex) {
+      state.nKeptVertices++;
+    }
 
     // Delete vertex from allVertices list again if it's not kept
     if (not keepVertex) {
@@ -349,39 +366,75 @@ auto Acts::AdaptiveMultiVertexFinder<vfitter_t, sfinder_t>::
     checkVertexAndCompatibleTracks(
         Vertex<InputTrack_t>& vtx,
         const std::vector<const InputTrack_t*>& seedTracks,
-        FitterState_t& fitterState) const -> std::pair<int, bool> {
+        FitterState_t& fitterState) const -> std::tuple<int, bool, bool> {
   bool isGoodVertex = false;
+  bool hasElibigleTracks = false;
   int nCompatibleTracks = 0;
+  std::cout << "VERTEX CAND: " << vtx.position().transpose() << std::endl;
   for (const auto& trk : fitterState.vtxInfoMap[&vtx].trackLinks) {
     const auto& trkAtVtx =
         fitterState.tracksAtVerticesMap.at(std::make_pair(trk, &vtx));
-    if ((trkAtVtx.vertexCompatibility < m_cfg.maxVertexChi2 &&
-         m_cfg.useFastCompatibility) ||
-        (trkAtVtx.trackWeight > m_cfg.minWeight &&
-         trkAtVtx.chi2Track < m_cfg.maxVertexChi2 &&
-         !m_cfg.useFastCompatibility)) {
-      // TODO: Understand why looking for compatible tracks only in seed tracks
-      // and not also in all tracks
-      auto foundIter =
-          std::find_if(seedTracks.begin(), seedTracks.end(),
-                       [&trk](auto seedTrk) { return trk == seedTrk; });
-      if (foundIter != seedTracks.end()) {
-        nCompatibleTracks++;
-        ACTS_DEBUG("Compatible track found.");
 
-        if (m_cfg.addSingleTrackVertices && m_cfg.useBeamSpotConstraint) {
-          isGoodVertex = true;
-          break;
-        }
-        if (nCompatibleTracks > 1) {
-          isGoodVertex = true;
-          break;
-        }
+    // if (!(trkAtVtx.vertexCompatibility < m_cfg.maxVertexChi2 &&
+    // m_cfg.useFastCompatibility)) {
+    // continue;
+    // }
+
+    // if (!(trkAtVtx.trackWeight > m_cfg.minWeight &&
+    // trkAtVtx.chi2Track < m_cfg.maxVertexChi2 &&
+    // !m_cfg.useFastCompatibility)) {
+    // continue;
+    // }
+
+    if (m_cfg.useFastCompatibility) {
+      std::cout << "vtxCompat: " << trkAtVtx.vertexCompatibility << " "
+                << m_cfg.maxVertexChi2 << std::endl;
+      if (trkAtVtx.vertexCompatibility >= m_cfg.maxVertexChi2) {
+        continue;
+      }
+    }
+    // ret.nFastCompat++;
+
+    if (!m_cfg.useFastCompatibility) {
+      if (trkAtVtx.trackWeight <= m_cfg.minWeight ||
+          trkAtVtx.chi2Track >= m_cfg.maxVertexChi2) {
+        continue;
+      }
+    }
+    // ret.nSlowCompat++;
+
+    // if ((trkAtVtx.vertexCompatibility < m_cfg.maxVertexChi2 &&
+    // m_cfg.useFastCompatibility) ||
+    // (trkAtVtx.trackWeight > m_cfg.minWeight &&
+    // trkAtVtx.chi2Track < m_cfg.maxVertexChi2 &&
+    // !m_cfg.useFastCompatibility)) {
+    // } else {
+    // continue;
+    // }
+
+    hasElibigleTracks = true;
+
+    // TODO: Understand why looking for compatible tracks only in seed tracks
+    // and not also in all tracks
+    auto foundIter =
+        std::find_if(seedTracks.begin(), seedTracks.end(),
+                     [&trk](auto seedTrk) { return trk == seedTrk; });
+    if (foundIter != seedTracks.end()) {
+      nCompatibleTracks++;
+      ACTS_DEBUG("Compatible track found.");
+
+      if (m_cfg.addSingleTrackVertices && m_cfg.useBeamSpotConstraint) {
+        isGoodVertex = true;
+        break;
+      }
+      if (nCompatibleTracks > 1) {
+        isGoodVertex = true;
+        break;
       }
     }
   }  // end loop over all tracks at vertex
 
-  return {nCompatibleTracks, isGoodVertex};
+  return {nCompatibleTracks, isGoodVertex, hasElibigleTracks};
 }
 
 template <typename vfitter_t, typename sfinder_t>

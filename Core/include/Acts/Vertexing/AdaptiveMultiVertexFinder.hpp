@@ -165,7 +165,14 @@ class AdaptiveMultiVertexFinder {
   };  // Config struct
 
   /// State struct for fulfilling interface
-  struct State {};
+  struct State {
+    size_t nVertexCandidates = 0;
+    size_t nVertexCandidatesAfterPrep = 0;
+    size_t nVertexCandidatesAfterFit = 0;
+    size_t nHasEligibleTrackVertices = 0;
+    size_t nGoodVertices = 0;
+    size_t nKeptVertices = 0;
+  };
 
   /// @brief Constructor used if InputTrack_t type == BoundTrackParameters
   ///
@@ -319,7 +326,17 @@ class AdaptiveMultiVertexFinder {
   /// @param fitterState The vertex fitter state
   ///
   /// @return pair(nCompatibleTracks, isGoodVertex)
-  std::pair<int, bool> checkVertexAndCompatibleTracks(
+  // std::pair<int, bool>
+
+  struct CompatReturn {
+    int nCompatibleTracks = 0;
+    bool isGoodVertex = false;
+
+    int nFastCompat = 0;
+    int nSlowCompat = 0;
+  };
+
+  std::tuple<int, bool, bool> checkVertexAndCompatibleTracks(
       Vertex<InputTrack_t>& vtx,
       const std::vector<const InputTrack_t*>& seedTracks,
       FitterState_t& fitterState) const;

@@ -78,6 +78,9 @@ class RootVertexPerformanceWriter final
   /// End-of-run hook
   ProcessCode endRun() final override;
 
+  size_t getNRecoVtxAll() const { return m_nRecoVtxAll; }
+  size_t getNTrueVtxAll() const { return m_nTrueVtxAll; }
+
  protected:
   /// @brief Write method called by the base class
   /// @param [in] ctx is the algorithm context for event information
@@ -112,6 +115,9 @@ class RootVertexPerformanceWriter final
       -1;  ///< Max. number of reconstructable vertices (detector acceptance +
            ///< tracking efficiency)
   int m_timeMS = -1;  ///< Reconstruction time in ms
+
+  size_t m_nRecoVtxAll = 0;
+  size_t m_nTrueVtxAll = 0;
 
   int getNumberOfReconstructableVertices(
       const SimParticleContainer& collection) const;
