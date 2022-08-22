@@ -17,8 +17,11 @@
 #include "Acts/Plugins/DD4hep/ConvertDD4hepDetector.hpp"
 #include "Acts/Utilities/BinningType.hpp"
 
+#include <cstddef>
+#include <cstdlib>
 #include <stdexcept>
 
+#include "DD4hep/Plugins.h"
 #include "DD4hep/Printout.h"
 
 ActsExamples::DD4hep::DD4hepGeometryService::DD4hepGeometryService(
@@ -37,6 +40,16 @@ ActsExamples::DD4hep::DD4hepGeometryService::~DD4hepGeometryService() {
 
 ActsExamples::ProcessCode
 ActsExamples::DD4hep::DD4hepGeometryService::buildDD4hepGeometry() {
+  for (const std::string& k :
+       {"LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH", "DD4HEP_LIBRARY_PATH"}) {
+    const char* v = std::getenv(k.c_str());
+    if (v == nullptr) {
+      std::cout << k << ": null" << std::endl;
+    } else {
+      std::cout << k << ": " << v << std::endl;
+    }
+  }
+
   switch (m_cfg.dd4hepLogLevel) {
     case Acts::Logging::Level::VERBOSE:
       dd4hep::setPrintLevel(dd4hep::PrintLevel::VERBOSE);
@@ -60,6 +73,8 @@ ActsExamples::DD4hep::DD4hepGeometryService::buildDD4hepGeometry() {
       dd4hep::setPrintLevel(dd4hep::PrintLevel::ALWAYS);
       break;
   }
+
+  dd4hep::PluginService::setDebug(true);
   m_lcdd = &(dd4hep::Detector::getInstance());
   for (auto& file : m_cfg.xmlFileNames) {
     m_lcdd->fromCompact(file.c_str());

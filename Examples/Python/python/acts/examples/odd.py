@@ -8,6 +8,7 @@ def getOpenDataDetector(odd_dir, mdecorator=None):
     if not odd_xml.exists():
         raise RuntimeError(f"OpenDataDetector.xml not found at {odd_xml}")
 
+    """
     env_vars = []
     map_name = "libOpenDataDetector.components"
     lib_name = None
@@ -32,6 +33,18 @@ def getOpenDataDetector(odd_dir, mdecorator=None):
                 f"You might need to point {'/'.join(env_vars)} to build/thirdparty/OpenDataDetector/factory or other ODD install location"
             )
             raise RuntimeError(msg)
+    """
+
+    for v in ["LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH", "DD4HEP_LIBRARY_PATH"]:
+        print("PYTHON:", v, os.environ.get(v))
+        #  print(v, "\n", "\n".join([" - " + e for e in os.environ.get(v, "").split(":")]))
+
+    ld_path = (
+        os.environ.get("LD_LIBRARY_PATH", "") + ":" + os.environ["DD4HEP_LIBRARY_PATH"]
+    )
+    os.environ["DYLD_LIBRARY_PATH"] = ld_path
+    #  os.environ["LD_LIBRARY_PATH"] = ld_path
+    os.environ["DD4HEP_LIBRARY_PATH"] = ld_path
 
     import acts.examples.dd4hep
 
