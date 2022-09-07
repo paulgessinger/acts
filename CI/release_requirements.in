@@ -1,4 +1,4 @@
-python-semantic-release
+python-semantic-release==7.19.1
 aiohttp
 gidgethub
 python-dotenv
