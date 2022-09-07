@@ -299,12 +299,14 @@ async def make_release(
             git.add(version_file)
 
             zenodo_file = Path(".zenodo.json")
-            update_zenodo(zenodo_file, repo, next_version)
-            git.add(zenodo_file)
+            if zenodo_file.exists():
+                update_zenodo(zenodo_file, repo, next_version)
+                git.add(zenodo_file)
 
             citation_file = Path("CITATION.cff")
-            update_citation(citation_file, next_version)
-            git.add(citation_file)
+            if citation_file.exists():
+                update_citation(citation_file, next_version)
+                git.add(citation_file)
 
             git.commit(m=f"Bump to version {next_tag}")
 
