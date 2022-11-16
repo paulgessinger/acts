@@ -19,15 +19,30 @@ def getOpenDataDetector(
     if not odd_xml.exists():
         raise RuntimeError(f"OpenDataDetector.xml not found at {odd_xml}")
 
-    env_vars = []
+    env_vars = ["LD_LIBRARY_PATH", "DD4HEP_LIBRARY_PATH"]
     map_name = "libOpenDataDetector.components"
     lib_name = None
     if sys.platform == "linux":
-        env_vars = ["LD_LIBRARY_PATH"]
         lib_name = "libOpenDataDetector.so"
     elif sys.platform == "darwin":
-        env_vars = ["DYLD_LIBRARY_PATH", "DD4HEP_LIBRARY_PATH"]
+        env_vars += ["DYLD_LIBRARY_PATH"]
         lib_name = "libOpenDataDetector.dylib"
+
+    for ev in env_vars:
+        print(ev + ":", os.environ.get(ev))
+
+    # synchronize all the paths in all variables
+    paths = []
+    for ev in env_vars:
+        value = os.environ.get(ev)
+        if value is not None and len(value) > 0:
+            paths += value.strip().split(":")
+
+    print(paths)
+
+    for ev in env_vars:
+        os.environ[ev] = ":".join([p for p in paths if len(p.strip()) > 0])
+        print(ev + ":", os.environ.get(ev))
 
     if lib_name is not None and len(env_vars) > 0:
         found = False
@@ -42,12 +57,12 @@ def getOpenDataDetector(
                 "Unable to find OpenDataDetector factory library. "
                 f"You might need to point {'/'.join(env_vars)} to build/thirdparty/OpenDataDetector/factory or other ODD install location"
             )
-            raise RuntimeError(msg)
+            #  raise RuntimeError(msg)
 
     dd4hepConfig = acts.examples.dd4hep.DD4hepGeometryService.Config(
         xmlFileNames=[str(odd_xml)],
         logLevel=customLogLevel(),
-        dd4hepLogLevel=customLogLevel(),
+        dd4hepLogLevel=acts.logging.VERBOSE,
     )
     detector = acts.examples.dd4hep.DD4hepDetector()
 
