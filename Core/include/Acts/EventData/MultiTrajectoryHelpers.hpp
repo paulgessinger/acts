@@ -82,6 +82,25 @@ TrajectoryState trajectoryState(const Acts::MultiTrajectory<traj_t>& multiTraj,
   return trajState;
 }
 
+/// @brief Getter for global trajectory info
+///
+/// @tparam track_container_t Track container type
+/// @tparam traj_t Track state container type
+/// @tparam holder_t Holder type for track container
+///
+/// @param track The track proxy
+/// @param entryIndex The entry index of trajectory to investigate
+///
+/// @return The trajectory summary info
+template <typename track_container_t, typename traj_t,
+          template <typename> class holder_t>
+TrajectoryState trajectoryState(
+    typename Acts::TrackContainer<track_container_t, traj_t,
+                                  holder_t>::ConstTrackProxy track) {
+  return trajectoryState(track.container().trackStateContainer(),
+                         track.tipIndex());
+}
+
 /// @brief Getter for trajectory info for different sub-detectors
 ///
 /// @tparam source_link_t Type of source link
@@ -133,6 +152,29 @@ VolumeTrajectoryStateContainer trajectoryState(
     return true;
   });
   return trajStateContainer;
+}
+
+/// @brief Getter for trajectory info for different sub-detectors
+///
+/// @tparam track_container_t Track container type
+/// @tparam traj_t Track state container type
+/// @tparam holder_t Holder type for track container
+///
+/// @param track The track proxy
+/// @param entryIndex The entry index of trajectory to investigate
+/// track states at different sub-detectors.
+/// @param volumeIds The container for sub-detector Ids
+///
+/// @return The trajectory summary info at different sub-detectors (i.e.
+/// different volumes)
+template <typename track_container_t, typename traj_t,
+          template <typename> class holder_t>
+VolumeTrajectoryStateContainer trajectoryState(
+    typename Acts::TrackContainer<track_container_t, traj_t,
+                                  holder_t>::ConstTrackProxy track,
+    const std::vector<GeometryIdentifier::Value>& volumeIds) {
+  return trajectoryState(track.container().trackStateContainer(),
+                         track.tipIndex(), volumeIds);
 }
 
 /// @brief Transforms the filtered parameters from a @c TrackStateProxy to free
