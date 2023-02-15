@@ -165,17 +165,9 @@ class SingleFreeTrackParameters {
   }
   /// Transverse momentum.
   Scalar transverseMomentum() const {
-    // direction vector w/ arbitrary normalization can be parametrized as
-    //   [f*sin(theta)*cos(phi), f*sin(theta)*sin(phi), f*cos(theta)]
-    // w/ f,sin(theta) positive, the transverse magnitude is then
-    //   sqrt(f^2*sin^2(theta)) = f*sin(theta)
-    Scalar transverseMagnitude =
-        std::hypot(m_params[eFreeDir0], m_params[eFreeDir1]);
-    // absolute magnitude is f by construction
-    Scalar magnitude = std::hypot(transverseMagnitude, m_params[eFreeDir2]);
-    // such that we can extract sin(theta) = f*sin(theta) / f
-    return (transverseMagnitude / magnitude) * absoluteMomentum();
+    return std::sin(parameters()[eBoundTheta]) * absoluteMomentum();
   }
+  ///
   /// Momentum three-vector.
   Vector3 momentum() const { return absoluteMomentum() * unitDirection(); }
 

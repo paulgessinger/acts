@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/Definitions/Units.hpp"
 #include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/Utilities/HashedString.hpp"
 
@@ -204,6 +207,39 @@ class TrackProxy {
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
   Covariance covariance() {
     return m_container->covariance(m_index);
+  }
+
+  ActsScalar charge() const {
+    // Currently, neutral tracks are not supported here
+    return std::copysign(static_cast<ActsScalar>(UnitConstants::e),
+                         parameters()[eBoundQOverP]);
+  }
+
+  ActsScalar theta() const { return parameters()[eBoundTheta]; }
+  ActsScalar phi() const { return parameters()[eBoundPhi]; }
+  ActsScalar loc0() const { return parameters()[eBoundLoc0]; }
+  ActsScalar loc1() const { return parameters()[eBoundLoc1]; }
+  ActsScalar time() const { return parameters()[eBoundTime]; }
+
+  ActsScalar absoluteMomentum() const {
+    return std::abs(static_cast<ActsScalar>(Acts::UnitConstants::e) /
+                    parameters()[eBoundQOverP]);
+  }
+
+  ActsScalar transverseMomentum() const {
+    // const auto& params = parameters();
+    // // direction vector w/ arbitrary normalization can be parametrized as
+    // //   [f*sin(theta)*cos(phi), f*sin(theta)*sin(phi), f*cos(theta)]
+    // // w/ f,sin(theta) positive, the transverse magnitude is then
+    // //   sqrt(f^2*sin^2(theta)) = f*sin(theta)
+    // ActsScalar transverseMagnitude =
+    // std::hypot(params[eFreeDir0], params[eFreeDir1]);
+    // // absolute magnitude is f by construction
+    // ActsScalar magnitude = std::hypot(transverseMagnitude,
+    // params[eFreeDir2]);
+    // // such that we can extract sin(theta) = f*sin(theta) / f
+    // return (transverseMagnitude / magnitude) * absoluteMomentum();
+    return std::sin(parameters()[eBoundTheta]) * absoluteMomentum();
   }
 
   /// Get a range over the track states of this track. Return value is
@@ -522,6 +558,11 @@ class TrackContainer {
     return m_container->addTrack_impl();
   }
 
+  template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
+  void removeTrack(IndexType itrack) {
+    m_container->removeTrack_impl(itrack);
+  }
+
   /// Add a dymanic column to the track container
   /// @param key the name of the column to be added
   template <typename T, bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
@@ -559,9 +600,16 @@ class TrackContainer {
     return *m_traj;
   }
 
+  template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
+  auto& trackStateContainerHolder() {
+    return m_traj;
+  }
+
   /// Get a const reference to the track state container backend
   /// @return a const reference to the backend
   const auto& trackStateContainer() const { return *m_traj; }
+
+  const auto& trackStateContainerHolder() const { return m_traj; }
 
   /// Get a mutable iterator to the first track in the container
   /// @return a mutable iterator to the first track

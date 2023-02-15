@@ -62,6 +62,7 @@ with acts.FpeMonitor() if not g4_simulation else contextlib.nullcontext():
         events=args["events"],
         numThreads=1,
         outputDir=str(outputDir),
+        logLevel=acts.logging.VERBOSE
     )
 
     if not ttbar_pu200:
