@@ -116,3 +116,31 @@ def failure_threshold(level: acts.logging.Level, enabled: bool = True):
         acts.logging.setFailureThreshold(prev)
     else:
         yield
+
+
+def assert_csv_output(csv_path, stem):
+    __tracebackhide__ = True
+    # print(list(csv_path.iterdir()))
+    assert len([f for f in csv_path.iterdir() if f.name.endswith(stem + ".csv")]) > 0
+    assert all([f.stat().st_size > 100 for f in csv_path.iterdir()])
+
+
+def assert_entries(root_file, tree_name, exp=None, non_zero=False):
+    __tracebackhide__ = True
+    import ROOT
+
+    ROOT.PyConfig.IgnoreCommandLineOptions = True
+    ROOT.gROOT.SetBatch(True)
+
+    rf = ROOT.TFile.Open(str(root_file))
+    keys = [k.GetName() for k in rf.GetListOfKeys()]
+    assert tree_name in keys
+    if non_zero:
+        assert rf.Get(tree_name).GetEntries() > 0, f"{root_file}:{tree_name}"
+    if exp is not None:
+        assert rf.Get(tree_name).GetEntries() == exp, f"{root_file}:{tree_name}"
+
+
+def assert_has_entries(root_file, tree_name):
+    __tracebackhide__ = True
+    assert_entries(root_file, tree_name, non_zero=True)
