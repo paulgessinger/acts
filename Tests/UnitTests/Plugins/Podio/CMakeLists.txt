@@ -1,0 +1,3 @@
+add_unittest(ConvertTrackPodio ConvertTrackPodioTest.cpp)
+
+target_link_libraries(ActsUnitTestConvertTrackPodio PUBLIC ActsPluginPodio)
