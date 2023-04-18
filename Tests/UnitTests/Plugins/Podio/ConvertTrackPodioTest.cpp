@@ -79,11 +79,6 @@ BOOST_AUTO_TEST_CASE(ConvertSurface) {
 BOOST_AUTO_TEST_CASE(ConvertTrack) {
   ActsPodioEdm::TrackCollection tracks;
 
-  // auto track = tracks.create();
-  // auto* data = track.data();
-  // Eigen::Map<BoundVector> params{&data->l0};
-  // params << 1, 2, 3, 4, 5, 6;
-
   Acts::VectorMultiTrajectory mtj{};
   Acts::PodioTrackContainer ptc{tracks};
 
@@ -101,22 +96,49 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
   auto pTrack = tracks.at(0);
   BOOST_CHECK_EQUAL(pTrack.data().tipIndex, 5);
 
-  // pTrack.setL0(42);
-  // BOOST_CHECK_EQUAL(t.parameters()[0], 42);
   t.parameters() << 1, 2, 3, 4, 5, 6;
   Eigen::Map<BoundVector> pars{pTrack.data().parameters.data()};
   BOOST_CHECK_EQUAL(pars, (BoundVector{1, 2, 3, 4, 5, 6}));
-  // BOOST_CHECK_EQUAL(pTrack.getL0(), 1);
-  // BOOST_CHECK_EQUAL(pTrack.getL1(), 2);
-  // BOOST_CHECK_EQUAL(pTrack.getPhi(), 3);
-  // BOOST_CHECK_EQUAL(pTrack.getTheta(), 4);
-  // BOOST_CHECK_EQUAL(pTrack.getQop(), 5);
-  // BOOST_CHECK_EQUAL(pTrack.getT(), 6);
 
-  t.covariance().setRandom();
+  auto ref = BoundMatrix::Random().eval();
+  t.covariance() = ref;
 
   Eigen::Map<const BoundMatrix> cov{pTrack.data().covariance.data()};
-  BOOST_CHECK_EQUAL(t.covariance(), cov);
+  BOOST_CHECK_EQUAL(ref, cov);
+
+  t.nMeasurements() = 17;
+  BOOST_CHECK_EQUAL(pTrack.data().nMeasurements, 17);
+
+  t.nHoles() = 34;
+  BOOST_CHECK_EQUAL(pTrack.data().nHoles, 34);
+
+  t.chi2() = 882.3f;
+  BOOST_CHECK_EQUAL(pTrack.data().chi2, 882.3f);
+
+  t.nDoF() = 9;
+  BOOST_CHECK_EQUAL(pTrack.data().ndf, 9);
+
+  t.nOutliers() = 77;
+  BOOST_CHECK_EQUAL(pTrack.data().nOutliers, 77);
+
+  t.nSharedHits() = 99;
+  BOOST_CHECK_EQUAL(pTrack.data().nSharedHits, 99);
+
+  auto rBounds = std::make_shared<RectangleBounds>(15, 20);
+  auto trf = Transform3::Identity();
+  trf.translation().setRandom();
+  auto free = Acts::Surface::makeShared<PlaneSurface>(trf, rBounds);
+
+  Acts::GeometryContext gctx;
+  t.setReferenceSurface(free);
+  const auto& free2 = t.referenceSurface();
+  BOOST_CHECK_EQUAL(free->center(gctx), free2.center(gctx));
+
+  const auto* rBounds2 = dynamic_cast<const RectangleBounds*>(&free2.bounds());
+  BOOST_REQUIRE_NE(rBounds2, nullptr);
+
+  BOOST_CHECK_EQUAL(rBounds2->halfLengthX(), rBounds->halfLengthX());
+  BOOST_CHECK_EQUAL(rBounds2->halfLengthY(), rBounds->halfLengthY());
 
   // std::cout << track.getL0() << std::endl;
   // std::cout << track.getT() << std::endl;

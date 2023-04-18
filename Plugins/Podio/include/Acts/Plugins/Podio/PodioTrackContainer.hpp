@@ -50,15 +50,18 @@ class PodioTrackContainer {
 
   // BEGIN INTERFACE HELPER
 
-  std::any component_impl(HashedString key, IndexType itrack) {
+ private:
+  template <bool EnsureConst, typename T>
+  static std::any component_impl(T& instance, HashedString key,
+                                 IndexType itrack) {
     using namespace Acts::HashedStringLiteral;
-    // if constexpr (EnsureConst) {
-    // static_assert(std::is_const_v<std::remove_reference_t<T>>,
-    // "Is not const");
-    // }
+    if constexpr (EnsureConst) {
+      static_assert(std::is_const_v<std::remove_reference_t<T>>,
+                    "Is not const");
+    }
 
     using namespace Acts::HashedStringLiteral;
-    auto track = m_collection->at(itrack);
+    auto track = instance.m_collection->at(itrack);
     auto& data = track.data();
     switch (key) {
       case "tipIndex"_hash:
@@ -69,18 +72,18 @@ class PodioTrackContainer {
         return data.covariance.data();
       // case "referenceSurface"_hash:
       // return &instance.m_referenceSurfaces[itrack];
-      // case "nMeasurements"_hash:
-      // return &instance.m_nMeasurements[itrack];
-      // case "nHoles"_hash:
-      // return &instance.m_nHoles[itrack];
-      // case "chi2"_hash:
-      // return &instance.m_chi2[itrack];
-      // case "ndf"_hash:
-      // return &instance.m_ndf[itrack];
-      // case "nOutliers"_hash:
-      // return &instance.m_nOutliers[itrack];
-      // case "nSharedHits"_hash:
-      // return &instance.m_nSharedHits[itrack];
+      case "nMeasurements"_hash:
+        return &data.nMeasurements;
+      case "nHoles"_hash:
+        return &data.nHoles;
+      case "chi2"_hash:
+        return &data.chi2;
+      case "ndf"_hash:
+        return &data.ndf;
+      case "nOutliers"_hash:
+        return &data.nOutliers;
+      case "nSharedHits"_hash:
+        return &data.nSharedHits;
       default:
         // auto it = instance.m_dynamic.find(key);
         // if (it == instance.m_dynamic.end()) {
@@ -96,6 +99,14 @@ class PodioTrackContainer {
   }
 
  public:
+  std::any component_impl(HashedString key, IndexType itrack) {
+    return component_impl<false>(*this, key, itrack);
+  }
+
+  std::any component_impl(HashedString key, IndexType itrack) const {
+    return component_impl<true>(*this, key, itrack);
+  }
+
   constexpr bool hasColumn_impl(HashedString key) const {
     return false;
     // using namespace Acts::HashedStringLiteral;
