@@ -145,8 +145,7 @@ struct SurfaceArrayFixture {
 
     size_t nVtx = 0;
     for (const auto& srfx : surfaces) {
-      std::shared_ptr<const PlaneSurface> srf =
-          std::dynamic_pointer_cast<const PlaneSurface>(srfx);
+      const PlaneSurface* srf = dynamic_cast<const PlaneSurface*>(srfx.get());
       const PlanarBounds* bounds =
           dynamic_cast<const PlanarBounds*>(&srf->bounds());
 

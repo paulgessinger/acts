@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(NextNavigator) {
       Acts::Experimental::defaultPortalAndSubPortalGenerator(), tgContext,
       "Inner Volume", Acts::Transform3::Identity(),
       std::make_unique<Acts::CuboidVolumeBounds>(3, 3, 3),
-      std::vector<std::shared_ptr<Acts::Surface>>(),
+      std::vector<Acts::SurfacePtr>(),
       std::vector<std::shared_ptr<Acts::Experimental::DetectorVolume>>(),
       Acts::Experimental::tryAllPortalsAndSurfaces());
 
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(NextNavigator) {
       Acts::Experimental::defaultPortalAndSubPortalGenerator(), tgContext,
       "Detector Volume", Acts::Transform3::Identity(),
       std::make_unique<Acts::CuboidVolumeBounds>(10, 10, 10),
-      std::vector<std::shared_ptr<Acts::Surface>>(),
+      std::vector<Acts::SurfacePtr>(),
       std::vector<std::shared_ptr<Acts::Experimental::DetectorVolume>>(
           {innerVolume}),
       Acts::Experimental::tryAllPortalsAndSurfaces());

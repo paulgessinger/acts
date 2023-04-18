@@ -48,7 +48,7 @@ using SurfacePosition = std::pair<const Acts::Surface*, Acts::Vector3>;
 
 struct ProtoLayerSurfaces {
   Acts::ProtoLayer protoLayer;
-  std::vector<std::shared_ptr<const Acts::Surface>> surfaces;
+  std::vector<Acts::ConstSurfacePtr> surfaces;
   size_t bins0;
   size_t bins1;
 };
@@ -227,7 +227,7 @@ ProtoLayerCreatorT<detector_element_t>::centralProtoLayers(
       ACTS_DEBUG("Build layer " << icl << " with target radius = " << layerR);
 
       // prepare the Surface vector
-      std::vector<std::shared_ptr<const Acts::Surface>> sVector;
+      std::vector<Acts::ConstSurfacePtr> sVector;
       // assign the current envelope
       double layerEnvelopeCoverZ =
           !m_cfg.centralLayerEnvelopes.empty()
@@ -430,7 +430,7 @@ ProtoLayerCreatorT<detector_element_t>::createProtoLayers(
       // define the layer envelope
       double layerEnvelopeR = m_cfg.posnegLayerEnvelopeR.at(ipnl);
       // prepare for the r binning
-      std::vector<std::shared_ptr<const Acts::Surface>> esVector;
+      std::vector<Acts::ConstSurfacePtr> esVector;
       // now fill the vectors
       size_t ipnR = 0;
       for (auto& discModulePositions : m_cfg.posnegModulePositions.at(ipnl)) {

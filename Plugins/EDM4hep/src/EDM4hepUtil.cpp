@@ -114,8 +114,7 @@ Parameters convertTrackParametersToEdm4hep(
   Acts::Vector3 global = params.referenceSurface().localToGlobal(
       gctx, params.parameters().template head<2>(), params.momentum());
 
-  std::shared_ptr<const Acts::Surface> refSurface =
-      params.referenceSurface().getSharedPtr();
+  Acts::ConstSurfacePtr refSurface = params.referenceSurface().getSharedPtr();
 
   Acts::BoundVector targetPars = params.parameters();
   std::optional<Acts::FreeVector> freePars;

@@ -31,9 +31,8 @@ namespace ActsFatras {
 
 using Randomizer = std::function<Acts::Vector2(double, double)>;
 
-using PlanarTestBed =
-    std::tuple<std::string, std::shared_ptr<const Acts::Surface>,
-               Acts::BinUtility, Randomizer>;
+using PlanarTestBed = std::tuple<std::string, Acts::ConstSurfacePtr,
+                                 Acts::BinUtility, Randomizer>;
 
 /// Helper struct to create a testbed for Digitization steps
 struct PlanarSurfaceTestBeds {

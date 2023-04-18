@@ -174,7 +174,7 @@ inline Acts::Transform3 makeCurvilinearTransform(
 /// Construct a z-cylinder centered at zero with the track on its surface.
 struct ZCylinderSurfaceBuilder {
   template <typename charge_t>
-  std::shared_ptr<Acts::CylinderSurface> operator()(
+  Acts::SurfacePtrT<Acts::CylinderSurface> operator()(
       const Acts::SingleBoundTrackParameters<charge_t>& params,
       const Acts::GeometryContext& geoCtx) {
     auto radius = params.position(geoCtx).template head<2>().norm();
@@ -187,7 +187,7 @@ struct ZCylinderSurfaceBuilder {
 /// Construct a disc at track position with plane normal along track tangent.
 struct DiscSurfaceBuilder {
   template <typename charge_t>
-  std::shared_ptr<Acts::DiscSurface> operator()(
+  Acts::SurfacePtrT<Acts::DiscSurface> operator()(
       const Acts::SingleBoundTrackParameters<charge_t>& params,
       const Acts::GeometryContext& geoCtx) {
     using namespace Acts;
@@ -211,7 +211,7 @@ struct DiscSurfaceBuilder {
 /// Construct a plane at track position with plane normal along track tangent.
 struct PlaneSurfaceBuilder {
   template <typename charge_t>
-  std::shared_ptr<Acts::PlaneSurface> operator()(
+  Acts::SurfacePtrT<Acts::PlaneSurface> operator()(
       const Acts::SingleBoundTrackParameters<charge_t>& params,
       const Acts::GeometryContext& geoCtx) {
     return Acts::Surface::makeShared<Acts::PlaneSurface>(
@@ -222,7 +222,7 @@ struct PlaneSurfaceBuilder {
 /// Construct a z-straw at the track position.
 struct ZStrawSurfaceBuilder {
   template <typename charge_t>
-  std::shared_ptr<Acts::StrawSurface> operator()(
+  Acts::SurfacePtrT<Acts::StrawSurface> operator()(
       const Acts::SingleBoundTrackParameters<charge_t>& params,
       const Acts::GeometryContext& geoCtx) {
     return Acts::Surface::makeShared<Acts::StrawSurface>(

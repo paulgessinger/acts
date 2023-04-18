@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 
 #include <memory>
 
@@ -79,10 +80,10 @@ struct TGeoSurfaceConverter {
   /// @param scalor The unit scalor between TGeo and Acts
   ///
   /// @return shared pointer to a surface
-  static SurfacePtr toSurface(const TGeoShape& tgShape,
-                              const TGeoMatrix& tgMatrix,
-                              const std::string& axes,
-                              double scalor = 10.) noexcept(false);
+  static Acts::SurfacePtr toSurface(const TGeoShape& tgShape,
+                                    const TGeoMatrix& tgMatrix,
+                                    const std::string& axes,
+                                    double scalor = 10.) noexcept(false);
 
   /// Transalte TGeo degree [0, 360) to radian
   /// * will correct to [-pi,pi)

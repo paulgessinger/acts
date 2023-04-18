@@ -24,7 +24,7 @@ namespace Acts {
 class VolumeBounds;
 using VolumeBoundsPtr = std::shared_ptr<const VolumeBounds>;
 
-using OrientedSurface = std::pair<ConstSurfacePtr, NavigationDirection>;
+using OrientedSurface = std::pair<SurfacePtr, NavigationDirection>;
 using OrientedSurfaces = std::vector<OrientedSurface>;
 
 // Planar definitions to help construct the boundary surfaces

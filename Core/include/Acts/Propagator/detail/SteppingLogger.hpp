@@ -12,6 +12,7 @@
 #include "Acts/Definitions/Common.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
 #include "Acts/Propagator/ConstrainedStep.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 #include "Acts/Utilities/Logger.hpp"
 
 #include <memory>

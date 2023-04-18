@@ -64,7 +64,7 @@ struct Fixture {
   Acts::GeometryIdentifier gid;
   ActsFatras::Barcode pid;
   // geometry information
-  std::shared_ptr<Acts::Surface> surface;
+  Acts::SurfacePtr surface;
   Acts::GeometryContext geoCtx;
   // local and global track parameters
   Acts::BoundVector boundParams;

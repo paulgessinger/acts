@@ -61,8 +61,8 @@ BOOST_AUTO_TEST_CASE(ProtoLayerTests) {
         Transform3(trf * Translation3(Vector3(0., 3., 0.)) * planeZX),
         recBounds);
 
-    std::vector<std::shared_ptr<const Surface>> sharedSurfaces = {
-        atNegX, atNegY, atPosX, atPosY};
+    std::vector<ConstSurfacePtrT<Surface>> sharedSurfaces = {atNegX, atNegY,
+                                                             atPosX, atPosY};
     surfaceStore.insert(surfaceStore.begin(), sharedSurfaces.begin(),
                         sharedSurfaces.end());
     if (not shared) {
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(ProtoLayerTests) {
   std::stringstream sstream;
   protoLayerRot.toStream(sstream);
   std::string oString = R"(ProtoLayer with dimensions (min/max)
-Extent in space : 
+Extent in space :
   - value :      binX | range = [-6.66104, 6.66104]
   - value :      binY | range = [-4.85241, 4.85241]
   - value :      binZ | range = [-6, 6]

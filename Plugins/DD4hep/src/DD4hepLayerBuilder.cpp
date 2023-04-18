@@ -355,7 +355,7 @@ const Acts::LayerVector Acts::DD4hepLayerBuilder::positiveLayers(
 
 void Acts::DD4hepLayerBuilder::resolveSensitive(
     const dd4hep::DetElement& detElement,
-    std::vector<std::shared_ptr<const Acts::Surface>>& surfaces) const {
+    std::vector<Acts::ConstSurfacePtr>& surfaces) const {
   const dd4hep::DetElement::Children& children = detElement.children();
   if (!children.empty()) {
     for (auto& child : children) {
@@ -369,8 +369,7 @@ void Acts::DD4hepLayerBuilder::resolveSensitive(
   }
 }
 
-std::shared_ptr<const Acts::Surface>
-Acts::DD4hepLayerBuilder::createSensitiveSurface(
+Acts::ConstSurfacePtr Acts::DD4hepLayerBuilder::createSensitiveSurface(
     const dd4hep::DetElement& detElement, bool isDisc) const {
   std::string detAxis =
       getParamOr<std::string>("axis_definitions", detElement, "XYZ");

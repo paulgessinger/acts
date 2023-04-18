@@ -22,7 +22,7 @@
 namespace Acts {
 
 using SurfaceAndMaterialWithContext =
-    std::tuple<std::shared_ptr<const Acts::Surface>,
+    std::tuple<Acts::ConstSurfacePtr,
                std::shared_ptr<const Acts::ISurfaceMaterial>,
                Acts::GeometryContext>;
 
@@ -75,7 +75,7 @@ SurfacePtr surfaceFromJson(const nlohmann::json& j);
 ///
 /// @return a shared_ptr to a typed surface object for type polymorphism
 template <typename surface_t, typename bounds_t>
-std::shared_ptr<surface_t> surfaceFromJsonT(const nlohmann::json& j) {
+SurfacePtrT<surface_t> surfaceFromJsonT(const nlohmann::json& j) {
   Transform3 sTransform;
   nlohmann::json jtrf = j["transform"];
   from_json(jtrf, sTransform);

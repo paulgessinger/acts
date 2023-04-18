@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(linearized_track_factory_test) {
   auto propagator = std::make_shared<Propagator<EigenStepper<>>>(stepper);
 
   // Create perigee surface
-  std::shared_ptr<PerigeeSurface> perigeeSurface =
+  SurfacePtrT<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
 
   // Create position of vertex and perigee surface
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(linearized_track_factory_straightline_test) {
   auto propagator = std::make_shared<Propagator<StraightLineStepper>>(stepper);
 
   // Create perigee surface
-  std::shared_ptr<PerigeeSurface> perigeeSurface =
+  SurfacePtrT<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
 
   // Create position of vertex and perigee surface

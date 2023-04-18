@@ -50,7 +50,7 @@ std::shared_ptr<Acts::Layer> generateDiscLayer(Acts::ActsScalar rInner,
                                                bool useTrapezoids = false) {
   // Some preperations
   setupTools();
-  std::vector<std::shared_ptr<const Acts::Surface>> moduleSurfaces;
+  std::vector<Acts::ConstSurfacePtr> moduleSurfaces;
   Acts::ActsScalar phiStep = 2 * M_PI / nSegments;
   Acts::ActsScalar rStep = (rOuter - rInner) / nRings;
   // Reserve & fill

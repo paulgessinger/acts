@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(CuboidWithCuboid) {
       portals, tContext, "InnerBox", nominal, std::move(smallBoxBounds),
       tryAllPortals());
 
-  std::vector<std::shared_ptr<Acts::Surface>> surfaces = {};
+  std::vector<Acts::SurfacePtr> surfaces = {};
   std::vector<std::shared_ptr<Acts::Experimental::DetectorVolume>> volumes = {
       innerBox};
 

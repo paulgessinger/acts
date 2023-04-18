@@ -35,7 +35,7 @@ struct Geant4Detector {
   using DetectorElements =
       std::vector<std::shared_ptr<Acts::Geant4DetectorElement>>;
   using DetectorPtr = std::shared_ptr<Acts::Experimental::Detector>;
-  using Surfaces = std::vector<std::shared_ptr<Acts::Surface>>;
+  using Surfaces = std::vector<Acts::SurfacePtr>;
 
   using ContextDecorators =
       std::vector<std::shared_ptr<ActsExamples::IContextDecorator>>;

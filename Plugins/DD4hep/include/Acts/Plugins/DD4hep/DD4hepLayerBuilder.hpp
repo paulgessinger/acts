@@ -143,9 +143,8 @@ class DD4hepLayerBuilder : public ILayerBuilder {
   /// @param detElement the DD4hep::DetElement of the layer
   /// @param surfaces the vector of surfaces which should be filled with the
   /// sensitive detector elements
-  void resolveSensitive(
-      const dd4hep::DetElement& detElement,
-      std::vector<std::shared_ptr<const Acts::Surface>>& surfaces) const;
+  void resolveSensitive(const dd4hep::DetElement& detElement,
+                        std::vector<Acts::ConstSurfacePtr>& surfaces) const;
 
   /// Private helper function to create a sensitive surface from a given
   /// detector element
@@ -153,7 +152,7 @@ class DD4hepLayerBuilder : public ILayerBuilder {
   /// created
   /// @param isDisc in case the sensitive detector module should be translated
   ///        as disc (e.g. for endcaps) this flag should be set to true
-  std::shared_ptr<const Acts::Surface> createSensitiveSurface(
+  Acts::ConstSurfacePtr createSensitiveSurface(
       const dd4hep::DetElement& detElement, bool isDisc = false) const;
 
   // Private helper function to convert the TGeo transformation matrix into

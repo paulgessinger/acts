@@ -41,7 +41,7 @@ namespace detail {
 struct Parameters {
   Acts::ActsVector<6> values;
   std::optional<Acts::ActsSymMatrix<6>> covariance;
-  std::shared_ptr<const Acts::Surface> surface;
+  Acts::ConstSurfacePtr surface;
 };
 
 ActsSymMatrix<6> jacobianToEdm4hep(double theta, double qOverP, double Bz);

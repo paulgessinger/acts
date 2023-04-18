@@ -13,6 +13,7 @@
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Plugins/Identification/IdentifiedDetectorElement.hpp"
 #include "Acts/Plugins/Identification/Identifier.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 
 namespace Acts {
 class Surface;
@@ -100,7 +101,7 @@ class GenericDetectorElement : public Acts::IdentifiedDetectorElement {
   /// the transform for positioning in 3D space
   std::shared_ptr<const Acts::Transform3> m_elementTransform;
   /// the surface represented by it
-  std::shared_ptr<const Acts::Surface> m_elementSurface;
+  Acts::ConstSurfacePtr m_elementSurface;
   /// the element thickness
   double m_elementThickness;
   /// store either

@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(adaptive_multi_vertex_fitter_test) {
     paramVec << d0Dist(gen), z0Dist(gen), phiDist(gen), thetaDist(gen),
         q / pTDist(gen), 0.;
 
-    std::shared_ptr<PerigeeSurface> perigeeSurface =
+    SurfacePtrT<PerigeeSurface> perigeeSurface =
         Surface::makeShared<PerigeeSurface>(vtxPosVec[vtxIdx]);
 
     allTracks.emplace_back(perigeeSurface, paramVec, std::move(covMat));

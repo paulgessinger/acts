@@ -30,7 +30,7 @@ ProcessCode PropagationAlgorithm::execute(
                                                 m_cfg.ptRange.second);
   std::uniform_real_distribution<double> qDist(0., 1.);
 
-  std::shared_ptr<const Acts::PerigeeSurface> surface =
+  Acts::ConstSurfacePtrT<Acts::PerigeeSurface> surface =
       Acts::Surface::makeShared<Acts::PerigeeSurface>(
           Acts::Vector3(0., 0., 0.));
 

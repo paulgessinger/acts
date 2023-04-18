@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <memory>
 namespace Acts {
 
@@ -21,6 +22,9 @@ class SurfacePtrT {
 
   SurfacePtrT(std::shared_ptr<surface_t> surface)
       : m_shared{std::move(surface)} {}
+
+  SurfacePtrT(std::nullptr_t) {}
+
   SurfacePtrT(surface_t* surface) : m_shared{surface} {}
   SurfacePtrT() = default;
   SurfacePtrT(const SurfacePtrT&) = default;
@@ -28,6 +32,13 @@ class SurfacePtrT {
 
   SurfacePtrT& operator=(const SurfacePtrT& other) = default;
   SurfacePtrT& operator=(SurfacePtrT&& other) = default;
+
+  template <typename T>
+  bool operator==(const T* rhs) const {
+    return m_shared.get() == rhs;
+  }
+
+  bool operator==(std::nullptr_t) const { return !m_shared; }
 
   template <typename T,
             typename = std::enable_if_t<std::is_base_of_v<surface_t, T>>>
@@ -77,6 +88,9 @@ class ConstSurfacePtrT {
   ConstSurfacePtrT(surface_t* surface) : m_shared{surface} {}
   ConstSurfacePtrT(std::shared_ptr<surface_t> surface)
       : m_shared{std::move(surface)} {}
+
+  ConstSurfacePtrT(std::nullptr_t) {}
+
   ConstSurfacePtrT(const surface_t* surface) : m_shared{surface} {}
   ConstSurfacePtrT(std::shared_ptr<const surface_t> surface)
       : m_shared{std::move(surface)} {}
@@ -117,6 +131,13 @@ class ConstSurfacePtrT {
     return *this;
   }
 
+  template <typename T>
+  bool operator==(const T* rhs) const {
+    return m_shared.get() == rhs;
+  }
+
+  bool operator==(std::nullptr_t) const { return !m_shared; }
+
   template <typename T,
             typename = std::enable_if_t<std::is_base_of_v<surface_t, T>>>
   ConstSurfacePtrT(const ConstSurfacePtrT<T>& other)
@@ -143,6 +164,9 @@ class ConstSurfacePtrT {
   const surface_t* operator->() const { return m_shared.get(); }
   operator bool() const { return !!m_shared; }
   const surface_t* get() const { return m_shared.get(); }
+
+  template <typename T>
+  friend class ConstSurfacePtrT;
 
  private:
   std::shared_ptr<const surface_t> m_shared;

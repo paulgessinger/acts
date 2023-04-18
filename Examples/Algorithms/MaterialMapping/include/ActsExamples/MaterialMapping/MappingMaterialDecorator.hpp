@@ -172,7 +172,7 @@ class MappingMaterialDecorator : public IMaterialDecorator {
   ///
   /// @param surface protomaterial will be added to
   std::shared_ptr<const Acts::ISurfaceMaterial> binnedSurfaceMaterial(
-      const std::shared_ptr<const Acts::Surface>& surface) const {
+      const Acts::ConstSurfacePtr& surface) const {
     auto bin = m_binningMap.find(surface->geometryId().value());
     Acts::BinUtility bUtility;
     if (bin == m_binningMap.end()) {

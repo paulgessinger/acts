@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(Kalman_Vertex_Updater) {
   Linearizer::State state(bField->makeCache(magFieldContext));
 
   // Create perigee surface at origin
-  std::shared_ptr<PerigeeSurface> perigeeSurface =
+  SurfacePtrT<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
 
   // Creates a random tracks around origin and a random vertex.

@@ -75,7 +75,7 @@ ActsExamples::MockupSectorBuilder::buildChamber(
       g4detector.constructDetector(g4WorldConfig, Acts::getDummyLogger());
 
   // The vector that holds the converted sensitive surfaces of the chamber
-  std::vector<std::shared_ptr<Acts::Surface>> strawSurfaces = {};
+  std::vector<Acts::SurfacePtr> strawSurfaces = {};
 
   std::array<std::pair<float, float>, 3> min_max;
   std::fill(min_max.begin(), min_max.end(),
@@ -221,7 +221,7 @@ ActsExamples::MockupSectorBuilder::buildSector(
   transform *= rotZ;
 
   // create a vector for the shifted surfaces of each chamber
-  std::vector<std::shared_ptr<Acts::Surface>> shiftedSurfaces = {};
+  std::vector<Acts::SurfacePtr> shiftedSurfaces = {};
 
   // creare an array of vectors that holds all the chambers of each sector
   std::vector<std::vector<std::shared_ptr<Acts::Experimental::DetectorVolume>>>
@@ -283,7 +283,7 @@ ActsExamples::MockupSectorBuilder::buildSector(
             Acts::Experimental::defaultPortalGenerator(), gctx,
             "cylinder_volume_" + std::to_string(i), transform,
             std::move(cylinderVolumesBounds[i]),
-            std::vector<std::shared_ptr<Acts::Surface>>{}, chambersOfSectors[i],
+            std::vector<Acts::SurfacePtr>{}, chambersOfSectors[i],
             Acts::Experimental::tryAllPortalsAndSurfaces()));
 
   }  // end of cylinder volumes
@@ -297,8 +297,7 @@ ActsExamples::MockupSectorBuilder::buildSector(
   auto detectorVolume = Acts::Experimental::DetectorVolumeFactory::construct(
       Acts::Experimental::defaultPortalGenerator(), gctx,
       "detectorVolumeSector", transform,
-      std::move(cylinderVolumesBoundsOfMother),
-      std::vector<std::shared_ptr<Acts::Surface>>{},
+      std::move(cylinderVolumesBoundsOfMother), std::vector<Acts::SurfacePtr>{},
       detectorCylinderVolumesOfSector,
       Acts::Experimental::tryAllPortalsAndSurfaces());
 

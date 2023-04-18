@@ -10,6 +10,7 @@
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Plugins/Identification/IdentifiedDetectorElement.hpp"
 #include "Acts/Plugins/Identification/Identifier.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 
 #include <iostream>
 
@@ -138,7 +139,7 @@ class TGeoDetectorElement : public IdentifiedDetectorElement {
   ///  Thickness of this detector element
   double m_thickness{0.};
   /// Corresponding Surface
-  SurfacePtr m_surface{nullptr};
+  Acts::SurfacePtr m_surface{nullptr};
 };
 
 inline Identifier TGeoDetectorElement::identifier() const {

@@ -54,8 +54,7 @@ void draw_surfaces(const SrfVec& surfaces, const std::string& fname) {
 
   size_t nVtx = 0;
   for (const auto& srfx : surfaces) {
-    std::shared_ptr<const PlaneSurface> srf =
-        std::dynamic_pointer_cast<const PlaneSurface>(srfx);
+    const PlaneSurface* srf = dynamic_cast<const PlaneSurface*>(srfx.get());
     const PlanarBounds* bounds =
         dynamic_cast<const PlanarBounds*>(&srf->bounds());
 
@@ -129,7 +128,7 @@ struct LayerCreatorFixture {
       trans.translate(Vector3(r, 0, z));
 
       auto bounds = std::make_shared<const RectangleBounds>(2, 1);
-      std::shared_ptr<PlaneSurface> srf =
+      SurfacePtrT<PlaneSurface> srf =
           Surface::makeShared<PlaneSurface>(trans, bounds);
 
       res.push_back(srf);
@@ -157,7 +156,7 @@ struct LayerCreatorFixture {
       trans.rotate(Eigen::AngleAxisd(M_PI / 2., Vector3(0, 1, 0)));
 
       auto bounds = std::make_shared<const RectangleBounds>(w, h);
-      std::shared_ptr<PlaneSurface> srf =
+      SurfacePtrT<PlaneSurface> srf =
           Surface::makeShared<PlaneSurface>(trans, bounds);
 
       res.push_back(srf);
@@ -203,13 +202,13 @@ struct LayerCreatorFixture {
         trans.rotate(Eigen::AngleAxisd(M_PI / 2., Vector3(0, 1, 0)));
 
         auto bounds = std::make_shared<const RectangleBounds>(w, h);
-        std::shared_ptr<PlaneSurface> srfA =
+        SurfacePtrT<PlaneSurface> srfA =
             Surface::makeShared<PlaneSurface>(trans, bounds);
 
         Vector3 nrm = srfA->normal(tgContext);
         Transform3 transB = trans;
         transB.pretranslate(nrm * 0.1);
-        std::shared_ptr<PlaneSurface> srfB =
+        SurfacePtrT<PlaneSurface> srfB =
             Surface::makeShared<PlaneSurface>(transB, bounds);
 
         pairs.push_back(std::make_pair(srfA.get(), srfB.get()));

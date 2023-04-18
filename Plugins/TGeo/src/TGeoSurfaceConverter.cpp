@@ -444,7 +444,7 @@ Acts::TGeoSurfaceConverter::planeComponents(const TGeoShape& tgShape,
   return {bounds, transform, thickness};
 }
 
-std::shared_ptr<Acts::Surface> Acts::TGeoSurfaceConverter::toSurface(
+Acts::SurfacePtr Acts::TGeoSurfaceConverter::toSurface(
     const TGeoShape& tgShape, const TGeoMatrix& tgMatrix,
     const std::string& axes, double scalor) noexcept(false) {
   // Get the placement and orientation in respect to its mother

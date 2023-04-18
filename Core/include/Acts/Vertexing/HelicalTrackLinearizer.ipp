@@ -16,7 +16,7 @@ Acts::Result<Acts::LinearizedTrack> Acts::
         const Acts::MagneticFieldContext& mctx, State& state) const {
   Vector3 linPointPos = VectorHelpers::position(linPoint);
 
-  const std::shared_ptr<PerigeeSurface> perigeeSurface =
+  const SurfacePtrT<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(linPointPos);
 
   auto intersection = perigeeSurface->intersect(gctx, params.position(gctx),

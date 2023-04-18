@@ -13,6 +13,7 @@
 #include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/Plugins/Python/Utilities.hpp"
 #include "Acts/Surfaces/Surface.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 
 #include <memory>
 
@@ -36,11 +37,13 @@ struct GeometryIdentifierHookBinding : public Acts::GeometryIdentifierHook {
 };
 }  // namespace
 
+PYBIND11_DECLARE_HOLDER_TYPE(T, Acts::SurfacePtrT<T>);
+
 namespace Acts::Python {
 void addGeometry(Context& ctx) {
   auto m = ctx.get("main");
   {
-    py::class_<Acts::Surface, std::shared_ptr<Acts::Surface>>(m, "Surface")
+    py::class_<Acts::Surface, Acts::SurfacePtr>(m, "Surface")
         .def("geometryId",
              [](Acts::Surface& self) { return self.geometryId(); })
         .def("center",

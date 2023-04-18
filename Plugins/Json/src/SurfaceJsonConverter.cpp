@@ -38,14 +38,12 @@ void Acts::to_json(nlohmann::json& j, const Acts::Surface& surface) {
   toJson(j, surface, gctx);
 }
 
-void Acts::to_json(nlohmann::json& j,
-                   const std::shared_ptr<const Acts::Surface>& surface) {
+void Acts::to_json(nlohmann::json& j, const Acts::ConstSurfacePtr& surface) {
   Acts::GeometryContext gctx;
   toJson(j, *(surface.get()), gctx);
 }
 
-void Acts::toJson(nlohmann::json& j,
-                  const std::shared_ptr<const Acts::Surface>& surface,
+void Acts::toJson(nlohmann::json& j, const Acts::ConstSurfacePtr& surface,
                   const Acts::GeometryContext& gctx) {
   toJson(j, *(surface.get()), gctx);
 }
@@ -65,11 +63,11 @@ void Acts::toJson(nlohmann::json& j, const Acts::Surface& surface,
   }
 }
 
-std::shared_ptr<Acts::Surface> Acts::surfaceFromJson(const nlohmann::json& j) {
+Acts::SurfacePtr Acts::surfaceFromJson(const nlohmann::json& j) {
   std::string sType = j["type"];
   std::string bType = j["bounds"]["type"];
 
-  std::shared_ptr<Acts::Surface> mutableSf = nullptr;
+  Acts::SurfacePtr mutableSf = nullptr;
 
   /// Unroll the types
   if (sType == "PlaneSurface") {

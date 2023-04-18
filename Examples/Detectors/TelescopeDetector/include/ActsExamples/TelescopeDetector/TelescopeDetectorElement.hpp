@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Acts/Geometry/DetectorElementBase.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 
 namespace Acts {
 class Surface;
@@ -97,7 +98,7 @@ class TelescopeDetectorElement : public Acts::DetectorElementBase {
   // the aligned transforms
   std::vector<std::unique_ptr<Acts::Transform3>> m_alignedTransforms = {};
   /// the surface represented by it
-  std::shared_ptr<const Acts::Surface> m_elementSurface = nullptr;
+  Acts::ConstSurfacePtr m_elementSurface = nullptr;
   /// the element thickness
   double m_elementThickness = 0.;
   /// the planar bounds
