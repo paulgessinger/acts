@@ -50,7 +50,7 @@ TrackingVolumePtr constructCylinderVolume(
   double bUmin = sfnPosition.z() - surfaceHalfLengthZ;
   double bUmax = sfpPosition.z() + surfaceHalfLengthZ;
 
-  std::vector<std::shared_ptr<const Surface>> surfaces_only = {{sfn, sfc, sfp}};
+  std::vector<ConstSurfacePtr> surfaces_only = {{sfn, sfc, sfp}};
   std::vector<const Surface*> surfaces_only_raw = {
       {sfn.get(), sfc.get(), sfp.get()}};
 

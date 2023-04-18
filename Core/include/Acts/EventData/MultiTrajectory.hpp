@@ -14,6 +14,7 @@
 #include "Acts/EventData/SourceLink.hpp"
 #include "Acts/EventData/TrackStatePropMask.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
+#include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/HashedString.hpp"
 #include "Acts/Utilities/Helpers.hpp"
 #include "Acts/Utilities/TypeTraits.hpp"
@@ -407,8 +408,7 @@ class TrackStateProxy {
   /// @return the reference surface
   const Surface& referenceSurface() const {
     assert(has<hashString("referenceSurface")>());
-    return *component<std::shared_ptr<const Surface>,
-                      hashString("referenceSurface")>();
+    return *component<ConstSurfacePtr, hashString("referenceSurface")>();
   }
 
   // NOLINTBEGIN(performance-unnecessary-value-param)
@@ -418,9 +418,9 @@ class TrackStateProxy {
   /// @param srf Shared pointer to the surface to set
   /// @note This overload is only present in case @c ReadOnly is false.
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
-  void setReferenceSurface(std::shared_ptr<const Surface> srf) {
-    component<std::shared_ptr<const Surface>,
-              hashString("referenceSurface")>() = std::move(srf);
+  void setReferenceSurface(ConstSurfacePtr srf) {
+    component<ConstSurfacePtr, hashString("referenceSurface")>() =
+        std::move(srf);
   }
   // NOLINTEND(performance-unnecessary-value-param)
 
@@ -966,9 +966,8 @@ class TrackStateProxy {
   TrackStateProxy(ConstIf<MultiTrajectory<Trajectory>, ReadOnly>& trajectory,
                   IndexType istate);
 
-  const std::shared_ptr<const Surface>& referenceSurfacePointer() const {
-    return component<std::shared_ptr<const Surface>,
-                     hashString("referenceSurface")>();
+  const ConstSurfacePtr& referenceSurfacePointer() const {
+    return component<ConstSurfacePtr, hashString("referenceSurface")>();
   }
 
   TransitiveConstPointer<ConstIf<MultiTrajectory<Trajectory>, ReadOnly>> m_traj;

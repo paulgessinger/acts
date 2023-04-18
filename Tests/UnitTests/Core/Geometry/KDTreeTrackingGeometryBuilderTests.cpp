@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(KDTreeTrackingGeometryBuilder_simple) {
   CylindricalTrackingGeometry::DetectorStore detectorStore;
 
   // The collected surfaces
-  std::vector<std::shared_ptr<Surface>> layerSurfacePtrs;
+  std::vector<SurfacePtr> layerSurfacePtrs;
 
   // Add a beam pipe
   auto hTransform = Transform3::Identity();

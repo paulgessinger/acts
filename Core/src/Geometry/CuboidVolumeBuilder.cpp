@@ -34,10 +34,10 @@
 
 #include <limits>
 
-std::shared_ptr<const Acts::Surface> Acts::CuboidVolumeBuilder::buildSurface(
+Acts::ConstSurfacePtr Acts::CuboidVolumeBuilder::buildSurface(
     const GeometryContext& /*gctx*/,
     const CuboidVolumeBuilder::SurfaceConfig& cfg) const {
-  std::shared_ptr<PlaneSurface> surface;
+  SurfacePtrT<PlaneSurface> surface;
 
   // Build transformation
   Transform3 trafo(Transform3::Identity() * cfg.rotation);

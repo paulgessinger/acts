@@ -31,8 +31,7 @@ Acts::KDTreeTrackingGeometryBuilder::KDTreeTrackingGeometryBuilder(
 std::unique_ptr<const Acts::TrackingGeometry>
 Acts::KDTreeTrackingGeometryBuilder::trackingGeometry(
     const GeometryContext& gctx) const {
-  using MeasuredSurface =
-      std::pair<std::array<ActsScalar, 2u>, std::shared_ptr<Surface>>;
+  using MeasuredSurface = std::pair<std::array<ActsScalar, 2u>, SurfacePtr>;
   // Prepare all the surfaces
   std::vector<MeasuredSurface> surfacesMeasured;
   surfacesMeasured.reserve(m_cfg.surfaces.size());
@@ -191,7 +190,7 @@ Acts::KDTreeTrackingGeometryBuilder::translateLayer(
 
   } else if (layerSurfaces.size() > 1u) {
     // Make a const collection out of the surfaces
-    std::vector<std::shared_ptr<const Surface>> cLayerSurfaces;
+    std::vector<ConstSurfacePtr> cLayerSurfaces;
     cLayerSurfaces.reserve(layerSurfaces.size());
     for (const auto& s : layerSurfaces) {
       cLayerSurfaces.push_back(s.second);

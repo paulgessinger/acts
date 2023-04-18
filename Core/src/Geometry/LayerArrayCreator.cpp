@@ -106,9 +106,8 @@ std::unique_ptr<const Acts::LayerArray> Acts::LayerArrayCreator::layerArray(
         }
 
         // create the navigation layer surface from the layer
-        std::shared_ptr<const Surface> navLayerSurface =
-            createNavigationSurface(gctx, *layIter, bValue,
-                                    -std::abs(layerValue - navigationValue));
+        ConstSurfacePtr navLayerSurface = createNavigationSurface(
+            gctx, *layIter, bValue, -std::abs(layerValue - navigationValue));
         ACTS_VERBOSE(
             "arbitrary : creating a  NavigationLayer at "
             << (navLayerSurface->binningPosition(gctx, bValue)).x() << ", "
@@ -136,9 +135,8 @@ std::unique_ptr<const Acts::LayerArray> Acts::LayerArrayCreator::layerArray(
       // create navigation layer only when necessary
       if (navigationValue != max) {
         // create the navigation layer surface from the layer
-        std::shared_ptr<const Surface> navLayerSurface =
-            createNavigationSurface(gctx, *lastLayer, bValue,
-                                    navigationValue - layerValue);
+        ConstSurfacePtr navLayerSurface = createNavigationSurface(
+            gctx, *lastLayer, bValue, navigationValue - layerValue);
         ACTS_VERBOSE(
             "arbitrary : creating a  NavigationLayer at "
             << (navLayerSurface->binningPosition(gctx, bValue)).x() << ", "
@@ -169,7 +167,7 @@ std::unique_ptr<const Acts::LayerArray> Acts::LayerArrayCreator::layerArray(
                                                          std::move(binUtility));
 }
 
-std::shared_ptr<Acts::Surface> Acts::LayerArrayCreator::createNavigationSurface(
+Acts::SurfacePtr Acts::LayerArrayCreator::createNavigationSurface(
     const GeometryContext& gctx, const Layer& layer, BinningValue bValue,
     double offset) const {
   // surface reference
@@ -204,7 +202,7 @@ std::shared_ptr<Acts::Surface> Acts::LayerArrayCreator::createNavigationSurface(
     }
   }
   // navigation surface
-  std::shared_ptr<Surface> navigationSurface;
+  SurfacePtr navigationSurface;
   // for everything else than a cylinder it's a copy with shift
   if (layerSurface.type() == Surface::Plane) {
     // create a transform that does the shift

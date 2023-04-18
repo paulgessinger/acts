@@ -35,11 +35,10 @@ class Geant4DetectorSurfaceFactory {
 
   // Collect the senstive surfaces
   using Geant4SensitiveSurface =
-      std::tuple<std::shared_ptr<Geant4DetectorElement>,
-                 std::shared_ptr<Surface>>;
+      std::tuple<std::shared_ptr<Geant4DetectorElement>, SurfacePtr>;
 
   // Collect the passive surfaces
-  using Geant4PassiveSurface = std::shared_ptr<Surface>;
+  using Geant4PassiveSurface = SurfacePtr;
 
   /// Nested cache that records the conversion status
   struct Cache {

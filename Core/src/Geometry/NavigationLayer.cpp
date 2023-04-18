@@ -10,8 +10,8 @@
 
 #include "Acts/Surfaces/SurfaceArray.hpp"
 
-Acts::NavigationLayer::NavigationLayer(
-    std::shared_ptr<const Surface> surfaceRepresentation, double thickness)
+Acts::NavigationLayer::NavigationLayer(ConstSurfacePtr surfaceRepresentation,
+                                       double thickness)
     : Acts::Layer(nullptr),
       m_surfaceRepresentation(std::move(surfaceRepresentation)) {
   m_layerThickness = thickness;

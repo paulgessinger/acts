@@ -9,6 +9,7 @@
 #include "Acts/Surfaces/Surface.hpp"
 
 #include "Acts/EventData/detail/TransformationBoundToFree.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 #include "Acts/Surfaces/detail/AlignmentHelper.hpp"
 
 #include <iomanip>
@@ -135,12 +136,12 @@ Acts::AlignmentToPathMatrix Acts::Surface::alignmentToPathDerivative(
   return alignToPath;
 }
 
-std::shared_ptr<Acts::Surface> Acts::Surface::getSharedPtr() {
-  return shared_from_this();
+Acts::SurfacePtr Acts::Surface::getSharedPtr() {
+  return {shared_from_this()};
 }
 
-std::shared_ptr<const Acts::Surface> Acts::Surface::getSharedPtr() const {
-  return shared_from_this();
+Acts::ConstSurfacePtr Acts::Surface::getSharedPtr() const {
+  return {shared_from_this()};
 }
 
 Acts::Surface& Acts::Surface::operator=(const Surface& other) {

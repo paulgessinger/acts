@@ -51,7 +51,7 @@ class SingleBoundTrackParameters {
   /// an input here to be consistent with the other constructors below that
   /// that also take the charge as an input. The charge sign is only used in
   /// debug builds to check for consistency with the q/p parameter.
-  SingleBoundTrackParameters(std::shared_ptr<const Surface> surface,
+  SingleBoundTrackParameters(ConstSurfacePtr surface,
                              const ParametersVector& params, Scalar q,
                              std::optional<CovarianceMatrix> cov = std::nullopt)
       : m_params(params),
@@ -74,7 +74,7 @@ class SingleBoundTrackParameters {
   /// ambiguities, i.e. the charge type is default-constructible.
   template <typename T = charge_t,
             std::enable_if_t<std::is_default_constructible_v<T>, int> = 0>
-  SingleBoundTrackParameters(std::shared_ptr<const Surface> surface,
+  SingleBoundTrackParameters(ConstSurfacePtr surface,
                              const ParametersVector& params,
                              std::optional<CovarianceMatrix> cov = std::nullopt)
       : m_params(params), m_cov(std::move(cov)), m_surface(std::move(surface)) {
@@ -96,7 +96,7 @@ class SingleBoundTrackParameters {
   /// @note The returned result indicates whether the free parameters could
   /// successfully be converted to on-surface parameters.
   static Result<SingleBoundTrackParameters<charge_t>> create(
-      std::shared_ptr<const Surface> surface, const GeometryContext& geoCtx,
+      ConstSurfacePtr surface, const GeometryContext& geoCtx,
       const Vector4& pos4, const Vector3& dir, Scalar p, Scalar q,
       std::optional<CovarianceMatrix> cov = std::nullopt) {
     Result<BoundVector> bound = detail::transformFreeToBoundParameters(
@@ -129,7 +129,7 @@ class SingleBoundTrackParameters {
   template <typename T = charge_t,
             std::enable_if_t<std::is_default_constructible_v<T>, int> = 0>
   static Result<SingleBoundTrackParameters<charge_t>> create(
-      std::shared_ptr<const Surface> surface, const GeometryContext& geoCtx,
+      ConstSurfacePtr surface, const GeometryContext& geoCtx,
       const Vector4& pos4, const Vector3& dir, Scalar qOverP,
       std::optional<CovarianceMatrix> cov = std::nullopt) {
     Result<BoundVector> bound = detail::transformFreeToBoundParameters(
@@ -244,7 +244,7 @@ class SingleBoundTrackParameters {
   BoundVector m_params;
   std::optional<BoundSymMatrix> m_cov;
   /// reference surface
-  std::shared_ptr<const Surface> m_surface;
+  ConstSurfacePtr m_surface;
   // TODO use [[no_unique_address]] once we switch to C++20
   charge_t m_chargeInterpreter;
 

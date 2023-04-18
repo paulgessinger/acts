@@ -17,16 +17,15 @@
 // implementation for pure virtual destructor of ISurfaceGridLookup
 Acts::SurfaceArray::ISurfaceGridLookup::~ISurfaceGridLookup() = default;
 
-Acts::SurfaceArray::SurfaceArray(
-    std::unique_ptr<ISurfaceGridLookup> gridLookup,
-    std::vector<std::shared_ptr<const Surface>> surfaces,
-    const Transform3& transform)
+Acts::SurfaceArray::SurfaceArray(std::unique_ptr<ISurfaceGridLookup> gridLookup,
+                                 std::vector<ConstSurfacePtr> surfaces,
+                                 const Transform3& transform)
     : p_gridLookup(std::move(gridLookup)),
       m_surfaces(std::move(surfaces)),
       m_surfacesRawPointers(unpack_shared_vector(m_surfaces)),
       m_transform(transform) {}
 
-Acts::SurfaceArray::SurfaceArray(std::shared_ptr<const Surface> srf)
+Acts::SurfaceArray::SurfaceArray(ConstSurfacePtr srf)
     : p_gridLookup(
           static_cast<ISurfaceGridLookup*>(new SingleElementLookup(srf.get()))),
       m_surfaces({std::move(srf)}) {

@@ -140,10 +140,9 @@ struct Geant4PhysicalVolumeConverter {
   /// @param compressed the compressed thickness of the converted material
   ///
   /// @return a shared surface object
-  std::shared_ptr<Surface> surface(const G4VPhysicalVolume& g4PhysVol,
-                                   const Transform3& toGlobal,
-                                   bool convertMaterial = false,
-                                   ActsScalar compressed = 0.);
+  SurfacePtr surface(const G4VPhysicalVolume& g4PhysVol,
+                     const Transform3& toGlobal, bool convertMaterial = false,
+                     ActsScalar compressed = 0.);
 };
 
 class HomogeneousSurfaceMaterial;

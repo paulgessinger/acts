@@ -67,7 +67,7 @@ void Acts::CylinderLayer::buildApproachDescriptor() {
         bSurfaces = m_representingVolume->boundarySurfaces();
 
     // fill in the surfaces into the vector
-    std::vector<std::shared_ptr<const Surface>> aSurfaces;
+    std::vector<ConstSurfacePtr> aSurfaces;
     if (bSurfaces.size() > size_t(tubeInnerCover)) {
       aSurfaces.push_back(
           bSurfaces.at(tubeInnerCover)->surfaceRepresentation().getSharedPtr());

@@ -27,7 +27,7 @@ using namespace Acts;
 // reference surfaces
 // this includes only those surfaces that can take unbounded local positions as
 // inputs, i.e. no angles or strictly positive radii.
-const auto surfaces = bdata::make(std::vector<std::shared_ptr<const Surface>>{
+const auto surfaces = bdata::make(std::vector<ConstSurfacePtr>{
     Surface::makeShared<CylinderSurface>(
         Transform3::Identity(), 10 /* radius */, 100 /* half-length z */),
     // TODO perigee roundtrip local->global->local does not seem to work

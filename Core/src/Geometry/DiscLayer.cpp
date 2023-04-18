@@ -72,7 +72,7 @@ void Acts::DiscLayer::buildApproachDescriptor() {
     const std::vector<std::shared_ptr<const BoundarySurfaceT<AbstractVolume>>>&
         bSurfaces = m_representingVolume->boundarySurfaces();
     // fill in the surfaces into the vector
-    std::vector<std::shared_ptr<const Surface>> aSurfaces;
+    std::vector<ConstSurfacePtr> aSurfaces;
     aSurfaces.push_back(
         bSurfaces.at(negativeFaceXY)->surfaceRepresentation().getSharedPtr());
     aSurfaces.push_back(

@@ -96,7 +96,7 @@ class DetectorElementStub : public DetectorElementBase {
   /// the transform for positioning in 3D space
   Transform3 m_elementTransform;
   /// the surface represented by it
-  std::shared_ptr<const Surface> m_elementSurface{nullptr};
+  ConstSurfacePtr m_elementSurface{};
   /// the element thickness
   double m_elementThickness{0.};
 };

@@ -18,7 +18,7 @@
 namespace Acts::Test {
 
 struct TestTrackState {
-  std::shared_ptr<Surface> surface;
+  SurfacePtr surface;
   TestSourceLink sourceLink;
   BoundTrackParameters predicted;
   BoundTrackParameters filtered;

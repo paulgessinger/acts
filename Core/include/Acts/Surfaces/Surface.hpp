@@ -27,6 +27,7 @@
 #include <memory>
 #include <ostream>
 #include <string>
+#include <type_traits>
 
 namespace Acts {
 
@@ -107,8 +108,8 @@ class Surface : public virtual GeometryObject,
   /// Will forward all parameters and will attempt to find a suitable
   /// constructor.
   template <class T, typename... Args>
-  static std::shared_ptr<T> makeShared(Args&&... args) {
-    return std::shared_ptr<T>(new T(std::forward<Args>(args)...));
+  static SurfacePtrT<T> makeShared(Args&&... args) {
+    return SurfacePtrT{new T(std::forward<Args>(args)...)};
   }
 
   /// Retrieve a @c std::shared_ptr for this surface (non-const version)
@@ -120,7 +121,7 @@ class Surface : public virtual GeometryObject,
   /// @note Only call this if you need shared ownership of this object.
   ///
   /// @return The shared pointer
-  std::shared_ptr<Surface> getSharedPtr();
+  SurfacePtr getSharedPtr();
 
   /// Retrieve a @c std::shared_ptr for this surface (const version)
   ///
@@ -131,7 +132,7 @@ class Surface : public virtual GeometryObject,
   /// @note Only call this if you need shared ownership of this object.
   ///
   /// @return The shared pointer
-  std::shared_ptr<const Surface> getSharedPtr() const;
+  ConstSurfacePtr getSharedPtr() const;
 
   /// Assignment operator
   /// @note copy construction invalidates the association

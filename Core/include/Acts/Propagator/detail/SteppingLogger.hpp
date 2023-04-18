@@ -30,7 +30,7 @@ struct Step {
   ConstrainedStep stepSize;
   Vector3 position = Vector3(0., 0., 0.);
   Vector3 momentum = Vector3(0., 0., 0.);
-  std::shared_ptr<const Surface> surface = nullptr;
+  ConstSurfacePtr surface = nullptr;
   const TrackingVolume* volume = nullptr;
 };
 

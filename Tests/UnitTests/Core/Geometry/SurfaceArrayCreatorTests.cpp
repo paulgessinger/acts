@@ -43,11 +43,11 @@ GeometryContext tgContext = GeometryContext();
     CHECK_CLOSE_ABS(phi(v), (a), tolerance);  \
   }
 
-using SrfVec = std::vector<std::shared_ptr<const Surface>>;
+using SrfVec = std::vector<ConstSurfacePtr>;
 
 struct SurfaceArrayCreatorFixture {
   SurfaceArrayCreator m_SAC;
-  std::vector<std::shared_ptr<const Surface>> m_surfaces;
+  std::vector<ConstSurfacePtr> m_surfaces;
 
   SurfaceArrayCreatorFixture()
       : m_SAC(SurfaceArrayCreator::Config(),
@@ -93,8 +93,7 @@ struct SurfaceArrayCreatorFixture {
 
       auto bounds = std::make_shared<const RectangleBounds>(w, h);
 
-      std::shared_ptr<Surface> srf =
-          Surface::makeShared<PlaneSurface>(trans, bounds);
+      SurfacePtr srf = Surface::makeShared<PlaneSurface>(trans, bounds);
 
       res.push_back(srf);
       m_surfaces.push_back(
@@ -123,8 +122,7 @@ struct SurfaceArrayCreatorFixture {
       trans.rotate(Eigen::AngleAxisd(M_PI / 2., Vector3(0, 1, 0)));
 
       auto bounds = std::make_shared<const RectangleBounds>(w, h);
-      std::shared_ptr<Surface> srf =
-          Surface::makeShared<PlaneSurface>(trans, bounds);
+      SurfacePtr srf = Surface::makeShared<PlaneSurface>(trans, bounds);
 
       res.push_back(srf);
       m_surfaces.push_back(
@@ -149,8 +147,7 @@ struct SurfaceArrayCreatorFixture {
 
       auto bounds = std::make_shared<const RectangleBounds>(2, 1.5);
 
-      std::shared_ptr<Surface> srf =
-          Surface::makeShared<PlaneSurface>(trans, bounds);
+      SurfacePtr srf = Surface::makeShared<PlaneSurface>(trans, bounds);
 
       res.push_back(srf);
       m_surfaces.push_back(
@@ -195,14 +192,12 @@ struct SurfaceArrayCreatorFixture {
         trans.rotate(Eigen::AngleAxisd(M_PI / 2., Vector3(0, 1, 0)));
 
         auto bounds = std::make_shared<const RectangleBounds>(w, h);
-        std::shared_ptr<Surface> srfA =
-            Surface::makeShared<PlaneSurface>(trans, bounds);
+        SurfacePtr srfA = Surface::makeShared<PlaneSurface>(trans, bounds);
 
         Vector3 nrm = srfA->normal(tgContext);
         Transform3 transB = trans;
         transB.pretranslate(nrm * 0.1);
-        std::shared_ptr<Surface> srfB =
-            Surface::makeShared<PlaneSurface>(transB, bounds);
+        SurfacePtr srfB = Surface::makeShared<PlaneSurface>(transB, bounds);
 
         pairs.push_back(std::make_pair(srfA.get(), srfB.get()));
 
@@ -529,7 +524,7 @@ BOOST_FIXTURE_TEST_CASE(SurfaceArrayCreator_dependentBinCounts,
   auto ringB = fullPhiTestSurfacesEC(15, 0, 0, 15, 2, 3.5);
   auto ringC = fullPhiTestSurfacesEC(20, 0, 0, 20, 2, 3.8);
 
-  std::vector<std::shared_ptr<const Surface>> surfaces;
+  std::vector<ConstSurfacePtr> surfaces;
   std::copy(ringA.begin(), ringA.end(), std::back_inserter(surfaces));
   std::copy(ringB.begin(), ringB.end(), std::back_inserter(surfaces));
   std::copy(ringC.begin(), ringC.end(), std::back_inserter(surfaces));

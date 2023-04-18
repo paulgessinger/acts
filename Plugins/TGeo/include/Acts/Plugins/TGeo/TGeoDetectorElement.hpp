@@ -138,7 +138,7 @@ class TGeoDetectorElement : public IdentifiedDetectorElement {
   ///  Thickness of this detector element
   double m_thickness{0.};
   /// Corresponding Surface
-  std::shared_ptr<Surface> m_surface{nullptr};
+  SurfacePtr m_surface{nullptr};
 };
 
 inline Identifier TGeoDetectorElement::identifier() const {

@@ -295,7 +295,7 @@ struct CylindricalTrackingGeometry {
                            pLayerRadii[ilp], 2_mm, 5_mm, pLayerBinning[ilp]);
 
       // Make a shared version out of it
-      std::vector<std::shared_ptr<const Surface>> layerSurfacePtrs;
+      std::vector<ConstSurfacePtr> layerSurfacePtrs;
       layerSurfacePtrs.reserve(layerSurfaces.size());
       for (auto& sf : layerSurfaces) {
         layerSurfacePtrs.push_back(sf->getSharedPtr());

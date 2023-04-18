@@ -269,8 +269,7 @@ class TrackProxy {
   /// Get the reference surface of the track (e.g. the perigee)
   /// @return the reference surface
   const Surface& referenceSurface() const {
-    return *component<std::shared_ptr<const Surface>,
-                      hashString("referenceSurface")>();
+    return *component<ConstSurfacePtr, hashString("referenceSurface")>();
   }
 
   // NOLINTBEGIN(performance-unnecessary-value-param)
@@ -278,17 +277,16 @@ class TrackProxy {
   /// Set a new reference surface for this track
   /// @param srf The surface to set
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
-  void setReferenceSurface(std::shared_ptr<const Surface> srf) {
-    component<std::shared_ptr<const Surface>,
-              hashString("referenceSurface")>() = std::move(srf);
+  void setReferenceSurface(ConstSurfacePtr srf) {
+    component<ConstSurfacePtr, hashString("referenceSurface")>() =
+        std::move(srf);
   }
   // NOLINTEND(performance-unnecessary-value-param)
 
   /// Return whether a reference surface is associated to this track
   /// @return whether a surface exists or not
   bool hasReferenceSurface() const {
-    return !!component<std::shared_ptr<const Surface>,
-                       hashString("referenceSurface")>();
+    return !!component<ConstSurfacePtr, hashString("referenceSurface")>();
   }
 
   /// Get the parameters of the track at the reference surface (e.g. perigee).

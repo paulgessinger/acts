@@ -44,7 +44,7 @@ GeometryContext tgContext = GeometryContext();
     CHECK_CLOSE_ABS(VectorHelpers::phi(v), (a), tolerance); \
   }
 
-using SrfVec = std::vector<std::shared_ptr<const Surface>>;
+using SrfVec = std::vector<ConstSurfacePtr>;
 
 void draw_surfaces(const SrfVec& surfaces, const std::string& fname) {
   std::ofstream os;
@@ -82,7 +82,7 @@ struct LayerCreatorFixture {
   std::shared_ptr<const SurfaceArrayCreator> p_SAC;
   std::shared_ptr<LayerCreator> p_LC;
 
-  std::vector<std::shared_ptr<const Surface>> m_surfaces;
+  std::vector<ConstSurfacePtr> m_surfaces;
 
   LayerCreatorFixture() {
     p_SAC = std::make_shared<const SurfaceArrayCreator>(
@@ -228,7 +228,7 @@ struct LayerCreatorFixture {
 BOOST_AUTO_TEST_SUITE(Tools)
 
 BOOST_FIXTURE_TEST_CASE(LayerCreator_createCylinderLayer, LayerCreatorFixture) {
-  std::vector<std::shared_ptr<const Surface>> srf;
+  std::vector<ConstSurfacePtr> srf;
 
   srf = makeBarrel(30, 7, 2, 1.5);
   draw_surfaces(srf, "LayerCreator_createCylinderLayer_BRL_1.obj");
@@ -321,7 +321,7 @@ BOOST_FIXTURE_TEST_CASE(LayerCreator_createCylinderLayer, LayerCreatorFixture) {
 }
 
 BOOST_FIXTURE_TEST_CASE(LayerCreator_createDiscLayer, LayerCreatorFixture) {
-  std::vector<std::shared_ptr<const Surface>> surfaces;
+  std::vector<ConstSurfacePtr> surfaces;
   auto ringa = fullPhiTestSurfacesEC(30, 0, 0, 10);
   surfaces.insert(surfaces.end(), ringa.begin(), ringa.end());
   auto ringb = fullPhiTestSurfacesEC(30, 0, 0, 15);

@@ -11,6 +11,7 @@
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Definitions/Common.hpp"
 #include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 #include "Acts/Utilities/BinningType.hpp"
 #include "Acts/Utilities/TypeTraits.hpp"
 
@@ -30,6 +31,12 @@
 #define ACTS_CHECK_BIT(value, mask) ((value & mask) == mask)
 
 namespace Acts {
+
+// template <typename surface_t>
+// class ConstSurfacePtrT;
+
+// template <typename surface_t>
+// class SurfacePtrT;
 
 namespace VectorHelpers {
 namespace detail {
@@ -341,6 +348,17 @@ std::vector<T*> unpack_shared_vector(
   return rawPtrs;
 }
 
+template <typename T>
+std::vector<T*> unpack_shared_vector(
+    const std::vector<Acts::SurfacePtrT<T>>& items) {
+  std::vector<T*> rawPtrs;
+  rawPtrs.reserve(items.size());
+  for (const Acts::SurfacePtrT<T>& item : items) {
+    rawPtrs.push_back(item.get());
+  }
+  return rawPtrs;
+}
+
 /// Helper function to unpack a vector of @c shared_ptr into a vector of raw
 /// pointers (const version)
 /// @tparam T the stored type
@@ -357,6 +375,17 @@ std::vector<const T*> unpack_shared_vector(
   return rawPtrs;
 }
 
+template <typename T>
+std::vector<const T*> unpack_shared_vector(
+    const std::vector<Acts::ConstSurfacePtrT<T>>& items) {
+  std::vector<const T*> rawPtrs;
+  rawPtrs.reserve(items.size());
+  for (const ConstSurfacePtrT<T>& item : items) {
+    rawPtrs.push_back(item.get());
+  }
+  return rawPtrs;
+}
+
 /// Helper function to unpack a vector of @c shared_ptr into a vector of raw
 /// pointers
 /// @tparam T the stored type
@@ -368,6 +397,17 @@ std::vector<const T*> unpack_shared_const_vector(
   std::vector<const T*> rawPtrs;
   rawPtrs.reserve(items.size());
   for (const std::shared_ptr<T>& item : items) {
+    rawPtrs.push_back(item.get());
+  }
+  return rawPtrs;
+}
+
+template <typename T>
+std::vector<const T*> unpack_shared_const_vector(
+    const std::vector<Acts::SurfacePtrT<T>>& items) {
+  std::vector<const T*> rawPtrs;
+  rawPtrs.reserve(items.size());
+  for (const Acts::SurfacePtrT<T>& item : items) {
     rawPtrs.push_back(item.get());
   }
   return rawPtrs;

@@ -82,9 +82,9 @@ class LayerCreator {
   ///
   /// @return shared pointer to a newly created layer
   MutableLayerPtr cylinderLayer(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces, size_t binsPhi,
-      size_t binsZ, std::optional<ProtoLayer> _protoLayer = std::nullopt,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+      size_t binsPhi, size_t binsZ,
+      std::optional<ProtoLayer> _protoLayer = std::nullopt,
       const Transform3& transform = Transform3::Identity(),
       std::unique_ptr<ApproachDescriptor> ad = nullptr) const;
 
@@ -106,8 +106,7 @@ class LayerCreator {
   ///
   /// @return shared pointer to a newly created layer
   MutableLayerPtr cylinderLayer(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
       BinningType bTypePhi, BinningType bTypeZ,
       std::optional<ProtoLayer> _protoLayer = std::nullopt,
       const Transform3& transform = Transform3::Identity(),
@@ -131,9 +130,9 @@ class LayerCreator {
   ///
   /// @return shared pointer to a newly created layer
   MutableLayerPtr discLayer(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces, size_t binsR,
-      size_t binsPhi, std::optional<ProtoLayer> _protoLayer = std::nullopt,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+      size_t binsR, size_t binsPhi,
+      std::optional<ProtoLayer> _protoLayer = std::nullopt,
       const Transform3& transform = Transform3::Identity(),
       std::unique_ptr<ApproachDescriptor> ad = nullptr) const;
 
@@ -155,9 +154,8 @@ class LayerCreator {
   ///
   /// @return shared pointer to a newly created layer
   MutableLayerPtr discLayer(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces, BinningType bTypeR,
-      BinningType bTypePhi,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+      BinningType bTypeR, BinningType bTypePhi,
       std::optional<ProtoLayer> _protoLayer = std::nullopt,
       const Transform3& transform = Transform3::Identity(),
       std::unique_ptr<ApproachDescriptor> ad = nullptr) const;
@@ -184,9 +182,8 @@ class LayerCreator {
   ///
   /// @return shared pointer to a newly created layer
   MutableLayerPtr planeLayer(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces, size_t bins1,
-      size_t bins2, BinningValue bValue,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+      size_t bins1, size_t bins2, BinningValue bValue,
       std::optional<ProtoLayer> _protoLayer = std::nullopt,
       const Transform3& transform = Transform3::Identity(),
       std::unique_ptr<ApproachDescriptor> ad = nullptr) const;

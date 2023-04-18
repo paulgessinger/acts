@@ -63,7 +63,7 @@ const Acts::LayerVector Acts::DD4hepLayerBuilder::endcapLayers(
     for (auto& detElement : dendcapLayers) {
       ACTS_VERBOSE("=> Translating layer from: " << detElement.name());
       // prepare the layer surfaces
-      std::vector<std::shared_ptr<const Surface>> layerSurfaces;
+      std::vector<ConstSurfacePtr> layerSurfaces;
       // access the extension of the layer
       // at this stage all layer detElements have extension (checked in
       // ConvertDD4hepDetector)
@@ -230,7 +230,7 @@ const Acts::LayerVector Acts::DD4hepLayerBuilder::centralLayers(
     for (auto& detElement : m_cfg.centralLayers) {
       ACTS_VERBOSE("=> Translating layer from: " << detElement.name());
       // prepare the layer surfaces
-      std::vector<std::shared_ptr<const Surface>> layerSurfaces;
+      std::vector<ConstSurfacePtr> layerSurfaces;
       // access the extension of the layer
       // at this stage all layer detElements have extension (checked in
       // ConvertDD4hepDetector)

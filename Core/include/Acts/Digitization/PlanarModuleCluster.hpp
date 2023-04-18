@@ -35,9 +35,9 @@ class PlanarModuleCluster : public Measurement<BoundIndices, 3> {
   /// @param [in] t Timestamp of the cluster
   /// @param [in] dCells is the vector of digitization cells
   /// @param [in] dModule an optional pointer to a digitization configuration
-  PlanarModuleCluster(std::shared_ptr<const Surface> surface,
-                      SourceLink sourceLink, const Base::CovarianceMatrix& cov,
-                      double loc0, double loc1, double t,
+  PlanarModuleCluster(ConstSurfacePtr surface, SourceLink sourceLink,
+                      const Base::CovarianceMatrix& cov, double loc0,
+                      double loc1, double t,
                       std::vector<DigitizationCell> dCells,
                       const DigitizationModule* dModule = nullptr)
       : Base(std::move(sourceLink), kIndices,
@@ -62,7 +62,7 @@ class PlanarModuleCluster : public Measurement<BoundIndices, 3> {
   const DigitizationModule* digitizationModule() const;
 
  private:
-  std::shared_ptr<const Surface> m_surface;
+  ConstSurfacePtr m_surface;
   std::vector<DigitizationCell> m_digitizationCells;  /// the digitization cells
   const DigitizationModule* m_digitizationModule;  /// the digitization module
 };

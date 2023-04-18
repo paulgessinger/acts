@@ -83,7 +83,7 @@ class TrackingGeometry {
   /// Register the beam tube
   ///
   /// @param beam is the beam line surface
-  void registerBeamTube(std::shared_ptr<const PerigeeSurface> beam);
+  void registerBeamTube(ConstSurfacePtrT<PerigeeSurface> beam);
 
   /// @brief surface representing the beam pipe
   ///
@@ -123,7 +123,7 @@ class TrackingGeometry {
   // the known world
   TrackingVolumePtr m_world;
   // beam line
-  std::shared_ptr<const PerigeeSurface> m_beam;
+  ConstSurfacePtrT<PerigeeSurface> m_beam;
   // lookup containers
   std::unordered_map<GeometryIdentifier, const TrackingVolume*> m_volumesById;
   std::unordered_map<GeometryIdentifier, const Surface*> m_surfacesById;

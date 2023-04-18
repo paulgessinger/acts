@@ -251,7 +251,7 @@ std::shared_ptr<Acts::Surface> Acts::Geant4PhysicalVolumeConverter::surface(
   };
 
   // Dynamic cast chain & conversion
-  std::shared_ptr<Surface> surface = nullptr;
+  SurfacePtr surface = nullptr;
 
   // Into a rectangle
   auto g4Box = dynamic_cast<const G4Box*>(g4Solid);

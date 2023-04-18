@@ -40,9 +40,9 @@ namespace Test {
 // Create a test context
 GeometryContext tgContext = GeometryContext();
 
-using SrfVec = std::vector<std::shared_ptr<const Surface>>;
+using SrfVec = std::vector<ConstSurfacePtr>;
 struct SurfaceArrayFixture {
-  std::vector<std::shared_ptr<const Surface>> m_surfaces;
+  std::vector<ConstSurfacePtr> m_surfaces;
 
   SurfaceArrayFixture() { BOOST_TEST_MESSAGE("setup fixture"); }
   ~SurfaceArrayFixture() { BOOST_TEST_MESSAGE("teardown fixture"); }
@@ -61,8 +61,7 @@ struct SurfaceArrayFixture {
       trans.translate(Vector3(r, 0, z));
 
       auto bounds = std::make_shared<const RectangleBounds>(2, 1);
-      std::shared_ptr<const Surface> srf =
-          Surface::makeShared<PlaneSurface>(trans, bounds);
+      ConstSurfacePtr srf = Surface::makeShared<PlaneSurface>(trans, bounds);
 
       res.push_back(srf);
       m_surfaces.push_back(
@@ -89,8 +88,7 @@ struct SurfaceArrayFixture {
       trans.rotate(Eigen::AngleAxisd(M_PI / 2., Vector3(0, 1, 0)));
 
       auto bounds = std::make_shared<const RectangleBounds>(w, h);
-      std::shared_ptr<const Surface> srf =
-          Surface::makeShared<PlaneSurface>(trans, bounds);
+      ConstSurfacePtr srf = Surface::makeShared<PlaneSurface>(trans, bounds);
 
       res.push_back(srf);
       m_surfaces.push_back(
@@ -115,8 +113,7 @@ struct SurfaceArrayFixture {
 
       auto bounds = std::make_shared<const RectangleBounds>(2, 1.5);
 
-      std::shared_ptr<const Surface> srf =
-          Surface::makeShared<PlaneSurface>(trans, bounds);
+      ConstSurfacePtr srf = Surface::makeShared<PlaneSurface>(trans, bounds);
 
       res.push_back(srf);
       m_surfaces.push_back(

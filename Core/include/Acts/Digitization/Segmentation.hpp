@@ -9,6 +9,7 @@
 #pragma once
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Digitization/DigitizationCell.hpp"
+#include "Acts/Surfaces/Surface.hpp"
 
 #include <memory>
 #include <vector>
@@ -16,10 +17,8 @@
 namespace Acts {
 
 class SurfaceBounds;
-class Surface;
 class BinUtility;
-using SurfacePtr = std::shared_ptr<const Surface>;
-using SurfacePtrVector = std::vector<SurfacePtr>;
+using SurfacePtrVector = std::vector<ConstSurfacePtr>;
 
 /// @brief Segmentation Base class
 ///

@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(ProtoLayerTests) {
                                     AngleAxis3(-0.5 * M_PI, Vector3::UnitZ()) *
                                     Transform3::Identity();
 
-  std::vector<std::shared_ptr<const Surface>> surfaceStore;
+  std::vector<ConstSurfacePtr> surfaceStore;
   surfaceStore.reserve(100);
 
   auto createProtoLayer = [&](const Transform3& trf,

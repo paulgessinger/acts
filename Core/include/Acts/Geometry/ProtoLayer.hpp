@@ -53,7 +53,7 @@ struct ProtoLayer {
   /// @param gctx The current geometry context object, e.g. alignment
   /// @param surfaces The vector of surfaces to consider
   ProtoLayer(const GeometryContext& gctx,
-             const std::vector<std::shared_ptr<const Surface>>& surfaces);
+             const std::vector<ConstSurfacePtr>& surfaces);
 
   ProtoLayer() = default;
 

@@ -30,8 +30,8 @@ namespace Experimental {
 // A portal with a surfac
 class Portal {
  public:
-  std::shared_ptr<Surface> m_surface = nullptr;
-  Portal(std::shared_ptr<Surface> sf) : m_surface(std::move(sf)) {}
+  SurfacePtr m_surface = nullptr;
+  Portal(SurfacePtr sf) : m_surface(std::move(sf)) {}
   const Surface& surface() const { return (*m_surface.get()); }
 };
 

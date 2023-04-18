@@ -140,7 +140,7 @@ class VectorTrackContainerBase {
   std::vector<IndexType> m_tipIndex;
   std::vector<typename detail_lt::Types<eBoundSize>::Coefficients> m_params;
   std::vector<typename detail_lt::Types<eBoundSize>::Covariance> m_cov;
-  std::vector<std::shared_ptr<const Surface>> m_referenceSurfaces;
+  std::vector<ConstSurfacePtr> m_referenceSurfaces;
 
   std::vector<unsigned int> m_nMeasurements;
   std::vector<unsigned int> m_nHoles;

@@ -122,9 +122,9 @@ class SurfaceArrayCreator {
   ///
   /// @return a unique pointer to a new SurfaceArray
   std::unique_ptr<SurfaceArray> surfaceArrayOnCylinder(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces, size_t binsPhi,
-      size_t binsZ, std::optional<ProtoLayer> protoLayerOpt = std::nullopt,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+      size_t binsPhi, size_t binsZ,
+      std::optional<ProtoLayer> protoLayerOpt = std::nullopt,
       const Transform3& transform = Transform3::Identity()) const;
 
   /// SurfaceArrayCreator interface method
@@ -145,8 +145,7 @@ class SurfaceArrayCreator {
   ///
   /// @return a unique pointer a new SurfaceArray
   std::unique_ptr<Acts::SurfaceArray> surfaceArrayOnCylinder(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
       BinningType bTypePhi = equidistant, BinningType bTypeZ = equidistant,
       std::optional<ProtoLayer> protoLayerOpt = std::nullopt,
       const Transform3& transform = Transform3::Identity()) const;
@@ -168,9 +167,9 @@ class SurfaceArrayCreator {
   ///
   /// @return a unique pointer a new SurfaceArray
   std::unique_ptr<SurfaceArray> surfaceArrayOnDisc(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces, size_t binsR,
-      size_t binsPhi, std::optional<ProtoLayer> protoLayerOpt = std::nullopt,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+      size_t binsR, size_t binsPhi,
+      std::optional<ProtoLayer> protoLayerOpt = std::nullopt,
       const Transform3& transform = Transform3::Identity()) const;
 
   /// SurfaceArrayCreator interface method
@@ -194,9 +193,8 @@ class SurfaceArrayCreator {
   ///       will be set to lowest number of surfaces of any R-ring.
   ///       This ignores bTypePhi and produces equidistant binning in phi
   std::unique_ptr<Acts::SurfaceArray> surfaceArrayOnDisc(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces, BinningType bTypeR,
-      BinningType bTypePhi,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+      BinningType bTypeR, BinningType bTypePhi,
       std::optional<ProtoLayer> protoLayerOpt = std::nullopt,
       const Transform3& transform = Transform3::Identity()) const;
 
@@ -220,9 +218,8 @@ class SurfaceArrayCreator {
   ///
   /// @return a unique pointer a new SurfaceArray
   std::unique_ptr<SurfaceArray> surfaceArrayOnPlane(
-      const GeometryContext& gctx,
-      std::vector<std::shared_ptr<const Surface>> surfaces, size_t bins1,
-      size_t bins2, BinningValue bValue,
+      const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+      size_t bins1, size_t bins2, BinningValue bValue,
       std::optional<ProtoLayer> protoLayerOpt = std::nullopt,
       const Transform3& transform = Transform3::Identity()) const;
 

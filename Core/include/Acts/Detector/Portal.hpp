@@ -40,7 +40,7 @@ class Portal : public std::enable_shared_from_this<Portal> {
   /// Constructor from surface w/o portal links
   ///
   /// @param surface is the representing surface
-  Portal(std::shared_ptr<Surface> surface);
+  Portal(SurfacePtr surface);
 
  public:
   /// The volume links forward/backward with respect to the surface normal
@@ -148,7 +148,7 @@ class Portal : public std::enable_shared_from_this<Portal> {
 
  private:
   /// The surface representation of this portal
-  std::shared_ptr<Surface> m_surface;
+  SurfacePtr m_surface;
 
   /// The portal targets along/opposite the normal vector
   DetectorVolumeUpdators m_volumeUpdators = {unconnectedUpdator(),

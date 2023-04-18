@@ -26,9 +26,8 @@ ProtoLayer::ProtoLayer(const GeometryContext& gctx,
   measure(gctx, surfaces);
 }
 
-ProtoLayer::ProtoLayer(
-    const GeometryContext& gctx,
-    const std::vector<std::shared_ptr<const Surface>>& surfaces)
+ProtoLayer::ProtoLayer(const GeometryContext& gctx,
+                       const std::vector<ConstSurfacePtr>& surfaces)
     : m_surfaces(unpack_shared_vector(surfaces)) {
   measure(gctx, m_surfaces);
 }

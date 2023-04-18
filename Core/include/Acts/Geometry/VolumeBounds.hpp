@@ -10,6 +10,7 @@
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Geometry/Volume.hpp"
+#include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/BinningType.hpp"
 
 #include <cmath>
@@ -20,13 +21,10 @@
 
 namespace Acts {
 
-class Surface;
-
 class VolumeBounds;
 using VolumeBoundsPtr = std::shared_ptr<const VolumeBounds>;
 
-using OrientedSurface =
-    std::pair<std::shared_ptr<Surface>, NavigationDirection>;
+using OrientedSurface = std::pair<ConstSurfacePtr, NavigationDirection>;
 using OrientedSurfaces = std::vector<OrientedSurface>;
 
 // Planar definitions to help construct the boundary surfaces

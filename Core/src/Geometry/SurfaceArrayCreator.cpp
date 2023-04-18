@@ -28,9 +28,8 @@ using Acts::VectorHelpers::phi;
 
 std::unique_ptr<Acts::SurfaceArray>
 Acts::SurfaceArrayCreator::surfaceArrayOnCylinder(
-    const GeometryContext& gctx,
-    std::vector<std::shared_ptr<const Surface>> surfaces, size_t binsPhi,
-    size_t binsZ, std::optional<ProtoLayer> protoLayerOpt,
+    const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+    size_t binsPhi, size_t binsZ, std::optional<ProtoLayer> protoLayerOpt,
     const Transform3& transform) const {
   std::vector<const Surface*> surfacesRaw = unpack_shared_vector(surfaces);
   // Check if we have proto layer, else build it
@@ -75,9 +74,9 @@ Acts::SurfaceArrayCreator::surfaceArrayOnCylinder(
 
 std::unique_ptr<Acts::SurfaceArray>
 Acts::SurfaceArrayCreator::surfaceArrayOnCylinder(
-    const GeometryContext& gctx,
-    std::vector<std::shared_ptr<const Surface>> surfaces, BinningType bTypePhi,
-    BinningType bTypeZ, std::optional<ProtoLayer> protoLayerOpt,
+    const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+    BinningType bTypePhi, BinningType bTypeZ,
+    std::optional<ProtoLayer> protoLayerOpt,
     const Transform3& transform) const {
   std::vector<const Surface*> surfacesRaw = unpack_shared_vector(surfaces);
   // check if we have proto layer, else build it
@@ -141,9 +140,8 @@ Acts::SurfaceArrayCreator::surfaceArrayOnCylinder(
 
 std::unique_ptr<Acts::SurfaceArray>
 Acts::SurfaceArrayCreator::surfaceArrayOnDisc(
-    const GeometryContext& gctx,
-    std::vector<std::shared_ptr<const Surface>> surfaces, size_t binsR,
-    size_t binsPhi, std::optional<ProtoLayer> protoLayerOpt,
+    const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+    size_t binsR, size_t binsPhi, std::optional<ProtoLayer> protoLayerOpt,
     const Transform3& transform) const {
   std::vector<const Surface*> surfacesRaw = unpack_shared_vector(surfaces);
   // check if we have proto layer, else build it
@@ -194,9 +192,9 @@ Acts::SurfaceArrayCreator::surfaceArrayOnDisc(
 
 std::unique_ptr<Acts::SurfaceArray>
 Acts::SurfaceArrayCreator::surfaceArrayOnDisc(
-    const GeometryContext& gctx,
-    std::vector<std::shared_ptr<const Surface>> surfaces, BinningType bTypeR,
-    BinningType bTypePhi, std::optional<ProtoLayer> protoLayerOpt,
+    const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+    BinningType bTypeR, BinningType bTypePhi,
+    std::optional<ProtoLayer> protoLayerOpt,
     const Transform3& transform) const {
   std::vector<const Surface*> surfacesRaw = unpack_shared_vector(surfaces);
   // check if we have proto layer, else build it
@@ -302,9 +300,9 @@ Acts::SurfaceArrayCreator::surfaceArrayOnDisc(
 /// SurfaceArrayCreator interface method - create an array on a plane
 std::unique_ptr<Acts::SurfaceArray>
 Acts::SurfaceArrayCreator::surfaceArrayOnPlane(
-    const GeometryContext& gctx,
-    std::vector<std::shared_ptr<const Surface>> surfaces, size_t bins1,
-    size_t bins2, BinningValue bValue, std::optional<ProtoLayer> protoLayerOpt,
+    const GeometryContext& gctx, std::vector<ConstSurfacePtr> surfaces,
+    size_t bins1, size_t bins2, BinningValue bValue,
+    std::optional<ProtoLayer> protoLayerOpt,
     const Transform3& transform) const {
   std::vector<const Surface*> surfacesRaw = unpack_shared_vector(surfaces);
   // check if we have proto layer, else build it

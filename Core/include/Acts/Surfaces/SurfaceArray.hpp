@@ -448,12 +448,12 @@ class SurfaceArray {
   /// bookkeeping, so we can ask
   /// @param transform Optional additional transform for this SurfaceArray
   SurfaceArray(std::unique_ptr<ISurfaceGridLookup> gridLookup,
-               std::vector<std::shared_ptr<const Surface>> surfaces,
+               std::vector<ConstSurfacePtr> surfaces,
                const Transform3& transform = Transform3::Identity());
 
   /// @brief Constructor with a single surface
   /// @param srf The one and only surface
-  SurfaceArray(std::shared_ptr<const Surface> srf);
+  SurfaceArray(ConstSurfacePtr srf);
 
   /// @brief Get all surfaces in bin given by position.
   /// @param position the lookup position
@@ -539,7 +539,7 @@ class SurfaceArray {
  private:
   std::unique_ptr<ISurfaceGridLookup> p_gridLookup;
   // this vector makes sure we have shared ownership over the surfaces
-  std::vector<std::shared_ptr<const Surface>> m_surfaces;
+  std::vector<ConstSurfacePtr> m_surfaces;
   // this vector is returned, so that (expensive) copying of the shared_ptr
   // vector does not happen by default
   SurfaceVector m_surfacesRawPointers;

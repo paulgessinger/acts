@@ -10,7 +10,7 @@
 
 #include "Acts/Surfaces/Surface.hpp"
 
-Acts::Experimental::Portal::Portal(std::shared_ptr<Surface> surface)
+Acts::Experimental::Portal::Portal(SurfacePtr surface)
     : m_surface(std::move(surface)) {}
 
 std::shared_ptr<Acts::Experimental::Portal>

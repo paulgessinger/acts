@@ -77,10 +77,9 @@ class LayerArrayCreator : public ILayerArrayCreator {
   ///
   /// @param bValue is the Binning value for the layer array
   /// @param offset is the sift for the navigation layer
-  std::shared_ptr<Surface> createNavigationSurface(const GeometryContext& gctx,
-                                                   const Layer& layer,
-                                                   BinningValue bValue,
-                                                   double offset) const;
+  SurfacePtr createNavigationSurface(const GeometryContext& gctx,
+                                     const Layer& layer, BinningValue bValue,
+                                     double offset) const;
 };
 
 }  // namespace Acts

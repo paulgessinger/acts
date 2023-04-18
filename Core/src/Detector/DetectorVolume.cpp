@@ -21,7 +21,7 @@
 Acts::Experimental::DetectorVolume::DetectorVolume(
     const GeometryContext& gctx, const std::string& name,
     const Transform3& transform, std::unique_ptr<VolumeBounds> bounds,
-    const std::vector<std::shared_ptr<Surface>>& surfaces,
+    const std::vector<SurfacePtr>& surfaces,
     const std::vector<std::shared_ptr<DetectorVolume>>& volumes,
     SurfaceCandidatesUpdator&& surfaceCandidateUpdator)
     : m_name(name),
@@ -38,7 +38,7 @@ Acts::Experimental::DetectorVolume::DetectorVolume(
         "DetectorVolume: navigation state updator delegate is not connected.");
   }
 
-  m_surfaces = ObjectStore<std::shared_ptr<Surface>>(surfaces);
+  m_surfaces = ObjectStore<SurfacePtr>(surfaces);
   m_volumes = ObjectStore<std::shared_ptr<DetectorVolume>>(volumes);
 
   [[maybe_unused]] const auto& gctx_ref = gctx;
@@ -121,10 +121,10 @@ void Acts::Experimental::DetectorVolume::updateNavigationState(
 
 void Acts::Experimental::DetectorVolume::assignSurfaceCandidatesUpdator(
     SurfaceCandidatesUpdator&& surfaceCandidateUpdator,
-    const std::vector<std::shared_ptr<Surface>>& surfaces,
+    const std::vector<SurfacePtr>& surfaces,
     const std::vector<std::shared_ptr<DetectorVolume>>& volumes) {
   m_surfaceCandidatesUpdator = std::move(surfaceCandidateUpdator);
-  m_surfaces = ObjectStore<std::shared_ptr<Surface>>(surfaces);
+  m_surfaces = ObjectStore<SurfacePtr>(surfaces);
   m_volumes = ObjectStore<std::shared_ptr<DetectorVolume>>(volumes);
 }
 

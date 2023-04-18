@@ -35,7 +35,7 @@ class MultiComponentBoundTrackParameters {
 
   std::vector<std::tuple<double, BoundVector, std::optional<BoundSymMatrix>>>
       m_components;
-  std::shared_ptr<const Surface> m_surface;
+  ConstSurfacePtr m_surface;
 
   // TODO use [[no_unique_address]] once we switch to C++20
   charge_t m_chargeInterpreter;
@@ -69,7 +69,7 @@ class MultiComponentBoundTrackParameters {
   /// Construct from multiple components with charge scalar q
   template <typename covariance_t>
   MultiComponentBoundTrackParameters(
-      std::shared_ptr<const Surface> surface,
+      ConstSurfacePtr surface,
       const std::vector<std::tuple<double, BoundVector, covariance_t>>& cmps,
       ActsScalar q)
       : m_surface(std::move(surface)), m_chargeInterpreter(std::abs(q)) {
@@ -88,7 +88,7 @@ class MultiComponentBoundTrackParameters {
   template <typename covariance_t, typename T = charge_t,
             std::enable_if_t<std::is_default_constructible_v<T>, int> = 0>
   MultiComponentBoundTrackParameters(
-      std::shared_ptr<const Surface> surface,
+      ConstSurfacePtr surface,
       const std::vector<std::tuple<double, BoundVector, covariance_t>>& cmps)
       : m_surface(std::move(surface)) {
     static_assert(std::is_same_v<BoundSymMatrix, covariance_t> ||
@@ -116,8 +116,8 @@ class MultiComponentBoundTrackParameters {
   /// only used in debug builds to check for consistency with the q/p
   /// parameter.
   MultiComponentBoundTrackParameters(
-      std::shared_ptr<const Surface> surface, const BoundVector& params,
-      ActsScalar q, std::optional<BoundSymMatrix> cov = std::nullopt)
+      ConstSurfacePtr surface, const BoundVector& params, ActsScalar q,
+      std::optional<BoundSymMatrix> cov = std::nullopt)
       : m_surface(std::move(surface)), m_chargeInterpreter(std::abs(q)) {
     m_components.push_back({1., params, std::move(cov)});
   }
@@ -133,7 +133,7 @@ class MultiComponentBoundTrackParameters {
   template <typename T = charge_t,
             std::enable_if_t<std::is_default_constructible_v<T>, int> = 0>
   MultiComponentBoundTrackParameters(
-      std::shared_ptr<const Surface> surface, const BoundVector& params,
+      ConstSurfacePtr surface, const BoundVector& params,
       std::optional<BoundSymMatrix> cov = std::nullopt)
       : m_surface(std::move(surface)) {
     m_components.push_back({1., params, std::move(cov)});

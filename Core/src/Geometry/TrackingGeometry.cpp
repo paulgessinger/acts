@@ -58,7 +58,7 @@ const Acts::Layer* Acts::TrackingGeometry::associatedLayer(
 }
 
 void Acts::TrackingGeometry::registerBeamTube(
-    std::shared_ptr<const PerigeeSurface> beam) {
+    Acts::ConstSurfacePtrT<PerigeeSurface> beam) {
   m_beam = std::move(beam);
 }
 

@@ -31,8 +31,7 @@ class Geant4DetectorElement : public DetectorElementBase {
   /// @param thickness the thickness of this detector element
   /// @param toGlobal the global transformation before the volume
   /// @param g4phys the physical volume representing this detector element
-  Geant4DetectorElement(std::shared_ptr<Surface> surface,
-                        const G4VPhysicalVolume& g4physVol,
+  Geant4DetectorElement(SurfacePtr surface, const G4VPhysicalVolume& g4physVol,
                         const Transform3& toGlobal, ActsScalar thickness);
 
   /// Return local to global transform associated with this detector element
@@ -51,7 +50,7 @@ class Geant4DetectorElement : public DetectorElementBase {
 
  private:
   /// Corresponding Surface
-  std::shared_ptr<Surface> m_surface;
+  SurfacePtr m_surface;
   /// The GEant4 physical volume
   const G4VPhysicalVolume* m_g4physVol{nullptr};
   /// The global transformation before the volume
