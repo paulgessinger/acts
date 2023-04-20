@@ -40,6 +40,13 @@ BOOST_AUTO_TEST_CASE(RefCount) {
         auto h3 = h2;
         BOOST_CHECK_EQUAL(h1.refCount(), 3);
         BOOST_CHECK(!destructorCalled);
+
+        {
+          auto h4 = std::move(h3);
+          BOOST_CHECK_EQUAL(h1.refCount(), 3);
+          BOOST_CHECK(!destructorCalled);
+        }
+        BOOST_CHECK_EQUAL(h1.refCount(), 2);
       }
       BOOST_CHECK_EQUAL(h1.refCount(), 2);
       BOOST_CHECK(!destructorCalled);
