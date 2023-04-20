@@ -28,28 +28,37 @@ struct A {
 BOOST_AUTO_TEST_CASE(RefCount) {
   bool destructorCalled = false;
   {
+    std::cout << __LINE__ << std::endl;
     auto h1 = makeAsymHandle<A>([&]() { destructorCalled = true; });
     BOOST_CHECK_EQUAL(h1.refCount(), 1);
     BOOST_CHECK(!destructorCalled);
     {
+      std::cout << __LINE__ << std::endl;
       auto h2 = h1;
       BOOST_CHECK_EQUAL(h1.refCount(), 2);
       BOOST_CHECK(!destructorCalled);
 
       {
+        std::cout << __LINE__ << std::endl;
         auto h3 = h2;
         BOOST_CHECK_EQUAL(h1.refCount(), 3);
         BOOST_CHECK(!destructorCalled);
 
         {
+          std::cout << __LINE__ << std::endl;
           auto h4 = std::move(h3);
+          BOOST_CHECK(!h3);
           BOOST_CHECK_EQUAL(h1.refCount(), 3);
           BOOST_CHECK(!destructorCalled);
+          std::cout << __LINE__ << std::endl;
         }
         BOOST_CHECK_EQUAL(h1.refCount(), 2);
+        std::cout << __LINE__ << std::endl;
       }
+      std::cout << __LINE__ << std::endl;
       BOOST_CHECK_EQUAL(h1.refCount(), 2);
       BOOST_CHECK(!destructorCalled);
+      std::cout << __LINE__ << std::endl;
     }
 
     BOOST_CHECK_EQUAL(h1.refCount(), 1);
