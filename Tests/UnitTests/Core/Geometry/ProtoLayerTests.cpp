@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(ProtoLayerTests) {
         Transform3(trf * Translation3(Vector3(0., 3., 0.)) * planeZX),
         recBounds);
 
-    std::vector<ConstSurfacePtrT<Surface>> sharedSurfaces = {atNegX, atNegY,
+    std::vector<ConstAsymHandle<Surface>> sharedSurfaces = {atNegX, atNegY,
                                                              atPosX, atPosY};
     surfaceStore.insert(surfaceStore.begin(), sharedSurfaces.begin(),
                         sharedSurfaces.end());

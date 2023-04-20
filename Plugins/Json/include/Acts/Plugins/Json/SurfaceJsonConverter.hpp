@@ -75,7 +75,7 @@ SurfacePtr surfaceFromJson(const nlohmann::json& j);
 ///
 /// @return a shared_ptr to a typed surface object for type polymorphism
 template <typename surface_t, typename bounds_t>
-SurfacePtrT<surface_t> surfaceFromJsonT(const nlohmann::json& j) {
+AsymHandle<surface_t> surfaceFromJsonT(const nlohmann::json& j) {
   Transform3 sTransform;
   nlohmann::json jtrf = j["transform"];
   from_json(jtrf, sTransform);

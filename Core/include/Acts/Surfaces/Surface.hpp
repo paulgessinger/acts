@@ -18,6 +18,7 @@
 #include "Acts/Surfaces/BoundaryCheck.hpp"
 #include "Acts/Surfaces/SurfaceBounds.hpp"
 #include "Acts/Surfaces/SurfaceError.hpp"
+#include "Acts/Surfaces/SurfacePtr.hpp"
 #include "Acts/Surfaces/detail/AlignmentHelper.hpp"
 #include "Acts/Utilities/BinnedArray.hpp"
 #include "Acts/Utilities/BinningType.hpp"
@@ -37,12 +38,6 @@ class ISurfaceMaterial;
 class Layer;
 class TrackingVolume;
 class IVisualization3D;
-
-template <typename surface_t>
-class ConstSurfacePtrT;
-
-template <typename surface_t>
-class SurfacePtrT;
 
 /// Typedef of the surface intersection
 using SurfaceIntersection = ObjectIntersection<Surface>;
@@ -114,8 +109,8 @@ class Surface : public virtual GeometryObject,
   /// Will forward all parameters and will attempt to find a suitable
   /// constructor.
   template <class T, typename... Args>
-  static SurfacePtrT<T> makeShared(Args&&... args) {
-    return SurfacePtrT{new T(std::forward<Args>(args)...)};
+  static AsymHandle<T> makeShared(Args&&... args) {
+    return AsymHandle{new T(std::forward<Args>(args)...)};
   }
 
   /// Retrieve a @c std::shared_ptr for this surface (non-const version)
@@ -127,7 +122,7 @@ class Surface : public virtual GeometryObject,
   /// @note Only call this if you need shared ownership of this object.
   ///
   /// @return The shared pointer
-  SurfacePtrT<Surface> getSharedPtr();
+  SurfacePtr getSharedPtr();
 
   /// Retrieve a @c std::shared_ptr for this surface (const version)
   ///
@@ -138,7 +133,7 @@ class Surface : public virtual GeometryObject,
   /// @note Only call this if you need shared ownership of this object.
   ///
   /// @return The shared pointer
-  ConstSurfacePtrT<Surface> getSharedPtr() const;
+  ConstSurfacePtr getSharedPtr() const;
 
   /// Assignment operator
   /// @note copy construction invalidates the association
@@ -519,9 +514,6 @@ class Surface : public virtual GeometryObject,
   AlignmentToBoundMatrix alignmentToBoundDerivativeWithoutCorrection(
       const GeometryContext& gctx, const FreeVector& parameters) const;
 };
-
-using SurfacePtr = SurfacePtrT<Surface>;
-using ConstSurfacePtr = ConstSurfacePtrT<Surface>;
 
 /// Print surface information to the provided stream. Internally invokes the
 /// `surface.toStream(...)`-method. This can be easily used e.g. like `std::cout

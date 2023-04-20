@@ -37,7 +37,7 @@
 Acts::ConstSurfacePtr Acts::CuboidVolumeBuilder::buildSurface(
     const GeometryContext& /*gctx*/,
     const CuboidVolumeBuilder::SurfaceConfig& cfg) const {
-  SurfacePtrT<PlaneSurface> surface;
+  AsymHandle<PlaneSurface> surface;
 
   // Build transformation
   Transform3 trafo(Transform3::Identity() * cfg.rotation);

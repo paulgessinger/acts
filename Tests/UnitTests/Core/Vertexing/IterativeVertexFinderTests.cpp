@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(iterative_finder_test) {
                   << std::endl;
       }
       // Create perigee surface
-      SurfacePtrT<PerigeeSurface> perigeeSurface =
+      AsymHandle<PerigeeSurface> perigeeSurface =
           Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
 
       // Create position of vertex and perigee surface
@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE(iterative_finder_test_user_track_type) {
                   << std::endl;
       }
       // Create perigee surface
-      SurfacePtrT<PerigeeSurface> perigeeSurface =
+      AsymHandle<PerigeeSurface> perigeeSurface =
           Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
 
       // Create position of vertex and perigee surface

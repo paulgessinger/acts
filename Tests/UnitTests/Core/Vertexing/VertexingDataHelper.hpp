@@ -63,7 +63,7 @@ readTracksAndVertexCSV(const std::string& toolString,
   // String to store the read lines
   std::string line{};
 
-  SurfacePtrT<PerigeeSurface> perigeeSurface;
+  AsymHandle<PerigeeSurface> perigeeSurface;
   std::vector<BoundTrackParameters> tracks;
   std::vector<VertexInfo> vertices;
   Vertex<BoundTrackParameters> beamspotConstraint;

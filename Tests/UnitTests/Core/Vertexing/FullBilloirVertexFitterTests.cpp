@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(billoir_vertex_fitter_defaulttrack_test) {
     double z = vZDist(gen);
 
     Vector3 vertexPosition(x, y, z);
-    SurfacePtrT<PerigeeSurface> perigeeSurface =
+    AsymHandle<PerigeeSurface> perigeeSurface =
         Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
     // Calculate d0 and z0 corresponding to vertex position
     double d0V = sqrt(x * x + y * y);
@@ -301,7 +301,7 @@ BOOST_AUTO_TEST_CASE(billoir_vertex_fitter_usertrack_test) {
     double z = vZDist(gen);
 
     Vector3 vertexPosition(x, y, z);
-    SurfacePtrT<PerigeeSurface> perigeeSurface =
+    AsymHandle<PerigeeSurface> perigeeSurface =
         Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
 
     // Calculate d0 and z0 corresponding to vertex position

@@ -300,7 +300,7 @@ class VectorMultiTrajectoryBase {
   // This might be problematic when appending a large number of surfaces
   // trackstates, because vector has to reallocated and thus copy. This might
   // be handled in a smart way by moving but not sure.
-  std::vector<ConstSurfacePtrT<Surface>> m_referenceSurfaces;
+  std::vector<ConstAsymHandle<Surface>> m_referenceSurfaces;
 
   std::unordered_map<HashedString, std::unique_ptr<detail::DynamicColumnBase>>
       m_dynamic;

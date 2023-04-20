@@ -68,7 +68,7 @@ Acts::ImpactPointEstimator<input_track_t, propagator_t, propagator_options_t>::
   // translation
   thePlane.matrix().block(0, 3, 3, 1) = vtxPos;
 
-  SurfacePtrT<PlaneSurface> planeSurface =
+  AsymHandle<PlaneSurface> planeSurface =
       Surface::makeShared<PlaneSurface>(thePlane);
 
   // Create propagator options
@@ -262,7 +262,7 @@ Acts::ImpactPointEstimator<input_track_t, propagator_t, propagator_options_t>::
   // towards
   // the vertex position. By this time the vertex should NOT contain this
   // trajectory anymore
-  const SurfacePtrT<PerigeeSurface> perigeeSurface =
+  const AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(vtx.position());
 
   // Create propagator options
@@ -365,7 +365,7 @@ Acts::ImpactPointEstimator<input_track_t, propagator_t, propagator_options_t>::
                             const Acts::Vector3& direction,
                             const GeometryContext& gctx,
                             const MagneticFieldContext& mctx) const {
-  const SurfacePtrT<PerigeeSurface> perigeeSurface =
+  const AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(vtx.position());
 
   // Create propagator options
@@ -409,7 +409,7 @@ Acts::ImpactPointEstimator<input_track_t, propagator_t, propagator_options_t>::
                              const Acts::Vector3& direction,
                              const GeometryContext& gctx,
                              const MagneticFieldContext& mctx) const {
-  const SurfacePtrT<PerigeeSurface> perigeeSurface =
+  const AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(vtx.position());
 
   // Create propagator options

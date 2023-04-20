@@ -305,7 +305,7 @@ Acts::FullBilloirVertexFitter<input_track_t, linearizer_t>::fit(
 
       std::vector<TrackAtVertex<input_track_t>> tracksAtVertex;
 
-      SurfacePtrT<PerigeeSurface> perigee = Surface::makeShared<PerigeeSurface>(
+      AsymHandle<PerigeeSurface> perigee = Surface::makeShared<PerigeeSurface>(
           VectorHelpers::position(vertexPos));
 
       iTrack = 0;

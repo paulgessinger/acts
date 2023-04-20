@@ -161,7 +161,7 @@ ActsExamples::ProcessCode ActsExamples::RootTrajectorySummaryReader::read(
     std::lock_guard<std::mutex> lock(m_read_mutex);
     // now read
 
-    Acts::SurfacePtrT<Acts::PerigeeSurface> perigeeSurface =
+    Acts::AsymHandle<Acts::PerigeeSurface> perigeeSurface =
         Acts::Surface::makeShared<Acts::PerigeeSurface>(
             Acts::Vector3(0., 0., 0.));
 

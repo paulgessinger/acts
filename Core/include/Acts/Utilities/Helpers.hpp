@@ -32,12 +32,6 @@
 
 namespace Acts {
 
-template <typename surface_t>
-class ConstSurfacePtrT;
-
-template <typename surface_t>
-class SurfacePtrT;
-
 namespace VectorHelpers {
 namespace detail {
 template <class T>
@@ -350,10 +344,10 @@ std::vector<T*> unpack_shared_vector(
 
 template <typename T>
 std::vector<T*> unpack_shared_vector(
-    const std::vector<Acts::SurfacePtrT<T>>& items) {
+    const std::vector<Acts::AsymHandle<T>>& items) {
   std::vector<T*> rawPtrs;
   rawPtrs.reserve(items.size());
-  for (const Acts::SurfacePtrT<T>& item : items) {
+  for (const Acts::AsymHandle<T>& item : items) {
     rawPtrs.push_back(item.get());
   }
   return rawPtrs;
@@ -377,10 +371,10 @@ std::vector<const T*> unpack_shared_vector(
 
 template <typename T>
 std::vector<const T*> unpack_shared_vector(
-    const std::vector<Acts::ConstSurfacePtrT<T>>& items) {
+    const std::vector<Acts::ConstAsymHandle<T>>& items) {
   std::vector<const T*> rawPtrs;
   rawPtrs.reserve(items.size());
-  for (const ConstSurfacePtrT<T>& item : items) {
+  for (const ConstAsymHandle<T>& item : items) {
     rawPtrs.push_back(item.get());
   }
   return rawPtrs;
@@ -404,10 +398,10 @@ std::vector<const T*> unpack_shared_const_vector(
 
 template <typename T>
 std::vector<const T*> unpack_shared_const_vector(
-    const std::vector<Acts::SurfacePtrT<T>>& items) {
+    const std::vector<Acts::AsymHandle<T>>& items) {
   std::vector<const T*> rawPtrs;
   rawPtrs.reserve(items.size());
-  for (const Acts::SurfacePtrT<T>& item : items) {
+  for (const Acts::AsymHandle<T>& item : items) {
     rawPtrs.push_back(item.get());
   }
   return rawPtrs;

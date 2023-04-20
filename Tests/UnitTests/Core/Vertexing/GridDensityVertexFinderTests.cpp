@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(grid_density_vertex_finder_test) {
 
   // Perigee surface for track parameters
   Vector3 pos0{0, 0, 0};
-  SurfacePtrT<PerigeeSurface> perigeeSurface =
+  AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(pos0);
 
   VertexingOptions<BoundTrackParameters> vertexingOptions(geoContext,
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(grid_density_vertex_finder_track_caching_test) {
 
   // Perigee surface for track parameters
   Vector3 pos0{0, 0, 0};
-  SurfacePtrT<PerigeeSurface> perigeeSurface =
+  AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(pos0);
 
   VertexingOptions<BoundTrackParameters> vertexingOptions(geoContext,
@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE(grid_density_vertex_finder_seed_width_test) {
 
   // Perigee surface for track parameters
   Vector3 pos0{0, 0, 0};
-  SurfacePtrT<PerigeeSurface> perigeeSurface =
+  AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(pos0);
 
   VertexingOptions<BoundTrackParameters> vertexingOptions(geoContext,

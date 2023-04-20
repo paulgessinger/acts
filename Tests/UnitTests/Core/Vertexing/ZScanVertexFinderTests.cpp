@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(zscan_finder_test) {
         FullBilloirVertexFitter<BoundTrackParameters, Linearizer_t>;
 
     // Create perigee surface
-    SurfacePtrT<PerigeeSurface> perigeeSurface =
+    AsymHandle<PerigeeSurface> perigeeSurface =
         Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
 
     // Create position of vertex and perigee surface
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(zscan_finder_usertrack_test) {
     using BilloirFitter = FullBilloirVertexFitter<InputTrack, Linearizer_t>;
 
     // Create perigee surface
-    SurfacePtrT<PerigeeSurface> perigeeSurface =
+    AsymHandle<PerigeeSurface> perigeeSurface =
         Surface::makeShared<PerigeeSurface>(Vector3(0., 0., 0.));
 
     // Create position of vertex and perigee surface

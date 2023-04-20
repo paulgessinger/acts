@@ -37,7 +37,7 @@ struct GeometryIdentifierHookBinding : public Acts::GeometryIdentifierHook {
 };
 }  // namespace
 
-PYBIND11_DECLARE_HOLDER_TYPE(T, Acts::SurfacePtrT<T>);
+PYBIND11_DECLARE_HOLDER_TYPE(T, Acts::AsymHandle<T>);
 
 namespace Acts::Python {
 void addGeometry(Context& ctx) {

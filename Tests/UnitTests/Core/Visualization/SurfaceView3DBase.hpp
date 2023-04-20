@@ -57,7 +57,7 @@ static inline std::string run(IVisualization3D& helper, bool triangulate,
 
   //----------------------------------------------------
   // Cone Surface section
-  std::vector<SurfacePtrT<ConeSurface>> coneSurfaces;
+  std::vector<AsymHandle<ConeSurface>> coneSurfaces;
 
   double coneAlpha = 0.245;
   double coneMinZ = 0.;
@@ -115,7 +115,7 @@ static inline std::string run(IVisualization3D& helper, bool triangulate,
 
   //----------------------------------------------------
   // Cylinder surface section
-  std::vector<SurfacePtrT<CylinderSurface>> cylinderSurfaces;
+  std::vector<AsymHandle<CylinderSurface>> cylinderSurfaces;
 
   double cylinderRadius = 5.;
   double cylinderHalfZ = 10.;
@@ -193,7 +193,7 @@ static inline std::string run(IVisualization3D& helper, bool triangulate,
   double discRmin = 5.;
   double discRmax = 10.;
 
-  std::vector<SurfacePtrT<DiscSurface>> radialSurfaces;
+  std::vector<AsymHandle<DiscSurface>> radialSurfaces;
 
   // Full Disc
   auto radialBounds = std::make_shared<RadialBounds>(0., discRmax);
@@ -280,7 +280,7 @@ static inline std::string run(IVisualization3D& helper, bool triangulate,
   helper.write(cStream);
   helper.clear();
 
-  std::vector<SurfacePtrT<DiscSurface>> anomalDiscSurfaces;
+  std::vector<AsymHandle<DiscSurface>> anomalDiscSurfaces;
 
   double annulusMinPhi = 0.75;
   double annulusMaxPhi = 1.35;
@@ -323,7 +323,7 @@ static inline std::string run(IVisualization3D& helper, bool triangulate,
 
   //----------------------------------------------------
   // Plane Surface section
-  std::vector<SurfacePtrT<PlaneSurface>> planarSurfaces;
+  std::vector<AsymHandle<PlaneSurface>> planarSurfaces;
 
   // Ellipse shaped : Full Ellipse
   double ellipseR0min = 2;

@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(track_density_finder_test) {
 
   // Start creating some track parameters
   Covariance covMat = Covariance::Identity();
-  SurfacePtrT<PerigeeSurface> perigeeSurface =
+  AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(pos0);
 
   // Test finder for some fixed track parameter values
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(track_density_finder_constr_test) {
 
   // Start creating some track parameters
   Covariance covMat = Covariance::Identity();
-  SurfacePtrT<PerigeeSurface> perigeeSurface =
+  AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(pos0);
 
   // Test finder for some fixed track parameter values
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(track_density_finder_random_test) {
 
   // Perigee surface for track parameters
   Vector3 pos0{0, 0, 0};
-  SurfacePtrT<PerigeeSurface> perigeeSurface =
+  AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(pos0);
 
   VertexingOptions<BoundTrackParameters> vertexingOptions(geoContext,
@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE(track_density_finder_usertrack_test) {
 
   // Start creating some track parameters
   Covariance covMat = Covariance::Identity();
-  SurfacePtrT<PerigeeSurface> perigeeSurface =
+  AsymHandle<PerigeeSurface> perigeeSurface =
       Surface::makeShared<PerigeeSurface>(pos0);
 
   // Test finder for some fixed track parameter values
