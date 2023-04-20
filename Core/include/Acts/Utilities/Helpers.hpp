@@ -32,11 +32,11 @@
 
 namespace Acts {
 
-// template <typename surface_t>
-// class ConstSurfacePtrT;
+template <typename surface_t>
+class ConstSurfacePtrT;
 
-// template <typename surface_t>
-// class SurfacePtrT;
+template <typename surface_t>
+class SurfacePtrT;
 
 namespace VectorHelpers {
 namespace detail {

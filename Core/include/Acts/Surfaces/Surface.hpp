@@ -38,6 +38,12 @@ class Layer;
 class TrackingVolume;
 class IVisualization3D;
 
+template <typename surface_t>
+class ConstSurfacePtrT;
+
+template <typename surface_t>
+class SurfacePtrT;
+
 /// Typedef of the surface intersection
 using SurfaceIntersection = ObjectIntersection<Surface>;
 
@@ -121,7 +127,7 @@ class Surface : public virtual GeometryObject,
   /// @note Only call this if you need shared ownership of this object.
   ///
   /// @return The shared pointer
-  SurfacePtr getSharedPtr();
+  SurfacePtrT<Surface> getSharedPtr();
 
   /// Retrieve a @c std::shared_ptr for this surface (const version)
   ///
@@ -132,7 +138,7 @@ class Surface : public virtual GeometryObject,
   /// @note Only call this if you need shared ownership of this object.
   ///
   /// @return The shared pointer
-  ConstSurfacePtr getSharedPtr() const;
+  ConstSurfacePtrT<Surface> getSharedPtr() const;
 
   /// Assignment operator
   /// @note copy construction invalidates the association
@@ -513,6 +519,9 @@ class Surface : public virtual GeometryObject,
   AlignmentToBoundMatrix alignmentToBoundDerivativeWithoutCorrection(
       const GeometryContext& gctx, const FreeVector& parameters) const;
 };
+
+using SurfacePtr = SurfacePtrT<Surface>;
+using ConstSurfacePtr = ConstSurfacePtrT<Surface>;
 
 /// Print surface information to the provided stream. Internally invokes the
 /// `surface.toStream(...)`-method. This can be easily used e.g. like `std::cout

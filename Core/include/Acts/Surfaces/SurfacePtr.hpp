@@ -10,6 +10,7 @@
 
 #include <cstddef>
 #include <memory>
+
 namespace Acts {
 
 template <typename surface_t>
@@ -33,12 +34,13 @@ class SurfacePtrT {
   SurfacePtrT& operator=(const SurfacePtrT& other) = default;
   SurfacePtrT& operator=(SurfacePtrT&& other) = default;
 
-  template <typename T>
-  bool operator==(const T* rhs) const {
-    return m_shared.get() == rhs;
+  friend bool operator==(const SurfacePtrT<surface_t>& lhs, std::nullptr_t) {
+    return !lhs;
   }
 
-  bool operator==(std::nullptr_t) const { return !m_shared; }
+  friend bool operator!=(const SurfacePtrT<surface_t>& lhs, std::nullptr_t) {
+    return lhs;
+  }
 
   template <typename T,
             typename = std::enable_if_t<std::is_base_of_v<surface_t, T>>>
@@ -131,12 +133,15 @@ class ConstSurfacePtrT {
     return *this;
   }
 
-  template <typename T>
-  bool operator==(const T* rhs) const {
-    return m_shared.get() == rhs;
+  friend bool operator==(const ConstSurfacePtrT<surface_t>& lhs,
+                         std::nullptr_t) {
+    return !lhs;
   }
 
-  bool operator==(std::nullptr_t) const { return !m_shared; }
+  friend bool operator!=(const ConstSurfacePtrT<surface_t>& lhs,
+                         std::nullptr_t) {
+    return lhs;
+  }
 
   template <typename T,
             typename = std::enable_if_t<std::is_base_of_v<surface_t, T>>>
@@ -172,8 +177,12 @@ class ConstSurfacePtrT {
   std::shared_ptr<const surface_t> m_shared;
 };
 
-class Surface;
+template <typename T>
+bool operator==(const ConstSurfacePtrT<T>& lhs, std::nullptr_t) {
+  return !lhs;
+}
 
+class Surface;
 using SurfacePtr = SurfacePtrT<Surface>;
 using ConstSurfacePtr = ConstSurfacePtrT<Surface>;
 
