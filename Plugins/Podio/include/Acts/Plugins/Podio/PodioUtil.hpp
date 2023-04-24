@@ -17,12 +17,21 @@ namespace ActsPodioEdm {
 class Surface;
 }
 
-namespace Acts {
+namespace Acts::PodioUtil {
+
+class ConversionHelper {
+ public:
+  using identifier_type = uint64_t;
+  virtual std::optional<identifier_type> surfaceToIdentifier(
+      const Surface& surface) const = 0;
+  virtual const Surface* identifierToSurface(
+      identifier_type identifier) const = 0;
+};
 
 std::shared_ptr<const Surface> convertSurfaceFromPodio(
-    const ActsPodioEdm::Surface& surface);
+    const ConversionHelper& helper, const ActsPodioEdm::Surface& surface);
 
-ActsPodioEdm::Surface convertSurfaceToPodio(const Acts::GeometryContext& gctx,
+ActsPodioEdm::Surface convertSurfaceToPodio(const ConversionHelper& helper,
                                             const Acts::Surface& surface);
 
-}  // namespace Acts
+}  // namespace Acts::PodioUtil

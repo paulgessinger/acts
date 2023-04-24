@@ -31,7 +31,9 @@
 
 #include <memory>
 
-namespace Acts {
+#include <_types/_uint64_t.h>
+
+namespace Acts::PodioUtil {
 
 namespace {
 template <typename bounds_t>
@@ -49,7 +51,7 @@ std::shared_ptr<const bounds_t> createBounds(
 }
 }  // namespace
 
-ActsPodioEdm::Surface convertSurfaceToPodio(const Acts::GeometryContext& gctx,
+ActsPodioEdm::Surface convertSurfaceToPodio(const ConversionHelper& helper,
                                             const Acts::Surface& surface) {
   ActsPodioEdm::Surface result;
 
@@ -70,13 +72,25 @@ ActsPodioEdm::Surface convertSurfaceToPodio(const Acts::GeometryContext& gctx,
   result.boundValuesSize = values.size();
 
   Eigen::Map<ActsSymMatrix<4>> trf{result.transform.data()};
-  trf = surface.transform(gctx).matrix();
+
+  std::optional<ConversionHelper::identifier_type> identifier =
+      helper.surfaceToIdentifier(surface);
+  if (identifier.has_value()) {
+    result.identifier = identifier.value();
+  } else {
+    assert(surface.associatedDetectorElement() == nullptr &&
+           "Unidentified surface does not have detector element");
+    // This is safe ONLY(!) if there is no associated detector element, since
+    // the surface will not inspect the geometry context at all by itself.
+    Acts::GeometryContext gctx;
+    trf = surface.transform(gctx).matrix();
+  }
 
   return result;
 }
 
 std::shared_ptr<const Surface> convertSurfaceFromPodio(
-    const ActsPodioEdm::Surface& surface) {
+    const ConversionHelper& helper, const ActsPodioEdm::Surface& surface) {
   Eigen::Map<const ActsSymMatrix<4>> mat{surface.transform.data()};
   Transform3 transform{mat};
 
@@ -84,6 +98,15 @@ std::shared_ptr<const Surface> convertSurfaceFromPodio(
   using B = SurfaceBounds;
 
   std::shared_ptr<const Surface> result;
+
+  if (const Surface* srf = helper.identifierToSurface(surface.identifier);
+      srf != nullptr) {
+    result = srf->getSharedPtr();
+  }
+
+  if (result) {
+    return result;
+  }
 
   switch (surface.surfaceType) {
     default:
@@ -176,4 +199,4 @@ std::shared_ptr<const Surface> convertSurfaceFromPodio(
   return result;
 }
 
-}  // namespace Acts
+}  // namespace Acts::PodioUtil

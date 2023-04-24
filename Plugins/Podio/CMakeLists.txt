@@ -10,7 +10,7 @@ target_include_directories(
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(
   ActsPluginPodio
-  PUBLIC ActsCore)
+  PUBLIC ActsCore ActsPluginIdentification)
 
 # target_link_libraries(ActsPluginEDM4hep PUBLIC EDM4HEP::edm4hep)
 

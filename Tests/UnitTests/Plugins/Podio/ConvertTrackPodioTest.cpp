@@ -44,10 +44,22 @@
 #include <iterator>
 #include <memory>
 #include <random>
+#include <stdexcept>
 
 using namespace Acts;
 using namespace Acts::UnitLiterals;
 BOOST_AUTO_TEST_SUITE(PodioTrackConversion)
+
+class Helper : public PodioUtil::ConversionHelper {
+ public:
+  std::optional<identifier_type> surfaceToIdentifier(
+      const Surface&) const override {
+    return {};
+  }
+  const Surface* identifierToSurface(identifier_type) const override {
+    return nullptr;
+  }
+};
 
 BOOST_AUTO_TEST_CASE(ConvertSurface) {
   auto rBounds = std::make_shared<RectangleBounds>(15, 20);
@@ -57,10 +69,12 @@ BOOST_AUTO_TEST_CASE(ConvertSurface) {
 
   auto free = Acts::Surface::makeShared<PlaneSurface>(trf, rBounds);
 
-  Acts::GeometryContext gctx;
-  auto surface = convertSurfaceToPodio(gctx, *free);
+  Helper helper;
+  auto surface = PodioUtil::convertSurfaceToPodio(helper, *free);
 
-  auto free2 = convertSurfaceFromPodio(surface);
+  auto free2 = PodioUtil::convertSurfaceFromPodio(helper, surface);
+
+  Acts::GeometryContext gctx;
 
   BOOST_REQUIRE(free2);
   BOOST_CHECK_EQUAL(free->type(), free2->type());
@@ -80,7 +94,8 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
   ActsPodioEdm::TrackCollection tracks;
 
   Acts::VectorMultiTrajectory mtj{};
-  Acts::PodioTrackContainer ptc{tracks};
+  Helper helper;
+  Acts::PodioTrackContainer ptc{helper, tracks};
 
   Acts::TrackContainer tc{ptc, mtj};
 

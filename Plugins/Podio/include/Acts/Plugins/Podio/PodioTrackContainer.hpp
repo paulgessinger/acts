@@ -11,8 +11,11 @@
 #include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/EventData/TrackContainer.hpp"
 #include "Acts/EventData/detail/DynamicColumn.hpp"
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
+#include "ActsPodioEdm/Track.h"
 #include "ActsPodioEdm/TrackCollection.h"
 
+#include <mutex>
 #include <stdexcept>
 
 namespace Acts {
@@ -41,8 +44,15 @@ class PodioTrackContainer {
       typename detail_lt::Types<eBoundSize, true>::CovarianceMap;
 
  public:
-  PodioTrackContainer(ActsPodioEdm::TrackCollection& collection)
-      : m_collection{&collection} {}
+  PodioTrackContainer(const PodioUtil::ConversionHelper& helper,
+                      ActsPodioEdm::TrackCollection& collection)
+      : m_collection{&collection}, m_helper{helper} {
+    m_surfaces.reserve(m_collection->size());
+    for (ActsPodioEdm::Track track : *m_collection) {
+      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
+          m_helper, track.getReferenceSurface()));
+    }
+  }
 
   PodioTrackContainer(const PodioTrackContainer& other);
 
@@ -70,7 +80,12 @@ class PodioTrackContainer {
         return data.parameters.data();
       case "cov"_hash:
         return data.covariance.data();
-      // case "referenceSurface"_hash:
+      case "referenceSurface"_hash:
+        if constexpr (EnsureConst) {
+          return instance.getSurface(itrack);
+        } else {
+          return instance.getOrCreateSurface(itrack);
+        }
       // return &instance.m_referenceSurfaces[itrack];
       case "nMeasurements"_hash:
         return &data.nMeasurements;
@@ -96,6 +111,20 @@ class PodioTrackContainer {
     // assert(col && "Dynamic column is null");
     // return col->get(itrack);
     // }
+  }
+
+  std::shared_ptr<const Surface> getOrCreateSurface(IndexType itrack) {
+    std::shared_ptr<const Surface>& ptr = m_surfaces.at(itrack);
+    if (!ptr) {
+      ActsPodioEdm::Track track = m_collection->at(itrack);
+      ptr = PodioUtil::convertSurfaceFromPodio(m_helper,
+                                               track.getReferenceSurface());
+    }
+    return ptr;
+  }
+
+  std::shared_ptr<const Surface> getSurface(IndexType itrack) const {
+    return m_surfaces.at(itrack);
   }
 
  public:
@@ -141,6 +170,7 @@ class PodioTrackContainer {
 
   IndexType addTrack_impl() {
     auto track = m_collection->create();
+    m_surfaces.emplace_back();
     return m_collection->size() - 1;
   };
 
@@ -180,5 +210,7 @@ class PodioTrackContainer {
 
  private:
   ActsPodioEdm::TrackCollection* m_collection;
+  std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
+  std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
 }  // namespace Acts

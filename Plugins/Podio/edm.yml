@@ -25,6 +25,7 @@ components:
         - int surfaceType
         - int boundsType
         - uint64_t geometryId
+        - uint64_t identifier
         - std::array<double, 10> boundValues
         - uint32_t boundValuesSize
         - std::array<double, 16> transform
