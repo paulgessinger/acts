@@ -266,12 +266,11 @@ class TrackProxy {
     return component<IndexType>(hashString("tipIndex"));
   }
 
-  // @TODO: Returning a shared_ptr is expensive, this needs work
   /// Get the reference surface of the track (e.g. the perigee)
   /// @return the reference surface
-  std::shared_ptr<const Surface> referenceSurface() const {
-    return component<std::shared_ptr<const Surface>,
-                     hashString("referenceSurface")>();
+  const Surface& referenceSurface() const {
+    return *component<std::shared_ptr<const Surface>,
+                      hashString("referenceSurface")>();
   }
 
   // NOLINTBEGIN(performance-unnecessary-value-param)
@@ -543,7 +542,7 @@ class TrackProxy {
     parameters() = other.parameters();
     covariance() = other.covariance();
     if (other.hasReferenceSurface()) {
-      setReferenceSurface(other.referenceSurface());
+      setReferenceSurface(other.referenceSurface().getSharedPtr());
     }
     nMeasurements() = other.nMeasurements();
     nHoles() = other.nHoles();

@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Build, factory_t, holder_types) {
       Acts::Vector3{-3_m, 0., 0.}, Acts::Vector3{1., 0., 0});
 
   t.setReferenceSurface(surface);
-  BOOST_CHECK_EQUAL(surface.get(), t.referenceSurface().get());
+  BOOST_CHECK_EQUAL(surface.get(), &t.referenceSurface());
 
   TrackAccessor<unsigned int> accNMeasuements("nMeasurements");
   ConstTrackAccessor<unsigned int> caccNMeasuements("nMeasurements");
