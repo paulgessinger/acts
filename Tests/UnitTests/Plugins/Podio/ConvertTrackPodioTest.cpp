@@ -131,10 +131,10 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
   Acts::GeometryContext gctx;
   t.setReferenceSurface(free);
-  const auto& free2 = t.referenceSurface();
-  BOOST_CHECK_EQUAL(free->center(gctx), free2.center(gctx));
+  auto free2 = t.referenceSurface();
+  BOOST_CHECK_EQUAL(free->center(gctx), free2->center(gctx));
 
-  const auto* rBounds2 = dynamic_cast<const RectangleBounds*>(&free2.bounds());
+  const auto* rBounds2 = dynamic_cast<const RectangleBounds*>(&free2->bounds());
   BOOST_REQUIRE_NE(rBounds2, nullptr);
 
   BOOST_CHECK_EQUAL(rBounds2->halfLengthX(), rBounds->halfLengthX());

@@ -336,8 +336,8 @@ BOOST_AUTO_TEST_CASE(RoundTripTests) {
 
     CHECK_CLOSE_OR_SMALL(orig.parameters(), read.parameters(), 1e-5, 1e-8);
     CHECK_CLOSE_OR_SMALL(orig.covariance(), read.covariance(), 1e-5, 1e-8);
-    BOOST_CHECK_EQUAL(orig.referenceSurface().center(gctx),
-                      read.referenceSurface().center(gctx));
+    BOOST_CHECK_EQUAL(orig.referenceSurface()->center(gctx),
+                      read.referenceSurface()->center(gctx));
 
     auto origTsIt = orig.trackStates().begin();
     auto readTsIt = read.trackStates().begin();

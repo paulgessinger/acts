@@ -134,8 +134,7 @@ void writeTrack(
 
   // Convert the track parameters at the IP
   SingleBoundTrackParameters<SinglyCharged> trackParams{
-      track.referenceSurface().getSharedPtr(), track.parameters(),
-      track.covariance()};
+      track.referenceSurface(), track.parameters(), track.covariance()};
 
   // Convert to LCIO track parametrization expected by EDM4hep
   auto converted =

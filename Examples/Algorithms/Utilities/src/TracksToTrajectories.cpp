@@ -56,7 +56,7 @@ ProcessCode TracksToTrajectories::execute(const AlgorithmContext& ctx) const {
       tips.push_back(track.tipIndex());
       parameters.emplace(
           std::pair{track.tipIndex(),
-                    TrackParameters{track.referenceSurface().getSharedPtr(),
+                    TrackParameters{track.referenceSurface(),
                                     track.parameters(), track.covariance()}});
     }
 
@@ -80,7 +80,7 @@ ProcessCode TracksToTrajectories::execute(const AlgorithmContext& ctx) const {
       tips.push_back(track.tipIndex());
       parameters.emplace(
           std::pair{track.tipIndex(),
-                    TrackParameters{track.referenceSurface().getSharedPtr(),
+                    TrackParameters{track.referenceSurface(),
                                     track.parameters(), track.covariance()}});
 
       trajectories.emplace_back(tracks.trackStateContainer(), std::move(tips),

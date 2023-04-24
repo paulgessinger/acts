@@ -56,11 +56,10 @@ ActsExamples::ProcessCode ActsExamples::RefittingAlgorithm::execute(
 
     TrackFitterFunction::GeneralFitterOptions options{
         ctx.geoContext, ctx.magFieldContext, ctx.calibContext,
-        &track.referenceSurface(), Acts::PropagatorPlainOptions()};
+        track.referenceSurface().get(), Acts::PropagatorPlainOptions()};
 
     const Acts::BoundTrackParameters initialParams(
-        track.referenceSurface().getSharedPtr(), track.parameters(),
-        track.covariance());
+        track.referenceSurface(), track.parameters(), track.covariance());
 
     trackSourceLinks.clear();
     surfSequence.clear();
