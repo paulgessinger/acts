@@ -148,20 +148,17 @@ class PodioTrackContainer {
   std::size_t size_impl() const { return m_collection->size(); }
   // END INTERFACE HELPER
 
-  // std::vector<IndexType> m_tipIndex;
-  // std::vector<typename detail_lt::Types<eBoundSize>::Coefficients> m_params;
-  // std::vector<typename detail_lt::Types<eBoundSize>::Covariance> m_cov;
-  // std::vector<std::shared_ptr<const Surface>> m_referenceSurfaces;
+  const Surface& referenceSurface_impl(IndexType itrack) const {
+    return *m_surfaces.at(itrack);
+  }
 
-  // std::vector<unsigned int> m_nMeasurements;
-  // std::vector<unsigned int> m_nHoles;
-  // std::vector<float> m_chi2;
-  // std::vector<unsigned int> m_ndf;
-  // std::vector<unsigned int> m_nOutliers;
-  // std::vector<unsigned int> m_nSharedHits;
-
-  // std::unordered_map<HashedString,
-  // std::unique_ptr<detail::DynamicColumnBase>> m_dynamic;
+  void setReferenceSurface_impl(IndexType itrack,
+                                std::shared_ptr<const Surface> surface) {
+    auto track = m_collection->at(itrack);
+    track.setReferenceSurface(
+        PodioUtil::convertSurfaceToPodio(m_helper, *surface));
+    m_surfaces.at(itrack) = std::move(surface);
+  }
 
   PodioTrackContainer(const ConstPodioTrackContainer& other);
 

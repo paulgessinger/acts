@@ -10,6 +10,7 @@
 
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
+#include "Acts/Plugins/Identification/Identifier.hpp"
 #include "Acts/Surfaces/AnnulusBounds.hpp"
 #include "Acts/Surfaces/ConeSurface.hpp"
 #include "Acts/Surfaces/ConvexPolygonBounds.hpp"
@@ -29,6 +30,7 @@
 #include "Acts/Utilities/ThrowAssert.hpp"
 #include "ActsPodioEdm/Surface.h"
 
+#include <limits>
 #include <memory>
 
 #include <_types/_uint64_t.h>
@@ -55,31 +57,31 @@ ActsPodioEdm::Surface convertSurfaceToPodio(const ConversionHelper& helper,
                                             const Acts::Surface& surface) {
   ActsPodioEdm::Surface result;
 
-  // @TODO: Surface type is not well-defined for curvilinear surface: looks like any plane surface
-  result.surfaceType = surface.type();
-  // @TODO: Test line bounds, does not have bounds, so nullptr
-  result.boundsType = surface.bounds().type();
-  result.geometryId = surface.geometryId().value();
-  auto values = surface.bounds().values();
-
-  if (values.size() > result.boundValues.size()) {
-    throw std::runtime_error{"Too many bound values to store"};
-  }
-
-  for (size_t i = 0; i < values.size(); i++) {
-    result.boundValues.at(i) = values.at(i);
-  }
-  result.boundValuesSize = values.size();
-
-  Eigen::Map<ActsSymMatrix<4>> trf{result.transform.data()};
-
-  std::optional<ConversionHelper::identifier_type> identifier =
-      helper.surfaceToIdentifier(surface);
+  std::optional<Identifier> identifier = helper.surfaceToIdentifier(surface);
   if (identifier.has_value()) {
     result.identifier = identifier.value();
   } else {
+    result.identifier = kNoIdentifier;
     assert(surface.associatedDetectorElement() == nullptr &&
            "Unidentified surface does not have detector element");
+    // @TODO: Surface type is not well-defined for curvilinear surface: looks like any plane surface
+    result.surfaceType = surface.type();
+    // @TODO: Test line bounds, does not have bounds, so nullptr
+    result.boundsType = surface.bounds().type();
+    result.geometryId = surface.geometryId().value();
+    auto values = surface.bounds().values();
+
+    if (values.size() > result.boundValues.size()) {
+      throw std::runtime_error{"Too many bound values to store"};
+    }
+
+    for (size_t i = 0; i < values.size(); i++) {
+      result.boundValues.at(i) = values.at(i);
+    }
+    result.boundValuesSize = values.size();
+
+    Eigen::Map<ActsSymMatrix<4>> trf{result.transform.data()};
+
     // This is safe ONLY(!) if there is no associated detector element, since
     // the surface will not inspect the geometry context at all by itself.
     Acts::GeometryContext gctx;

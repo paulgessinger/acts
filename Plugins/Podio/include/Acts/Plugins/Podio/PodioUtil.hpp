@@ -11,6 +11,7 @@
 #include "Acts/Geometry/GeometryIdentifier.hpp"
 #include "Acts/Geometry/TrackingGeometry.hpp"
 
+#include <limits>
 #include <memory>
 
 namespace ActsPodioEdm {
@@ -19,13 +20,14 @@ class Surface;
 
 namespace Acts::PodioUtil {
 
+using Identifier = uint64_t;
+constexpr Identifier kNoIdentifier = std::numeric_limits<Identifier>::max();
+
 class ConversionHelper {
  public:
-  using identifier_type = uint64_t;
-  virtual std::optional<identifier_type> surfaceToIdentifier(
+  virtual std::optional<Identifier> surfaceToIdentifier(
       const Surface& surface) const = 0;
-  virtual const Surface* identifierToSurface(
-      identifier_type identifier) const = 0;
+  virtual const Surface* identifierToSurface(Identifier identifier) const = 0;
 };
 
 std::shared_ptr<const Surface> convertSurfaceFromPodio(

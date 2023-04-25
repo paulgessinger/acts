@@ -50,15 +50,37 @@ using namespace Acts;
 using namespace Acts::UnitLiterals;
 BOOST_AUTO_TEST_SUITE(PodioTrackConversion)
 
-class Helper : public PodioUtil::ConversionHelper {
+class NullHelper : public PodioUtil::ConversionHelper {
  public:
-  std::optional<identifier_type> surfaceToIdentifier(
+  std::optional<PodioUtil::Identifier> surfaceToIdentifier(
       const Surface&) const override {
     return {};
   }
-  const Surface* identifierToSurface(identifier_type) const override {
+  const Surface* identifierToSurface(PodioUtil::Identifier) const override {
     return nullptr;
   }
+};
+
+struct MapHelper : public PodioUtil::ConversionHelper {
+  std::optional<PodioUtil::Identifier> surfaceToIdentifier(
+      const Surface& surface) const override {
+    for (auto&& [id, srf] : surfaces) {
+      if (srf == &surface) {
+        return id;
+      }
+    }
+    return {};
+  }
+  const Surface* identifierToSurface(PodioUtil::Identifier id) const override {
+    auto it = surfaces.find(id);
+    if (it == surfaces.end()) {
+      return nullptr;
+    }
+
+    return it->second;
+  }
+
+  std::unordered_map<PodioUtil::Identifier, const Surface*> surfaces;
 };
 
 BOOST_AUTO_TEST_CASE(ConvertSurface) {
@@ -69,7 +91,7 @@ BOOST_AUTO_TEST_CASE(ConvertSurface) {
 
   auto free = Acts::Surface::makeShared<PlaneSurface>(trf, rBounds);
 
-  Helper helper;
+  NullHelper helper;
   auto surface = PodioUtil::convertSurfaceToPodio(helper, *free);
 
   auto free2 = PodioUtil::convertSurfaceFromPodio(helper, surface);
@@ -91,112 +113,103 @@ BOOST_AUTO_TEST_CASE(ConvertSurface) {
 }
 
 BOOST_AUTO_TEST_CASE(ConvertTrack) {
-  ActsPodioEdm::TrackCollection tracks;
-
-  Acts::VectorMultiTrajectory mtj{};
-  Helper helper;
-  Acts::PodioTrackContainer ptc{helper, tracks};
-
-  Acts::TrackContainer tc{ptc, mtj};
-
-  BOOST_CHECK_EQUAL(tc.size(), 0);
-
-  auto t = tc.getTrack(tc.addTrack());
-  BOOST_CHECK_EQUAL(t.tipIndex(), MultiTrajectoryTraits::kInvalid);
-  t.tipIndex() = 5;
-  BOOST_CHECK_EQUAL(t.tipIndex(), 5);
-
-  BOOST_CHECK_EQUAL(tc.size(), 1);
-
-  auto pTrack = tracks.at(0);
-  BOOST_CHECK_EQUAL(pTrack.data().tipIndex, 5);
-
-  t.parameters() << 1, 2, 3, 4, 5, 6;
-  Eigen::Map<BoundVector> pars{pTrack.data().parameters.data()};
-  BOOST_CHECK_EQUAL(pars, (BoundVector{1, 2, 3, 4, 5, 6}));
-
-  auto ref = BoundMatrix::Random().eval();
-  t.covariance() = ref;
-
-  Eigen::Map<const BoundMatrix> cov{pTrack.data().covariance.data()};
-  BOOST_CHECK_EQUAL(ref, cov);
-
-  t.nMeasurements() = 17;
-  BOOST_CHECK_EQUAL(pTrack.data().nMeasurements, 17);
-
-  t.nHoles() = 34;
-  BOOST_CHECK_EQUAL(pTrack.data().nHoles, 34);
-
-  t.chi2() = 882.3f;
-  BOOST_CHECK_EQUAL(pTrack.data().chi2, 882.3f);
-
-  t.nDoF() = 9;
-  BOOST_CHECK_EQUAL(pTrack.data().ndf, 9);
-
-  t.nOutliers() = 77;
-  BOOST_CHECK_EQUAL(pTrack.data().nOutliers, 77);
-
-  t.nSharedHits() = 99;
-  BOOST_CHECK_EQUAL(pTrack.data().nSharedHits, 99);
-
   auto rBounds = std::make_shared<RectangleBounds>(15, 20);
   auto trf = Transform3::Identity();
   trf.translation().setRandom();
   auto free = Acts::Surface::makeShared<PlaneSurface>(trf, rBounds);
 
-  Acts::GeometryContext gctx;
-  t.setReferenceSurface(free);
-  const auto& free2 = t.referenceSurface();
-  BOOST_CHECK_EQUAL(free->center(gctx), free2.center(gctx));
+  MapHelper helper;
 
-  const auto* rBounds2 = dynamic_cast<const RectangleBounds*>(&free2.bounds());
-  BOOST_REQUIRE_NE(rBounds2, nullptr);
+  ActsPodioEdm::TrackCollection tracks;
 
-  BOOST_CHECK_EQUAL(rBounds2->halfLengthX(), rBounds->halfLengthX());
-  BOOST_CHECK_EQUAL(rBounds2->halfLengthY(), rBounds->halfLengthY());
+  {
+    Acts::VectorMultiTrajectory mtj{};
+    Acts::PodioTrackContainer ptc{helper, tracks};
 
-  // std::cout << track.getL0() << std::endl;
-  // std::cout << track.getT() << std::endl;
+    Acts::TrackContainer tc{ptc, mtj};
 
-  // auto refSurface = Surface::makeShared<PerigeeSurface>(Vector3{50, 30, 20});
+    BOOST_CHECK_EQUAL(tc.size(), 0);
 
-  // BoundVector par;
-  // par << 1_mm, 5_mm, 0, M_PI_2, -1 / 1_GeV,
-  // 5_ns;  // -> perpendicular to perigee and pointing right, should be PCA
+    auto t = tc.getTrack(tc.addTrack());
+    BOOST_CHECK_EQUAL(t.tipIndex(), MultiTrajectoryTraits::kInvalid);
+    t.tipIndex() = 5;
+    BOOST_CHECK_EQUAL(t.tipIndex(), 5);
 
-  // BoundMatrix cov;
-  // cov.setIdentity();
-  // cov(5, 5) = 25_ns;
+    BOOST_CHECK_EQUAL(tc.size(), 1);
 
-  // SingleBoundTrackParameters<SinglyCharged> boundPar{refSurface, par, cov};
+    auto pTrack = tracks.at(0);
+    BOOST_CHECK_EQUAL(pTrack.data().tipIndex, 5);
 
-  // double Bz = 2_T;
+    t.parameters() << 1, 2, 3, 4, 5, 6;
+    Eigen::Map<BoundVector> pars{pTrack.data().parameters.data()};
+    BOOST_CHECK_EQUAL(pars, (BoundVector{1, 2, 3, 4, 5, 6}));
 
-  // Acts::GeometryContext gctx;
+    auto ref = BoundMatrix::Random().eval();
+    t.covariance() = ref;
 
-  // EDM4hepUtil::detail::Parameters converted =
-  // EDM4hepUtil::detail::convertTrackParametersToEdm4hep(gctx, Bz, boundPar);
+    Eigen::Map<const BoundMatrix> cov{pTrack.data().covariance.data()};
+    BOOST_CHECK_EQUAL(ref, cov);
 
-  // BOOST_CHECK(converted.covariance.has_value());
-  // BOOST_CHECK(converted.surface);
+    t.nMeasurements() = 17;
+    BOOST_CHECK_EQUAL(pTrack.data().nMeasurements, 17);
 
-  // // input is already on perigee, should not be modified
-  // BOOST_CHECK_EQUAL(par.template head<2>(),
-  // converted.values.template head<2>());
-  // BOOST_CHECK_EQUAL(
-  // (converted.covariance.value().template topLeftCorner<4, 4>()),
-  // ActsSymMatrix<4>::Identity());
-  // BOOST_CHECK(converted.covariance.value()(4, 4) > 0);
-  // BOOST_CHECK_EQUAL(converted.covariance.value()(5, 5), 25_ns);
+    t.nHoles() = 34;
+    BOOST_CHECK_EQUAL(pTrack.data().nHoles, 34);
 
-  // // convert back for roundtrip test
+    t.chi2() = 882.3f;
+    BOOST_CHECK_EQUAL(pTrack.data().chi2, 882.3f);
 
-  // SingleBoundTrackParameters<SinglyCharged> roundtripPar =
-  // EDM4hepUtil::detail::convertTrackParametersFromEdm4hep(Bz, converted);
+    t.nDoF() = 9;
+    BOOST_CHECK_EQUAL(pTrack.data().ndf, 9);
 
-  // BOOST_CHECK(roundtripPar.parameters().isApprox(boundPar.parameters()));
-  // BOOST_CHECK(roundtripPar.covariance().value().isApprox(
-  // boundPar.covariance().value()));
+    t.nOutliers() = 77;
+    BOOST_CHECK_EQUAL(pTrack.data().nOutliers, 77);
+
+    t.nSharedHits() = 99;
+    BOOST_CHECK_EQUAL(pTrack.data().nSharedHits, 99);
+
+    Acts::GeometryContext gctx;
+    t.setReferenceSurface(free);
+    const auto& free2 = t.referenceSurface();
+    BOOST_CHECK_EQUAL(free->center(gctx), free2.center(gctx));
+
+    const auto* rBounds2 =
+        dynamic_cast<const RectangleBounds*>(&free2.bounds());
+    BOOST_REQUIRE_NE(rBounds2, nullptr);
+
+    BOOST_CHECK_EQUAL(rBounds2->halfLengthX(), rBounds->halfLengthX());
+    BOOST_CHECK_EQUAL(rBounds2->halfLengthY(), rBounds->halfLengthY());
+
+    BOOST_CHECK_EQUAL(pTrack.getReferenceSurface().identifier,
+                      PodioUtil::kNoIdentifier);
+
+    auto t2 = tc.getTrack(tc.addTrack());
+
+    // Register surface "with the detector"
+    helper.surfaces[666] = free.get();
+    t2.setReferenceSurface(free);
+    auto pTrack2 = tracks.at(1);
+    BOOST_CHECK_EQUAL(pTrack2.getReferenceSurface().identifier, 666);
+  }
+
+  {
+    // Recreate track container from existing Podio collection
+    Acts::VectorMultiTrajectory mtj{};
+    Acts::PodioTrackContainer ptc{helper, tracks};
+
+    Acts::TrackContainer tc{ptc, mtj};
+
+    BOOST_CHECK_EQUAL(tc.size(), 2);
+
+    auto t = tc.getTrack(0);
+    const auto& freeRecreated = t.referenceSurface();
+    // Not the exact same surface, it's recreated from values
+    BOOST_CHECK_NE(free.get(), &freeRecreated);
+
+    auto t2 = tc.getTrack(1);
+    // Is the exact same surface, because it's looked up in the "detector"
+    BOOST_CHECK_EQUAL(free.get(), &t2.referenceSurface());
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
