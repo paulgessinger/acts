@@ -187,7 +187,6 @@ class VectorMultiTrajectoryBase {
         return instance.m_sourceLinks[instance.m_index[istate].iuncalibrated]
             .has_value();
       case "previous"_hash:
-      case "referenceSurface"_hash:
       case "measdim"_hash:
       case "chi2"_hash:
       case "pathLength"_hash:
@@ -217,8 +216,6 @@ class VectorMultiTrajectoryBase {
         return &instance.m_index[istate].ismoothed;
       case "projector"_hash:
         return &instance.m_projectors[instance.m_index[istate].iprojector];
-      case "referenceSurface"_hash:
-        return &instance.m_referenceSurfaces[istate];
       case "measdim"_hash:
         return &instance.m_index[istate].measdim;
       case "chi2"_hash:
@@ -270,6 +267,10 @@ class VectorMultiTrajectoryBase {
 
   SourceLink getUncalibratedSourceLink_impl(IndexType istate) const {
     return m_sourceLinks[m_index[istate].iuncalibrated].value();
+  }
+
+  const Surface& referenceSurface_impl(IndexType istate) const {
+    return *m_referenceSurfaces[istate];
   }
 
   // END INTERFACE HELPER
@@ -437,6 +438,11 @@ class VectorMultiTrajectory final
 
   void setUncalibratedSourceLink_impl(IndexType istate, SourceLink sourceLink) {
     m_sourceLinks[m_index[istate].iuncalibrated] = std::move(sourceLink);
+  }
+
+  void setReferenceSurface_impl(IndexType istate,
+                                std::shared_ptr<const Surface> surface) {
+    m_referenceSurfaces[istate] = std::move(surface);
   }
 
   // END INTERFACE

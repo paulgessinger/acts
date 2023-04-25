@@ -1530,6 +1530,16 @@ class MultiTrajectory {
     return self().getUncalibratedSourceLink_impl(istate);
   }
 
+  const Surface& referenceSurface(IndexType istate) const {
+    return self().referenceSurface_impl(istate);
+  }
+
+  template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
+  void setReferenceSurface(IndexType istate,
+                           std::shared_ptr<const Surface> surface) {
+    self().setReferenceSurface_impl(istate, std::move(surface));
+  }
+
  private:
   friend class detail_lt::TrackStateProxy<Derived, MeasurementSizeMax, true>;
   friend class detail_lt::TrackStateProxy<Derived, MeasurementSizeMax, false>;
