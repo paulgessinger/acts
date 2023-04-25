@@ -23,6 +23,7 @@ namespace Acts::PodioUtil {
 using Identifier = uint64_t;
 constexpr Identifier kNoIdentifier = std::numeric_limits<Identifier>::max();
 
+// @TODO: We might want to consider making this a type erased type that's not an interface
 class ConversionHelper {
  public:
   virtual std::optional<Identifier> surfaceToIdentifier(
