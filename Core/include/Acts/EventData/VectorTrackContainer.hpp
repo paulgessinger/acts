@@ -129,8 +129,8 @@ class VectorTrackContainerBase {
     }
   }
 
-  const Surface& referenceSurface_impl(IndexType itrack) const {
-    return *m_referenceSurfaces[itrack];
+  const Surface* referenceSurface_impl(IndexType itrack) const {
+    return m_referenceSurfaces[itrack].get();
   }
 
   std::size_t size_impl() const {

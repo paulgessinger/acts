@@ -481,9 +481,7 @@ class TrackStateProxy {
   /// Reference surface.
   /// @return the reference surface
   const Surface& referenceSurface() const {
-    assert(has<hashString("referenceSurface")>());
-    return *component<std::shared_ptr<const Surface>,
-                      hashString("referenceSurface")>();
+    return m_traj->referenceSurface(m_istate);
   }
 
   // NOLINTBEGIN(performance-unnecessary-value-param)
@@ -494,8 +492,7 @@ class TrackStateProxy {
   /// @note This overload is only present in case @c ReadOnly is false.
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
   void setReferenceSurface(std::shared_ptr<const Surface> srf) {
-    component<std::shared_ptr<const Surface>,
-              hashString("referenceSurface")>() = std::move(srf);
+    m_traj->setReferenceSurface(m_istate, std::move(srf));
   }
   // NOLINTEND(performance-unnecessary-value-param)
 
