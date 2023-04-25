@@ -86,7 +86,6 @@ class PodioTrackContainer {
         } else {
           return instance.getOrCreateSurface(itrack);
         }
-      // return &instance.m_referenceSurfaces[itrack];
       case "nMeasurements"_hash:
         return &data.nMeasurements;
       case "nHoles"_hash:
@@ -136,14 +135,7 @@ class PodioTrackContainer {
     return component_impl<true>(*this, key, itrack);
   }
 
-  constexpr bool hasColumn_impl(HashedString key) const {
-    return false;
-    // using namespace Acts::HashedStringLiteral;
-    // switch (key) {
-    // default:
-    // return m_dynamic.find(key) != m_dynamic.end();
-    // }
-  }
+  constexpr bool hasColumn_impl(HashedString /*key*/) const { return false; }
 
   std::size_t size_impl() const { return m_collection->size(); }
   // END INTERFACE HELPER
@@ -174,10 +166,8 @@ class PodioTrackContainer {
   void removeTrack_impl(IndexType itrack);
 
   template <typename T>
-  constexpr void addColumn_impl(const std::string& key) {
-    throw std::runtime_error{"Not implemented"};
-    // m_dynamic.insert(
-    // {hashString(key), std::make_unique<detail::DynamicColumn<T>>()});
+  constexpr void addColumn_impl(const std::string& /*key*/) {
+    throw std::runtime_error{"addColumn not implemented"};
   }
 
   Parameters parameters(IndexType itrack) {
@@ -201,7 +191,7 @@ class PodioTrackContainer {
 
   void ensureDynamicColumns_impl(const PodioTrackContainer& other);
 
-  void reserve(IndexType size) {}
+  void reserve(IndexType /*size*/) {}
 
   // END INTERFACE
 
