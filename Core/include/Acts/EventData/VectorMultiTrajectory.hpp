@@ -10,8 +10,10 @@
 
 #include "Acts/Definitions/TrackParametrization.hpp"
 #include "Acts/EventData/MultiTrajectory.hpp"
+#include "Acts/EventData/MultiTrajectoryBackendConcept.hpp"
 #include "Acts/EventData/TrackStatePropMask.hpp"
 #include "Acts/EventData/detail/DynamicColumn.hpp"
+#include "Acts/Utilities/Concepts.hpp"
 
 #include <unordered_map>
 
@@ -188,6 +190,7 @@ class VectorMultiTrajectoryBase {
             .has_value();
       case "previous"_hash:
       case "measdim"_hash:
+      case "referenceSurface"_hash:
       case "chi2"_hash:
       case "pathLength"_hash:
       case "typeFlags"_hash:
@@ -261,6 +264,7 @@ class VectorMultiTrajectoryBase {
     }
   }
 
+ public:
   IndexType calibratedSize_impl(IndexType istate) const {
     return m_index[istate].measdim;
   }
@@ -269,10 +273,11 @@ class VectorMultiTrajectoryBase {
     return m_sourceLinks[m_index[istate].iuncalibrated].value();
   }
 
-  const Surface& referenceSurface_impl(IndexType istate) const {
-    return *m_referenceSurfaces[istate];
+  const Surface* referenceSurface_impl(IndexType istate) const {
+    return m_referenceSurfaces[istate].get();
   }
 
+ protected:
   // END INTERFACE HELPER
 
   /// index to map track states to the corresponding
@@ -326,7 +331,6 @@ class VectorMultiTrajectory final
     return detail_vmt::VectorMultiTrajectoryBase::statistics(*this);
   }
 
- private:
   // BEGIN INTERFACE
   TrackStateProxy::Parameters parameters_impl(IndexType parIdx) {
     return TrackStateProxy::Parameters{m_params[parIdx].data()};
@@ -448,6 +452,8 @@ class VectorMultiTrajectory final
   // END INTERFACE
 };
 
+ACTS_STATIC_CHECK_CONCEPT(MutableMultiTrajectoryBackend, VectorMultiTrajectory);
+
 class ConstVectorMultiTrajectory;
 template <>
 struct IsReadOnlyMultiTrajectory<ConstVectorMultiTrajectory> : std::true_type {
@@ -478,7 +484,6 @@ class ConstVectorMultiTrajectory final
     return detail_vmt::VectorMultiTrajectoryBase::statistics(*this);
   }
 
- private:
   // BEGIN INTERFACE
 
   ConstTrackStateProxy::Parameters parameters_impl(IndexType parIdx) const {
@@ -526,5 +531,8 @@ class ConstVectorMultiTrajectory final
 
   // END INTERFACE
 };
+
+ACTS_STATIC_CHECK_CONCEPT(ConstMultiTrajectoryBackend,
+                          ConstVectorMultiTrajectory);
 
 }  // namespace Acts

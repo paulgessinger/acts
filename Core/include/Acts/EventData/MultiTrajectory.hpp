@@ -466,7 +466,9 @@ class TrackStateProxy {
     typeFlags() = other.typeFlags();
 
     // can be nullptr, but we just take that
-    setReferenceSurface(other.referenceSurfacePointer());
+    if (other.hasReferenceSurface()) {
+      setReferenceSurface(other.referenceSurface().getSharedPtr());
+    }
   }
 
   /// Unset an optional track state component
@@ -479,7 +481,13 @@ class TrackStateProxy {
   /// Reference surface.
   /// @return the reference surface
   const Surface& referenceSurface() const {
-    return m_traj->referenceSurface(m_istate);
+    return *m_traj->referenceSurface(m_istate);
+  }
+
+  /// Returns if the track state has a non nullptr surface associated
+  /// @return whether a surface exists or not
+  bool hasReferenceSurface() const {
+    return m_traj->referenceSurface(m_istate) != nullptr;
   }
 
   // NOLINTBEGIN(performance-unnecessary-value-param)
@@ -1032,11 +1040,6 @@ class TrackStateProxy {
   TrackStateProxy(ConstIf<MultiTrajectory<Trajectory>, ReadOnly>& trajectory,
                   IndexType istate);
 
-  const std::shared_ptr<const Surface>& referenceSurfacePointer() const {
-    return component<std::shared_ptr<const Surface>,
-                     hashString("referenceSurface")>();
-  }
-
   TransitiveConstPointer<ConstIf<MultiTrajectory<Trajectory>, ReadOnly>> m_traj;
   IndexType m_istate;
 
@@ -1524,7 +1527,7 @@ class MultiTrajectory {
     return self().getUncalibratedSourceLink_impl(istate);
   }
 
-  const Surface& referenceSurface(IndexType istate) const {
+  const Surface* referenceSurface(IndexType istate) const {
     return self().referenceSurface_impl(istate);
   }
 
