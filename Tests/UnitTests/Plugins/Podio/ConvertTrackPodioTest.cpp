@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
   {
     Acts::VectorMultiTrajectory mtj{};
-    Acts::PodioTrackContainer ptc{helper, tracks};
+    Acts::MutablePodioTrackContainer ptc{helper, tracks};
 
     Acts::TrackContainer tc{ptc, mtj};
 
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
   {
     // Recreate track container from existing Podio collection
     Acts::VectorMultiTrajectory mtj{};
-    Acts::PodioTrackContainer ptc{helper, tracks};
+    Acts::MutablePodioTrackContainer ptc{helper, tracks};
 
     Acts::TrackContainer tc{ptc, mtj};
 

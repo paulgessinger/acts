@@ -10,7 +10,9 @@
 
 #include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/EventData/TrackContainer.hpp"
+#include "Acts/EventData/TrackContainerBackendConcept.hpp"
 #include "Acts/EventData/detail/DynamicColumn.hpp"
+#include "Acts/Utilities/Concepts.hpp"
 
 #include <unordered_map>
 
@@ -226,6 +228,8 @@ class VectorTrackContainer final : public detail_vtc::VectorTrackContainerBase {
 
   // END INTERFACE
 };
+
+ACTS_STATIC_CHECK_CONCEPT(TrackContainerBackend, VectorTrackContainer);
 
 class ConstVectorTrackContainer;
 template <>

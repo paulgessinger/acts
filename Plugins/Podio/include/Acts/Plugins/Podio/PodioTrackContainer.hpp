@@ -20,13 +20,14 @@
 
 namespace Acts {
 
-class PodioTrackContainer;
+class MutablePodioTrackContainer;
 class ConstPodioTrackContainer;
 
 template <>
-struct IsReadOnlyTrackContainer<PodioTrackContainer> : std::false_type {};
+struct IsReadOnlyTrackContainer<MutablePodioTrackContainer> : std::false_type {
+};
 
-class PodioTrackContainer {
+class MutablePodioTrackContainer {
  public:
   using IndexType = MultiTrajectoryTraits::IndexType;
   static constexpr auto kInvalid = MultiTrajectoryTraits::kInvalid;
@@ -44,8 +45,8 @@ class PodioTrackContainer {
       typename detail_lt::Types<eBoundSize, true>::CovarianceMap;
 
  public:
-  PodioTrackContainer(const PodioUtil::ConversionHelper& helper,
-                      ActsPodioEdm::TrackCollection& collection)
+  MutablePodioTrackContainer(const PodioUtil::ConversionHelper& helper,
+                             ActsPodioEdm::TrackCollection& collection)
       : m_collection{&collection}, m_helper{helper} {
     m_surfaces.reserve(m_collection->size());
     for (ActsPodioEdm::Track track : *m_collection) {
@@ -54,9 +55,10 @@ class PodioTrackContainer {
     }
   }
 
-  PodioTrackContainer(const PodioTrackContainer& other);
+  MutablePodioTrackContainer(const MutablePodioTrackContainer& other);
+  MutablePodioTrackContainer(MutablePodioTrackContainer&& other) = default;
 
-  PodioTrackContainer(PodioTrackContainer&& other) = default;
+  MutablePodioTrackContainer(const ConstPodioTrackContainer& other);
 
   // BEGIN INTERFACE HELPER
 
@@ -152,8 +154,6 @@ class PodioTrackContainer {
     m_surfaces.at(itrack) = std::move(surface);
   }
 
-  PodioTrackContainer(const ConstPodioTrackContainer& other);
-
  public:
   // BEGIN INTERFACE
 
@@ -186,10 +186,11 @@ class PodioTrackContainer {
     return ConstCovariance{m_collection->at(itrack).data().covariance.data()};
   }
 
-  void copyDynamicFrom_impl(IndexType dstIdx, const PodioTrackContainer& src,
-                            IndexType srcIdx);
+  // @TODO What's the equivalent of this?
+  // void copyDynamicFrom_impl(IndexType dstIdx, const PodioTrackContainer& src,
+  // IndexType srcIdx);
 
-  void ensureDynamicColumns_impl(const PodioTrackContainer& other);
+  // void ensureDynamicColumns_impl(const PodioTrackContainer& other);
 
   void reserve(IndexType /*size*/) {}
 
