@@ -42,6 +42,18 @@ components:
         - unsigned int nOutliers // number of outliers
         - unsigned int nSharedHits // number of shared hits
 
+    ActsPodioEdm::TrackStateInfo:
+      Members:
+        - uint32_t index
+        - uint32_t previous
+        - std::array<double, 6> parameters
+        - std::array<double, 36> covariance
+
+        - std::array<double, 6> measurement
+        - std::array<double, 36> measurementCovariance
+
+        - std::array<double, 36> jacobian
+        - unsigned long long projectorBitset
 
 datatypes:
   ActsPodioEdm::Track:
@@ -52,6 +64,12 @@ datatypes:
 
       - ActsPodioEdm::Surface referenceSurface // reference surface
 
+  ActsPodioEdm::TrackState:
+    Description: "Local state on a track"
+    Author : "Paul Gessinger, CERN"
+    Members: 
+      - ActsPodioEdm::TrackStateInfo data // local information
+      - ActsPodioEdm::Surface referenceSurface // reference surface
 
       # - int32_t type                         //flagword that defines the type of track.Bits 16-31 are used internally
       # - float chi2                       //Chi^2 of the track fit

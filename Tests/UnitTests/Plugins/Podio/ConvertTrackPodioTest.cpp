@@ -247,4 +247,6 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
   }
 }
 
+// @TODO: Add tests for (move-)construction of const from mutable
+
 BOOST_AUTO_TEST_SUITE_END()
