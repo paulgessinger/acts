@@ -122,6 +122,8 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
   ActsPodioEdm::TrackCollection tracks;
 
+  auto refCov = BoundMatrix::Random().eval();
+
   {
     Acts::VectorMultiTrajectory mtj{};
     Acts::MutablePodioTrackContainer ptc{helper, tracks};
@@ -144,11 +146,10 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
     Eigen::Map<BoundVector> pars{pTrack.data().parameters.data()};
     BOOST_CHECK_EQUAL(pars, (BoundVector{1, 2, 3, 4, 5, 6}));
 
-    auto ref = BoundMatrix::Random().eval();
-    t.covariance() = ref;
+    t.covariance() = refCov;
 
     Eigen::Map<const BoundMatrix> cov{pTrack.data().covariance.data()};
-    BOOST_CHECK_EQUAL(ref, cov);
+    BOOST_CHECK_EQUAL(refCov, cov);
 
     t.nMeasurements() = 17;
     BOOST_CHECK_EQUAL(pTrack.data().nMeasurements, 17);
@@ -209,6 +210,40 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
     auto t2 = tc.getTrack(1);
     // Is the exact same surface, because it's looked up in the "detector"
     BOOST_CHECK_EQUAL(free.get(), &t2.referenceSurface());
+  }
+
+  {
+    Acts::ConstVectorMultiTrajectory mtj{};
+    Acts::ConstPodioTrackContainer ptc{helper, tracks};
+
+    Acts::TrackContainer tc{ptc, mtj};
+
+    BOOST_CHECK_EQUAL(tc.size(), 2);
+
+    auto t = tc.getTrack(0);
+    const auto& freeRecreated = t.referenceSurface();
+    // Not the exact same surface, it's recreated from values
+    BOOST_CHECK_NE(free.get(), &freeRecreated);
+
+    BOOST_CHECK_EQUAL(t.nMeasurements(), 17);
+
+    BOOST_CHECK_EQUAL(t.nHoles(), 34);
+
+    BOOST_CHECK_EQUAL(t.chi2(), 882.3f);
+
+    BOOST_CHECK_EQUAL(t.nDoF(), 9);
+
+    BOOST_CHECK_EQUAL(t.nOutliers(), 77);
+
+    BOOST_CHECK_EQUAL(t.nSharedHits(), 99);
+
+    auto t2 = tc.getTrack(1);
+    // Is the exact same surface, because it's looked up in the "detector"
+    BOOST_CHECK_EQUAL(free.get(), &t2.referenceSurface());
+
+    BOOST_CHECK_EQUAL(t.parameters(), (BoundVector{1, 2, 3, 4, 5, 6}));
+
+    BOOST_CHECK_EQUAL(t.covariance(), refCov);
   }
 }
 

@@ -14,9 +14,11 @@
 #include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "ActsPodioEdm/Track.h"
 #include "ActsPodioEdm/TrackCollection.h"
+#include "ActsPodioEdm/TrackInfo.h"
 
 #include <mutex>
 #include <stdexcept>
+#include <type_traits>
 
 namespace Acts {
 
@@ -27,7 +29,10 @@ template <>
 struct IsReadOnlyTrackContainer<MutablePodioTrackContainer> : std::false_type {
 };
 
-class MutablePodioTrackContainer {
+template <>
+struct IsReadOnlyTrackContainer<ConstPodioTrackContainer> : std::true_type {};
+
+class PodioTrackContainerBase {
  public:
   using IndexType = MultiTrajectoryTraits::IndexType;
   static constexpr auto kInvalid = MultiTrajectoryTraits::kInvalid;
@@ -44,25 +49,10 @@ class MutablePodioTrackContainer {
   using ConstCovariance =
       typename detail_lt::Types<eBoundSize, true>::CovarianceMap;
 
- public:
-  MutablePodioTrackContainer(const PodioUtil::ConversionHelper& helper,
-                             ActsPodioEdm::TrackCollection& collection)
-      : m_collection{&collection}, m_helper{helper} {
-    m_surfaces.reserve(m_collection->size());
-    for (ActsPodioEdm::Track track : *m_collection) {
-      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
-          m_helper, track.getReferenceSurface()));
-    }
-  }
+ protected:
+  PodioTrackContainerBase(const PodioUtil::ConversionHelper& helper)
+      : m_helper{helper} {}
 
-  MutablePodioTrackContainer(const MutablePodioTrackContainer& other);
-  MutablePodioTrackContainer(MutablePodioTrackContainer&& other) = default;
-
-  MutablePodioTrackContainer(const ConstPodioTrackContainer& other);
-
-  // BEGIN INTERFACE HELPER
-
- private:
   template <bool EnsureConst, typename T>
   static std::any component_impl(T& instance, HashedString key,
                                  IndexType itrack) {
@@ -74,7 +64,15 @@ class MutablePodioTrackContainer {
 
     using namespace Acts::HashedStringLiteral;
     auto track = instance.m_collection->at(itrack);
-    auto& data = track.data();
+    std::conditional_t<EnsureConst, const ActsPodioEdm::TrackInfo*,
+                       ActsPodioEdm::TrackInfo*>
+        dataPtr;
+    if constexpr (EnsureConst) {
+      dataPtr = &track.getData();
+    } else {
+      dataPtr = &track.data();
+    }
+    auto& data = *dataPtr;
     switch (key) {
       case "tipIndex"_hash:
         return &data.tipIndex;
@@ -114,6 +112,34 @@ class MutablePodioTrackContainer {
     // }
   }
 
+  std::shared_ptr<const Surface> getSurface(IndexType itrack) const {
+    return m_surfaces.at(itrack);
+  }
+
+  std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
+  std::vector<std::shared_ptr<const Surface>> m_surfaces;
+};
+
+class MutablePodioTrackContainer : public PodioTrackContainerBase {
+ public:
+  MutablePodioTrackContainer(const PodioUtil::ConversionHelper& helper,
+                             ActsPodioEdm::TrackCollection& collection)
+      : PodioTrackContainerBase{helper}, m_collection{&collection} {
+    m_surfaces.reserve(m_collection->size());
+    for (ActsPodioEdm::Track track : *m_collection) {
+      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
+          m_helper, track.getReferenceSurface()));
+    }
+  }
+
+  MutablePodioTrackContainer(const MutablePodioTrackContainer& other);
+  MutablePodioTrackContainer(MutablePodioTrackContainer&& other) = default;
+
+  MutablePodioTrackContainer(const ConstPodioTrackContainer& other);
+
+  // BEGIN INTERFACE HELPER
+
+ private:
   std::shared_ptr<const Surface> getOrCreateSurface(IndexType itrack) {
     std::shared_ptr<const Surface>& ptr = m_surfaces.at(itrack);
     if (!ptr) {
@@ -124,17 +150,13 @@ class MutablePodioTrackContainer {
     return ptr;
   }
 
-  std::shared_ptr<const Surface> getSurface(IndexType itrack) const {
-    return m_surfaces.at(itrack);
-  }
-
  public:
   std::any component_impl(HashedString key, IndexType itrack) {
-    return component_impl<false>(*this, key, itrack);
+    return PodioTrackContainerBase::component_impl<false>(*this, key, itrack);
   }
 
   std::any component_impl(HashedString key, IndexType itrack) const {
-    return component_impl<true>(*this, key, itrack);
+    return PodioTrackContainerBase::component_impl<true>(*this, key, itrack);
   }
 
   constexpr bool hasColumn_impl(HashedString /*key*/) const { return false; }
@@ -175,7 +197,8 @@ class MutablePodioTrackContainer {
   }
 
   ConstParameters parameters(IndexType itrack) const {
-    return ConstParameters{m_collection->at(itrack).data().parameters.data()};
+    return ConstParameters{
+        m_collection->at(itrack).getData().parameters.data()};
   }
 
   Covariance covariance(IndexType itrack) {
@@ -183,7 +206,8 @@ class MutablePodioTrackContainer {
   }
 
   ConstCovariance covariance(IndexType itrack) const {
-    return ConstCovariance{m_collection->at(itrack).data().covariance.data()};
+    return ConstCovariance{
+        m_collection->at(itrack).getData().covariance.data()};
   }
 
   // @TODO What's the equivalent of this?
@@ -198,10 +222,53 @@ class MutablePodioTrackContainer {
   // END INTERFACE
 
  private:
+  friend PodioTrackContainerBase;
+
   ActsPodioEdm::TrackCollection* m_collection;
-  std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
-  std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
 
 ACTS_STATIC_CHECK_CONCEPT(TrackContainerBackend, MutablePodioTrackContainer);
-}  // namespace Acts
+
+class ConstPodioTrackContainer : public PodioTrackContainerBase {
+ public:
+  ConstPodioTrackContainer(const PodioUtil::ConversionHelper& helper,
+                           const ActsPodioEdm::TrackCollection& collection)
+      : PodioTrackContainerBase{helper}, m_collection{&collection} {
+    m_surfaces.reserve(m_collection->size());
+    for (ActsPodioEdm::Track track : *m_collection) {
+      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
+          m_helper, track.getReferenceSurface()));
+    }
+  }
+
+  std::any component_impl(HashedString key, IndexType itrack) const {
+    return PodioTrackContainerBase::component_impl<true>(*this, key, itrack);
+  }
+
+  constexpr bool hasColumn_impl(HashedString /*key*/) const { return false; }
+
+  std::size_t size_impl() const { return m_collection->size(); }
+
+  const Surface* referenceSurface_impl(IndexType itrack) const {
+    return m_surfaces.at(itrack).get();
+  }
+
+  ConstParameters parameters(IndexType itrack) const {
+    return ConstParameters{
+        m_collection->at(itrack).getData().parameters.data()};
+  }
+
+  ConstCovariance covariance(IndexType itrack) const {
+    return ConstCovariance{
+        m_collection->at(itrack).getData().covariance.data()};
+  }
+
+ private:
+  friend PodioTrackContainerBase;
+
+  const ActsPodioEdm::TrackCollection* m_collection;
+};
+
+ACTS_STATIC_CHECK_CONCEPT(ConstTrackContainerBackend, ConstPodioTrackContainer);
+
+}  //  namespace Acts
