@@ -142,8 +142,8 @@ class MutablePodioTrackContainer {
   std::size_t size_impl() const { return m_collection->size(); }
   // END INTERFACE HELPER
 
-  const Surface& referenceSurface_impl(IndexType itrack) const {
-    return *m_surfaces.at(itrack);
+  const Surface* referenceSurface_impl(IndexType itrack) const {
+    return m_surfaces.at(itrack).get();
   }
 
   void setReferenceSurface_impl(IndexType itrack,
@@ -187,10 +187,11 @@ class MutablePodioTrackContainer {
   }
 
   // @TODO What's the equivalent of this?
-  // void copyDynamicFrom_impl(IndexType dstIdx, const PodioTrackContainer& src,
-  // IndexType srcIdx);
+  void copyDynamicFrom_impl(IndexType dstIdx,
+                            const MutablePodioTrackContainer& src,
+                            IndexType srcIdx);
 
-  // void ensureDynamicColumns_impl(const PodioTrackContainer& other);
+  void ensureDynamicColumns_impl(const MutablePodioTrackContainer& other);
 
   void reserve(IndexType /*size*/) {}
 
@@ -201,4 +202,6 @@ class MutablePodioTrackContainer {
   std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
   std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
+
+ACTS_STATIC_CHECK_CONCEPT(TrackContainerBackend, MutablePodioTrackContainer);
 }  // namespace Acts

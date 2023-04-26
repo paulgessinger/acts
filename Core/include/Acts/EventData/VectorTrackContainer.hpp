@@ -271,6 +271,9 @@ class ConstVectorTrackContainer final
   // END INTERFACE
 };
 
+ACTS_STATIC_CHECK_CONCEPT(ConstTrackContainerBackend,
+                          ConstVectorTrackContainer);
+
 inline VectorTrackContainer::VectorTrackContainer(
     const ConstVectorTrackContainer& other)
     : VectorTrackContainerBase{other} {
