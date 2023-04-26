@@ -1,3 +1,3 @@
 set(unittest_extra_libraries ActsPluginPodio)
 add_unittest(ConvertTrackPodio ConvertTrackPodioTest.cpp)
-add_unittest(ConvertTrackStatePodio ConvertTrackStatePodioTest.cpp)
+add_unittest(PodioTrackStateContainer PodioTrackStateContainerTest.cpp)
