@@ -21,20 +21,24 @@
 
 namespace Acts::Test {
 
-template <typename trajectory_t, typename const_trajectory_t>
+template <typename factory_t>
 class MultiTrajectoryTestsCommon {
-  MultiTrajectoryTestsCommon() = delete;
-
   using ParametersVector = BoundTrackParameters::ParametersVector;
   using CovarianceMatrix = BoundTrackParameters::CovarianceMatrix;
   using Jacobian = BoundMatrix;
 
+  using trajectory_t = typename factory_t::trajectory_t;
+  using const_trajectory_t = typename factory_t::const_trajectory_t;
+
+ private:
+  factory_t m_factory;
+
  public:
-  void static testBuild() {
+  void testBuild() {
     constexpr TrackStatePropMask kMask = TrackStatePropMask::Predicted;
 
     // construct trajectory w/ multiple components
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
 
     auto i0 = t.addTrackState(kMask);
     // trajectory bifurcates here into multiple hypotheses
@@ -105,9 +109,9 @@ class MultiTrajectoryTestsCommon {
                                   predicteds.begin(), predicteds.end());
   }
 
-  static void testConstCorrectness() {
+  void testConstCorrectness() {
     // make mutable
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
     auto i0 = t.addTrackState();
 
     BOOST_CHECK(!t.ReadOnly);
@@ -146,9 +150,9 @@ class MultiTrajectoryTestsCommon {
     // ct.addTrackState();
   }
 
-  static void testClear() {
+  void testClear() {
     constexpr TrackStatePropMask kMask = TrackStatePropMask::Predicted;
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
     BOOST_CHECK_EQUAL(t.size(), 0);
 
     auto i0 = t.addTrackState(kMask);
@@ -163,11 +167,11 @@ class MultiTrajectoryTestsCommon {
     BOOST_CHECK_EQUAL(t.size(), 0);
   }
 
-  static void testApplyWithAbort() {
+  void testApplyWithAbort() {
     constexpr TrackStatePropMask kMask = TrackStatePropMask::Predicted;
 
     // construct trajectory with three components
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
     auto i0 = t.addTrackState(kMask);
     auto i1 = t.addTrackState(kMask, i0);
     auto i2 = t.addTrackState(kMask, i1);
@@ -197,11 +201,11 @@ class MultiTrajectoryTestsCommon {
     BOOST_CHECK_EQUAL(n, 3u);
   }
 
-  static void testAddTrackStateWithBitMask() {
+  void testAddTrackStateWithBitMask() {
     using PM = TrackStatePropMask;
     using namespace Acts::HashedStringLiteral;
 
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
 
     auto alwaysPresent = [](auto& ts) {
       BOOST_CHECK(ts.template has<"referenceSurface"_hash>());
@@ -278,11 +282,11 @@ class MultiTrajectoryTestsCommon {
     alwaysPresent(ts);
   }
 
-  static void testTrackStateProxyCrossTalk(std::default_random_engine& rng) {
+  void testTrackStateProxyCrossTalk(std::default_random_engine& rng) {
     TestTrackState pc(rng, 2u);
 
     // multi trajectory w/ a single, fully set, track state
-    trajectory_t traj;
+    trajectory_t traj = m_factory.create();
     size_t index = traj.addTrackState();
     {
       auto ts = traj.getTrackState(index);
@@ -384,10 +388,10 @@ class MultiTrajectoryTestsCommon {
     }
   }
 
-  static void testTrackStateReassignment(std::default_random_engine& rng) {
+  void testTrackStateReassignment(std::default_random_engine& rng) {
     TestTrackState pc(rng, 1u);
 
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
     size_t index = t.addTrackState();
     auto ts = t.getTrackState(index);
     fillTrackState<trajectory_t>(pc, TrackStatePropMask::All, ts);
@@ -412,12 +416,12 @@ class MultiTrajectoryTestsCommon {
     BOOST_CHECK_EQUAL(ts.effectiveProjector(), m2.projector());
   }
 
-  static void testTrackStateProxyStorage(std::default_random_engine& rng,
-                                         size_t nMeasurements) {
+  void testTrackStateProxyStorage(std::default_random_engine& rng,
+                                  size_t nMeasurements) {
     TestTrackState pc(rng, nMeasurements);
 
     // create trajectory with a single fully-filled random track state
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
     size_t index = t.addTrackState();
     auto ts = t.getTrackState(index);
     fillTrackState<trajectory_t>(pc, TrackStatePropMask::All, ts);
@@ -497,13 +501,13 @@ class MultiTrajectoryTestsCommon {
     BOOST_CHECK_EQUAL(ts.projector(), fullProj);
   }
 
-  static void testTrackStateProxyAllocations(std::default_random_engine& rng) {
+  void testTrackStateProxyAllocations(std::default_random_engine& rng) {
     using namespace Acts::HashedStringLiteral;
 
     TestTrackState pc(rng, 2u);
 
     // this should allocate for all components in the trackstate, plus filtered
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
     size_t i = t.addTrackState(TrackStatePropMask::Predicted |
                                TrackStatePropMask::Filtered |
                                TrackStatePropMask::Jacobian);
@@ -565,7 +569,7 @@ class MultiTrajectoryTestsCommon {
     BOOST_CHECK(!tsall.template has<"calibrated"_hash>());
   }
 
-  static void testTrackStateProxyGetMask() {
+  void testTrackStateProxyGetMask() {
     using PM = TrackStatePropMask;
 
     std::array<PM, 5> values{PM::Predicted, PM::Filtered, PM::Smoothed,
@@ -604,7 +608,7 @@ class MultiTrajectoryTestsCommon {
     }
   }
 
-  static void testTrackStateProxyCopy(std::default_random_engine& rng) {
+  void testTrackStateProxyCopy(std::default_random_engine& rng) {
     using PM = TrackStatePropMask;
 
     std::array<PM, 4> values{PM::Predicted, PM::Filtered, PM::Smoothed,
@@ -798,7 +802,7 @@ class MultiTrajectoryTestsCommon {
                       &ts2.referenceSurface());  // always copied
   }
 
-  static void testTrackStateProxyCopyDiffMTJ() {
+  void testTrackStateProxyCopyDiffMTJ() {
     using PM = TrackStatePropMask;
 
     std::array<PM, 4> values{PM::Predicted, PM::Filtered, PM::Smoothed,
@@ -882,9 +886,9 @@ class MultiTrajectoryTestsCommon {
     }
   }
 
-  static void testProxyAssignment() {
+  void testProxyAssignment() {
     constexpr TrackStatePropMask kMask = TrackStatePropMask::Predicted;
-    trajectory_t t;
+    trajectory_t t = m_factory.create();
     auto i0 = t.addTrackState(kMask);
 
     typename trajectory_t::TrackStateProxy tp = t.getTrackState(i0);  // mutable
@@ -894,7 +898,7 @@ class MultiTrajectoryTestsCommon {
     // MultiTrajectory::TrackStateProxy tp4{tp3};
   }
 
-  static void testCopyFromConst() {
+  void testCopyFromConst() {
     // Check if the copy from const does compile, assume the copy is done
     // correctly
 
@@ -917,11 +921,11 @@ class MultiTrajectoryTestsCommon {
     // constProxy.copyFrom(mutableProxy);
   }
 
-  static void testTrackStateProxyShare(std::default_random_engine& rng) {
+  void testTrackStateProxyShare(std::default_random_engine& rng) {
     TestTrackState pc(rng, 2u);
 
     {
-      trajectory_t traj;
+      trajectory_t traj = m_factory.create();
       size_t ia = traj.addTrackState(TrackStatePropMask::All);
       size_t ib = traj.addTrackState(TrackStatePropMask::None);
 
@@ -963,7 +967,7 @@ class MultiTrajectoryTestsCommon {
     }
 
     {
-      trajectory_t traj;
+      trajectory_t traj = m_factory.create();
       size_t i = traj.addTrackState(TrackStatePropMask::All &
                                     ~TrackStatePropMask::Filtered &
                                     ~TrackStatePropMask::Smoothed);
@@ -994,14 +998,14 @@ class MultiTrajectoryTestsCommon {
     }
   }
 
-  static void testMultiTrajectoryExtraColumns() {
+  void testMultiTrajectoryExtraColumns() {
     using namespace HashedStringLiteral;
 
     struct TestColumn {
       double value;
     };
 
-    trajectory_t traj;
+    trajectory_t traj = m_factory.create();
     traj.template addColumn<int>("extra_column");
     traj.template addColumn<TestColumn>("another_column");
 
@@ -1028,7 +1032,7 @@ class MultiTrajectoryTestsCommon {
         (ts3.template component<TestColumn, "another_column"_hash>().value), 7);
   }
 
-  static void testMultiTrajectoryExtraColumnsRuntime() {
+  void testMultiTrajectoryExtraColumnsRuntime() {
     auto runTest = [](auto&& fn) {
       trajectory_t mt;
       std::vector<std::string> columns = {"one", "two", "three", "four"};

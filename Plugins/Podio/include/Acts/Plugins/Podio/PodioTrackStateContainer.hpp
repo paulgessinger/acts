@@ -11,9 +11,13 @@
 #include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/EventData/MultiTrajectoryBackendConcept.hpp"
 #include "Acts/EventData/TrackContainer.hpp"
+#include "Acts/EventData/TrackStatePropMask.hpp"
 #include "Acts/EventData/Types.hpp"
 #include "Acts/Plugins/Podio/PodioTrackContainer.hpp"
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "Acts/Utilities/HashedString.hpp"
+#include "Acts/Utilities/Helpers.hpp"
+#include "ActsPodioEdm/BoundParametersCollection.h"
 #include "ActsPodioEdm/TrackStateCollection.h"
 
 #include <any>
@@ -26,9 +30,6 @@ class ConstPodioTrackStateContainer;
 class PodioTrackStateContainerBase {
  public:
   using IndexType = MultiTrajectoryTraits::IndexType;
-  static constexpr auto kInvalid = MultiTrajectoryTraits::kInvalid;
-  static constexpr auto MeasurementSizeMax =
-      MultiTrajectoryTraits::MeasurementSizeMax;
 
   using Parameters =
       typename detail_lt::Types<eBoundSize, false>::CoefficientsMap;
@@ -41,38 +42,47 @@ class PodioTrackStateContainerBase {
       typename detail_lt::Types<eBoundSize, true>::CovarianceMap;
 
  protected:
+  PodioTrackStateContainerBase(const PodioUtil::ConversionHelper& helper)
+      : m_helper{helper} {}
+
   template <typename T>
   static constexpr bool has_impl(T& instance, HashedString key,
                                  IndexType istate) {
+    constexpr auto kInvalid = MultiTrajectoryTraits::kInvalid;
+    using namespace Acts::HashedStringLiteral;
+    auto trackState = instance.m_collection->at(istate);
+    const auto& data = trackState.getData();
+    switch (key) {
+      case "predicted"_hash:
+        return data.ipredicted != kInvalid;
+      case "filtered"_hash:
+        return data.ifiltered != kInvalid;
+      case "smoothed"_hash:
+        return data.ismoothed != kInvalid;
+      case "calibrated"_hash:
+        return data.measdim != 0;
+      case "calibratedCov"_hash:
+        return data.measdim != 0;
+      case "jacobian"_hash:
+        return data.hasJacobian;
+      case "projector"_hash:
+        return data.hasProjector;
+      // case "uncalibratedSourceLink"_hash:
+      // return instance.m_sourceLinks[instance.m_index[istate].iuncalibrated]
+      // .has_value();
+      case "previous"_hash:
+      case "measdim"_hash:
+      case "referenceSurface"_hash:
+      case "chi2"_hash:
+      case "pathLength"_hash:
+      case "typeFlags"_hash:
+        return true;
+      default:
+        throw std::runtime_error("Unable to handle this component");
+        // return instance.m_dynamic.find(key) != instance.m_dynamic.end();
+    }
+
     return false;
-    // using namespace Acts::HashedStringLiteral;
-    // switch (key) {
-    // case "predicted"_hash:
-    // return instance.m_index[istate].ipredicted != kInvalid;
-    // case "filtered"_hash:
-    // return instance.m_index[istate].ifiltered != kInvalid;
-    // case "smoothed"_hash:
-    // return instance.m_index[istate].ismoothed != kInvalid;
-    // case "calibrated"_hash:
-    // return instance.m_measOffset[istate] != kInvalid;
-    // case "calibratedCov"_hash:
-    // return instance.m_measCovOffset[istate] != kInvalid;
-    // case "jacobian"_hash:
-    // return instance.m_index[istate].ijacobian != kInvalid;
-    // case "projector"_hash:
-    // return instance.m_index[istate].iprojector != kInvalid;
-    // case "uncalibratedSourceLink"_hash:
-    // return instance.m_sourceLinks[instance.m_index[istate].iuncalibrated]
-    // .has_value();
-    // case "previous"_hash:
-    // case "measdim"_hash:
-    // case "referenceSurface"_hash:
-    // case "chi2"_hash:
-    // case "pathLength"_hash:
-    // case "typeFlags"_hash:
-    // return true;
-    // default:
-    // return instance.m_dynamic.find(key) != instance.m_dynamic.end();
   }
 
   template <bool EnsureConst, typename T>
@@ -82,72 +92,86 @@ class PodioTrackStateContainerBase {
       static_assert(std::is_const_v<std::remove_reference_t<T>>,
                     "Is not const");
     }
-    // using namespace Acts::HashedStringLiteral;
-    // switch (key) {
-    // case "previous"_hash:
-    // return &instance.m_index[istate].iprevious;
-    // case "predicted"_hash:
-    // return &instance.m_index[istate].ipredicted;
-    // case "filtered"_hash:
-    // return &instance.m_index[istate].ifiltered;
-    // case "smoothed"_hash:
-    // return &instance.m_index[istate].ismoothed;
-    // case "calibrated"_hash:
-    // return &instance.m_measOffset[istate];
-    // case "calibratedCov"_hash:
-    // return &instance.m_measCovOffset[istate];
-    // case "jacobian"_hash:
-    // return &instance.m_index[istate].ijacobian;
-    // case "projector"_hash:
-    // return &instance.m_projectors[instance.m_index[istate].iprojector];
-    // case "measdim"_hash:
-    // return &instance.m_index[istate].measdim;
-    // case "chi2"_hash:
-    // return &instance.m_index[istate].chi2;
-    // case "pathLength"_hash:
-    // return &instance.m_index[istate].pathLength;
-    // case "typeFlags"_hash:
-    // return &instance.m_index[istate].typeFlags;
-    // default:
-    // auto it = instance.m_dynamic.find(key);
-    // if (it == instance.m_dynamic.end()) {
-    // throw std::runtime_error("Unable to handle this component");
-    // }
-    // std::conditional_t<EnsureConst, const detail::DynamicColumnBase*,
-    // detail::DynamicColumnBase*>
-    // col = it->second.get();
-    // assert(col && "Dynamic column is null");
-    // return col->get(istate);
-    // }
+    using namespace Acts::HashedStringLiteral;
+    auto trackState = instance.m_collection->at(istate);
+    std::conditional_t<EnsureConst, const ActsPodioEdm::TrackStateInfo*,
+                       ActsPodioEdm::TrackStateInfo*>
+        dataPtr;
+    if constexpr (EnsureConst) {
+      dataPtr = &trackState.getData();
+    } else {
+      dataPtr = &trackState.data();
+    }
+    auto& data = *dataPtr;
+    switch (key) {
+      case "previous"_hash:
+        return &data.previous;
+      case "predicted"_hash:
+        return &data.ipredicted;
+      case "filtered"_hash:
+        return &data.ifiltered;
+      case "smoothed"_hash:
+        return &data.ismoothed;
+      // case "calibrated"_hash:
+      // return &instance.m_measOffset[istate];
+      // case "calibratedCov"_hash:
+      // return &instance.m_measCovOffset[istate];
+      case "jacobian"_hash:
+        return &data.index;
+      // case "projector"_hash:
+      // return &instance.m_projectors[instance.m_index[istate].iprojector];
+      // case "measdim"_hash:
+      // return &instance.m_index[istate].measdim;
+      case "chi2"_hash:
+        return &instance.m_index[istate].chi2;
+      case "pathLength"_hash:
+        return &instance.m_index[istate].pathLength;
+      case "typeFlags"_hash:
+        return &instance.m_index[istate].typeFlags;
+      default:
+        throw std::runtime_error("Unable to handle this component");
+        // auto it = instance.m_dynamic.find(key);
+        // if (it == instance.m_dynamic.end()) {
+        // throw std::runtime_error("Unable to handle this component");
+        // }
+        // std::conditional_t<EnsureConst, const detail::DynamicColumnBase*,
+        // detail::DynamicColumnBase*>
+        // col = it->second.get();
+        // assert(col && "Dynamic column is null");
+        // return col->get(istate);
+    }
   }
 
   template <typename T>
   static constexpr bool hasColumn_impl(T& instance, HashedString key) {
+    using namespace Acts::HashedStringLiteral;
+    switch (key) {
+      // case "predicted"_hash:
+      // case "filtered"_hash:
+      // case "smoothed"_hash:
+      // case "calibrated"_hash:
+      // case "calibratedCov"_hash:
+      // case "jacobian"_hash:
+      // case "projector"_hash:
+      // case "previous"_hash:
+      // case "uncalibratedSourceLink"_hash:
+      // case "referenceSurface"_hash:
+      // case "measdim"_hash:
+      // case "chi2"_hash:
+      // case "pathLength"_hash:
+      // case "typeFlags"_hash:
+      // return true;
+      default:
+        throw std::runtime_error("Unable to handle this component");
+        // return instance.m_dynamic.find(key) != instance.m_dynamic.end();
+    }
     return false;
-    // using namespace Acts::HashedStringLiteral;
-    // switch (key) {
-    // case "predicted"_hash:
-    // case "filtered"_hash:
-    // case "smoothed"_hash:
-    // case "calibrated"_hash:
-    // case "calibratedCov"_hash:
-    // case "jacobian"_hash:
-    // case "projector"_hash:
-    // case "previous"_hash:
-    // case "uncalibratedSourceLink"_hash:
-    // case "referenceSurface"_hash:
-    // case "measdim"_hash:
-    // case "chi2"_hash:
-    // case "pathLength"_hash:
-    // case "typeFlags"_hash:
-    // return true;
-    // default:
-    // return instance.m_dynamic.find(key) != instance.m_dynamic.end();
-    // }
   }
 
  public:
-  IndexType calibratedSize_impl(IndexType istate) const { return 0; }
+  MultiTrajectoryTraits::IndexType calibratedSize_impl(IndexType istate) const {
+    return 0;
+  }
 
   SourceLink getUncalibratedSourceLink_impl(IndexType istate) const {
     return SourceLink{0, 5};
@@ -156,6 +180,10 @@ class PodioTrackStateContainerBase {
   const Surface* referenceSurface_impl(IndexType istate) const {
     return nullptr;
   }
+
+ protected:
+  std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
+  std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
 
 template <>
@@ -166,16 +194,24 @@ class ConstPodioTrackStateContainer final
     : public PodioTrackStateContainerBase,
       public MultiTrajectory<ConstPodioTrackStateContainer> {
  public:
+  ConstPodioTrackStateContainer(
+      const PodioUtil::ConversionHelper& helper,
+      const ActsPodioEdm::TrackStateCollection& trackStates,
+      const ActsPodioEdm::BoundParametersCollection& params)
+      : PodioTrackStateContainerBase{helper},
+        m_collection{&trackStates},
+        m_params{&params} {}
+
   ConstParameters parameters_impl(IndexType parIdx) const {
-    return ConstParameters{nullptr};
+    return ConstParameters{m_params->at(parIdx).getData().values.data()};
   }
 
   ConstCovariance covariance_impl(IndexType parIdx) const {
-    return ConstCovariance{nullptr};
+    return ConstCovariance{m_params->at(parIdx).getData().covariance.data()};
   }
 
   ConstCovariance jacobian_impl(IndexType parIdx) const {
-    return ConstCovariance{nullptr};
+    return ConstCovariance{m_collection->at(parIdx).getData().jacobian.data()};
   }
 
   template <size_t measdim>
@@ -190,7 +226,7 @@ class ConstPodioTrackStateContainer final
     return ConstTrackStateProxy::MeasurementCovariance<measdim>{nullptr};
   }
 
-  IndexType size_impl() const { return 0; }
+  IndexType size_impl() const { return m_collection->size(); }
 
   std::any component_impl(HashedString key, IndexType istate) const {
     return PodioTrackStateContainerBase::component_impl<true>(*this, key,
@@ -206,7 +242,10 @@ class ConstPodioTrackStateContainer final
   }
 
  private:
+  friend PodioTrackStateContainerBase;
+
   const ActsPodioEdm::TrackStateCollection* m_collection;
+  const ActsPodioEdm::BoundParametersCollection* m_params;
 };
 
 static_assert(IsReadOnlyMultiTrajectory<ConstPodioTrackStateContainer>::value,
@@ -223,23 +262,37 @@ class MutablePodioTrackStateContainer final
     : public PodioTrackStateContainerBase,
       public MultiTrajectory<MutablePodioTrackStateContainer> {
  public:
+  MutablePodioTrackStateContainer(
+      const PodioUtil::ConversionHelper& helper,
+      ActsPodioEdm::TrackStateCollection& trackStates,
+      ActsPodioEdm::BoundParametersCollection& params)
+      : PodioTrackStateContainerBase{helper},
+        m_collection{&trackStates},
+        m_params{&params} {}
+
   ConstParameters parameters_impl(IndexType parIdx) const {
-    return ConstParameters{nullptr};
+    return ConstParameters{m_params->at(parIdx).getData().values.data()};
   }
 
-  Parameters parameters_impl(IndexType parIdx) { return Parameters{nullptr}; }
+  Parameters parameters_impl(IndexType parIdx) {
+    return Parameters{m_params->at(parIdx).data().values.data()};
+  }
 
   ConstCovariance covariance_impl(IndexType parIdx) const {
-    return ConstCovariance{nullptr};
+    return ConstCovariance{m_params->at(parIdx).getData().covariance.data()};
   }
 
-  Covariance covariance_impl(IndexType parIdx) { return Covariance{nullptr}; }
+  Covariance covariance_impl(IndexType parIdx) {
+    return Covariance{m_params->at(parIdx).data().covariance.data()};
+  }
 
   ConstCovariance jacobian_impl(IndexType parIdx) const {
-    return ConstCovariance{nullptr};
+    return ConstCovariance{m_collection->at(parIdx).getData().jacobian.data()};
   }
 
-  Covariance jacobian_impl(IndexType parIdx) { return Covariance{nullptr}; }
+  Covariance jacobian_impl(IndexType parIdx) {
+    return Covariance{m_collection->at(parIdx).data().jacobian.data()};
+  }
 
   template <size_t measdim>
   ConstTrackStateProxy::Measurement<measdim> measurement_impl(
@@ -264,7 +317,7 @@ class MutablePodioTrackStateContainer final
     return TrackStateProxy::MeasurementCovariance<measdim>{nullptr};
   }
 
-  IndexType size_impl() const { return 0; }
+  IndexType size_impl() const { return m_collection->size(); }
 
   std::any component_impl(HashedString key, IndexType istate) const {
     return PodioTrackStateContainerBase::component_impl<true>(*this, key,
@@ -287,7 +340,32 @@ class MutablePodioTrackStateContainer final
   IndexType addTrackState_impl(
       TrackStatePropMask mask = TrackStatePropMask::All,
       TrackIndexType iprevious = kTrackIndexInvalid) {
-    return kTrackIndexInvalid;
+    auto trackState = m_collection->create();
+    auto& data = trackState.data();
+    data.previous = iprevious;
+    data.ipredicted = kInvalid;
+    data.ifiltered = kInvalid;
+    data.ismoothed = kInvalid;
+    if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Predicted)) {
+      m_params->create();
+      data.ipredicted = m_params->size() - 1;
+    }
+    if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Filtered)) {
+      m_params->create();
+      data.ifiltered = m_params->size() - 1;
+    }
+    if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Smoothed)) {
+      m_params->create();
+      data.ismoothed = m_params->size() - 1;
+    }
+    data.hasJacobian = ACTS_CHECK_BIT(mask, TrackStatePropMask::Jacobian);
+    data.measdim = 0;
+    data.hasProjector = false;
+    if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Calibrated)) {
+      data.hasProjector = true;
+    }
+    m_surfaces.emplace_back();
+    return m_collection->size() - 1;
   }
 
   void shareFrom_impl(TrackIndexType iself, TrackIndexType iother,
@@ -296,12 +374,19 @@ class MutablePodioTrackStateContainer final
 
   void unset_impl(TrackStatePropMask target, TrackIndexType istate) {}
 
-  void clear_impl() {}
+  void clear_impl() {
+    m_collection->clear();
+    m_params->clear();
+  }
 
   template <typename T>
   constexpr void addColumn_impl(const std::string& key) {}
 
-  void allocateCalibrated_impl(IndexType istate, size_t measdim) {}
+  void allocateCalibrated_impl(IndexType istate, size_t measdim) {
+    assert(measdim > 0 && "Zero measdim not supported");
+    auto& data = m_collection->at(istate).data();
+    data.measdim = measdim;
+  }
 
   void setUncalibratedSourceLink_impl(IndexType istate, SourceLink sourceLink) {
   }
@@ -310,7 +395,10 @@ class MutablePodioTrackStateContainer final
                                 std::shared_ptr<const Surface> surface) {}
 
  private:
+  friend PodioTrackStateContainerBase;
+
   ActsPodioEdm::TrackStateCollection* m_collection;
+  ActsPodioEdm::BoundParametersCollection* m_params;
 };
 
 static_assert(

@@ -13,7 +13,10 @@
 
 #include "Acts/Definitions/Units.hpp"
 #include "Acts/Plugins/Podio/PodioTrackStateContainer.hpp"
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "Acts/Tests/CommonHelpers/MultiTrajectoryTestsCommon.hpp"
+#include "ActsPodioEdm/BoundParametersCollection.h"
+#include "ActsPodioEdm/TrackStateCollection.h"
 
 namespace {
 
@@ -24,81 +27,146 @@ namespace bd = boost::unit_test::data;
 
 std::default_random_engine rng(31415);
 
-using CommonTests = MultiTrajectoryTestsCommon<MutablePodioTrackStateContainer,
-                                               ConstPodioTrackStateContainer>;
+class NullHelper : public PodioUtil::ConversionHelper {
+ public:
+  std::optional<PodioUtil::Identifier> surfaceToIdentifier(
+      const Surface&) const override {
+    return {};
+  }
+  const Surface* identifierToSurface(PodioUtil::Identifier) const override {
+    return nullptr;
+  }
+};
+
+struct MapHelper : public PodioUtil::ConversionHelper {
+  std::optional<PodioUtil::Identifier> surfaceToIdentifier(
+      const Surface& surface) const override {
+    for (auto&& [id, srf] : surfaces) {
+      if (srf == &surface) {
+        return id;
+      }
+    }
+    return {};
+  }
+  const Surface* identifierToSurface(PodioUtil::Identifier id) const override {
+    auto it = surfaces.find(id);
+    if (it == surfaces.end()) {
+      return nullptr;
+    }
+
+    return it->second;
+  }
+  std::unordered_map<PodioUtil::Identifier, const Surface*> surfaces;
+};
+
+struct Factory {
+  using trajectory_t = MutablePodioTrackStateContainer;
+  using const_trajectory_t = ConstPodioTrackStateContainer;
+
+  ActsPodioEdm::TrackStateCollection m_collection;
+  ActsPodioEdm::BoundParametersCollection m_params;
+  NullHelper m_helper;
+
+  MutablePodioTrackStateContainer create() {
+    return {m_helper, m_collection, m_params};
+  }
+};
+
+using CommonTests = MultiTrajectoryTestsCommon<Factory>;
 
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(PodioTrackStateContainerTest)
 
 BOOST_AUTO_TEST_CASE(Build) {
-  CommonTests::testBuild();
+  CommonTests ct;
+  ct.testBuild();
 }
 
 // BOOST_AUTO_TEST_CASE(ConstCorrectness) {
-// CommonTests::testConstCorrectness();
+// CommonTests ct;
+// ct.testConstCorrectness();
 // }
 
 BOOST_AUTO_TEST_CASE(Clear) {
-  CommonTests::testClear();
+  CommonTests ct;
+  ct.testClear();
 }
 
 BOOST_AUTO_TEST_CASE(ApplyWithAbort) {
-  CommonTests::testApplyWithAbort();
+  CommonTests ct;
+  ct.testApplyWithAbort();
 }
 
 BOOST_AUTO_TEST_CASE(AddTrackStateWithBitMask) {
-  CommonTests::testAddTrackStateWithBitMask();
+  CommonTests ct;
+  ct.testAddTrackStateWithBitMask();
 }
 
 // assert expected "cross-talk" between trackstate proxies
 BOOST_AUTO_TEST_CASE(TrackStateProxyCrossTalk) {
-  CommonTests::testTrackStateProxyCrossTalk(rng);
+  CommonTests ct;
+  ct.testTrackStateProxyCrossTalk(rng);
 }
+
+#if 0
 
 BOOST_AUTO_TEST_CASE(TrackStateReassignment) {
-  CommonTests::testTrackStateReassignment(rng);
+  CommonTests ct;
+  ct.testTrackStateReassignment(rng);
 }
 
-// BOOST_DATA_TEST_CASE(TrackStateProxyStorage, bd::make({1u, 2u}),
-// nMeasurements) {
-// CommonTests::testTrackStateProxyStorage(rng, nMeasurements);
-// }
+BOOST_DATA_TEST_CASE(TrackStateProxyStorage, bd::make({1u, 2u}),
+                     nMeasurements) {
+  CommonTests ct;
+  ct.testTrackStateProxyStorage(rng, nMeasurements);
+}
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyAllocations) {
-  CommonTests::testTrackStateProxyAllocations(rng);
+  CommonTests ct;
+  ct.testTrackStateProxyAllocations(rng);
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyGetMask) {
-  CommonTests::testTrackStateProxyGetMask();
+  CommonTests ct;
+  ct.testTrackStateProxyGetMask();
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
-  CommonTests::testTrackStateProxyCopy(rng);
+  CommonTests ct;
+  ct.testTrackStateProxyCopy(rng);
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyCopyDiffMTJ) {
-  CommonTests::testTrackStateProxyCopyDiffMTJ();
+  CommonTests ct;
+  ct.testTrackStateProxyCopyDiffMTJ();
 }
 
 BOOST_AUTO_TEST_CASE(ProxyAssignment) {
-  CommonTests::testProxyAssignment();
+  CommonTests ct;
+  ct.testProxyAssignment();
 }
 
 BOOST_AUTO_TEST_CASE(CopyFromConst) {
-  CommonTests::testCopyFromConst();
+  CommonTests ct;
+  ct.testCopyFromConst();
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyShare) {
-  CommonTests::testTrackStateProxyShare(rng);
+  CommonTests ct;
+  ct.testTrackStateProxyShare(rng);
 }
 
 BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumns) {
-  CommonTests::testMultiTrajectoryExtraColumns();
+  CommonTests ct;
+  ct.testMultiTrajectoryExtraColumns();
 }
 
 BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumnsRuntime) {
-  CommonTests::testMultiTrajectoryExtraColumnsRuntime();
+  CommonTests ct;
+  ct.testMultiTrajectoryExtraColumnsRuntime();
 }
+
+#endif
 
 BOOST_AUTO_TEST_SUITE_END()

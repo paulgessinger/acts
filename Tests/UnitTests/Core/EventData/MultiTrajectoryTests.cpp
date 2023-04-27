@@ -45,81 +45,105 @@ const GeometryContext gctx;
 // fixed seed for reproducible tests
 std::default_random_engine rng(31415);
 
-using CommonTests = MultiTrajectoryTestsCommon<VectorMultiTrajectory,
-                                               ConstVectorMultiTrajectory>;
+struct Factory {
+  using trajectory_t = VectorMultiTrajectory;
+  using const_trajectory_t = ConstVectorMultiTrajectory;
+
+  VectorMultiTrajectory create() { return {}; }
+  ConstVectorMultiTrajectory createConst() { return {}; }
+};
+
+using CommonTests = MultiTrajectoryTestsCommon<Factory>;
 
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(EventDataMultiTrajectory)
 
 BOOST_AUTO_TEST_CASE(Build) {
-  CommonTests::testBuild();
+  CommonTests ct;
+  ct.testBuild();
 }
 
 BOOST_AUTO_TEST_CASE(ConstCorrectness) {
-  CommonTests::testConstCorrectness();
+  CommonTests ct;
+  ct.testConstCorrectness();
 }
 
 BOOST_AUTO_TEST_CASE(Clear) {
-  CommonTests::testClear();
+  CommonTests ct;
+  ct.testClear();
 }
 
 BOOST_AUTO_TEST_CASE(ApplyWithAbort) {
-  CommonTests::testApplyWithAbort();
+  CommonTests ct;
+  ct.testApplyWithAbort();
 }
 
 BOOST_AUTO_TEST_CASE(AddTrackStateWithBitMask) {
-  CommonTests::testAddTrackStateWithBitMask();
+  CommonTests ct;
+  ct.testAddTrackStateWithBitMask();
 }
 
 // assert expected "cross-talk" between trackstate proxies
 BOOST_AUTO_TEST_CASE(TrackStateProxyCrossTalk) {
-  CommonTests::testTrackStateProxyCrossTalk(rng);
+  CommonTests ct;
+  ct.testTrackStateProxyCrossTalk(rng);
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateReassignment) {
-  CommonTests::testTrackStateReassignment(rng);
+  CommonTests ct;
+  ct.testTrackStateReassignment(rng);
 }
 
 BOOST_DATA_TEST_CASE(TrackStateProxyStorage, bd::make({1u, 2u}),
                      nMeasurements) {
-  CommonTests::testTrackStateProxyStorage(rng, nMeasurements);
+  CommonTests ct;
+  ct.testTrackStateProxyStorage(rng, nMeasurements);
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyAllocations) {
-  CommonTests::testTrackStateProxyAllocations(rng);
+  CommonTests ct;
+  ct.testTrackStateProxyAllocations(rng);
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyGetMask) {
-  CommonTests::testTrackStateProxyGetMask();
+  CommonTests ct;
+  ct.testTrackStateProxyGetMask();
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
-  CommonTests::testTrackStateProxyCopy(rng);
+  CommonTests ct;
+  ct.testTrackStateProxyCopy(rng);
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyCopyDiffMTJ) {
-  CommonTests::testTrackStateProxyCopyDiffMTJ();
+  CommonTests ct;
+  ct.testTrackStateProxyCopyDiffMTJ();
 }
 
 BOOST_AUTO_TEST_CASE(ProxyAssignment) {
-  CommonTests::testProxyAssignment();
+  CommonTests ct;
+  ct.testProxyAssignment();
 }
 
 BOOST_AUTO_TEST_CASE(CopyFromConst) {
-  CommonTests::testCopyFromConst();
+  CommonTests ct;
+  ct.testCopyFromConst();
 }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyShare) {
-  CommonTests::testTrackStateProxyShare(rng);
+  CommonTests ct;
+  ct.testTrackStateProxyShare(rng);
 }
 
 BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumns) {
-  CommonTests::testMultiTrajectoryExtraColumns();
+  CommonTests ct;
+  ct.testMultiTrajectoryExtraColumns();
 }
 
 BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumnsRuntime) {
-  CommonTests::testMultiTrajectoryExtraColumnsRuntime();
+  CommonTests ct;
+  ct.testMultiTrajectoryExtraColumnsRuntime();
 }
 
 BOOST_AUTO_TEST_CASE(MemoryStats) {

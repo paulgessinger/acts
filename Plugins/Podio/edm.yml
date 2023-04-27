@@ -46,14 +46,27 @@ components:
       Members:
         - uint32_t index
         - uint32_t previous
-        - std::array<double, 6> parameters
-        - std::array<double, 36> covariance
+
+        - uint32_t ipredicted;
+        - uint32_t ifiltered;
+        - uint32_t ismoothed;
 
         - std::array<double, 6> measurement
         - std::array<double, 36> measurementCovariance
+        - uint32_t measdim;
 
         - std::array<double, 36> jacobian
-        - unsigned long long projectorBitset
+        - bool hasJacobian
+        - unsigned long long projector
+        - bool hasProjector
+
+        - double chi2
+        - double pathLength
+
+    ActsPodioEdm::BoundParametersInfo:
+      Members:
+        - std::array<double, 6> values
+        - std::array<double, 36> covariance
 
 datatypes:
   ActsPodioEdm::Track:
@@ -70,6 +83,12 @@ datatypes:
     Members: 
       - ActsPodioEdm::TrackStateInfo data // local information
       - ActsPodioEdm::Surface referenceSurface // reference surface
+
+  ActsPodioEdm::BoundParameters:
+    Description: "Local track parameters"
+    Author : "Paul Gessinger, CERN"
+    Members:
+      - ActsPodioEdm::BoundParametersInfo data // parameter information
 
       # - int32_t type                         //flagword that defines the type of track.Bits 16-31 are used internally
       # - float chi2                       //Chi^2 of the track fit
