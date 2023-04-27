@@ -375,6 +375,8 @@ class MutablePodioTrackStateContainer final
     m_surfaces.emplace_back();
 
     data.uncalibratedIdentifier = PodioUtil::kNoIdentifier;
+    assert(m_collection->size() == m_surfaces.size() &&
+           "Inconsistent surface buffer");
     return m_collection->size() - 1;
   }
 
@@ -408,6 +410,7 @@ class MutablePodioTrackStateContainer final
   void clear_impl() {
     m_collection->clear();
     m_params->clear();
+    m_surfaces.clear();
   }
 
   template <typename T>

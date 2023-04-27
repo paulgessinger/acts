@@ -808,8 +808,8 @@ class MultiTrajectoryTestsCommon {
     std::array<PM, 4> values{PM::Predicted, PM::Filtered, PM::Smoothed,
                              PM::Jacobian};
 
-    trajectory_t mj;
-    trajectory_t mj2;
+    trajectory_t mj = m_factory.create();
+    trajectory_t mj2 = m_factory.create();
     auto mkts = [&](PM mask) {
       auto r = mj.getTrackState(mj.addTrackState(mask));
       return r;
@@ -903,7 +903,7 @@ class MultiTrajectoryTestsCommon {
     // correctly
 
     using PM = TrackStatePropMask;
-    trajectory_t mj;
+    trajectory_t mj = m_factory.create();
 
     const auto idx_a = mj.addTrackState(PM::All);
     const auto idx_b = mj.addTrackState(PM::All);

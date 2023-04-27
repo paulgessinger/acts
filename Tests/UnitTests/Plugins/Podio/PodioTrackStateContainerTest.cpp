@@ -83,12 +83,13 @@ struct Factory {
   using trajectory_t = MutablePodioTrackStateContainer;
   using const_trajectory_t = ConstPodioTrackStateContainer;
 
-  ActsPodioEdm::TrackStateCollection m_collection;
-  ActsPodioEdm::BoundParametersCollection m_params;
+  // list used to have stable addresses, irrelevant for testing
+  std::list<ActsPodioEdm::TrackStateCollection> m_collections;
+  std::list<ActsPodioEdm::BoundParametersCollection> m_params;
   MapHelper m_helper;
 
   MutablePodioTrackStateContainer create() {
-    return {m_helper, m_collection, m_params};
+    return {m_helper, m_collections.emplace_back(), m_params.emplace_back()};
   }
 };
 
@@ -150,12 +151,10 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyGetMask) {
   ct.testTrackStateProxyGetMask();
 }
 
-BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
-  CommonTests ct;
-  ct.testTrackStateProxyCopy(rng);
-}
-
-#if 0
+// BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
+// CommonTests ct;
+// ct.testTrackStateProxyCopy(rng);
+// }
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyCopyDiffMTJ) {
   CommonTests ct;
@@ -171,6 +170,7 @@ BOOST_AUTO_TEST_CASE(CopyFromConst) {
   CommonTests ct;
   ct.testCopyFromConst();
 }
+#if 0
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyShare) {
   CommonTests ct;

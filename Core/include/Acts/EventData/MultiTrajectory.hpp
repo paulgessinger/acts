@@ -481,6 +481,8 @@ class TrackStateProxy {
   /// Reference surface.
   /// @return the reference surface
   const Surface& referenceSurface() const {
+    assert(hasReferenceSurface() &&
+           "TrackState does not have reference surface");
     return *m_traj->referenceSurface(m_istate);
   }
 
