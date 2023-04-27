@@ -1004,13 +1004,49 @@ class MultiTrajectoryTestsCommon {
   void testMultiTrajectoryExtraColumns() {
     using namespace HashedStringLiteral;
 
-    struct TestColumn {
-      double value;
+    auto test = [&](const std::string& col, auto value) {
+      using T = decltype(value);
+      std::string col2 = col + "_2";
+      HashedString h{hashString(col)};
+      HashedString h2{hashString(col2)};
+
+      trajectory_t traj = m_factory.create();
+      BOOST_CHECK(!traj.hasColumn(h));
+      traj.template addColumn<T>(col);
+      BOOST_CHECK(traj.hasColumn(h));
+
+      BOOST_CHECK(!traj.hasColumn(h2));
+      traj.template addColumn<T>(col2);
+      BOOST_CHECK(traj.hasColumn(h2));
+
+      auto ts1 = traj.getTrackState(traj.addTrackState());
+      auto ts2 = traj.getTrackState(
+          traj.addTrackState(TrackStatePropMask::All, ts1.index()));
+      auto ts3 = traj.getTrackState(
+          traj.addTrackState(TrackStatePropMask::All, ts2.index()));
+
+      BOOST_CHECK(ts1.has(h));
+      BOOST_CHECK(ts2.has(h));
+      BOOST_CHECK(ts3.has(h));
+
+      BOOST_CHECK(ts1.has(h2));
+      BOOST_CHECK(ts2.has(h2));
+      BOOST_CHECK(ts3.has(h2));
+
+      ts1.template component<T>(col) = value;
+      BOOST_CHECK_EQUAL(ts1.template component<T>(col), value);
     };
+
+    test("uint32_t", uint32_t(1));
+    test("uint64_t", uint64_t(2));
+    test("int32_t", int32_t(-3));
+    test("int64_t", int64_t(-4));
+    test("float", float(8.9));
+    test("double", double(656.2));
 
     trajectory_t traj = m_factory.create();
     traj.template addColumn<int>("extra_column");
-    traj.template addColumn<TestColumn>("another_column");
+    traj.template addColumn<float>("another_column");
 
     auto ts1 = traj.getTrackState(traj.addTrackState());
     auto ts2 = traj.getTrackState(
@@ -1030,14 +1066,14 @@ class MultiTrajectoryTestsCommon {
 
     BOOST_CHECK_EQUAL((ts2.template component<int, "extra_column"_hash>()), 6);
 
-    ts3.template component<TestColumn, "another_column"_hash>().value = 7;
-    BOOST_CHECK_EQUAL(
-        (ts3.template component<TestColumn, "another_column"_hash>().value), 7);
+    ts3.template component<float, "another_column"_hash>() = 7.2f;
+    BOOST_CHECK_EQUAL((ts3.template component<float, "another_column"_hash>()),
+                      7.2f);
   }
 
   void testMultiTrajectoryExtraColumnsRuntime() {
-    auto runTest = [](auto&& fn) {
-      trajectory_t mt;
+    auto runTest = [&](auto&& fn) {
+      trajectory_t mt = m_factory.create();
       std::vector<std::string> columns = {"one", "two", "three", "four"};
       for (const auto& c : columns) {
         BOOST_CHECK(!mt.hasColumn(fn(c)));

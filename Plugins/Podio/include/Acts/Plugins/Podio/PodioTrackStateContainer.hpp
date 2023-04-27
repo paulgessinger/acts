@@ -23,10 +23,71 @@
 
 #include <any>
 
+#include "podio/UserDataCollection.h"
+
 namespace Acts {
 
 class MutablePodioTrackStateContainer;
 class ConstPodioTrackStateContainer;
+
+namespace podio_detail {
+struct DynamicColumnBase {
+  virtual ~DynamicColumnBase() = default;
+
+  virtual std::any get(size_t i) = 0;
+  virtual std::any get(size_t i) const = 0;
+
+  virtual void add() = 0;
+  virtual void clear() = 0;
+  virtual void erase(size_t i) = 0;
+  virtual size_t size() const = 0;
+  virtual void copyFrom(size_t dstIdx, const DynamicColumnBase& src,
+                        size_t srcIdx) = 0;
+
+  virtual std::unique_ptr<DynamicColumnBase> clone(
+      bool empty = false) const = 0;
+};
+
+template <typename T>
+struct DynamicColumn : public DynamicColumnBase {
+  DynamicColumn() = default;
+  DynamicColumn(podio::UserDataCollection<T> collection)
+      : m_collection{std::move(collection)} {}
+
+  std::any get(size_t i) override { return &m_collection.vec().at(i); }
+
+  std::any get(size_t i) const override { return &m_collection.vec().at(i); }
+
+  void add() override { m_collection.vec().emplace_back(); }
+  void clear() override { m_collection.clear(); }
+  void erase(size_t i) override {
+    m_collection.vec().erase(m_collection.vec().begin() + i);
+  }
+  size_t size() const override { return m_collection.size(); }
+
+  std::unique_ptr<DynamicColumnBase> clone(bool empty) const override {
+    if (empty) {
+      return std::make_unique<DynamicColumn<T>>();
+    }
+    podio::UserDataCollection<T> copy;
+    copy.vec().reserve(m_collection.size());
+    for (const T& v : m_collection) {
+      copy.push_back(v);
+    }
+    return std::make_unique<DynamicColumn<T>>(std::move(copy));
+  }
+
+  void copyFrom(size_t dstIdx, const DynamicColumnBase& src,
+                size_t srcIdx) override {
+    const auto* other = dynamic_cast<const DynamicColumn<T>*>(&src);
+    assert(other != nullptr &&
+           "Source column is not of same type as destination");
+    m_collection.vec().at(dstIdx) = other->m_collection.vec().at(srcIdx);
+  }
+
+  podio::UserDataCollection<T> m_collection;
+};
+}  // namespace podio_detail
 
 class PodioTrackStateContainerBase {
  public:
@@ -43,9 +104,6 @@ class PodioTrackStateContainerBase {
       typename detail_lt::Types<eBoundSize, true>::CovarianceMap;
 
  protected:
-  // PodioTrackStateContainerBase(const PodioUtil::ConversionHelper& helper)
-  // : m_helper{helper} {}
-
   template <typename T>
   static constexpr bool has_impl(T& instance, HashedString key,
                                  IndexType istate) {
@@ -78,8 +136,7 @@ class PodioTrackStateContainerBase {
       case "typeFlags"_hash:
         return true;
       default:
-        throw std::runtime_error("Unable to handle this component");
-        // return instance.m_dynamic.find(key) != instance.m_dynamic.end();
+        return instance.m_dynamic.find(key) != instance.m_dynamic.end();
     }
 
     return false;
@@ -123,16 +180,15 @@ class PodioTrackStateContainerBase {
       case "typeFlags"_hash:
         return &data.typeFlags;
       default:
-        throw std::runtime_error("Unable to handle this component");
-        // auto it = instance.m_dynamic.find(key);
-        // if (it == instance.m_dynamic.end()) {
-        // throw std::runtime_error("Unable to handle this component");
-        // }
-        // std::conditional_t<EnsureConst, const detail::DynamicColumnBase*,
-        // detail::DynamicColumnBase*>
-        // col = it->second.get();
-        // assert(col && "Dynamic column is null");
-        // return col->get(istate);
+        auto it = instance.m_dynamic.find(key);
+        if (it == instance.m_dynamic.end()) {
+          throw std::runtime_error("Unable to handle this component");
+        }
+        std::conditional_t<EnsureConst, const podio_detail::DynamicColumnBase*,
+                           podio_detail::DynamicColumnBase*>
+            col = it->second.get();
+        assert(col && "Dynamic column is null");
+        return col->get(istate);
     }
   }
 
@@ -140,24 +196,21 @@ class PodioTrackStateContainerBase {
   static constexpr bool hasColumn_impl(T& instance, HashedString key) {
     using namespace Acts::HashedStringLiteral;
     switch (key) {
-      // case "predicted"_hash:
-      // case "filtered"_hash:
-      // case "smoothed"_hash:
-      // case "calibrated"_hash:
-      // case "calibratedCov"_hash:
-      // case "jacobian"_hash:
-      // case "projector"_hash:
-      // case "previous"_hash:
+      case "predicted"_hash:
+      case "filtered"_hash:
+      case "smoothed"_hash:
+      case "jacobian"_hash:
+      case "projector"_hash:
+      case "previous"_hash:
       case "uncalibratedSourceLink"_hash:
-      // case "referenceSurface"_hash:
-      // case "measdim"_hash:
-      // case "chi2"_hash:
-      // case "pathLength"_hash:
-      // case "typeFlags"_hash:
-      // return true;
+      case "referenceSurface"_hash:
+      case "measdim"_hash:
+      case "chi2"_hash:
+      case "pathLength"_hash:
+      case "typeFlags"_hash:
+        return true;
       default:
-        throw std::runtime_error("Unable to handle this component");
-        // return instance.m_dynamic.find(key) != instance.m_dynamic.end();
+        return instance.m_dynamic.find(key) != instance.m_dynamic.end();
     }
     return false;
   }
@@ -250,6 +303,10 @@ class ConstPodioTrackStateContainer final
   ActsPodioEdm::BoundParametersCollection m_params;
   ActsPodioEdm::JacobianCollection m_jacs;
   std::vector<std::shared_ptr<const Surface>> m_surfaces;
+
+  std::unordered_map<HashedString,
+                     std::unique_ptr<podio_detail::DynamicColumnBase>>
+      m_dynamic;
 };
 
 static_assert(IsReadOnlyMultiTrajectory<ConstPodioTrackStateContainer>::value,
@@ -384,6 +441,11 @@ class MutablePodioTrackStateContainer final
     data.uncalibratedIdentifier = PodioUtil::kNoIdentifier;
     assert(m_collection->size() == m_surfaces.size() &&
            "Inconsistent surface buffer");
+
+    for (const auto& [key, vec] : m_dynamic) {
+      vec->add();
+    }
+
     return m_collection->size() - 1;
   }
 
@@ -467,10 +529,16 @@ class MutablePodioTrackStateContainer final
     m_collection->clear();
     m_params->clear();
     m_surfaces.clear();
+    for (const auto& [key, vec] : m_dynamic) {
+      vec->clear();
+    }
   }
 
   template <typename T>
-  constexpr void addColumn_impl(const std::string& key) {}
+  constexpr void addColumn_impl(const std::string& key) {
+    m_dynamic.insert(
+        {hashString(key), std::make_unique<podio_detail::DynamicColumn<T>>()});
+  }
 
   void allocateCalibrated_impl(IndexType istate, size_t measdim) {
     assert(measdim > 0 && "Zero measdim not supported");
@@ -514,6 +582,10 @@ class MutablePodioTrackStateContainer final
   ActsPodioEdm::BoundParametersCollection m_params;
   ActsPodioEdm::JacobianCollection m_jacs;
   std::vector<std::shared_ptr<const Surface>> m_surfaces;
+
+  std::unordered_map<HashedString,
+                     std::unique_ptr<podio_detail::DynamicColumnBase>>
+      m_dynamic;
 };
 
 static_assert(

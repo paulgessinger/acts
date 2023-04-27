@@ -176,14 +176,14 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyShare) {
   ct.testTrackStateProxyShare(rng);
 }
 
-// BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumns) {
-// CommonTests ct;
-// ct.testMultiTrajectoryExtraColumns();
-// }
+BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumns) {
+  CommonTests ct;
+  ct.testMultiTrajectoryExtraColumns();
+}
 
-// BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumnsRuntime) {
-// CommonTests ct;
-// ct.testMultiTrajectoryExtraColumnsRuntime();
-// }
+BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumnsRuntime) {
+  CommonTests ct;
+  ct.testMultiTrajectoryExtraColumnsRuntime();
+}
 
 BOOST_AUTO_TEST_SUITE_END()
