@@ -90,10 +90,7 @@ struct Factory {
   std::list<ActsPodioEdm::JacobianCollection> m_jacs;
   MapHelper m_helper;
 
-  MutablePodioTrackStateContainer create() {
-    return {m_helper, m_collections.emplace_back(), m_params.emplace_back(),
-            m_jacs.emplace_back()};
-  }
+  MutablePodioTrackStateContainer create() { return {m_helper}; }
 };
 
 using CommonTests = MultiTrajectoryTestsCommon<Factory>;

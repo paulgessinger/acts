@@ -129,9 +129,11 @@ class MultiTrajectoryTestsCommon {
     }
 
     // is this something we actually want?
-    // const_trajectory_t ct = t;
+    const_trajectory_t ct = t;
+    BOOST_CHECK_EQUAL(ct.size(), t.size());
 
     const_trajectory_t ctm{std::move(t)};
+    BOOST_CHECK_EQUAL(ctm.size(), ct.size());
 
     {
       static_assert(
