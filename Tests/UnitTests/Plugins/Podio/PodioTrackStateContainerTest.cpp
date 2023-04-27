@@ -17,6 +17,7 @@
 #include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "Acts/Tests/CommonHelpers/MultiTrajectoryTestsCommon.hpp"
 #include "ActsPodioEdm/BoundParametersCollection.h"
+#include "ActsPodioEdm/JacobianCollection.h"
 #include "ActsPodioEdm/TrackStateCollection.h"
 
 namespace {
@@ -86,10 +87,12 @@ struct Factory {
   // list used to have stable addresses, irrelevant for testing
   std::list<ActsPodioEdm::TrackStateCollection> m_collections;
   std::list<ActsPodioEdm::BoundParametersCollection> m_params;
+  std::list<ActsPodioEdm::JacobianCollection> m_jacs;
   MapHelper m_helper;
 
   MutablePodioTrackStateContainer create() {
-    return {m_helper, m_collections.emplace_back(), m_params.emplace_back()};
+    return {m_helper, m_collections.emplace_back(), m_params.emplace_back(),
+            m_jacs.emplace_back()};
   }
 };
 
@@ -104,10 +107,10 @@ BOOST_AUTO_TEST_CASE(Build) {
   ct.testBuild();
 }
 
-// BOOST_AUTO_TEST_CASE(ConstCorrectness) {
-// CommonTests ct;
-// ct.testConstCorrectness();
-// }
+BOOST_AUTO_TEST_CASE(ConstCorrectness) {
+  CommonTests ct;
+  ct.testConstCorrectness();
+}
 
 BOOST_AUTO_TEST_CASE(Clear) {
   CommonTests ct;
@@ -151,10 +154,10 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyGetMask) {
   ct.testTrackStateProxyGetMask();
 }
 
-// BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
-// CommonTests ct;
-// ct.testTrackStateProxyCopy(rng);
-// }
+BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
+  CommonTests ct;
+  ct.testTrackStateProxyCopy(rng);
+}
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyCopyDiffMTJ) {
   CommonTests ct;
@@ -170,23 +173,20 @@ BOOST_AUTO_TEST_CASE(CopyFromConst) {
   CommonTests ct;
   ct.testCopyFromConst();
 }
-#if 0
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyShare) {
   CommonTests ct;
   ct.testTrackStateProxyShare(rng);
 }
 
-BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumns) {
-  CommonTests ct;
-  ct.testMultiTrajectoryExtraColumns();
-}
+// BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumns) {
+// CommonTests ct;
+// ct.testMultiTrajectoryExtraColumns();
+// }
 
-BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumnsRuntime) {
-  CommonTests ct;
-  ct.testMultiTrajectoryExtraColumnsRuntime();
-}
-
-#endif
+// BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumnsRuntime) {
+// CommonTests ct;
+// ct.testMultiTrajectoryExtraColumnsRuntime();
+// }
 
 BOOST_AUTO_TEST_SUITE_END()

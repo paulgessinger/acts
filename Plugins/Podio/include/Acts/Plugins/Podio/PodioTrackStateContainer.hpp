@@ -18,6 +18,7 @@
 #include "Acts/Utilities/HashedString.hpp"
 #include "Acts/Utilities/Helpers.hpp"
 #include "ActsPodioEdm/BoundParametersCollection.h"
+#include "ActsPodioEdm/JacobianCollection.h"
 #include "ActsPodioEdm/TrackStateCollection.h"
 
 #include <any>
@@ -64,7 +65,7 @@ class PodioTrackStateContainerBase {
       case "calibratedCov"_hash:
         return data.measdim != 0;
       case "jacobian"_hash:
-        return data.hasJacobian;
+        return data.ijacobian != kInvalid;
       case "projector"_hash:
         return data.hasProjector;
       case "uncalibratedSourceLink"_hash:
@@ -160,10 +161,6 @@ class PodioTrackStateContainerBase {
     }
     return false;
   }
-
- public:
- protected:
-  std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
 
 template <>
@@ -177,14 +174,16 @@ class ConstPodioTrackStateContainer final
   ConstPodioTrackStateContainer(
       const PodioUtil::ConversionHelper& helper,
       const ActsPodioEdm::TrackStateCollection& trackStates,
-      const ActsPodioEdm::BoundParametersCollection& params)
-      : m_helper{helper}, m_collection{&trackStates}, m_params{&params} {
-    m_surfaces.reserve(m_collection->size());
-    for (ActsPodioEdm::TrackState trackState : *m_collection) {
-      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
-          m_helper, trackState.getReferenceSurface()));
-    }
+      const ActsPodioEdm::BoundParametersCollection& params,
+      const ActsPodioEdm::JacobianCollection& jacs)
+      : m_helper{helper},
+        m_collection{&trackStates},
+        m_params{&params},
+        m_jacs{&jacs} {
+    populateSurfaceBuffer();
   }
+
+  ConstPodioTrackStateContainer(MutablePodioTrackStateContainer&& other);
 
   ConstParameters parameters_impl(IndexType istate) const {
     return ConstParameters{m_params->at(istate).getData().values.data()};
@@ -195,7 +194,8 @@ class ConstPodioTrackStateContainer final
   }
 
   ConstCovariance jacobian_impl(IndexType istate) const {
-    return ConstCovariance{m_collection->at(istate).getData().jacobian.data()};
+    IndexType ijacobian = m_collection->at(istate).getData().ijacobian;
+    return ConstCovariance{m_jacs->at(ijacobian).getData().values.data()};
   }
 
   template <size_t measdim>
@@ -241,11 +241,21 @@ class ConstPodioTrackStateContainer final
   }
 
  private:
+  void populateSurfaceBuffer() noexcept {
+    m_surfaces.reserve(m_collection->size());
+    for (ActsPodioEdm::TrackState trackState : *m_collection) {
+      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
+          m_helper, trackState.getReferenceSurface()));
+    }
+  }
+
   friend PodioTrackStateContainerBase;
 
   std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
   const ActsPodioEdm::TrackStateCollection* m_collection;
   const ActsPodioEdm::BoundParametersCollection* m_params;
+  const ActsPodioEdm::JacobianCollection* m_jacs;
+  std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
 
 static_assert(IsReadOnlyMultiTrajectory<ConstPodioTrackStateContainer>::value,
@@ -265,8 +275,12 @@ class MutablePodioTrackStateContainer final
   MutablePodioTrackStateContainer(
       PodioUtil::ConversionHelper& helper,
       ActsPodioEdm::TrackStateCollection& trackStates,
-      ActsPodioEdm::BoundParametersCollection& params)
-      : m_helper{helper}, m_collection{&trackStates}, m_params{&params} {
+      ActsPodioEdm::BoundParametersCollection& params,
+      ActsPodioEdm::JacobianCollection& jacs)
+      : m_helper{helper},
+        m_collection{&trackStates},
+        m_params{&params},
+        m_jacs{&jacs} {
     m_surfaces.reserve(m_collection->size());
     for (ActsPodioEdm::TrackState trackState : *m_collection) {
       m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
@@ -291,11 +305,13 @@ class MutablePodioTrackStateContainer final
   }
 
   ConstCovariance jacobian_impl(IndexType istate) const {
-    return ConstCovariance{m_collection->at(istate).getData().jacobian.data()};
+    IndexType ijacobian = m_collection->at(istate).getData().ijacobian;
+    return ConstCovariance{m_jacs->at(ijacobian).getData().values.data()};
   }
 
   Covariance jacobian_impl(IndexType istate) {
-    return Covariance{m_collection->at(istate).data().jacobian.data()};
+    IndexType ijacobian = m_collection->at(istate).getData().ijacobian;
+    return Covariance{m_jacs->at(ijacobian).data().values.data()};
   }
 
   template <size_t measdim>
@@ -354,6 +370,7 @@ class MutablePodioTrackStateContainer final
     data.ipredicted = kInvalid;
     data.ifiltered = kInvalid;
     data.ismoothed = kInvalid;
+    data.ijacobian = kInvalid;
     if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Predicted)) {
       m_params->create();
       data.ipredicted = m_params->size() - 1;
@@ -366,7 +383,10 @@ class MutablePodioTrackStateContainer final
       m_params->create();
       data.ismoothed = m_params->size() - 1;
     }
-    data.hasJacobian = ACTS_CHECK_BIT(mask, TrackStatePropMask::Jacobian);
+    if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Jacobian)) {
+      m_jacs->create();
+      data.ijacobian = m_jacs->size() - 1;
+    }
     data.measdim = 0;
     data.hasProjector = false;
     if (ACTS_CHECK_BIT(mask, TrackStatePropMask::Calibrated)) {
@@ -382,7 +402,56 @@ class MutablePodioTrackStateContainer final
 
   void shareFrom_impl(TrackIndexType iself, TrackIndexType iother,
                       TrackStatePropMask shareSource,
-                      TrackStatePropMask shareTarget) {}
+                      TrackStatePropMask shareTarget) {
+    auto& self = m_collection->at(iself).data();
+    auto& other = m_collection->at(iother).data();
+
+    assert(ACTS_CHECK_BIT(getTrackState(iother).getMask(), shareSource) &&
+           "Source has incompatible allocation");
+
+    using PM = TrackStatePropMask;
+
+    IndexType sourceIndex{kInvalid};
+    switch (shareSource) {
+      case PM::Predicted:
+        sourceIndex = other.ipredicted;
+        break;
+      case PM::Filtered:
+        sourceIndex = other.ifiltered;
+        break;
+      case PM::Smoothed:
+        sourceIndex = other.ismoothed;
+        break;
+      case PM::Jacobian:
+        sourceIndex = other.ijacobian;
+        break;
+      default:
+        throw std::domain_error{"Unable to share this component"};
+    }
+
+    assert(sourceIndex != kInvalid);
+
+    switch (shareTarget) {
+      case PM::Predicted:
+        assert(shareSource != PM::Jacobian);
+        self.ipredicted = sourceIndex;
+        break;
+      case PM::Filtered:
+        assert(shareSource != PM::Jacobian);
+        self.ifiltered = sourceIndex;
+        break;
+      case PM::Smoothed:
+        assert(shareSource != PM::Jacobian);
+        self.ismoothed = sourceIndex;
+        break;
+      case PM::Jacobian:
+        assert(shareSource == PM::Jacobian);
+        self.ijacobian = sourceIndex;
+        break;
+      default:
+        throw std::domain_error{"Unable to share this component"};
+    }
+  }
 
   void unset_impl(TrackStatePropMask target, TrackIndexType istate) {
     auto& data = m_collection->at(istate).data();
@@ -397,7 +466,7 @@ class MutablePodioTrackStateContainer final
         data.ismoothed = kInvalid;
         break;
       case TrackStatePropMask::Jacobian:
-        data.hasJacobian = false;
+        data.ijacobian = kInvalid;
         break;
       case TrackStatePropMask::Calibrated:
         data.measdim = 0;
@@ -451,10 +520,13 @@ class MutablePodioTrackStateContainer final
 
  private:
   friend PodioTrackStateContainerBase;
+  friend ConstPodioTrackStateContainer;
 
   std::reference_wrapper<PodioUtil::ConversionHelper> m_helper;
   ActsPodioEdm::TrackStateCollection* m_collection;
   ActsPodioEdm::BoundParametersCollection* m_params;
+  ActsPodioEdm::JacobianCollection* m_jacs;
+  std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
 
 static_assert(
@@ -466,5 +538,17 @@ static_assert(!MutablePodioTrackStateContainer::ReadOnly,
 
 ACTS_STATIC_CHECK_CONCEPT(MutableMultiTrajectoryBackend,
                           MutablePodioTrackStateContainer);
+
+ConstPodioTrackStateContainer::ConstPodioTrackStateContainer(
+    MutablePodioTrackStateContainer&& other)
+    : m_helper{other.m_helper},
+      m_collection{other.m_collection},
+      m_params{other.m_params},
+      m_jacs{other.m_jacs},
+      m_surfaces{std::move(other.m_surfaces)} {
+  other.m_collection = nullptr;
+  other.m_params = nullptr;
+  other.m_jacs = nullptr;
+}
 
 }  // namespace Acts

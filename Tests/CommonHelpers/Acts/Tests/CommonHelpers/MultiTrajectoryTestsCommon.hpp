@@ -128,17 +128,18 @@ class MultiTrajectoryTestsCommon {
       // ctsp.predicted().setRandom();
     }
 
-    const_trajectory_t ct = t;
+    // is this something we actually want?
+    // const_trajectory_t ct = t;
 
     const_trajectory_t ctm{std::move(t)};
 
     {
       static_assert(
           std::is_same_v<typename const_trajectory_t::ConstTrackStateProxy,
-                         decltype(ct.getTrackState(i0))>,
+                         decltype(ctm.getTrackState(i0))>,
           "Got mutable track state proxy");
       typename const_trajectory_t::ConstTrackStateProxy ctsp =
-          ct.getTrackState(i0);
+          ctm.getTrackState(i0);
       static_cast<void>(ctsp);
 
       // doesn't compile:
