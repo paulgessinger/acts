@@ -715,8 +715,7 @@ class TrackStateProxy {
   /// @note Const version
   ConstCovariance jacobian() const {
     assert(has<hashString("jacobian")>());
-    return m_traj->self().jacobian(
-        component<IndexType, hashString("jacobian")>());
+    return m_traj->self().jacobian(m_istate);
   }
 
   /// Returns the jacobian from the previous trackstate to this one
@@ -725,8 +724,7 @@ class TrackStateProxy {
   template <bool RO = ReadOnly, typename = std::enable_if_t<!RO>>
   Covariance jacobian() {
     assert(has<hashString("jacobian")>());
-    return m_traj->self().jacobian(
-        component<IndexType, hashString("jacobian")>());
+    return m_traj->self().jacobian(m_istate);
   }
 
   /// Returns whether a jacobian is set for this trackstate

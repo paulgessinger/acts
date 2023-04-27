@@ -215,8 +215,6 @@ class VectorMultiTrajectoryBase {
         return &instance.m_index[istate].ifiltered;
       case "smoothed"_hash:
         return &instance.m_index[istate].ismoothed;
-      case "jacobian"_hash:
-        return &instance.m_index[istate].ijacobian;
       case "projector"_hash:
         return &instance.m_projectors[instance.m_index[istate].iprojector];
       case "referenceSurface"_hash:
@@ -345,12 +343,14 @@ class VectorMultiTrajectory final
     return ConstTrackStateProxy::Covariance{m_cov[parIdx].data()};
   }
 
-  TrackStateProxy::Covariance jacobian_impl(IndexType parIdx) {
-    return TrackStateProxy::Covariance{m_jac[parIdx].data()};
+  TrackStateProxy::Covariance jacobian_impl(IndexType istate) {
+    IndexType jacIdx = m_index[istate].ijacobian;
+    return TrackStateProxy::Covariance{m_jac[jacIdx].data()};
   }
 
-  ConstTrackStateProxy::Covariance jacobian_impl(IndexType parIdx) const {
-    return ConstTrackStateProxy::Covariance{m_jac[parIdx].data()};
+  ConstTrackStateProxy::Covariance jacobian_impl(IndexType istate) const {
+    IndexType jacIdx = m_index[istate].ijacobian;
+    return ConstTrackStateProxy::Covariance{m_jac[jacIdx].data()};
   }
 
   template <size_t measdim>
@@ -483,8 +483,9 @@ class ConstVectorMultiTrajectory final
     return ConstTrackStateProxy::Covariance{m_cov[parIdx].data()};
   }
 
-  ConstTrackStateProxy::Covariance jacobian_impl(IndexType parIdx) const {
-    return ConstTrackStateProxy::Covariance{m_jac[parIdx].data()};
+  ConstTrackStateProxy::Covariance jacobian_impl(IndexType istate) const {
+    IndexType jacIdx = m_index[istate].ijacobian;
+    return ConstTrackStateProxy::Covariance{m_jac[jacIdx].data()};
   }
 
   template <size_t measdim>
