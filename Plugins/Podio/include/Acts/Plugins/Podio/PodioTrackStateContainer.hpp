@@ -42,8 +42,8 @@ class PodioTrackStateContainerBase {
       typename detail_lt::Types<eBoundSize, true>::CovarianceMap;
 
  protected:
-  PodioTrackStateContainerBase(const PodioUtil::ConversionHelper& helper)
-      : m_helper{helper} {}
+  // PodioTrackStateContainerBase(const PodioUtil::ConversionHelper& helper)
+  // : m_helper{helper} {}
 
   template <typename T>
   static constexpr bool has_impl(T& instance, HashedString key,
@@ -67,7 +67,7 @@ class PodioTrackStateContainerBase {
         return data.hasJacobian;
       case "projector"_hash:
         return data.hasProjector;
-      // case "uncalibratedSourceLink"_hash:
+      case "uncalibratedSourceLink"_hash:
       // return instance.m_sourceLinks[instance.m_index[istate].iuncalibrated]
       // .has_value();
       case "previous"_hash:
@@ -112,22 +112,22 @@ class PodioTrackStateContainerBase {
         return &data.ifiltered;
       case "smoothed"_hash:
         return &data.ismoothed;
-      // case "calibrated"_hash:
-      // return &instance.m_measOffset[istate];
-      // case "calibratedCov"_hash:
-      // return &instance.m_measCovOffset[istate];
+      case "calibrated"_hash:
+        return &data.index;
+      case "calibratedCov"_hash:
+        return &data.index;
       case "jacobian"_hash:
         return &data.index;
-      // case "projector"_hash:
-      // return &instance.m_projectors[instance.m_index[istate].iprojector];
-      // case "measdim"_hash:
-      // return &instance.m_index[istate].measdim;
+      case "projector"_hash:
+        return &data.projector;
+      case "measdim"_hash:
+        return &data.measdim;
       case "chi2"_hash:
-        return &instance.m_index[istate].chi2;
+        return &data.chi2;
       case "pathLength"_hash:
-        return &instance.m_index[istate].pathLength;
+        return &data.pathLength;
       case "typeFlags"_hash:
-        return &instance.m_index[istate].typeFlags;
+        return &data.typeFlags;
       default:
         throw std::runtime_error("Unable to handle this component");
         // auto it = instance.m_dynamic.find(key);
@@ -154,7 +154,7 @@ class PodioTrackStateContainerBase {
       // case "jacobian"_hash:
       // case "projector"_hash:
       // case "previous"_hash:
-      // case "uncalibratedSourceLink"_hash:
+      case "uncalibratedSourceLink"_hash:
       // case "referenceSurface"_hash:
       // case "measdim"_hash:
       // case "chi2"_hash:
@@ -169,20 +169,7 @@ class PodioTrackStateContainerBase {
   }
 
  public:
-  MultiTrajectoryTraits::IndexType calibratedSize_impl(IndexType istate) const {
-    return 0;
-  }
-
-  SourceLink getUncalibratedSourceLink_impl(IndexType istate) const {
-    return SourceLink{0, 5};
-  }
-
-  const Surface* referenceSurface_impl(IndexType istate) const {
-    return nullptr;
-  }
-
  protected:
-  std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
   std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
 
@@ -198,9 +185,7 @@ class ConstPodioTrackStateContainer final
       const PodioUtil::ConversionHelper& helper,
       const ActsPodioEdm::TrackStateCollection& trackStates,
       const ActsPodioEdm::BoundParametersCollection& params)
-      : PodioTrackStateContainerBase{helper},
-        m_collection{&trackStates},
-        m_params{&params} {}
+      : m_helper{helper}, m_collection{&trackStates}, m_params{&params} {}
 
   ConstParameters parameters_impl(IndexType parIdx) const {
     return ConstParameters{m_params->at(parIdx).getData().values.data()};
@@ -216,14 +201,16 @@ class ConstPodioTrackStateContainer final
 
   template <size_t measdim>
   ConstTrackStateProxy::Measurement<measdim> measurement_impl(
-      IndexType offset) const {
-    return ConstTrackStateProxy::Measurement<measdim>{nullptr};
+      IndexType index) const {
+    return ConstTrackStateProxy::Measurement<measdim>{
+        m_collection->at(index).getData().measurement.data()};
   }
 
   template <size_t measdim>
   ConstTrackStateProxy::MeasurementCovariance<measdim>
-  measurementCovariance_impl(IndexType offset) const {
-    return ConstTrackStateProxy::MeasurementCovariance<measdim>{nullptr};
+  measurementCovariance_impl(IndexType index) const {
+    return ConstTrackStateProxy::MeasurementCovariance<measdim>{
+        m_collection->at(index).getData().measurementCovariance.data()};
   }
 
   IndexType size_impl() const { return m_collection->size(); }
@@ -241,9 +228,23 @@ class ConstPodioTrackStateContainer final
     return PodioTrackStateContainerBase::has_impl(*this, key, istate);
   }
 
+  MultiTrajectoryTraits::IndexType calibratedSize_impl(IndexType istate) const {
+    return m_collection->at(istate).getData().measdim;
+  }
+
+  SourceLink getUncalibratedSourceLink_impl(IndexType istate) const {
+    return m_helper.get().identifierToSourceLink(
+        m_collection->at(istate).getData().uncalibratedIdentifier);
+  }
+
+  const Surface* referenceSurface_impl(IndexType istate) const {
+    return nullptr;
+  }
+
  private:
   friend PodioTrackStateContainerBase;
 
+  std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
   const ActsPodioEdm::TrackStateCollection* m_collection;
   const ActsPodioEdm::BoundParametersCollection* m_params;
 };
@@ -263,12 +264,10 @@ class MutablePodioTrackStateContainer final
       public MultiTrajectory<MutablePodioTrackStateContainer> {
  public:
   MutablePodioTrackStateContainer(
-      const PodioUtil::ConversionHelper& helper,
+      PodioUtil::ConversionHelper& helper,
       ActsPodioEdm::TrackStateCollection& trackStates,
       ActsPodioEdm::BoundParametersCollection& params)
-      : PodioTrackStateContainerBase{helper},
-        m_collection{&trackStates},
-        m_params{&params} {}
+      : m_helper{helper}, m_collection{&trackStates}, m_params{&params} {}
 
   ConstParameters parameters_impl(IndexType parIdx) const {
     return ConstParameters{m_params->at(parIdx).getData().values.data()};
@@ -296,25 +295,29 @@ class MutablePodioTrackStateContainer final
 
   template <size_t measdim>
   ConstTrackStateProxy::Measurement<measdim> measurement_impl(
-      IndexType offset) const {
-    return ConstTrackStateProxy::Measurement<measdim>{nullptr};
+      IndexType index) const {
+    return ConstTrackStateProxy::Measurement<measdim>{
+        m_collection->at(index).getData().measurement.data()};
   }
 
   template <size_t measdim>
-  TrackStateProxy::Measurement<measdim> measurement_impl(IndexType offset) {
-    return TrackStateProxy::Measurement<measdim>{nullptr};
+  TrackStateProxy::Measurement<measdim> measurement_impl(IndexType index) {
+    return TrackStateProxy::Measurement<measdim>{
+        m_collection->at(index).data().measurement.data()};
   }
 
   template <size_t measdim>
   ConstTrackStateProxy::MeasurementCovariance<measdim>
-  measurementCovariance_impl(IndexType offset) const {
-    return ConstTrackStateProxy::MeasurementCovariance<measdim>{nullptr};
+  measurementCovariance_impl(IndexType index) const {
+    return ConstTrackStateProxy::MeasurementCovariance<measdim>{
+        m_collection->at(index).getData().measurementCovariance.data()};
   }
 
   template <size_t measdim>
   TrackStateProxy::MeasurementCovariance<measdim> measurementCovariance_impl(
-      IndexType offset) {
-    return TrackStateProxy::MeasurementCovariance<measdim>{nullptr};
+      IndexType index) {
+    return TrackStateProxy::MeasurementCovariance<measdim>{
+        m_collection->at(index).data().measurementCovariance.data()};
   }
 
   IndexType size_impl() const { return m_collection->size(); }
@@ -389,14 +392,31 @@ class MutablePodioTrackStateContainer final
   }
 
   void setUncalibratedSourceLink_impl(IndexType istate, SourceLink sourceLink) {
+    PodioUtil::Identifier id =
+        m_helper.get().sourceLinkToIdentifier(std::move(sourceLink));
+    m_collection->at(istate).data().uncalibratedIdentifier = id;
   }
 
   void setReferenceSurface_impl(IndexType istate,
                                 std::shared_ptr<const Surface> surface) {}
 
+  MultiTrajectoryTraits::IndexType calibratedSize_impl(IndexType istate) const {
+    return m_collection->at(istate).getData().measdim;
+  }
+
+  SourceLink getUncalibratedSourceLink_impl(IndexType istate) const {
+    return m_helper.get().identifierToSourceLink(
+        m_collection->at(istate).getData().uncalibratedIdentifier);
+  }
+
+  const Surface* referenceSurface_impl(IndexType istate) const {
+    return nullptr;
+  }
+
  private:
   friend PodioTrackStateContainerBase;
 
+  std::reference_wrapper<PodioUtil::ConversionHelper> m_helper;
   ActsPodioEdm::TrackStateCollection* m_collection;
   ActsPodioEdm::BoundParametersCollection* m_params;
 };

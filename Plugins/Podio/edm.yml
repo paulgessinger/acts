@@ -62,6 +62,9 @@ components:
 
         - double chi2
         - double pathLength
+        - uint64_t typeFlags
+
+        - uint64_t uncalibratedIdentifier
 
     ActsPodioEdm::BoundParametersInfo:
       Members:

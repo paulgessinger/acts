@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "Acts/EventData/SourceLink.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
 #include "Acts/Geometry/TrackingGeometry.hpp"
 
@@ -29,6 +30,9 @@ class ConversionHelper {
   virtual std::optional<Identifier> surfaceToIdentifier(
       const Surface& surface) const = 0;
   virtual const Surface* identifierToSurface(Identifier identifier) const = 0;
+
+  virtual Identifier sourceLinkToIdentifier(const SourceLink& sl) = 0;
+  virtual SourceLink identifierToSourceLink(Identifier identifier) const = 0;
 };
 
 std::shared_ptr<const Surface> convertSurfaceFromPodio(

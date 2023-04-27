@@ -12,6 +12,7 @@
 #include <boost/test/unit_test_suite.hpp>
 
 #include "Acts/Definitions/Units.hpp"
+#include "Acts/EventData/SourceLink.hpp"
 #include "Acts/Plugins/Podio/PodioTrackStateContainer.hpp"
 #include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "Acts/Tests/CommonHelpers/MultiTrajectoryTestsCommon.hpp"
@@ -36,9 +37,17 @@ class NullHelper : public PodioUtil::ConversionHelper {
   const Surface* identifierToSurface(PodioUtil::Identifier) const override {
     return nullptr;
   }
+
+  SourceLink identifierToSourceLink(PodioUtil::Identifier) const override {
+    return SourceLink{0, 0};
+  }
+
+  PodioUtil::Identifier sourceLinkToIdentifier(const SourceLink&) override {
+    return 0;
+  }
 };
 
-struct MapHelper : public PodioUtil::ConversionHelper {
+struct MapHelper : public NullHelper {
   std::optional<PodioUtil::Identifier> surfaceToIdentifier(
       const Surface& surface) const override {
     for (auto&& [id, srf] : surfaces) {
@@ -56,7 +65,18 @@ struct MapHelper : public PodioUtil::ConversionHelper {
 
     return it->second;
   }
+
+  PodioUtil::Identifier sourceLinkToIdentifier(const SourceLink& sl) override {
+    sourceLinks.push_back(sl);
+    return sourceLinks.size() - 1;
+  }
+
+  SourceLink identifierToSourceLink(PodioUtil::Identifier id) const override {
+    return sourceLinks.at(id);
+  }
+
   std::unordered_map<PodioUtil::Identifier, const Surface*> surfaces;
+  std::vector<SourceLink> sourceLinks;
 };
 
 struct Factory {
@@ -65,7 +85,7 @@ struct Factory {
 
   ActsPodioEdm::TrackStateCollection m_collection;
   ActsPodioEdm::BoundParametersCollection m_params;
-  NullHelper m_helper;
+  MapHelper m_helper;
 
   MutablePodioTrackStateContainer create() {
     return {m_helper, m_collection, m_params};
