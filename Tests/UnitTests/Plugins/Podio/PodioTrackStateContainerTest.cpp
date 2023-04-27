@@ -129,8 +129,6 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCrossTalk) {
   ct.testTrackStateProxyCrossTalk(rng);
 }
 
-#if 0
-
 BOOST_AUTO_TEST_CASE(TrackStateReassignment) {
   CommonTests ct;
   ct.testTrackStateReassignment(rng);
@@ -156,6 +154,8 @@ BOOST_AUTO_TEST_CASE(TrackStateProxyCopy) {
   CommonTests ct;
   ct.testTrackStateProxyCopy(rng);
 }
+
+#if 0
 
 BOOST_AUTO_TEST_CASE(TrackStateProxyCopyDiffMTJ) {
   CommonTests ct;

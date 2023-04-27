@@ -44,7 +44,6 @@ components:
 
     ActsPodioEdm::TrackStateInfo:
       Members:
-        - uint32_t index
         - uint32_t previous
 
         - uint32_t ipredicted;

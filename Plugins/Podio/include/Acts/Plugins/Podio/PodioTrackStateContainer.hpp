@@ -68,8 +68,7 @@ class PodioTrackStateContainerBase {
       case "projector"_hash:
         return data.hasProjector;
       case "uncalibratedSourceLink"_hash:
-      // return instance.m_sourceLinks[instance.m_index[istate].iuncalibrated]
-      // .has_value();
+        return data.uncalibratedIdentifier != PodioUtil::kNoIdentifier;
       case "previous"_hash:
       case "measdim"_hash:
       case "referenceSurface"_hash:
@@ -112,12 +111,6 @@ class PodioTrackStateContainerBase {
         return &data.ifiltered;
       case "smoothed"_hash:
         return &data.ismoothed;
-      case "calibrated"_hash:
-        return &data.index;
-      case "calibratedCov"_hash:
-        return &data.index;
-      case "jacobian"_hash:
-        return &data.index;
       case "projector"_hash:
         return &data.projector;
       case "measdim"_hash:
@@ -185,18 +178,24 @@ class ConstPodioTrackStateContainer final
       const PodioUtil::ConversionHelper& helper,
       const ActsPodioEdm::TrackStateCollection& trackStates,
       const ActsPodioEdm::BoundParametersCollection& params)
-      : m_helper{helper}, m_collection{&trackStates}, m_params{&params} {}
-
-  ConstParameters parameters_impl(IndexType parIdx) const {
-    return ConstParameters{m_params->at(parIdx).getData().values.data()};
+      : m_helper{helper}, m_collection{&trackStates}, m_params{&params} {
+    m_surfaces.reserve(m_collection->size());
+    for (ActsPodioEdm::TrackState trackState : *m_collection) {
+      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
+          m_helper, trackState.getReferenceSurface()));
+    }
   }
 
-  ConstCovariance covariance_impl(IndexType parIdx) const {
-    return ConstCovariance{m_params->at(parIdx).getData().covariance.data()};
+  ConstParameters parameters_impl(IndexType istate) const {
+    return ConstParameters{m_params->at(istate).getData().values.data()};
   }
 
-  ConstCovariance jacobian_impl(IndexType parIdx) const {
-    return ConstCovariance{m_collection->at(parIdx).getData().jacobian.data()};
+  ConstCovariance covariance_impl(IndexType istate) const {
+    return ConstCovariance{m_params->at(istate).getData().covariance.data()};
+  }
+
+  ConstCovariance jacobian_impl(IndexType istate) const {
+    return ConstCovariance{m_collection->at(istate).getData().jacobian.data()};
   }
 
   template <size_t measdim>
@@ -238,7 +237,7 @@ class ConstPodioTrackStateContainer final
   }
 
   const Surface* referenceSurface_impl(IndexType istate) const {
-    return nullptr;
+    return m_surfaces.at(istate).get();
   }
 
  private:
@@ -267,30 +266,36 @@ class MutablePodioTrackStateContainer final
       PodioUtil::ConversionHelper& helper,
       ActsPodioEdm::TrackStateCollection& trackStates,
       ActsPodioEdm::BoundParametersCollection& params)
-      : m_helper{helper}, m_collection{&trackStates}, m_params{&params} {}
-
-  ConstParameters parameters_impl(IndexType parIdx) const {
-    return ConstParameters{m_params->at(parIdx).getData().values.data()};
+      : m_helper{helper}, m_collection{&trackStates}, m_params{&params} {
+    m_surfaces.reserve(m_collection->size());
+    for (ActsPodioEdm::TrackState trackState : *m_collection) {
+      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
+          m_helper, trackState.getReferenceSurface()));
+    }
   }
 
-  Parameters parameters_impl(IndexType parIdx) {
-    return Parameters{m_params->at(parIdx).data().values.data()};
+  ConstParameters parameters_impl(IndexType istate) const {
+    return ConstParameters{m_params->at(istate).getData().values.data()};
   }
 
-  ConstCovariance covariance_impl(IndexType parIdx) const {
-    return ConstCovariance{m_params->at(parIdx).getData().covariance.data()};
+  Parameters parameters_impl(IndexType istate) {
+    return Parameters{m_params->at(istate).data().values.data()};
   }
 
-  Covariance covariance_impl(IndexType parIdx) {
-    return Covariance{m_params->at(parIdx).data().covariance.data()};
+  ConstCovariance covariance_impl(IndexType istate) const {
+    return ConstCovariance{m_params->at(istate).getData().covariance.data()};
   }
 
-  ConstCovariance jacobian_impl(IndexType parIdx) const {
-    return ConstCovariance{m_collection->at(parIdx).getData().jacobian.data()};
+  Covariance covariance_impl(IndexType istate) {
+    return Covariance{m_params->at(istate).data().covariance.data()};
   }
 
-  Covariance jacobian_impl(IndexType parIdx) {
-    return Covariance{m_collection->at(parIdx).data().jacobian.data()};
+  ConstCovariance jacobian_impl(IndexType istate) const {
+    return ConstCovariance{m_collection->at(istate).getData().jacobian.data()};
+  }
+
+  Covariance jacobian_impl(IndexType istate) {
+    return Covariance{m_collection->at(istate).data().jacobian.data()};
   }
 
   template <size_t measdim>
@@ -368,6 +373,8 @@ class MutablePodioTrackStateContainer final
       data.hasProjector = true;
     }
     m_surfaces.emplace_back();
+
+    data.uncalibratedIdentifier = PodioUtil::kNoIdentifier;
     return m_collection->size() - 1;
   }
 
@@ -375,7 +382,28 @@ class MutablePodioTrackStateContainer final
                       TrackStatePropMask shareSource,
                       TrackStatePropMask shareTarget) {}
 
-  void unset_impl(TrackStatePropMask target, TrackIndexType istate) {}
+  void unset_impl(TrackStatePropMask target, TrackIndexType istate) {
+    auto& data = m_collection->at(istate).data();
+    switch (target) {
+      case TrackStatePropMask::Predicted:
+        data.ipredicted = kInvalid;
+        break;
+      case TrackStatePropMask::Filtered:
+        data.ifiltered = kInvalid;
+        break;
+      case TrackStatePropMask::Smoothed:
+        data.ismoothed = kInvalid;
+        break;
+      case TrackStatePropMask::Jacobian:
+        data.hasJacobian = false;
+        break;
+      case TrackStatePropMask::Calibrated:
+        data.measdim = 0;
+        break;
+      default:
+        throw std::domain_error{"Unable to unset this component"};
+    }
+  }
 
   void clear_impl() {
     m_collection->clear();
@@ -398,7 +426,12 @@ class MutablePodioTrackStateContainer final
   }
 
   void setReferenceSurface_impl(IndexType istate,
-                                std::shared_ptr<const Surface> surface) {}
+                                std::shared_ptr<const Surface> surface) {
+    auto trackState = m_collection->at(istate);
+    trackState.setReferenceSurface(
+        PodioUtil::convertSurfaceToPodio(m_helper, *surface));
+    m_surfaces.at(istate) = std::move(surface);
+  }
 
   MultiTrajectoryTraits::IndexType calibratedSize_impl(IndexType istate) const {
     return m_collection->at(istate).getData().measdim;
@@ -410,7 +443,7 @@ class MutablePodioTrackStateContainer final
   }
 
   const Surface* referenceSurface_impl(IndexType istate) const {
-    return nullptr;
+    return m_surfaces.at(istate).get();
   }
 
  private:

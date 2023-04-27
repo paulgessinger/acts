@@ -577,7 +577,7 @@ class MultiTrajectoryTestsCommon {
     PM all = std::accumulate(values.begin(), values.end(), PM::None,
                              [](auto a, auto b) { return a | b; });
 
-    trajectory_t mj;
+    trajectory_t mj = m_factory.create();
     {
       auto ts = mj.getTrackState(mj.addTrackState(PM::All));
       // Calibrated is ignored because we haven't allocated yet
@@ -614,7 +614,7 @@ class MultiTrajectoryTestsCommon {
     std::array<PM, 4> values{PM::Predicted, PM::Filtered, PM::Smoothed,
                              PM::Jacobian};
 
-    trajectory_t mj;
+    trajectory_t mj = m_factory.create();
     auto mkts = [&](PM mask) {
       auto r = mj.getTrackState(mj.addTrackState(mask));
       return r;
