@@ -838,8 +838,7 @@ class TrackStateProxy {
   template <size_t measdim>
   ConstMeasurement<measdim> calibrated() const {
     assert(has<hashString("calibrated")>());
-    return m_traj->self().template measurement<measdim>(
-        component<IndexType, hashString("calibrated")>());
+    return m_traj->self().template measurement<measdim>(m_istate);
   }
 
   /// Full calibrated measurement vector. Might contain additional zeroed
@@ -850,8 +849,7 @@ class TrackStateProxy {
             typename = std::enable_if_t<!RO>>
   Measurement<measdim> calibrated() {
     assert(has<hashString("calibrated")>());
-    return m_traj->self().template measurement<measdim>(
-        component<IndexType, hashString("calibrated")>());
+    return m_traj->self().template measurement<measdim>(m_istate);
   }
 
   /// Full calibrated measurement covariance matrix. The effective covariance
@@ -861,8 +859,7 @@ class TrackStateProxy {
   template <size_t measdim>
   ConstMeasurementCovariance<measdim> calibratedCovariance() const {
     assert(has<hashString("calibratedCov")>());
-    return m_traj->self().template measurementCovariance<measdim>(
-        component<IndexType, hashString("calibratedCov")>());
+    return m_traj->self().template measurementCovariance<measdim>(m_istate);
   }
 
   /// Full calibrated measurement covariance matrix. The effective covariance
@@ -873,8 +870,7 @@ class TrackStateProxy {
             typename = std::enable_if_t<!RO>>
   MeasurementCovariance<measdim> calibratedCovariance() {
     assert(has<hashString("calibratedCov")>());
-    return m_traj->self().template measurementCovariance<measdim>(
-        component<IndexType, hashString("calibratedCov")>());
+    return m_traj->self().template measurementCovariance<measdim>(m_istate);
   }
 
   /// Dynamic measurement vector with only the valid dimensions.

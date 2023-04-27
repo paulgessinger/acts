@@ -215,10 +215,6 @@ class VectorMultiTrajectoryBase {
         return &instance.m_index[istate].ifiltered;
       case "smoothed"_hash:
         return &instance.m_index[istate].ismoothed;
-      case "calibrated"_hash:
-        return &instance.m_measOffset[istate];
-      case "calibratedCov"_hash:
-        return &instance.m_measCovOffset[istate];
       case "jacobian"_hash:
         return &instance.m_index[istate].ijacobian;
       case "projector"_hash:
@@ -358,25 +354,29 @@ class VectorMultiTrajectory final
   }
 
   template <size_t measdim>
-  TrackStateProxy::Measurement<measdim> measurement_impl(IndexType offset) {
+  TrackStateProxy::Measurement<measdim> measurement_impl(IndexType istate) {
+    IndexType offset = m_measOffset[istate];
     return TrackStateProxy::Measurement<measdim>{&m_meas[offset]};
   }
 
   template <size_t measdim>
   ConstTrackStateProxy::Measurement<measdim> measurement_impl(
-      IndexType offset) const {
+      IndexType istate) const {
+    IndexType offset = m_measOffset[istate];
     return ConstTrackStateProxy::Measurement<measdim>{&m_meas[offset]};
   }
 
   template <size_t measdim>
   TrackStateProxy::MeasurementCovariance<measdim> measurementCovariance_impl(
-      IndexType offset) {
+      IndexType istate) {
+    IndexType offset = m_measCovOffset[istate];
     return TrackStateProxy::MeasurementCovariance<measdim>{&m_measCov[offset]};
   }
 
   template <size_t measdim>
   ConstTrackStateProxy::MeasurementCovariance<measdim>
-  measurementCovariance_impl(IndexType offset) const {
+  measurementCovariance_impl(IndexType istate) const {
+    IndexType offset = m_measCovOffset[istate];
     return ConstTrackStateProxy::MeasurementCovariance<measdim>{
         &m_measCov[offset]};
   }
@@ -489,13 +489,15 @@ class ConstVectorMultiTrajectory final
 
   template <size_t measdim>
   ConstTrackStateProxy::Measurement<measdim> measurement_impl(
-      IndexType offset) const {
+      IndexType istate) const {
+    IndexType offset = m_measOffset[istate];
     return ConstTrackStateProxy::Measurement<measdim>{&m_meas[offset]};
   }
 
   template <size_t measdim>
   ConstTrackStateProxy::MeasurementCovariance<measdim>
-  measurementCovariance_impl(IndexType offset) const {
+  measurementCovariance_impl(IndexType istate) const {
+    IndexType offset = m_measCovOffset[istate];
     return ConstTrackStateProxy::MeasurementCovariance<measdim>{
         &m_measCov[offset]};
   }
