@@ -249,7 +249,7 @@ class ConstPodioTrackStateContainer final
     }
   }
 
-  friend PodioTrackStateContainerBase;
+  friend class PodioTrackStateContainerBase;
 
   std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
   const ActsPodioEdm::TrackStateCollection* m_collection;
@@ -519,8 +519,8 @@ class MutablePodioTrackStateContainer final
   }
 
  private:
-  friend PodioTrackStateContainerBase;
-  friend ConstPodioTrackStateContainer;
+  friend class PodioTrackStateContainerBase;
+  friend class ConstPodioTrackStateContainer;
 
   std::reference_wrapper<PodioUtil::ConversionHelper> m_helper;
   ActsPodioEdm::TrackStateCollection* m_collection;
