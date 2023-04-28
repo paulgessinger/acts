@@ -131,8 +131,6 @@ struct ConstDynamicColumn : public ConstDynamicColumnBase {
 
 class PodioTrackStateContainerBase {
  public:
-  using IndexType = MultiTrajectoryTraits::IndexType;
-
   using Parameters =
       typename detail_lt::Types<eBoundSize, false>::CoefficientsMap;
   using Covariance =
@@ -146,7 +144,7 @@ class PodioTrackStateContainerBase {
  protected:
   template <typename T>
   static constexpr bool has_impl(T& instance, HashedString key,
-                                 IndexType istate) {
+                                 TrackIndexType istate) {
     constexpr auto kInvalid = MultiTrajectoryTraits::kInvalid;
     using namespace Acts::HashedStringLiteral;
     auto trackState = instance.m_collection->at(istate);
@@ -184,7 +182,7 @@ class PodioTrackStateContainerBase {
 
   template <bool EnsureConst, typename T>
   static std::any component_impl(T& instance, HashedString key,
-                                 IndexType istate) {
+                                 TrackIndexType istate) {
     if constexpr (EnsureConst) {
       static_assert(std::is_const_v<std::remove_reference_t<T>>,
                     "Is not const");

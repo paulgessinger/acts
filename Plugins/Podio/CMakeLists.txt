@@ -39,6 +39,9 @@ target_link_libraries(ActsPluginPodio PUBLIC
   podio::podioRootIO
 )
 
+PODIO_ADD_ROOT_IO_DICT(ActsPodioEdmDict ActsPodioEdm "${headers}" src/selection.xml)
+add_library(Acts::ActsPodioEdmDict ALIAS ActsPodioEdmDict)
+
 install(
   TARGETS ActsPodioEdm
   EXPORT ActsPodioEdmTargets
@@ -62,14 +65,28 @@ install(
   DIRECTORY include/Acts
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
+install(TARGETS ActsPodioEdmDict
+  EXPORT ActsPodioEdmTargets
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
+  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ActsPodioEdm"
+  COMPONENT dev)
+
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/ActsPodioEdmDictDict.rootmap"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT dev)
+
+if (${ROOT_VERSION} GREATER 6)
+  install(FILES
+      "${CMAKE_CURRENT_BINARY_DIR}/libActsPodioEdmDict_rdict.pcm"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT dev)
+endif()
 
 # if (nlohmann_json_FOUND)
   # target_compile_definitions(edm4hep PUBLIC PODIO_JSON_OUTPUT)
   # target_link_libraries(edm4hep PUBLIC nlohmann_json::nlohmann_json)
 # endif()
 
-# PODIO_ADD_ROOT_IO_DICT(ActsPodioEdmDict ActsPodioEdm "${headers}" src/selection.xml)
-# add_library(Acts::ActsPodioEdmDict ALIAS ActsPodioEdmDict)
 
 # # list(APPEND EDM4HEP_INSTALL_LIBS edm4hep edm4hepDict)
 

@@ -23,6 +23,7 @@
 #include "ActsPodioEdm/BoundParametersCollection.h"
 #include "ActsPodioEdm/JacobianCollection.h"
 #include "ActsPodioEdm/TrackStateCollection.h"
+#include "ActsPodioEdm/TrivialCollection.h"
 
 #include <filesystem>
 
@@ -108,8 +109,6 @@ using CommonTests = MultiTrajectoryTestsCommon<Factory>;
 }  // namespace
 
 BOOST_AUTO_TEST_SUITE(PodioTrackStateContainerTest)
-
-#if 0
 
 BOOST_AUTO_TEST_CASE(Build) {
   CommonTests ct;
@@ -197,50 +196,13 @@ BOOST_AUTO_TEST_CASE(MultiTrajectoryExtraColumnsRuntime) {
   ct.testMultiTrajectoryExtraColumnsRuntime();
 }
 
-#endif
-
-BOOST_AUTO_TEST_CASE(IORoundTrip) {
-  // auto tmp_path = std::filesystem::temp_directory_path();
-  auto tmp_path = std::filesystem::current_path();
-  auto outfile = tmp_path / "trackstates.root";
-
-  std::cout << outfile << std::endl;
-
-  {
-    podio::Frame frame;
-
-    podio::UserDataCollection<int> coll;
-    coll.push_back(1);
-    coll.push_back(2);
-    coll.push_back(3);
-    // coll.create();
-    // coll.create();
-    // coll.create();
-
-    frame.put(std::move(coll), "trackStates");
-
-    podio::ROOTFrameWriter writer{outfile.string()};
-
-    writer.writeFrame(frame, "events");
-    writer.finish();
-  }
-
-  {
-    podio::ROOTFrameReader reader;
-    reader.openFile(outfile.string());
-
-    podio::Frame frame = reader.readEntry("events", 1);
-  }
-}
-
-#if 0
-
 BOOST_AUTO_TEST_CASE(WriteToPodioFrame) {
   using namespace HashedStringLiteral;
 
   MapHelper helper;
 
-  auto tmp_path = std::filesystem::temp_directory_path();
+  // auto tmp_path = std::filesystem::temp_directory_path();
+  auto tmp_path = std::filesystem::current_path();
   auto outfile = tmp_path / "trackstates.root";
 
   BoundVector tv1;
@@ -265,62 +227,44 @@ BOOST_AUTO_TEST_CASE(WriteToPodioFrame) {
 
   helper.surfaces[666] = reg.get();
 
+  podio::Frame frame;
+
+  MutablePodioTrackStateContainer c{helper};
+  c.addColumn<int32_t>("int_column");
+  c.addColumn<float>("float_column");
   {
-    podio::Frame frame;
+    auto t1 = c.getTrackState(c.addTrackState(TrackStatePropMask::Predicted));
+    t1.predicted() = tv1;
+    t1.predictedCovariance() = cov1;
 
-    MutablePodioTrackStateContainer c{helper};
-    c.addColumn<int32_t>("int_column");
-    c.addColumn<float>("float_column");
-    {
-      auto t1 = c.getTrackState(c.addTrackState(TrackStatePropMask::Predicted));
-      t1.predicted() = tv1;
-      t1.predictedCovariance() = cov1;
+    t1.setReferenceSurface(free);
 
-      t1.setReferenceSurface(free);
+    auto t2 =
+        c.getTrackState(c.addTrackState(TrackStatePropMask::All, t1.index()));
+    t2.predicted() = tv2;
+    t2.predictedCovariance() = cov2;
 
-      auto t2 =
-          c.getTrackState(c.addTrackState(TrackStatePropMask::All, t1.index()));
-      t2.predicted() = tv2;
-      t2.predictedCovariance() = cov2;
+    t2.filtered() = tv3;
+    t2.filteredCovariance() = cov3;
 
-      t2.filtered() = tv3;
-      t2.filteredCovariance() = cov3;
+    t2.smoothed() = tv4;
+    t2.smoothedCovariance() = cov4;
 
-      t2.smoothed() = tv4;
-      t2.smoothedCovariance() = cov4;
+    t2.jacobian() = cov2;
 
-      t2.jacobian() = cov2;
+    auto t3 = c.getTrackState(c.addTrackState());
+    t3.setReferenceSurface(reg);
 
-      auto t3 = c.getTrackState(c.addTrackState());
-      t3.setReferenceSurface(reg);
+    t1.component<int32_t, "int_column"_hash>() = -11;
+    t2.component<int32_t, "int_column"_hash>() = 42;
+    t3.component<int32_t, "int_column"_hash>() = -98;
 
-      t1.component<int32_t, "int_column"_hash>() = -11;
-      t2.component<int32_t, "int_column"_hash>() = 42;
-      t3.component<int32_t, "int_column"_hash>() = -98;
-
-      t1.component<float, "float_column"_hash>() = -11.2f;
-      t2.component<float, "float_column"_hash>() = 42.4f;
-      t3.component<float, "float_column"_hash>() = -98.9f;
-    }
-
-    c.releaseInto(frame, "test");
-
-    BOOST_CHECK_EQUAL(frame.get("trackStates_test")->size(), 3);
-    BOOST_CHECK_EQUAL(frame.get("trackStateParameters_test")->size(), 7);
-    BOOST_CHECK_EQUAL(frame.get("trackStateJacobians_test")->size(), 2);
-    BOOST_CHECK_NE(frame.get("trackStates_test_extra__int_column"), nullptr);
-    BOOST_CHECK_NE(frame.get("trackStates_test_extra__float_column"), nullptr);
-
-    podio::ROOTFrameWriter writer{outfile.string()};
-
-    writer.writeFrame(frame, "events");
-    writer.finish();
+    t1.component<float, "float_column"_hash>() = -11.2f;
+    t2.component<float, "float_column"_hash>() = 42.4f;
+    t3.component<float, "float_column"_hash>() = -98.9f;
   }
 
-  podio::ROOTFrameReader reader;
-  reader.openFile(outfile.string());
-
-  podio::Frame frame = reader.readEntry("events", 1);
+  c.releaseInto(frame, "test");
 
   BOOST_CHECK_EQUAL(frame.get("trackStates_test")->size(), 3);
   BOOST_CHECK_EQUAL(frame.get("trackStateParameters_test")->size(), 7);
@@ -378,7 +322,5 @@ BOOST_AUTO_TEST_CASE(WriteToPodioFrame) {
   BOOST_CHECK_EQUAL((t2.component<float, "float_column"_hash>()), 42.4f);
   BOOST_CHECK_EQUAL((t3.component<float, "float_column"_hash>()), -98.9f);
 }
-
-#endif
 
 BOOST_AUTO_TEST_SUITE_END()

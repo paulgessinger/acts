@@ -152,7 +152,9 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
     t.parameters() << 1, 2, 3, 4, 5, 6;
     Eigen::Map<BoundVector> pars{pTrack.data().parameters.data()};
-    BOOST_CHECK_EQUAL(pars, (BoundVector{1, 2, 3, 4, 5, 6}));
+    BoundVector bv;
+    bv << 1, 2, 3, 4, 5, 6;
+    BOOST_CHECK_EQUAL(pars, bv);
 
     t.covariance() = refCov;
 
@@ -248,8 +250,9 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
     auto t2 = tc.getTrack(1);
     // Is the exact same surface, because it's looked up in the "detector"
     BOOST_CHECK_EQUAL(free.get(), &t2.referenceSurface());
-
-    BOOST_CHECK_EQUAL(t.parameters(), (BoundVector{1, 2, 3, 4, 5, 6}));
+    BoundVector bv;
+    bv << 1, 2, 3, 4, 5, 6;
+    BOOST_CHECK_EQUAL(t.parameters(), bv);
 
     BOOST_CHECK_EQUAL(t.covariance(), refCov);
   }
