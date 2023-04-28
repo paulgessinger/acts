@@ -8,15 +8,23 @@
 
 #include "ActsExamples/TrackFitting/TrackFittingAlgorithm.hpp"
 
+#include "Acts/EventData/SourceLink.hpp"
 #include "Acts/EventData/VectorMultiTrajectory.hpp"
 #include "Acts/EventData/VectorTrackContainer.hpp"
+#include "Acts/Plugins/Podio/PodioTrackContainer.hpp"
+#include "Acts/Plugins/Podio/PodioTrackStateContainer.hpp"
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "Acts/Surfaces/PerigeeSurface.hpp"
 #include "Acts/TrackFitting/GainMatrixSmoother.hpp"
 #include "Acts/TrackFitting/GainMatrixUpdater.hpp"
+#include "ActsExamples/EventData/IndexSourceLink.hpp"
 #include "ActsExamples/EventData/ProtoTrack.hpp"
 #include "ActsExamples/Framework/WhiteBoard.hpp"
 
 #include <stdexcept>
+
+#include <podio/Frame.h>
+#include <podio/ROOTFrameWriter.h>
 
 ActsExamples::TrackFittingAlgorithm::TrackFittingAlgorithm(
     Config config, Acts::Logging::Level level)
@@ -46,6 +54,24 @@ ActsExamples::TrackFittingAlgorithm::TrackFittingAlgorithm(
   m_outputTracks.initialize(m_cfg.outputTracks);
 }
 
+namespace {
+class Helper : public Acts::PodioUtil::NullHelper {
+ public:
+  Acts::SourceLink identifierToSourceLink(
+      Acts::PodioUtil::Identifier id) const override {
+    return Acts::SourceLink{m_sourceLinks.at(id)};
+  }
+
+  Acts::PodioUtil::Identifier sourceLinkToIdentifier(
+      const Acts::SourceLink& sl) override {
+    auto id = sl.get<ActsExamples::IndexSourceLink>().index();
+    return id;
+  }
+
+  std::vector<ActsExamples::IndexSourceLink> m_sourceLinks;
+};
+}  // namespace
+
 ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
     const ActsExamples::AlgorithmContext& ctx) const {
   // Read input data
@@ -74,9 +100,17 @@ ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
       ctx.geoContext, ctx.magFieldContext, ctx.calibContext, pSurface.get(),
       Acts::PropagatorPlainOptions()};
 
-  auto trackContainer = std::make_shared<Acts::VectorTrackContainer>();
-  auto trackStateContainer = std::make_shared<Acts::VectorMultiTrajectory>();
-  TrackContainer tracks(trackContainer, trackStateContainer);
+  // auto trackContainer = std::make_shared<Acts::VectorTrackContainer>();
+  // auto trackStateContainer = std::make_shared<Acts::VectorMultiTrajectory>();
+
+  Helper helper;
+  helper.m_sourceLinks.resize(sourceLinks.size());
+  for (auto sl : sourceLinks) {
+    helper.m_sourceLinks.at(sl.index()) = sl;
+  }
+  auto trackContainer = Acts::MutablePodioTrackContainer{helper};
+  auto trackStateContainer = Acts::MutablePodioTrackStateContainer{helper};
+  Acts::TrackContainer tracks(trackContainer, trackStateContainer);
 
   // Perform the fit for each input track
   std::vector<Acts::SourceLink> trackSourceLinks;
@@ -137,16 +171,28 @@ ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::execute(
     }
   }
 
-  std::stringstream ss;
-  trackStateContainer->statistics().toStream(ss);
-  ACTS_DEBUG(ss.str());
+  podio::Frame frame;
+  trackStateContainer.releaseInto(frame);
+  trackContainer.releaseInto(frame);
 
-  ConstTrackContainer constTracks{
-      std::make_shared<Acts::ConstVectorTrackContainer>(
-          std::move(*trackContainer)),
-      std::make_shared<Acts::ConstVectorMultiTrajectory>(
-          std::move(*trackStateContainer))};
+  // podio::ROOTFrameWriter writer{"tracks_podio.root"};
+  writer.writeFrame(frame, "events");
 
-  m_outputTracks(ctx, std::move(constTracks));
+  // std::stringstream ss;
+  // trackStateContainer->statistics().toStream(ss);
+  // ACTS_DEBUG(ss.str());
+
+  // ConstTrackContainer constTracks{
+  // std::make_shared<Acts::ConstVectorTrackContainer>(
+  // std::move(*trackContainer)),
+  // std::make_shared<Acts::ConstVectorMultiTrajectory>(
+  // std::move(*trackStateContainer))};
+
+  // m_outputTracks(ctx, std::move(constTracks));
+  return ActsExamples::ProcessCode::SUCCESS;
+}
+
+ActsExamples::ProcessCode ActsExamples::TrackFittingAlgorithm::finalize() {
+  writer.finish();
   return ActsExamples::ProcessCode::SUCCESS;
 }

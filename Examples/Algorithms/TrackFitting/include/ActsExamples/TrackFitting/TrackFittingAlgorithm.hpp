@@ -16,6 +16,8 @@
 #include "ActsExamples/Framework/IAlgorithm.hpp"
 #include "ActsExamples/TrackFitting/TrackFitterFunction.hpp"
 
+#include <podio/ROOTFrameWriter.h>
+
 namespace Acts {
 class TrackingGeometry;
 }
@@ -52,12 +54,14 @@ class TrackFittingAlgorithm final : public IAlgorithm {
   /// @param ctx is the algorithm context that holds event-wise information
   /// @return a process code to steer the algporithm flow
   ActsExamples::ProcessCode execute(const AlgorithmContext& ctx) const final;
+  ActsExamples::ProcessCode finalize() final;
 
   /// Get readonly access to the config parameters
   const Config& config() const { return m_cfg; }
 
  private:
   Config m_cfg;
+  mutable podio::ROOTFrameWriter writer{"tracks_podio.root"};
 
   ReadDataHandle<MeasurementContainer> m_inputMeasurements{this,
                                                            "InputMeasurements"};

@@ -34,7 +34,7 @@ def runTruthTrackingKalman(
     )
 
     s = s or acts.examples.Sequencer(
-        events=100, numThreads=-1, logLevel=acts.logging.INFO
+        events=100, numThreads=1, logLevel=acts.logging.INFO
     )
 
     rnd = acts.examples.RandomNumbers()
@@ -100,49 +100,49 @@ def runTruthTrackingKalman(
     )
 
     # Output
-    s.addWriter(
-        acts.examples.RootTrajectoryStatesWriter(
-            level=acts.logging.INFO,
-            inputTrajectories="trajectories",
-            inputParticles="truth_seeds_selected",
-            inputSimHits="simhits",
-            inputMeasurementParticlesMap="measurement_particles_map",
-            inputMeasurementSimHitsMap="measurement_simhits_map",
-            filePath=str(outputDir / "trackstates_fitter.root"),
-        )
-    )
+    #  s.addWriter(
+    #  acts.examples.RootTrajectoryStatesWriter(
+    #  level=acts.logging.INFO,
+    #  inputTrajectories="trajectories",
+    #  inputParticles="truth_seeds_selected",
+    #  inputSimHits="simhits",
+    #  inputMeasurementParticlesMap="measurement_particles_map",
+    #  inputMeasurementSimHitsMap="measurement_simhits_map",
+    #  filePath=str(outputDir / "trackstates_fitter.root"),
+    #  )
+    #  )
 
-    s.addWriter(
-        acts.examples.RootTrajectorySummaryWriter(
-            level=acts.logging.INFO,
-            inputTrajectories="trajectories",
-            inputParticles="truth_seeds_selected",
-            inputMeasurementParticlesMap="measurement_particles_map",
-            filePath=str(outputDir / "tracksummary_fitter.root"),
-        )
-    )
+    #  s.addWriter(
+    #  acts.examples.RootTrajectorySummaryWriter(
+    #  level=acts.logging.INFO,
+    #  inputTrajectories="trajectories",
+    #  inputParticles="truth_seeds_selected",
+    #  inputMeasurementParticlesMap="measurement_particles_map",
+    #  filePath=str(outputDir / "tracksummary_fitter.root"),
+    #  )
+    #  )
 
-    s.addWriter(
-        acts.examples.TrackFinderPerformanceWriter(
-            level=acts.logging.INFO,
-            inputProtoTracks="sorted_truth_particle_tracks"
-            if directNavigation
-            else "truth_particle_tracks",
-            inputParticles="truth_seeds_selected",
-            inputMeasurementParticlesMap="measurement_particles_map",
-            filePath=str(outputDir / "performance_track_finder.root"),
-        )
-    )
+    #  s.addWriter(
+    #  acts.examples.TrackFinderPerformanceWriter(
+    #  level=acts.logging.INFO,
+    #  inputProtoTracks="sorted_truth_particle_tracks"
+    #  if directNavigation
+    #  else "truth_particle_tracks",
+    #  inputParticles="truth_seeds_selected",
+    #  inputMeasurementParticlesMap="measurement_particles_map",
+    #  filePath=str(outputDir / "performance_track_finder.root"),
+    #  )
+    #  )
 
-    s.addWriter(
-        acts.examples.TrackFitterPerformanceWriter(
-            level=acts.logging.INFO,
-            inputTrajectories="trajectories",
-            inputParticles="truth_seeds_selected",
-            inputMeasurementParticlesMap="measurement_particles_map",
-            filePath=str(outputDir / "performance_track_fitter.root"),
-        )
-    )
+    #  s.addWriter(
+    #  acts.examples.TrackFitterPerformanceWriter(
+    #  level=acts.logging.INFO,
+    #  inputTrajectories="trajectories",
+    #  inputParticles="truth_seeds_selected",
+    #  inputMeasurementParticlesMap="measurement_particles_map",
+    #  filePath=str(outputDir / "performance_track_fitter.root"),
+    #  )
+    #  )
 
     return s
 

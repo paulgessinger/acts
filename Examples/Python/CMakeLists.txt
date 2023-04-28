@@ -46,7 +46,7 @@ target_link_libraries(ActsPythonBindings PUBLIC
   ActsExamplesGenerators
   ActsExamplesTrackFinding
   ActsExamplesTrackFitting
-  ActsExamplesTrackFittingChi2
+  # ActsExamplesTrackFittingChi2
   ActsExamplesVertexing
   ActsExamplesFatras
   ActsExamplesPrinters

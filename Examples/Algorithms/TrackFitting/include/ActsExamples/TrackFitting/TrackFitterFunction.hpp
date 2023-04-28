@@ -16,10 +16,13 @@
 #include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/MagneticField/MagneticFieldContext.hpp"
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
+#include "Acts/Plugins/Podio/PodioTrackContainer.hpp"
+#include "Acts/Plugins/Podio/PodioTrackStateContainer.hpp"
 #include "Acts/Propagator/MultiEigenStepperLoop.hpp"
 #include "Acts/Propagator/Propagator.hpp"
 #include "Acts/TrackFitting/BetheHeitlerApprox.hpp"
 #include "Acts/Utilities/CalibrationContext.hpp"
+#include "Acts/Utilities/Holders.hpp"
 #include "ActsExamples/EventData/Measurement.hpp"
 #include "ActsExamples/EventData/Track.hpp"
 #include "ActsExamples/TrackFitting/RefittingCalibrator.hpp"
@@ -31,7 +34,10 @@ namespace ActsExamples {
 /// small.
 class TrackFitterFunction {
  public:
-  using TrackFitterResult = Acts::Result<TrackContainer::TrackProxy>;
+  using TrackFitterResult =
+      Acts::Result<Acts::TrackContainer<Acts::MutablePodioTrackContainer,
+                                        Acts::MutablePodioTrackStateContainer,
+                                        Acts::detail::RefHolder>::TrackProxy>;
 
   struct GeneralFitterOptions {
     std::reference_wrapper<const Acts::GeometryContext> geoContext;
@@ -43,18 +49,20 @@ class TrackFitterFunction {
 
   virtual ~TrackFitterFunction() = default;
 
-  virtual TrackFitterResult operator()(const std::vector<Acts::SourceLink>&,
-                                       const TrackParameters&,
-                                       const GeneralFitterOptions&,
-                                       const MeasurementCalibrator&,
-                                       TrackContainer&) const = 0;
+  virtual TrackFitterResult operator()(
+      const std::vector<Acts::SourceLink>&, const TrackParameters&,
+      const GeneralFitterOptions&, const MeasurementCalibrator&,
+      Acts::TrackContainer<Acts::MutablePodioTrackContainer,
+                           Acts::MutablePodioTrackStateContainer,
+                           Acts::detail::RefHolder>&) const = 0;
 
-  virtual TrackFitterResult operator()(const std::vector<Acts::SourceLink>&,
-                                       const TrackParameters&,
-                                       const GeneralFitterOptions&,
-                                       const RefittingCalibrator&,
-                                       const std::vector<const Acts::Surface*>&,
-                                       TrackContainer&) const = 0;
+  // virtual TrackFitterResult operator()(
+  // const std::vector<Acts::SourceLink>&, const TrackParameters&,
+  // const GeneralFitterOptions&, const RefittingCalibrator&,
+  // const std::vector<const Acts::Surface*>&,
+  // Acts::TrackContainer<Acts::MutablePodioTrackContainer,
+  // Acts::MutablePodioTrackStateContainer,
+  // Acts::detail::RefHolder>&) const = 0;
 };
 
 /// Makes a fitter function object for the Kalman Filter

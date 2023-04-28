@@ -36,6 +36,25 @@ class ConversionHelper {
   virtual SourceLink identifierToSourceLink(Identifier identifier) const = 0;
 };
 
+class NullHelper : public PodioUtil::ConversionHelper {
+ public:
+  std::optional<PodioUtil::Identifier> surfaceToIdentifier(
+      const Surface&) const override {
+    return {};
+  }
+  const Surface* identifierToSurface(PodioUtil::Identifier) const override {
+    return nullptr;
+  }
+
+  SourceLink identifierToSourceLink(PodioUtil::Identifier) const override {
+    return SourceLink{0, 0};
+  }
+
+  PodioUtil::Identifier sourceLinkToIdentifier(const SourceLink&) override {
+    return 0;
+  }
+};
+
 std::shared_ptr<const Surface> convertSurfaceFromPodio(
     const ConversionHelper& helper, const ActsPodioEdm::Surface& surface);
 

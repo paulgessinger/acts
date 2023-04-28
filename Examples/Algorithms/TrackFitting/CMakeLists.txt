@@ -4,8 +4,9 @@ add_library(
   src/SurfaceSortingAlgorithm.cpp
   src/TrackFittingAlgorithm.cpp
   src/KalmanFitterFunction.cpp
-  src/RefittingAlgorithm.cpp
-  src/GsfFitterFunction.cpp)
+  # src/RefittingAlgorithm.cpp
+  # src/GsfFitterFunction.cpp
+)
 target_include_directories(
   ActsExamplesTrackFitting
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
@@ -13,6 +14,7 @@ target_link_libraries(
   ActsExamplesTrackFitting
   PUBLIC
     ActsCore
+    ActsPluginPodio
     ActsExamplesFramework ActsExamplesMagneticField)
 
 install(

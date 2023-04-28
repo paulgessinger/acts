@@ -35,6 +35,7 @@ namespace Acts::Python {
 void addTrackFinding(Context& ctx) {
   auto [m, mex] = ctx.get("main", "examples");
 
+  return;
   ACTS_PYTHON_DECLARE_ALGORITHM(ActsExamples::SpacePointMaker, mex,
                                 "SpacePointMaker", inputSourceLinks,
                                 inputMeasurements, outputSpacePoints,

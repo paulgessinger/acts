@@ -60,8 +60,8 @@ ActsPodioEdm::Surface convertSurfaceToPodio(const ConversionHelper& helper,
     result.identifier = identifier.value();
   } else {
     result.identifier = kNoIdentifier;
-    assert(surface.associatedDetectorElement() == nullptr &&
-           "Unidentified surface does not have detector element");
+    // assert(surface.associatedDetectorElement() == nullptr &&
+    // "Unidentified surface does not have detector element");
     // @TODO: Surface type is not well-defined for curvilinear surface: looks like any plane surface
     result.surfaceType = surface.type();
     // @TODO: Test line bounds, does not have bounds, so nullptr

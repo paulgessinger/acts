@@ -9,11 +9,11 @@
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
 #include "Acts/Plugins/Python/Utilities.hpp"
 #include "Acts/Utilities/Logger.hpp"
-#include "ActsExamples/TrackFitting/RefittingAlgorithm.hpp"
+// #include "ActsExamples/TrackFitting/RefittingAlgorithm.hpp"
 #include "ActsExamples/TrackFitting/SurfaceSortingAlgorithm.hpp"
 #include "ActsExamples/TrackFitting/TrackFitterFunction.hpp"
 #include "ActsExamples/TrackFitting/TrackFittingAlgorithm.hpp"
-#include "ActsExamples/TrackFittingChi2/TrackFittingChi2Algorithm.hpp"
+// #include "ActsExamples/TrackFittingChi2/TrackFittingChi2Algorithm.hpp"
 
 #include <memory>
 
@@ -40,9 +40,9 @@ void addTrackFitting(Context& ctx) {
       inputMeasurements, inputSourceLinks, inputProtoTracks,
       inputInitialTrackParameters, outputTracks, fit, pickTrack);
 
-  ACTS_PYTHON_DECLARE_ALGORITHM(ActsExamples::RefittingAlgorithm, mex,
-                                "RefittingAlgorithm", inputTracks, outputTracks,
-                                fit, pickTrack);
+  // ACTS_PYTHON_DECLARE_ALGORITHM(ActsExamples::RefittingAlgorithm, mex,
+  // "RefittingAlgorithm", inputTracks, outputTracks,
+  // fit, pickTrack);
 
   {
     py::class_<TrackFitterFunction, std::shared_ptr<TrackFitterFunction>>(
@@ -78,64 +78,64 @@ void addTrackFitting(Context& ctx) {
           return Acts::Experimental::makeDefaultBetheHeitlerApprox();
         });
 
-    mex.def(
-        "makeGsfFitterFunction",
-        [](std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry,
-           std::shared_ptr<const Acts::MagneticFieldProvider> magneticField,
-           BetheHeitlerApprox betheHeitlerApprox, std::size_t maxComponents,
-           double weightCutoff, Acts::FinalReductionMethod finalReductionMethod,
-           bool abortOnError, bool disableAllMaterialHandling,
-           Logging::Level level) {
-          return ActsExamples::makeGsfFitterFunction(
-              trackingGeometry, magneticField, betheHeitlerApprox,
-              maxComponents, weightCutoff, finalReductionMethod, abortOnError,
-              disableAllMaterialHandling,
-              *Acts::getDefaultLogger("GSFFunc", level));
-        },
-        py::arg("trackingGeometry"), py::arg("magneticField"),
-        py::arg("betheHeitlerApprox"), py::arg("maxComponents"),
-        py::arg("weightCutoff"), py::arg("finalReductionMethod"),
-        py::arg("abortOnError"), py::arg("disableAllMaterialHandling"),
-        py::arg("level"));
+    // mex.def(
+    // "makeGsfFitterFunction",
+    // [](std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry,
+    // std::shared_ptr<const Acts::MagneticFieldProvider> magneticField,
+    // BetheHeitlerApprox betheHeitlerApprox, std::size_t maxComponents,
+    // double weightCutoff, Acts::FinalReductionMethod finalReductionMethod,
+    // bool abortOnError, bool disableAllMaterialHandling,
+    // Logging::Level level) {
+    // return ActsExamples::makeGsfFitterFunction(
+    // trackingGeometry, magneticField, betheHeitlerApprox,
+    // maxComponents, weightCutoff, finalReductionMethod, abortOnError,
+    // disableAllMaterialHandling,
+    // *Acts::getDefaultLogger("GSFFunc", level));
+    // },
+    // py::arg("trackingGeometry"), py::arg("magneticField"),
+    // py::arg("betheHeitlerApprox"), py::arg("maxComponents"),
+    // py::arg("weightCutoff"), py::arg("finalReductionMethod"),
+    // py::arg("abortOnError"), py::arg("disableAllMaterialHandling"),
+    // py::arg("level"));
   }
 
-  {
-    using Alg = ActsExamples::TrackFittingChi2Algorithm;
-    using Config = Alg::Config;
+  // {
+  // using Alg = ActsExamples::TrackFittingChi2Algorithm;
+  // using Config = Alg::Config;
 
-    auto alg =
-        py::class_<Alg, IAlgorithm, std::shared_ptr<Alg>>(
-            mex, "TrackFittingChi2Algorithm")
-            .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Alg::config)
-            .def_static("makeTrackFitterChi2Function",
-                        py::overload_cast<
-                            std::shared_ptr<const Acts::TrackingGeometry>,
-                            std::shared_ptr<const Acts::MagneticFieldProvider>>(
-                            &Alg::makeTrackFitterChi2Function));
+  // auto alg =
+  // py::class_<Alg, IAlgorithm, std::shared_ptr<Alg>>(
+  // mex, "TrackFittingChi2Algorithm")
+  // .def(py::init<const Alg::Config&, Acts::Logging::Level>(),
+  // py::arg("config"), py::arg("level"))
+  // .def_property_readonly("config", &Alg::config)
+  // .def_static("makeTrackFitterChi2Function",
+  // py::overload_cast<
+  // std::shared_ptr<const Acts::TrackingGeometry>,
+  // std::shared_ptr<const Acts::MagneticFieldProvider>>(
+  // &Alg::makeTrackFitterChi2Function));
 
-    py::class_<
-        TrackFittingChi2Algorithm::TrackFitterChi2Function,
-        std::shared_ptr<TrackFittingChi2Algorithm::TrackFitterChi2Function>>(
-        alg, "TrackFitterChi2Function");
+  // py::class_<
+  // TrackFittingChi2Algorithm::TrackFitterChi2Function,
+  // std::shared_ptr<TrackFittingChi2Algorithm::TrackFitterChi2Function>>(
+  // alg, "TrackFitterChi2Function");
 
-    auto c = py::class_<Config>(alg, "Config").def(py::init<>());
+  // auto c = py::class_<Config>(alg, "Config").def(py::init<>());
 
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(inputMeasurements);
-    ACTS_PYTHON_MEMBER(inputSourceLinks);
-    ACTS_PYTHON_MEMBER(inputProtoTracks);
-    ACTS_PYTHON_MEMBER(inputInitialTrackParameters);
-    ACTS_PYTHON_MEMBER(outputTracks);
-    ACTS_PYTHON_MEMBER(nUpdates);
-    ACTS_PYTHON_MEMBER(fit);
-    ACTS_PYTHON_MEMBER(trackingGeometry);
-    ACTS_PYTHON_MEMBER(multipleScattering);
-    ACTS_PYTHON_MEMBER(energyLoss);
-    ACTS_PYTHON_MEMBER(pickTrack);
-    ACTS_PYTHON_STRUCT_END();
-  }
+  // ACTS_PYTHON_STRUCT_BEGIN(c, Config);
+  // ACTS_PYTHON_MEMBER(inputMeasurements);
+  // ACTS_PYTHON_MEMBER(inputSourceLinks);
+  // ACTS_PYTHON_MEMBER(inputProtoTracks);
+  // ACTS_PYTHON_MEMBER(inputInitialTrackParameters);
+  // ACTS_PYTHON_MEMBER(outputTracks);
+  // ACTS_PYTHON_MEMBER(nUpdates);
+  // ACTS_PYTHON_MEMBER(fit);
+  // ACTS_PYTHON_MEMBER(trackingGeometry);
+  // ACTS_PYTHON_MEMBER(multipleScattering);
+  // ACTS_PYTHON_MEMBER(energyLoss);
+  // ACTS_PYTHON_MEMBER(pickTrack);
+  // ACTS_PYTHON_STRUCT_END();
+  // }
 
   {
     py::class_<FreeToBoundCorrection>(mex, "FreeToBoundCorrection")

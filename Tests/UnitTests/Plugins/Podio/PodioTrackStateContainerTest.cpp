@@ -39,25 +39,6 @@ namespace bd = boost::unit_test::data;
 
 std::default_random_engine rng(31415);
 
-class NullHelper : public PodioUtil::ConversionHelper {
- public:
-  std::optional<PodioUtil::Identifier> surfaceToIdentifier(
-      const Surface&) const override {
-    return {};
-  }
-  const Surface* identifierToSurface(PodioUtil::Identifier) const override {
-    return nullptr;
-  }
-
-  SourceLink identifierToSourceLink(PodioUtil::Identifier) const override {
-    return SourceLink{0, 0};
-  }
-
-  PodioUtil::Identifier sourceLinkToIdentifier(const SourceLink&) override {
-    return 0;
-  }
-};
-
 struct MapHelper : public NullHelper {
   std::optional<PodioUtil::Identifier> surfaceToIdentifier(
       const Surface& surface) const override {

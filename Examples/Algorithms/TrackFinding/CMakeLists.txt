@@ -4,8 +4,8 @@ add_library(
   src/SeedingAlgorithm.cpp
   src/SeedingOrthogonalAlgorithm.cpp
   src/SpacePointMaker.cpp
-  src/TrackFindingAlgorithm.cpp
-  src/TrackFindingAlgorithmFunction.cpp
+  # src/TrackFindingAlgorithm.cpp
+  # src/TrackFindingAlgorithmFunction.cpp
   src/HoughTransformSeeder.cpp
   src/TrackParamsEstimationAlgorithm.cpp
 )

@@ -184,7 +184,7 @@ def addSeeding(
     seedFilterConfigArg: SeedFilterConfigArg = SeedFilterConfigArg(),
     spacePointGridConfigArg: SpacePointGridConfigArg = SpacePointGridConfigArg(),
     seedingAlgorithmConfigArg: SeedingAlgorithmConfigArg = SeedingAlgorithmConfigArg(),
-    houghTransformConfig: acts.examples.HoughTransformSeeder.Config = acts.examples.HoughTransformSeeder.Config(),
+    houghTransformConfig=None,  # acts.examples.HoughTransformSeeder.Config = acts.examples.HoughTransformSeeder.Config(),
     truthEstimatedSeedingAlgorithmConfigArg: TruthEstimatedSeedingAlgorithmConfigArg = TruthEstimatedSeedingAlgorithmConfigArg(),
     inputParticles: str = "particles",
     outputDirRoot: Optional[Union[Path, str]] = None,
@@ -754,7 +754,7 @@ def addOrthogonalSeeding(
 
 def addHoughTransformSeeding(
     sequence: acts.examples.Sequencer,
-    config: acts.examples.HoughTransformSeeder.Config,
+    config=None,  #: acts.examples.HoughTransformSeeder.Config,
     logLevel: acts.logging.Level = None,
 ):
     """
@@ -856,14 +856,14 @@ def addKalmanTracks(
     )
     s.addAlgorithm(fitAlg)
 
-    trackConverter = acts.examples.TracksToTrajectories(
-        level=customLogLevel(),
-        inputTracks=fitAlg.config.outputTracks,
-        outputTrajectories="kfTrajectories",
-    )
-    s.addAlgorithm(trackConverter)
+    #  trackConverter = acts.examples.TracksToTrajectories(
+    #  level=customLogLevel(),
+    #  inputTracks=fitAlg.config.outputTracks,
+    #  outputTrajectories="kfTrajectories",
+    #  )
+    #  s.addAlgorithm(trackConverter)
 
-    s.addWhiteboardAlias("trajectories", trackConverter.config.outputTrajectories)
+    #  s.addWhiteboardAlias("trajectories", trackConverter.config.outputTrajectories)
 
     return s
 

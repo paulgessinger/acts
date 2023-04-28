@@ -10,6 +10,7 @@
 #include "Acts/EventData/SourceLink.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
 #include "Acts/Geometry/TrackingGeometry.hpp"
+#include "Acts/Plugins/Podio/PodioTrackStateContainer.hpp"
 #include "Acts/Propagator/EigenStepper.hpp"
 #include "Acts/Propagator/Navigator.hpp"
 #include "Acts/Propagator/Propagator.hpp"
@@ -27,10 +28,11 @@ namespace {
 
 using Stepper = Acts::EigenStepper<>;
 using Propagator = Acts::Propagator<Stepper, Acts::Navigator>;
-using Fitter = Acts::KalmanFitter<Propagator, Acts::VectorMultiTrajectory>;
+using Fitter =
+    Acts::KalmanFitter<Propagator, Acts::MutablePodioTrackStateContainer>;
 using DirectPropagator = Acts::Propagator<Stepper, Acts::DirectNavigator>;
 using DirectFitter =
-    Acts::KalmanFitter<DirectPropagator, Acts::VectorMultiTrajectory>;
+    Acts::KalmanFitter<DirectPropagator, Acts::MutablePodioTrackStateContainer>;
 
 using TrackContainer =
     Acts::TrackContainer<Acts::VectorTrackContainer,
@@ -40,8 +42,8 @@ struct SimpleReverseFilteringLogic {
   double momentumThreshold = 0;
 
   bool doBackwardFiltering(
-      Acts::MultiTrajectory<Acts::VectorMultiTrajectory>::ConstTrackStateProxy
-          trackState) const {
+      Acts::MultiTrajectory<Acts::MutablePodioTrackStateContainer>::
+          ConstTrackStateProxy trackState) const {
     auto momentum = fabs(1 / trackState.filtered()[Acts::eBoundQOverP]);
     return (momentum <= momentumThreshold);
   }
@@ -67,52 +69,56 @@ struct KalmanFitterFunctionImpl final : public TrackFitterFunction {
   template <typename calibrator_t>
   auto makeKfOptions(const GeneralFitterOptions& options,
                      const calibrator_t& calibrator) const {
-    Acts::KalmanFitterExtensions<Acts::VectorMultiTrajectory> extensions;
-    extensions.updater.connect<
-        &Acts::GainMatrixUpdater::operator()<Acts::VectorMultiTrajectory>>(
-        &kfUpdater);
-    extensions.smoother.connect<
-        &Acts::GainMatrixSmoother::operator()<Acts::VectorMultiTrajectory>>(
-        &kfSmoother);
+    Acts::KalmanFitterExtensions<Acts::MutablePodioTrackStateContainer>
+        extensions;
+    extensions.updater.connect<&Acts::GainMatrixUpdater::operator()<
+        Acts::MutablePodioTrackStateContainer>>(&kfUpdater);
+    extensions.smoother.connect<&Acts::GainMatrixSmoother::operator()<
+        Acts::MutablePodioTrackStateContainer>>(&kfSmoother);
     extensions.reverseFilteringLogic
         .connect<&SimpleReverseFilteringLogic::doBackwardFiltering>(
             &reverseFilteringLogic);
 
-    Acts::KalmanFitterOptions<Acts::VectorMultiTrajectory> kfOptions(
+    Acts::KalmanFitterOptions<Acts::MutablePodioTrackStateContainer> kfOptions(
         options.geoContext, options.magFieldContext, options.calibrationContext,
         extensions, options.propOptions, &(*options.referenceSurface));
 
     kfOptions.multipleScattering = multipleScattering;
     kfOptions.energyLoss = energyLoss;
     kfOptions.freeToBoundCorrection = freeToBoundCorrection;
-    kfOptions.extensions.calibrator.connect<&calibrator_t::calibrate>(
-        &calibrator);
+    kfOptions.extensions.calibrator.connect<&calibrator_t::template calibrate<
+        Acts::MutablePodioTrackStateContainer>>(&calibrator);
 
     return kfOptions;
-  }
-
-  TrackFitterResult operator()(const std::vector<Acts::SourceLink>& sourceLinks,
-                               const TrackParameters& initialParameters,
-                               const GeneralFitterOptions& options,
-                               const MeasurementCalibrator& calibrator,
-                               TrackContainer& tracks) const override {
-    const auto kfOptions = makeKfOptions(options, calibrator);
-    return fitter.fit(sourceLinks.begin(), sourceLinks.end(), initialParameters,
-                      kfOptions, tracks);
   }
 
   TrackFitterResult operator()(
       const std::vector<Acts::SourceLink>& sourceLinks,
       const TrackParameters& initialParameters,
       const GeneralFitterOptions& options,
-      const RefittingCalibrator& calibrator,
-      const std::vector<const Acts::Surface*>& surfaceSequence,
-      TrackContainer& tracks) const override {
+      const MeasurementCalibrator& calibrator,
+      Acts::TrackContainer<Acts::MutablePodioTrackContainer,
+                           Acts::MutablePodioTrackStateContainer,
+                           Acts::detail::RefHolder>& tracks) const override {
     const auto kfOptions = makeKfOptions(options, calibrator);
-    return directFitter.fit(sourceLinks.begin(), sourceLinks.end(),
-                            initialParameters, kfOptions, surfaceSequence,
-                            tracks);
+    return fitter.fit(sourceLinks.begin(), sourceLinks.end(), initialParameters,
+                      kfOptions, tracks);
   }
+
+  // TrackFitterResult operator()(
+  // const std::vector<Acts::SourceLink>& sourceLinks,
+  // const TrackParameters& initialParameters,
+  // const GeneralFitterOptions& options,
+  // const RefittingCalibrator& calibrator,
+  // const std::vector<const Acts::Surface*>& surfaceSequence,
+  // Acts::TrackContainer<Acts::MutablePodioTrackContainer,
+  // Acts::MutablePodioTrackStateContainer,
+  // Acts::detail::RefHolder>& tracks) const override {
+  // const auto kfOptions = makeKfOptions(options, calibrator);
+  // return directFitter.fit(sourceLinks.begin(), sourceLinks.end(),
+  // initialParameters, kfOptions, surfaceSequence,
+  // tracks);
+  // }
 };
 
 }  // namespace

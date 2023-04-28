@@ -42,12 +42,12 @@ class MeasurementCalibrator {
   /// @tparam parameters_t Track parameters type
   /// @param gctx The geometry context (unused)
   /// @param trackState The track state to calibrate
-  void calibrate(
-      const Acts::GeometryContext& /*gctx*/,
-      Acts::MultiTrajectory<Acts::VectorMultiTrajectory>::TrackStateProxy
-          trackState) const {
+  template <typename traj_t>
+  void calibrate(const Acts::GeometryContext& /*gctx*/,
+                 typename Acts::MultiTrajectory<traj_t>::TrackStateProxy
+                     trackState) const {
     const IndexSourceLink& sourceLink =
-        trackState.getUncalibratedSourceLink().get<IndexSourceLink>();
+        trackState.getUncalibratedSourceLink().template get<IndexSourceLink>();
     assert(m_measurements and
            "Undefined measurement container in DigitizedCalibrator");
     assert((sourceLink.index() < m_measurements->size()) and
