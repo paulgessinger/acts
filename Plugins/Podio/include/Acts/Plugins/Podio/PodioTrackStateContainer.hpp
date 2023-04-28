@@ -109,7 +109,6 @@ struct DynamicColumn : public DynamicColumnBase {
   }
 
   void releaseInto(podio::Frame& frame, const std::string& prefix) override {
-    std::cout << "release col: " << prefix + m_name << std::endl;
     frame.put(std::move(m_collection), prefix + m_name);
   }
 
@@ -349,13 +348,11 @@ class ConstPodioTrackStateContainer final
                 return;
               }
               using T = decltype(arg);
-              std::cout << "check if " << typeid(T).name() << std::endl;
               const auto* dyn =
                   dynamic_cast<const podio::UserDataCollection<T>*>(coll);
               if (dyn == nullptr) {
                 return;
               }
-              std::cout << " success!" << std::endl;
               up = std::make_unique<podio_detail::ConstDynamicColumn<T>>(
                   dynName, *dyn);
             };
@@ -388,23 +385,7 @@ class ConstPodioTrackStateContainer final
     }
   }
 
-  // template <typename T>
-  // static std::unique_ptr<podio_detail::DynamicColumnBase> tryDynamicColumn(
-  // const podio::CollectionBase* coll, const std::string& name) {
-  // std::cout << "check if " << typeid(T).name() << std::endl;
-  // const auto* dyn = dynamic_cast<const podio::UserDataCollection<T>*>(coll);
-  // if (dyn == nullptr) {
-  // return nullptr;
-  // }
-
-  // return std::make_unique<podio_detail::DynamicColumn<T>>()
-  // }
-
  public:
-  // ConstPodioTrackStateContainer(const MutablePodioTrackStateContainer&
-  // other); ConstPodioTrackStateContainer(MutablePodioTrackStateContainer&&
-  // other);
-
   ConstParameters parameters_impl(IndexType istate) const {
     return ConstParameters{m_params->at(istate).getData().values.data()};
   }

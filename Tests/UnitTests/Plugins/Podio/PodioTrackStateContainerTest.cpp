@@ -23,7 +23,6 @@
 #include "ActsPodioEdm/BoundParametersCollection.h"
 #include "ActsPodioEdm/JacobianCollection.h"
 #include "ActsPodioEdm/TrackStateCollection.h"
-#include "ActsPodioEdm/TrivialCollection.h"
 
 #include <filesystem>
 
