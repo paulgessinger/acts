@@ -18,6 +18,7 @@
 #include "Acts/EventData/VectorMultiTrajectory.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Plugins/Podio/PodioTrackContainer.hpp"
+#include "Acts/Plugins/Podio/PodioTrackStateContainer.hpp"
 #include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "Acts/Surfaces/AnnulusBounds.hpp"
 #include "Acts/Surfaces/ConeSurface.hpp"
@@ -134,11 +135,11 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
   podio::Frame frame;
 
   {
-    Acts::VectorMultiTrajectory mtj{};
+    Acts::MutablePodioTrackStateContainer tsc{helper};
     Acts::MutablePodioTrackContainer ptc{helper};
     ActsPodioEdm::TrackCollection& tracks = ptc.trackCollection();
 
-    Acts::TrackContainer tc{ptc, mtj};
+    Acts::TrackContainer tc{ptc, tsc};
 
     BOOST_CHECK(!tc.hasColumn("int_column"_hash));
     BOOST_CHECK(!tc.hasColumn("float_column"_hash));
@@ -151,13 +152,23 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
     auto t = tc.getTrack(tc.addTrack());
     BOOST_CHECK_EQUAL(t.tipIndex(), MultiTrajectoryTraits::kInvalid);
-    t.tipIndex() = 5;
-    BOOST_CHECK_EQUAL(t.tipIndex(), 5);
+
+    BOOST_CHECK_EQUAL(tsc.size(), 0);
+    auto ts1 = t.appendTrackState();
+    auto ts2 = t.appendTrackState();
+    auto ts3 = t.appendTrackState();
+    BOOST_CHECK_EQUAL(tsc.size(), 3);
+    BOOST_CHECK_EQUAL(ts1.index(), 0);
+    BOOST_CHECK_EQUAL(ts2.index(), 1);
+    BOOST_CHECK_EQUAL(ts3.index(), 2);
+
+    BOOST_CHECK_EQUAL(t.nTrackStates(), 3);
+    BOOST_CHECK_EQUAL(t.tipIndex(), 2);
 
     BOOST_CHECK_EQUAL(tc.size(), 1);
 
     auto pTrack = tracks.at(0);
-    BOOST_CHECK_EQUAL(pTrack.data().tipIndex, 5);
+    BOOST_CHECK_EQUAL(pTrack.data().tipIndex, 2);
 
     t.parameters() << 1, 2, 3, 4, 5, 6;
     Eigen::Map<BoundVector> pars{pTrack.data().parameters.data()};
@@ -222,18 +233,23 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
     t3.component<float, "float_column"_hash>() = -98.9f;
 
     ptc.releaseInto(frame);
+    tsc.releaseInto(frame);
+
     BOOST_REQUIRE_NE(frame.get("tracks"), nullptr);
     BOOST_CHECK_EQUAL(frame.get("tracks")->size(), 3);
     BOOST_REQUIRE_NE(frame.get("tracks_extra__int_column"), nullptr);
     BOOST_REQUIRE_NE(frame.get("tracks_extra__float_column"), nullptr);
+
+    BOOST_REQUIRE_NE(frame.get("trackStates"), nullptr);
+    BOOST_CHECK_EQUAL(frame.get("trackStates")->size(), 3);
   }
 
   {
-    Acts::ConstVectorMultiTrajectory mtj{};
+    Acts::ConstPodioTrackStateContainer tsc{helper, frame};
     Acts::ConstPodioTrackContainer ptc{helper, frame};
     // const ActsPodioEdm::TrackCollection& tracks = ptc.trackCollection();
 
-    Acts::TrackContainer tc{ptc, mtj};
+    Acts::TrackContainer tc{ptc, tsc};
 
     BOOST_CHECK(tc.hasColumn("int_column"_hash));
     BOOST_CHECK(tc.hasColumn("float_column"_hash));
@@ -257,6 +273,9 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
     BOOST_CHECK_EQUAL(t.nSharedHits(), 99);
 
+    BOOST_CHECK_EQUAL(t.tipIndex(), 2);
+    BOOST_CHECK_EQUAL(t.nTrackStates(), 3);
+
     auto t2 = tc.getTrack(1);
     // Is the exact same surface, because it's looked up in the "detector"
     BOOST_CHECK_EQUAL(free.get(), &t2.referenceSurface());
@@ -278,5 +297,7 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
     BOOST_CHECK_EQUAL((t3.component<float, "float_column"_hash>()), -98.9f);
   }
 }
+
+// @TODO: Add ensure dynamic columns
 
 BOOST_AUTO_TEST_SUITE_END()
