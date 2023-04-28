@@ -33,8 +33,6 @@
 #include <limits>
 #include <memory>
 
-#include <_types/_uint64_t.h>
-
 namespace Acts::PodioUtil {
 
 namespace {
@@ -93,6 +91,10 @@ ActsPodioEdm::Surface convertSurfaceToPodio(const ConversionHelper& helper,
 
 std::shared_ptr<const Surface> convertSurfaceFromPodio(
     const ConversionHelper& helper, const ActsPodioEdm::Surface& surface) {
+  if (surface.surfaceType == kNoSurface) {
+    return nullptr;
+  }
+
   Eigen::Map<const ActsSymMatrix<4>> mat{surface.transform.data()};
   Transform3 transform{mat};
 

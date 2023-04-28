@@ -65,8 +65,47 @@ BOOST_AUTO_TEST_CASE(Build) {
 }
 
 BOOST_AUTO_TEST_CASE(ConstCorrectness) {
-  CommonTests ct;
-  ct.testConstCorrectness();
+  // make mutable
+  VectorMultiTrajectory t;
+  auto i0 = t.addTrackState();
+
+  BOOST_CHECK(!t.ReadOnly);
+
+  {
+    VectorMultiTrajectory::TrackStateProxy tsp = t.getTrackState(i0);
+    static_cast<void>(tsp);
+    VectorMultiTrajectory::ConstTrackStateProxy ctsp = t.getTrackState(i0);
+    static_cast<void>(ctsp);
+
+    tsp.predicted().setRandom();
+    // const auto& tsp_const = tsp;
+    // tsp_const.predicted().setRandom();
+    // ctsp.predicted().setRandom();
+  }
+
+  // is this something we actually want?
+  ConstVectorMultiTrajectory ct = t;
+  BOOST_CHECK_EQUAL(ct.size(), t.size());
+
+  ConstVectorMultiTrajectory ctm{std::move(t)};
+  BOOST_CHECK_EQUAL(ctm.size(), ct.size());
+
+  {
+    static_assert(
+        std::is_same_v<ConstVectorMultiTrajectory::ConstTrackStateProxy,
+                       decltype(ctm.getTrackState(i0))>,
+        "Got mutable track state proxy");
+    ConstVectorMultiTrajectory::ConstTrackStateProxy ctsp =
+        ctm.getTrackState(i0);
+    static_cast<void>(ctsp);
+
+    // doesn't compile:
+    // ctsp.predictedCovariance().setIdentity();
+  }
+
+  // doesn't compile:
+  // ct.clear();
+  // ct.addTrackState();
 }
 
 BOOST_AUTO_TEST_CASE(Clear) {

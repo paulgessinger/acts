@@ -59,9 +59,17 @@ class NullHelper : public PodioUtil::ConversionHelper {
   const Surface* identifierToSurface(PodioUtil::Identifier) const override {
     return nullptr;
   }
+
+  SourceLink identifierToSourceLink(PodioUtil::Identifier) const override {
+    return SourceLink{0, 0};
+  }
+
+  PodioUtil::Identifier sourceLinkToIdentifier(const SourceLink&) override {
+    return 0;
+  }
 };
 
-struct MapHelper : public PodioUtil::ConversionHelper {
+struct MapHelper : public NullHelper {
   std::optional<PodioUtil::Identifier> surfaceToIdentifier(
       const Surface& surface) const override {
     for (auto&& [id, srf] : surfaces) {

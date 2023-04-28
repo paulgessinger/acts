@@ -109,50 +109,6 @@ class MultiTrajectoryTestsCommon {
                                   predicteds.begin(), predicteds.end());
   }
 
-  void testConstCorrectness() {
-    // make mutable
-    trajectory_t t = m_factory.create();
-    auto i0 = t.addTrackState();
-
-    BOOST_CHECK(!t.ReadOnly);
-
-    {
-      typename trajectory_t::TrackStateProxy tsp = t.getTrackState(i0);
-      static_cast<void>(tsp);
-      typename trajectory_t::ConstTrackStateProxy ctsp = t.getTrackState(i0);
-      static_cast<void>(ctsp);
-
-      tsp.predicted().setRandom();
-      // const auto& tsp_const = tsp;
-      // tsp_const.predicted().setRandom();
-      // ctsp.predicted().setRandom();
-    }
-
-    // is this something we actually want?
-    const_trajectory_t ct = t;
-    BOOST_CHECK_EQUAL(ct.size(), t.size());
-
-    const_trajectory_t ctm{std::move(t)};
-    BOOST_CHECK_EQUAL(ctm.size(), ct.size());
-
-    {
-      static_assert(
-          std::is_same_v<typename const_trajectory_t::ConstTrackStateProxy,
-                         decltype(ctm.getTrackState(i0))>,
-          "Got mutable track state proxy");
-      typename const_trajectory_t::ConstTrackStateProxy ctsp =
-          ctm.getTrackState(i0);
-      static_cast<void>(ctsp);
-
-      // doesn't compile:
-      // ctsp.predictedCovariance().setIdentity();
-    }
-
-    // doesn't compile:
-    // ct.clear();
-    // ct.addTrackState();
-  }
-
   void testClear() {
     constexpr TrackStatePropMask kMask = TrackStatePropMask::Predicted;
     trajectory_t t = m_factory.create();
