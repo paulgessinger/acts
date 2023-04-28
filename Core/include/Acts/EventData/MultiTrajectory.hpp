@@ -51,7 +51,7 @@ class TrackStateType;
 /// This view does not allow modifications
 class ConstTrackStateType {
  public:
-  using raw_type = unsigned long long;
+  using raw_type = std::uint64_t;
 
   /// Constructor from a reference to the underlying value container
   /// @param raw the value container
@@ -74,7 +74,7 @@ class ConstTrackStateType {
 /// This view allows modifications.
 class TrackStateType {
  public:
-  using raw_type = unsigned long long;
+  using raw_type = std::uint64_t;
   /// Constructor from a reference to the underlying value container
   /// @param raw the value container
   TrackStateType(raw_type& raw) : m_raw{&raw} {}
@@ -127,7 +127,7 @@ template <typename derived_t>
 class MultiTrajectory;
 class Surface;
 
-using ProjectorBitset = unsigned long long;
+using ProjectorBitset = uint64_t;
 
 namespace detail_lt {
 /// Either type T or const T depending on the boolean.
