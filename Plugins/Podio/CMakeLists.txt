@@ -32,7 +32,12 @@ PODIO_GENERATE_DATAMODEL(
 PODIO_ADD_DATAMODEL_CORE_LIB(ActsPodioEdm "${headers}" "${sources}")
 # set_target_properties(ActsPodioEdm PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(ActsPluginPodio PUBLIC ActsPodioEdm)
+target_link_libraries(ActsPluginPodio PUBLIC 
+  ActsPodioEdm 
+  ROOT::Core 
+  podio::podio
+  podio::podioRootIO
+)
 
 install(
   TARGETS ActsPodioEdm

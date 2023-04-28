@@ -25,6 +25,7 @@
 #include <any>
 #include <memory>
 #include <stdexcept>
+#include <tuple>
 #include <type_traits>
 
 #include <podio/CollectionBase.h>
@@ -38,28 +39,36 @@ class MutablePodioTrackStateContainer;
 class ConstPodioTrackStateContainer;
 
 namespace podio_detail {
-struct DynamicColumnBase {
-  DynamicColumnBase(const std::string& name) : m_name{name} {}
 
-  virtual ~DynamicColumnBase() = default;
+struct ConstDynamicColumnBase {
+  ConstDynamicColumnBase(const std::string& name) : m_name{name} {}
+
+  virtual ~ConstDynamicColumnBase() = default;
+
+  virtual std::any get(size_t i) const = 0;
+
+  virtual size_t size() const = 0;
+
+ protected:
+  std::string m_name;
+};
+
+struct DynamicColumnBase : public ConstDynamicColumnBase {
+  DynamicColumnBase(const std::string& name) : ConstDynamicColumnBase{name} {}
 
   virtual std::any get(size_t i) = 0;
-  virtual std::any get(size_t i) const = 0;
+  std::any get(size_t i) const override = 0;
 
   virtual void add() = 0;
   virtual void clear() = 0;
   virtual void erase(size_t i) = 0;
-  virtual size_t size() const = 0;
   virtual void copyFrom(size_t dstIdx, const DynamicColumnBase& src,
                         size_t srcIdx) = 0;
 
   virtual std::unique_ptr<DynamicColumnBase> clone(
       bool empty = false) const = 0;
 
-  virtual void putInto(podio::Frame& frame) = 0;
-
- protected:
-  std::string m_name;
+  virtual void releaseInto(podio::Frame& frame, const std::string& prefix) = 0;
 };
 
 template <typename T>
@@ -99,9 +108,24 @@ struct DynamicColumn : public DynamicColumnBase {
     m_collection.vec().at(dstIdx) = other->m_collection.vec().at(srcIdx);
   }
 
-  void putInto(podio::Frame& frame) override {}
+  void releaseInto(podio::Frame& frame, const std::string& prefix) override {
+    std::cout << "release col: " << prefix + m_name << std::endl;
+    frame.put(std::move(m_collection), prefix + m_name);
+  }
 
   podio::UserDataCollection<T> m_collection;
+};
+
+template <typename T>
+struct ConstDynamicColumn : public ConstDynamicColumnBase {
+  ConstDynamicColumn(const std::string& name,
+                     const podio::UserDataCollection<T>& collection)
+      : ConstDynamicColumnBase(name), m_collection{collection} {}
+
+  std::any get(size_t i) const override { return &m_collection.vec().at(i); }
+  size_t size() const override { return m_collection.size(); }
+
+  const podio::UserDataCollection<T>& m_collection;
 };
 }  // namespace podio_detail
 
@@ -200,7 +224,8 @@ class PodioTrackStateContainerBase {
         if (it == instance.m_dynamic.end()) {
           throw std::runtime_error("Unable to handle this component");
         }
-        std::conditional_t<EnsureConst, const podio_detail::DynamicColumnBase*,
+        std::conditional_t<EnsureConst,
+                           const podio_detail::ConstDynamicColumnBase*,
                            podio_detail::DynamicColumnBase*>
             col = it->second.get();
         assert(col && "Dynamic column is null");
@@ -228,7 +253,6 @@ class PodioTrackStateContainerBase {
       default:
         return instance.m_dynamic.find(key) != instance.m_dynamic.end();
     }
-    return false;
   }
 
   void populateSurfaceBuffer(
@@ -300,12 +324,62 @@ class ConstPodioTrackStateContainer final
     loadCollection<ActsPodioEdm::JacobianCollection>(m_jacs, frame, jacsKey);
 
     populateSurfaceBuffer(m_helper, *m_collection, m_surfaces);
+
+    // let's find dynamic columns
+
+    using load_type = std::unique_ptr<podio_detail::DynamicColumnBase> (*)(
+        const podio::CollectionBase*);
+
+    using types =
+        std::tuple<int32_t, int64_t, uint32_t, uint64_t, float, double>;
+
+    for (const auto& col : available) {
+      std::string prefix = trackStatesKey + "_extra__";
+      std::size_t p = col.find(prefix);
+      if (p == std::string::npos) {
+        continue;
+      }
+      std::string dynName = col.substr(prefix.size());
+      const podio::CollectionBase* coll = frame.get(col);
+
+      std::unique_ptr<podio_detail::ConstDynamicColumnBase> up;
+
+      std::apply(
+          [&](auto... args) {
+            auto inner = [&](auto arg) {
+              if (up) {
+                return;
+              }
+              using T = decltype(arg);
+              std::cout << "check if " << typeid(T).name() << std::endl;
+              const auto* dyn =
+                  dynamic_cast<const podio::UserDataCollection<T>*>(coll);
+              if (dyn == nullptr) {
+                return;
+              }
+              std::cout << " success!" << std::endl;
+              up = std::make_unique<podio_detail::ConstDynamicColumn<T>>(
+                  dynName, *dyn);
+            };
+
+            ((inner(args)), ...);
+          },
+          types{});
+
+      if (!up) {
+        throw std::runtime_error{"Dynamic column '" + dynName +
+                                 "' is not of allowed type"};
+      }
+
+      m_dynamic.insert({hashString(dynName), std::move(up)});
+    }
   }
 
  private:
   template <typename collection_t>
-  void loadCollection(collection_t const*& dest, const podio::Frame& frame,
-                      const std::string& key) {
+  static void loadCollection(collection_t const*& dest,
+                             const podio::Frame& frame,
+                             const std::string& key) {
     const auto* collection = frame.get(key);
 
     if (const auto* d = dynamic_cast<const collection_t*>(collection);
@@ -315,6 +389,18 @@ class ConstPodioTrackStateContainer final
       throw std::runtime_error{"Unable to get collection " + key};
     }
   }
+
+  // template <typename T>
+  // static std::unique_ptr<podio_detail::DynamicColumnBase> tryDynamicColumn(
+  // const podio::CollectionBase* coll, const std::string& name) {
+  // std::cout << "check if " << typeid(T).name() << std::endl;
+  // const auto* dyn = dynamic_cast<const podio::UserDataCollection<T>*>(coll);
+  // if (dyn == nullptr) {
+  // return nullptr;
+  // }
+
+  // return std::make_unique<podio_detail::DynamicColumn<T>>()
+  // }
 
  public:
   // ConstPodioTrackStateContainer(const MutablePodioTrackStateContainer&
@@ -386,7 +472,7 @@ class ConstPodioTrackStateContainer final
   std::vector<std::shared_ptr<const Surface>> m_surfaces;
 
   std::unordered_map<HashedString,
-                     std::unique_ptr<podio_detail::DynamicColumnBase>>
+                     std::unique_ptr<podio_detail::ConstDynamicColumnBase>>
       m_dynamic;
 };
 
@@ -665,6 +751,10 @@ class MutablePodioTrackStateContainer final
     frame.put(std::move(m_params), "trackStateParameters" + s);
     frame.put(std::move(m_jacs), "trackStateJacobians" + s);
     m_surfaces.clear();
+
+    for (const auto& [key, col] : m_dynamic) {
+      col->releaseInto(frame, "trackStates" + s + "_extra__");
+    }
   }
 
  private:
