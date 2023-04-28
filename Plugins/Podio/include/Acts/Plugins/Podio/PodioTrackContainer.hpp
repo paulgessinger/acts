@@ -11,6 +11,7 @@
 #include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/EventData/TrackContainer.hpp"
 #include "Acts/EventData/detail/DynamicColumn.hpp"
+#include "Acts/Plugins/Podio/PodioDynamicColumns.hpp"
 #include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "ActsPodioEdm/Track.h"
 #include "ActsPodioEdm/TrackCollection.h"
@@ -95,21 +96,18 @@ class PodioTrackContainerBase {
       case "nSharedHits"_hash:
         return &data.nSharedHits;
       default:
-        // auto it = instance.m_dynamic.find(key);
-        // if (it == instance.m_dynamic.end()) {
-        throw std::runtime_error("Unable to handle this component");
+        auto it = instance.m_dynamic.find(key);
+        if (it == instance.m_dynamic.end()) {
+          throw std::runtime_error("Unable to handle this component");
+        }
+
+        std::conditional_t<EnsureConst,
+                           const podio_detail::ConstDynamicColumnBase*,
+                           podio_detail::DynamicColumnBase*>
+            col = it->second.get();
+        assert(col && "Dynamic column is null");
+        return col->get(itrack);
     }
-
-    // std::conditional_t<EnsureConst, const detail::DynamicColumnBase*,
-    // detail::DynamicColumnBase*>
-    // col = it->second.get();
-    // assert(col && "Dynamic column is null");
-    // return col->get(itrack);
-    // }
-  }
-
-  std::shared_ptr<const Surface> getSurface(IndexType itrack) const {
-    return m_surfaces.at(itrack);
   }
 
   static void populateSurfaceBuffer(
@@ -162,7 +160,9 @@ class MutablePodioTrackContainer : public PodioTrackContainerBase {
     return PodioTrackContainerBase::component_impl<true>(*this, key, itrack);
   }
 
-  constexpr bool hasColumn_impl(HashedString /*key*/) const { return false; }
+  bool hasColumn_impl(HashedString key) const {
+    return m_dynamic.find(key) != m_dynamic.end();
+  }
 
   std::size_t size_impl() const { return m_collection->size(); }
   // END INTERFACE HELPER
@@ -184,15 +184,20 @@ class MutablePodioTrackContainer : public PodioTrackContainerBase {
 
   IndexType addTrack_impl() {
     auto track = m_collection->create();
+    track.referenceSurface().surfaceType = PodioUtil::kNoSurface;
     m_surfaces.emplace_back();
+    for (const auto& [key, vec] : m_dynamic) {
+      vec->add();
+    }
     return m_collection->size() - 1;
   };
 
   void removeTrack_impl(IndexType itrack);
 
   template <typename T>
-  constexpr void addColumn_impl(const std::string& /*key*/) {
-    throw std::runtime_error{"addColumn not implemented"};
+  constexpr void addColumn_impl(const std::string& key) {
+    m_dynamic.insert({hashString(key),
+                      std::make_unique<podio_detail::DynamicColumn<T>>(key)});
   }
 
   Parameters parameters(IndexType itrack) {
@@ -232,9 +237,9 @@ class MutablePodioTrackContainer : public PodioTrackContainerBase {
     frame.put(std::move(m_collection), "tracks" + s);
     m_surfaces.clear();
 
-    // for (const auto& [key, col] : m_dynamic) {
-    // col->releaseInto(frame, "trackStates" + s + "_extra__");
-    // }
+    for (const auto& [key, col] : m_dynamic) {
+      col->releaseInto(frame, "tracks" + s + "_extra__");
+    }
   }
 
   // END INTERFACE
@@ -243,6 +248,9 @@ class MutablePodioTrackContainer : public PodioTrackContainerBase {
   friend PodioTrackContainerBase;
 
   std::unique_ptr<ActsPodioEdm::TrackCollection> m_collection;
+  std::unordered_map<HashedString,
+                     std::unique_ptr<podio_detail::DynamicColumnBase>>
+      m_dynamic;
 };
 
 ACTS_STATIC_CHECK_CONCEPT(TrackContainerBackend, MutablePodioTrackContainer);
@@ -258,7 +266,7 @@ class ConstPodioTrackContainer : public PodioTrackContainerBase {
   ConstPodioTrackContainer(const PodioUtil::ConversionHelper& helper,
                            const podio::Frame& frame,
                            const std::string& suffix = "")
-      : PodioTrackContainerBase{m_helper} {
+      : PodioTrackContainerBase{helper} {
     std::string s = suffix.empty() ? suffix : "_" + suffix;
     std::string tracksKey = "tracks" + s;
 
@@ -281,14 +289,57 @@ class ConstPodioTrackContainer : public PodioTrackContainerBase {
 
     populateSurfaceBuffer(m_helper, *m_collection, m_surfaces);
 
-    // @TODO: Handle dynamic columns
+    // let's find dynamic columns
+    using types =
+        std::tuple<int32_t, int64_t, uint32_t, uint64_t, float, double>;
+
+    for (const auto& col : available) {
+      std::string prefix = tracksKey + "_extra__";
+      std::size_t p = col.find(prefix);
+      if (p == std::string::npos) {
+        continue;
+      }
+      std::string dynName = col.substr(prefix.size());
+      const podio::CollectionBase* coll = frame.get(col);
+
+      std::unique_ptr<podio_detail::ConstDynamicColumnBase> up;
+
+      std::apply(
+          [&](auto... args) {
+            auto inner = [&](auto arg) {
+              if (up) {
+                return;
+              }
+              using T = decltype(arg);
+              const auto* dyn =
+                  dynamic_cast<const podio::UserDataCollection<T>*>(coll);
+              if (dyn == nullptr) {
+                return;
+              }
+              up = std::make_unique<podio_detail::ConstDynamicColumn<T>>(
+                  dynName, *dyn);
+            };
+
+            ((inner(args)), ...);
+          },
+          types{});
+
+      if (!up) {
+        throw std::runtime_error{"Dynamic column '" + dynName +
+                                 "' is not of allowed type"};
+      }
+
+      m_dynamic.insert({hashString(dynName), std::move(up)});
+    }
   }
 
   std::any component_impl(HashedString key, IndexType itrack) const {
     return PodioTrackContainerBase::component_impl<true>(*this, key, itrack);
   }
 
-  constexpr bool hasColumn_impl(HashedString /*key*/) const { return false; }
+  bool hasColumn_impl(HashedString key) const {
+    return m_dynamic.find(key) != m_dynamic.end();
+  }
 
   std::size_t size_impl() const { return m_collection->size(); }
 
@@ -314,6 +365,9 @@ class ConstPodioTrackContainer : public PodioTrackContainerBase {
   friend PodioTrackContainerBase;
 
   const ActsPodioEdm::TrackCollection* m_collection;
+  std::unordered_map<HashedString,
+                     std::unique_ptr<podio_detail::ConstDynamicColumnBase>>
+      m_dynamic;
 };
 
 ACTS_STATIC_CHECK_CONCEPT(ConstTrackContainerBackend, ConstPodioTrackContainer);

@@ -48,6 +48,7 @@
 
 using namespace Acts;
 using namespace Acts::UnitLiterals;
+using namespace Acts::HashedStringLiteral;
 BOOST_AUTO_TEST_SUITE(PodioTrackConversion)
 
 class NullHelper : public PodioUtil::ConversionHelper {
@@ -139,6 +140,13 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
     Acts::TrackContainer tc{ptc, mtj};
 
+    BOOST_CHECK(!tc.hasColumn("int_column"_hash));
+    BOOST_CHECK(!tc.hasColumn("float_column"_hash));
+    tc.addColumn<int32_t>("int_column");
+    tc.addColumn<float>("float_column");
+    BOOST_CHECK(tc.hasColumn("int_column"_hash));
+    BOOST_CHECK(tc.hasColumn("float_column"_hash));
+
     BOOST_CHECK_EQUAL(tc.size(), 0);
 
     auto t = tc.getTrack(tc.addTrack());
@@ -196,6 +204,8 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
                       PodioUtil::kNoIdentifier);
 
     auto t2 = tc.getTrack(tc.addTrack());
+    auto t3 = tc.getTrack(tc.addTrack());
+    BOOST_CHECK_EQUAL(tc.size(), 3);
 
     // Register surface "with the detector"
     helper.surfaces[666] = free.get();
@@ -203,30 +213,20 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
     auto pTrack2 = tracks.at(1);
     BOOST_CHECK_EQUAL(pTrack2.getReferenceSurface().identifier, 666);
 
+    t.component<int32_t, "int_column"_hash>() = -11;
+    t2.component<int32_t, "int_column"_hash>() = 42;
+    t3.component<int32_t, "int_column"_hash>() = -98;
+
+    t.component<float, "float_column"_hash>() = -11.2f;
+    t2.component<float, "float_column"_hash>() = 42.4f;
+    t3.component<float, "float_column"_hash>() = -98.9f;
+
     ptc.releaseInto(frame);
     BOOST_REQUIRE_NE(frame.get("tracks"), nullptr);
-    BOOST_CHECK_EQUAL(frame.get("tracks")->size(), 2);
+    BOOST_CHECK_EQUAL(frame.get("tracks")->size(), 3);
+    BOOST_REQUIRE_NE(frame.get("tracks_extra__int_column"), nullptr);
+    BOOST_REQUIRE_NE(frame.get("tracks_extra__float_column"), nullptr);
   }
-
-  // {
-  // // Recreate track container from existing Podio collection
-  // Acts::VectorMultiTrajectory mtj{};
-  // Acts::MutablePodioTrackContainer ptc{helper};
-  // ActsPodioEdm::TrackCollection& tracks = ptc.trackCollection();
-
-  // Acts::TrackContainer tc{ptc, mtj};
-
-  // BOOST_CHECK_EQUAL(tc.size(), 1);
-
-  // auto t = tc.getTrack(0);
-  // const auto& freeRecreated = t.referenceSurface();
-  // // Not the exact same surface, it's recreated from values
-  // BOOST_CHECK_NE(free.get(), &freeRecreated);
-
-  // auto t2 = tc.getTrack(1);
-  // // Is the exact same surface, because it's looked up in the "detector"
-  // BOOST_CHECK_EQUAL(free.get(), &t2.referenceSurface());
-  // }
 
   {
     Acts::ConstVectorMultiTrajectory mtj{};
@@ -235,7 +235,10 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
     Acts::TrackContainer tc{ptc, mtj};
 
-    BOOST_CHECK_EQUAL(tc.size(), 2);
+    BOOST_CHECK(tc.hasColumn("int_column"_hash));
+    BOOST_CHECK(tc.hasColumn("float_column"_hash));
+
+    BOOST_CHECK_EQUAL(tc.size(), 3);
 
     auto t = tc.getTrack(0);
     const auto& freeRecreated = t.referenceSurface();
@@ -262,9 +265,18 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
     BOOST_CHECK_EQUAL(t.parameters(), bv);
 
     BOOST_CHECK_EQUAL(t.covariance(), refCov);
+
+    auto t3 = tc.getTrack(2);
+    BOOST_CHECK(!t3.hasReferenceSurface());
+
+    BOOST_CHECK_EQUAL((t.component<int32_t, "int_column"_hash>()), -11);
+    BOOST_CHECK_EQUAL((t2.component<int32_t, "int_column"_hash>()), 42);
+    BOOST_CHECK_EQUAL((t3.component<int32_t, "int_column"_hash>()), -98);
+
+    BOOST_CHECK_EQUAL((t.component<float, "float_column"_hash>()), -11.2f);
+    BOOST_CHECK_EQUAL((t2.component<float, "float_column"_hash>()), 42.4f);
+    BOOST_CHECK_EQUAL((t3.component<float, "float_column"_hash>()), -98.9f);
   }
 }
-
-// @TODO: Add tests for (move-)construction of const from mutable
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -229,8 +229,13 @@ BOOST_AUTO_TEST_CASE(WriteToPodioFrame) {
   podio::Frame frame;
 
   MutablePodioTrackStateContainer c{helper};
+  BOOST_CHECK(!c.hasColumn("int_column"_hash));
+  BOOST_CHECK(!c.hasColumn("float_column"_hash));
   c.addColumn<int32_t>("int_column");
   c.addColumn<float>("float_column");
+  BOOST_CHECK(c.hasColumn("int_column"_hash));
+  BOOST_CHECK(c.hasColumn("float_column"_hash));
+
   {
     auto t1 = c.getTrackState(c.addTrackState(TrackStatePropMask::Predicted));
     t1.predicted() = tv1;
