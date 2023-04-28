@@ -20,6 +20,8 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include <podio/Frame.h>
+
 namespace Acts {
 
 class MutablePodioTrackContainer;
@@ -80,12 +82,6 @@ class PodioTrackContainerBase {
         return data.parameters.data();
       case "cov"_hash:
         return data.covariance.data();
-      case "referenceSurface"_hash:
-        if constexpr (EnsureConst) {
-          return instance.getSurface(itrack);
-        } else {
-          return instance.getOrCreateSurface(itrack);
-        }
       case "nMeasurements"_hash:
         return &data.nMeasurements;
       case "nHoles"_hash:
@@ -116,20 +112,27 @@ class PodioTrackContainerBase {
     return m_surfaces.at(itrack);
   }
 
+  static void populateSurfaceBuffer(
+      const PodioUtil::ConversionHelper& helper,
+      const ActsPodioEdm::TrackCollection& collection,
+      std::vector<std::shared_ptr<const Surface>>& surfaces) noexcept {
+    surfaces.reserve(collection.size());
+    for (ActsPodioEdm::Track track : collection) {
+      surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
+          helper, track.getReferenceSurface()));
+    }
+  }
+
   std::reference_wrapper<const PodioUtil::ConversionHelper> m_helper;
   std::vector<std::shared_ptr<const Surface>> m_surfaces;
 };
 
 class MutablePodioTrackContainer : public PodioTrackContainerBase {
  public:
-  MutablePodioTrackContainer(const PodioUtil::ConversionHelper& helper,
-                             ActsPodioEdm::TrackCollection& collection)
-      : PodioTrackContainerBase{helper}, m_collection{&collection} {
-    m_surfaces.reserve(m_collection->size());
-    for (ActsPodioEdm::Track track : *m_collection) {
-      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
-          m_helper, track.getReferenceSurface()));
-    }
+  MutablePodioTrackContainer(const PodioUtil::ConversionHelper& helper)
+      : PodioTrackContainerBase{helper},
+        m_collection{std::make_unique<ActsPodioEdm::TrackCollection>()} {
+    populateSurfaceBuffer(m_helper, *m_collection, m_surfaces);
   }
 
   MutablePodioTrackContainer(const MutablePodioTrackContainer& other);
@@ -219,12 +222,27 @@ class MutablePodioTrackContainer : public PodioTrackContainerBase {
 
   void reserve(IndexType /*size*/) {}
 
+  ActsPodioEdm::TrackCollection& trackCollection() { return *m_collection; }
+
+  void releaseInto(podio::Frame& frame, const std::string& suffix = "") {
+    std::string s = suffix;
+    if (!s.empty()) {
+      s = "_" + s;
+    }
+    frame.put(std::move(m_collection), "tracks" + s);
+    m_surfaces.clear();
+
+    // for (const auto& [key, col] : m_dynamic) {
+    // col->releaseInto(frame, "trackStates" + s + "_extra__");
+    // }
+  }
+
   // END INTERFACE
 
  private:
   friend PodioTrackContainerBase;
 
-  ActsPodioEdm::TrackCollection* m_collection;
+  std::unique_ptr<ActsPodioEdm::TrackCollection> m_collection;
 };
 
 ACTS_STATIC_CHECK_CONCEPT(TrackContainerBackend, MutablePodioTrackContainer);
@@ -234,11 +252,36 @@ class ConstPodioTrackContainer : public PodioTrackContainerBase {
   ConstPodioTrackContainer(const PodioUtil::ConversionHelper& helper,
                            const ActsPodioEdm::TrackCollection& collection)
       : PodioTrackContainerBase{helper}, m_collection{&collection} {
-    m_surfaces.reserve(m_collection->size());
-    for (ActsPodioEdm::Track track : *m_collection) {
-      m_surfaces.push_back(PodioUtil::convertSurfaceFromPodio(
-          m_helper, track.getReferenceSurface()));
+    populateSurfaceBuffer(m_helper, *m_collection, m_surfaces);
+  }
+
+  ConstPodioTrackContainer(const PodioUtil::ConversionHelper& helper,
+                           const podio::Frame& frame,
+                           const std::string& suffix = "")
+      : PodioTrackContainerBase{m_helper} {
+    std::string s = suffix.empty() ? suffix : "_" + suffix;
+    std::string tracksKey = "tracks" + s;
+
+    std::vector<std::string> available = frame.getAvailableCollections();
+    if (std::find(available.begin(), available.end(), tracksKey) ==
+        available.end()) {
+      throw std::runtime_error{"Track collection '" + tracksKey +
+                               "'not found in frame"};
     }
+
+    const auto* collection = frame.get(tracksKey);
+
+    if (const auto* d =
+            dynamic_cast<const ActsPodioEdm::TrackCollection*>(collection);
+        d != nullptr) {
+      m_collection = d;
+    } else {
+      throw std::runtime_error{"Unable to get collection " + tracksKey};
+    }
+
+    populateSurfaceBuffer(m_helper, *m_collection, m_surfaces);
+
+    // @TODO: Handle dynamic columns
   }
 
   std::any component_impl(HashedString key, IndexType itrack) const {
@@ -261,6 +304,10 @@ class ConstPodioTrackContainer : public PodioTrackContainerBase {
   ConstCovariance covariance(IndexType itrack) const {
     return ConstCovariance{
         m_collection->at(itrack).getData().covariance.data()};
+  }
+
+  const ActsPodioEdm::TrackCollection& trackCollection() {
+    return *m_collection;
   }
 
  private:

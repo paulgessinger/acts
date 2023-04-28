@@ -128,13 +128,14 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
 
   MapHelper helper;
 
-  ActsPodioEdm::TrackCollection tracks;
-
   auto refCov = BoundMatrix::Random().eval();
+
+  podio::Frame frame;
 
   {
     Acts::VectorMultiTrajectory mtj{};
-    Acts::MutablePodioTrackContainer ptc{helper, tracks};
+    Acts::MutablePodioTrackContainer ptc{helper};
+    ActsPodioEdm::TrackCollection& tracks = ptc.trackCollection();
 
     Acts::TrackContainer tc{ptc, mtj};
 
@@ -201,30 +202,36 @@ BOOST_AUTO_TEST_CASE(ConvertTrack) {
     t2.setReferenceSurface(free);
     auto pTrack2 = tracks.at(1);
     BOOST_CHECK_EQUAL(pTrack2.getReferenceSurface().identifier, 666);
+
+    ptc.releaseInto(frame);
+    BOOST_REQUIRE_NE(frame.get("tracks"), nullptr);
+    BOOST_CHECK_EQUAL(frame.get("tracks")->size(), 2);
   }
 
-  {
-    // Recreate track container from existing Podio collection
-    Acts::VectorMultiTrajectory mtj{};
-    Acts::MutablePodioTrackContainer ptc{helper, tracks};
+  // {
+  // // Recreate track container from existing Podio collection
+  // Acts::VectorMultiTrajectory mtj{};
+  // Acts::MutablePodioTrackContainer ptc{helper};
+  // ActsPodioEdm::TrackCollection& tracks = ptc.trackCollection();
 
-    Acts::TrackContainer tc{ptc, mtj};
+  // Acts::TrackContainer tc{ptc, mtj};
 
-    BOOST_CHECK_EQUAL(tc.size(), 2);
+  // BOOST_CHECK_EQUAL(tc.size(), 1);
 
-    auto t = tc.getTrack(0);
-    const auto& freeRecreated = t.referenceSurface();
-    // Not the exact same surface, it's recreated from values
-    BOOST_CHECK_NE(free.get(), &freeRecreated);
+  // auto t = tc.getTrack(0);
+  // const auto& freeRecreated = t.referenceSurface();
+  // // Not the exact same surface, it's recreated from values
+  // BOOST_CHECK_NE(free.get(), &freeRecreated);
 
-    auto t2 = tc.getTrack(1);
-    // Is the exact same surface, because it's looked up in the "detector"
-    BOOST_CHECK_EQUAL(free.get(), &t2.referenceSurface());
-  }
+  // auto t2 = tc.getTrack(1);
+  // // Is the exact same surface, because it's looked up in the "detector"
+  // BOOST_CHECK_EQUAL(free.get(), &t2.referenceSurface());
+  // }
 
   {
     Acts::ConstVectorMultiTrajectory mtj{};
-    Acts::ConstPodioTrackContainer ptc{helper, tracks};
+    Acts::ConstPodioTrackContainer ptc{helper, frame};
+    // const ActsPodioEdm::TrackCollection& tracks = ptc.trackCollection();
 
     Acts::TrackContainer tc{ptc, mtj};
 
