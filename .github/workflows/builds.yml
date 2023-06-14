@@ -180,10 +180,10 @@ jobs:
           -DACTS_BUILD_PLUGIN_ACTSVG=ON
 
       - name: Build
-        run: cmake --build build
+        run: CCACHE_DEBUG=1 CCACHE_DEBUGDIR=ccache-debug cmake --build build
 
       - name: ccache stats
-        run: ccache -s
+        run: ccache -sv
 
       - name: Save ccache
         uses: actions/cache/save@v3
@@ -208,6 +208,11 @@ jobs:
         with:
           name: acts-linux-ubuntu
           path: build.tar.gz
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: acts-linux-ubuntu-ccache-debug
+          path: ccache-debug
 
       - name: Downstream configure
         run: >
