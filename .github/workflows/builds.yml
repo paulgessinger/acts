@@ -137,6 +137,8 @@ jobs:
     env:
       INSTALL_DIR: ${{ github.workspace }}/install
       ACTS_LOG_FAILURE_THRESHOLD: WARNING
+      CCACHE_DEBUG: 1 
+      CCACHE_DEBUGDIR: ccache-debug 
     steps:
       - name: Install git lfs
         run: apt-get update && apt-get install -y git-lfs
@@ -180,7 +182,7 @@ jobs:
           -DACTS_BUILD_PLUGIN_ACTSVG=ON
 
       - name: Build
-        run: CCACHE_DEBUG=1 CCACHE_DEBUGDIR=ccache-debug cmake --build build
+        run: cmake --build build
 
       - name: ccache stats
         run: ccache -sv
