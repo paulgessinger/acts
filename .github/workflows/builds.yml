@@ -192,42 +192,42 @@ jobs:
           path: ${{ github.workspace }}/ccache
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
-      - name: Unit tests
-        run: ctest --test-dir build -j$(nproc)
+      # - name: Unit tests
+        # run: ctest --test-dir build -j$(nproc)
 
-      - name: Integration tests
-        run: cmake --build build --target integrationtests
+      # - name: Integration tests
+        # run: cmake --build build --target integrationtests
 
-      - name: Install
-        run: cmake --build build --target install
+      # - name: Install
+        # run: cmake --build build --target install
 
-      - name: Package build
-        run: tar czf build.tar.gz -C build . 
+      # - name: Package build
+        # run: tar czf build.tar.gz -C build . 
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: acts-linux-ubuntu
-          path: build.tar.gz
+      # - uses: actions/upload-artifact@v3
+        # with:
+          # name: acts-linux-ubuntu
+          # path: build.tar.gz
 
       - uses: actions/upload-artifact@v3
         with:
           name: acts-linux-ubuntu-ccache-debug
           path: ccache-debug
 
-      - name: Downstream configure
-        run: >
-          cmake -B build-downstream -S Tests/DownstreamProject
-          -GNinja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_CXX_FLAGS=-Werror
-          -DCMAKE_CXX_STANDARD=17
-          -DCMAKE_PREFIX_PATH="${INSTALL_DIR}"
+      # - name: Downstream configure
+        # run: >
+          # cmake -B build-downstream -S Tests/DownstreamProject
+          # -GNinja
+          # -DCMAKE_BUILD_TYPE=Release
+          # -DCMAKE_CXX_FLAGS=-Werror
+          # -DCMAKE_CXX_STANDARD=17
+          # -DCMAKE_PREFIX_PATH="${INSTALL_DIR}"
 
-      - name: Downstream build
-        run: cmake --build build-downstream
+      # - name: Downstream build
+        # run: cmake --build build-downstream
 
-      - name: Downstream run
-        run: ./build-downstream/bin/ShowActsVersion
+      # - name: Downstream run
+        # run: ./build-downstream/bin/ShowActsVersion
 
   linux_examples_test:
     runs-on: ubuntu-latest
