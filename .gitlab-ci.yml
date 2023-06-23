@@ -433,7 +433,7 @@ lcg_103:
           - gcc12
           # currently failing:
           # - clang12
-          # - clang15
+          - clang15
 
       - OS: [alma9]
         COMPILER: 
