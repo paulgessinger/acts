@@ -12,7 +12,7 @@ setup = makeSetup()
 
 with tempfile.TemporaryDirectory() as temp:
     s = acts.examples.Sequencer(
-        events=10000,
+        events=50000,
         numThreads=-1,
         logLevel=acts.logging.INFO,
         fpeMasks=acts.examples.Sequencer.FpeMask.fromFile(
