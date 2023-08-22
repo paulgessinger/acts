@@ -55,9 +55,14 @@ async def atlas(ctx: Context, revert_sha: List[str]):
 
         pr = ctx.pr
 
-        head_clone_url = pr["head"]["repo"]["clone_url"]
-        head_branch = pr["head"]["ref"]
-        head_sha = pr["head"]["sha"]
+        if pr["merged"]:
+            head_clone_url = pr["base"]["repo"]["clone_url"]
+            head_branch = pr["base"]["ref"]
+            head_sha = pr["head"]["sha"]
+        else:
+            head_clone_url = pr["head"]["repo"]["clone_url"]
+            head_branch = pr["head"]["ref"]
+            head_sha = pr["merge_commit_sha"]
 
         variable_summary = f"""
 | Variable | Value |
