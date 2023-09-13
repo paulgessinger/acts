@@ -45,7 +45,7 @@ def runCKFTracks(
     )
 
     s = s or acts.examples.Sequencer(
-        events=100, numThreads=-1, logLevel=acts.logging.INFO
+        events=10, numThreads=1, logLevel=acts.logging.INFO
     )
     for d in decorators:
         s.addContextDecorator(d)
@@ -58,7 +58,7 @@ def runCKFTracks(
             EtaConfig(-2.0, 2.0),
             ParticleConfig(4, acts.PdgParticle.eMuon, True),
             PhiConfig(0.0, 360.0 * u.degree),
-            multiplicity=2,
+            multiplicity=1,
             rnd=rnd,
         )
     else:
@@ -126,6 +126,11 @@ def runCKFTracks(
         outputDirRoot=outputDir,
         outputDirCsv=outputDir / "csv" if outputCsv else None,
     )
+
+    print("CONFIG DONE")
+
+    #  import signal
+    #  signal.raise_signal( signal.SIGINT  )
 
     return s
 

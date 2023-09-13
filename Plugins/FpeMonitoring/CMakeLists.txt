@@ -18,6 +18,7 @@ include(CheckCXXSourceCompiles)
 find_library(dl_LIBRARY dl)
 find_package(Backtrace)
 find_program(addr2line_EXECUTABLE addr2line)
+
 if(APPLE)
   list(APPEND _fpe_options -D_GNU_SOURCE)
 else()
@@ -56,12 +57,19 @@ else()
         message(CHECK_FAIL "no")
 
         file(GLOB hints "/usr/lib/gcc/*/*/include")
+        # message(STATUS ${hints})
+        # if(DEFINED ACTS_BACKTRACE_INCLUDE)
+          # message(STATUS ${ACTS_BACKTRACE_INCLUDE})
+          # list(APPEND hints ${ACTS_BACKTRACE_INCLUDE})
+        # endif()
+        # message(STATUS ${hints})
         find_file(backtrace_header "backtrace.h"
           HINTS ${hints})
+        message(STATUS INCLUDE: ${backtrace_header})
 
-        if(${backtrace_header} STREQUAL "backtrcae_header-NOTFOUND")
-          message(STATUS "Could not find backtrace header file")
-        else()
+        # if(${backtrace_header} STREQUAL "backtrace_header-NOTFOUND")
+          # message(STATUS "Could not find backtrace header file")
+        # else()
           set(backtrace_include "-DBOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE=\"${backtrace_header}\"")
 
 
@@ -81,13 +89,14 @@ else()
               COMPILE_DEFINITIONS -DBOOST_STACKTRACE_USE_BACKTRACE ${backtrace_include}
               OUTPUT_VARIABLE __OUTPUT)
 
+
           if(_backtrace_explicit_header)
             message(CHECK_PASS "yes")
             list(APPEND _fpe_options "${backtrace_include}")
           else()
             message(CHECK_FAIL "no")
           endif()
-        endif()
+        # endif()
 
       endif()
 
@@ -111,6 +120,12 @@ else()
       else()
         message(CHECK_FAIL "no")
 
+        find_library(backtrace_library NAMES backtrace)
+        if(${backtrace_library} STREQUAL "backtrace_library-NOTFOUND")
+          set(backtrace_library backtrace)
+        endif()
+        message(STATUS "Lib: ${backtrace_library}")
+
         file(WRITE
           "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/backtrace.cpp"
           "#include <boost/stacktrace.hpp>\n"
@@ -120,14 +135,14 @@ else()
         message(CHECK_START "Does backtrace work with linker flag")
         try_compile(_backtrace_link "${CMAKE_BINARY_DIR}"
             "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/backtrace.cpp"
-            LINK_LIBRARIES backtrace ${dl_LIBRARY}
+            LINK_LIBRARIES ${backtrace_library} ${dl_LIBRARY}
             COMPILE_DEFINITIONS -DBOOST_STACKTRACE_USE_BACKTRACE ${backtrace_include}
             OUTPUT_VARIABLE __OUTPUT)
 
         if(_backtrace_link)
           message(CHECK_PASS "yes")
           list(APPEND _fpe_options -DBOOST_STACKTRACE_USE_BACKTRACE)
-          target_link_libraries(ActsPluginFpeMonitoring PUBLIC backtrace)
+          target_link_libraries(ActsPluginFpeMonitoring PUBLIC ${backtrace_library})
 
           set(_backtrace_setup_complete TRUE)
         else()
@@ -158,6 +173,8 @@ else()
 endif()
 
 target_compile_options(ActsPluginFpeMonitoring PUBLIC "${_fpe_options}")
+target_compile_options(ActsCore PUBLIC "${_fpe_options}")
+message(STATUS "FPE: ${_fpe_options}")
 
 
 install(

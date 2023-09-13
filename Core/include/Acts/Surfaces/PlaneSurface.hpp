@@ -44,7 +44,7 @@ class PlaneSurface : public Surface {
   friend Surface;
 #endif
 
- protected:
+ public:
   /// Copy Constructor
   ///
   /// @param other is the source surface for the copy
@@ -79,7 +79,6 @@ class PlaneSurface : public Surface {
   PlaneSurface(const Transform3& transform,
                std::shared_ptr<const PlanarBounds> pbounds = nullptr);
 
- public:
   ~PlaneSurface() override = default;
   PlaneSurface() = delete;
 

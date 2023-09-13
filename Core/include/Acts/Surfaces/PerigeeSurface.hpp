@@ -32,7 +32,7 @@ class PerigeeSurface : public LineSurface {
   friend Surface;
 #endif
 
- protected:
+ public:
   /// Constructor from GlobalPosition
   ///
   /// @param gp position where the perigee is centered

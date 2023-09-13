@@ -36,7 +36,7 @@ class StrawSurface : public LineSurface {
   friend Surface;
 #endif
 
- protected:
+ public:
   /// Constructor from Transform3 and bounds
   ///
   /// @param transform the transform that positions the straw in the global

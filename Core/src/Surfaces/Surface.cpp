@@ -19,6 +19,9 @@
 #include <iomanip>
 #include <utility>
 
+#include <boost/stacktrace/frame.hpp>
+#include <boost/stacktrace/stacktrace.hpp>
+
 std::array<std::string, Acts::Surface::SurfaceType::Other>
     Acts::Surface::s_surfaceTypeNames = {
         "Cone", "Cylinder", "Disc", "Perigee", "Plane", "Straw", "Curvilinear"};
@@ -366,4 +369,47 @@ void Acts::Surface::assignSurfaceMaterial(
 
 void Acts::Surface::associateLayer(const Acts::Layer& lay) {
   m_associatedLayer = (&lay);
+}
+
+namespace {
+struct defer {
+  std::function<void()> func;
+
+  ~defer() { func(); }
+};
+}  // namespace
+
+void Acts::Surface::allocMon() {
+  static std::mutex mutex;
+  static std::vector<std::pair<boost::stacktrace::stacktrace, std::size_t>>
+      traces;
+  static defer d{[&]() {
+    std::cout << "DESTROY!" << std::endl;
+
+    std::sort(traces.begin(), traces.end(),
+              [](const auto& a, const auto& b) { return a.second > b.second; });
+
+    for (const auto& [st, count] : traces) {
+      std::cout << "Allocated: " << count << " surfaces in:" << std::endl;
+      std::cout << st << std::endl;
+      std::cout << "---------------" << std::endl;
+    }
+  }};
+  std::lock_guard guard{mutex};
+
+  boost::stacktrace::stacktrace st(1, static_cast<std::size_t>(-1));
+  auto it = std::find_if(traces.begin(), traces.end(),
+                         [&](auto& v) -> bool { return v.first == st; });
+
+  if (it == traces.end()) {
+    traces.emplace_back(st, 1);
+  } else {
+    it->second++;
+  }
+
+  auto& n = count();
+  n++;
+  if (n % 100 == 0) {
+    std::cout << "Allocated " << n << " surfaces" << std::endl;
+  }
 }

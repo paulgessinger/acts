@@ -45,7 +45,7 @@ class CylinderSurface : public Surface {
   friend Surface;
 #endif
 
- protected:
+ public:
   /// Constructor from DetectorElementBase: Element proxy
   ///
   /// @param cbounds are the provided cylinder bounds (shared)

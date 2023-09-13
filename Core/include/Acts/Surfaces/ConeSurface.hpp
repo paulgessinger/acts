@@ -44,7 +44,7 @@ class ConeSurface : public Surface {
   friend Surface;
 #endif
 
- protected:
+ public:
   /// Constructor form HepTransform and an opening angle
   ///
   /// @param transform is the transform to place to cone in a 3D frame

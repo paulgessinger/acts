@@ -27,9 +27,11 @@
 #include "Acts/Utilities/Result.hpp"
 
 #include <array>
+#include <csignal>
 #include <cstddef>
 #include <memory>
 #include <ostream>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -113,11 +115,20 @@ class Surface : public virtual GeometryObject,
  public:
   virtual ~Surface();
 
+  static std::atomic<std::size_t>& count() {
+    static std::atomic<size_t> n = 0;
+    return n;
+  }
+
+  static void allocMon();
+
   /// Factory for producing memory managed instances of Surface.
   /// Will forward all parameters and will attempt to find a suitable
   /// constructor.
   template <class T, typename... Args>
   static std::shared_ptr<T> makeShared(Args&&... args) {
+    // return std::make_shared<T>(std::forward<Args>(args)...);
+    allocMon();
     return std::shared_ptr<T>(new T(std::forward<Args>(args)...));
   }
 

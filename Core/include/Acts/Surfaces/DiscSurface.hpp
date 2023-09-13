@@ -55,7 +55,7 @@ class DiscSurface : public Surface {
   friend Surface;
 #endif
 
- protected:
+ public:
   /// Constructor for Discs from Transform3, \f$ r_{min}, r_{max} \f$
   ///
   /// @param transform is transform that places the disc in the global 3D space

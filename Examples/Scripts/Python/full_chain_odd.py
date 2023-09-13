@@ -52,6 +52,7 @@ ambiguity_MLSolver = args["MLSolver"]
 u = acts.UnitConstants
 geoDir = getOpenDataDetectorDirectory()
 outputDir = pathlib.Path.cwd() / "odd_output"
+outputDir = None
 # acts.examples.dump_args_calls(locals())  # show python binding calls
 
 oddMaterialMap = geoDir / "data/odd-material-maps.root"
@@ -68,7 +69,7 @@ rnd = acts.examples.RandomNumbers(seed=42)
 s = acts.examples.Sequencer(
     events=args["events"],
     numThreads=1,
-    outputDir=str(outputDir),
+    outputDir="",
 )
 
 if not ttbar:
