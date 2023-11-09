@@ -83,47 +83,6 @@ void setFailureThreshold(Level /*lvl*/) {
 }  // namespace Logging
 
 namespace {
-spdlog::level::level_enum toSpdlog(Logging::Level level) {
-  switch (level) {
-    case Logging::VERBOSE:
-      return spdlog::level::level_enum::trace;
-    case Logging::DEBUG:
-      return spdlog::level::level_enum::debug;
-    case Logging::INFO:
-      return spdlog::level::level_enum::info;
-    case Logging::WARNING:
-      return spdlog::level::level_enum::warn;
-    case Logging::ERROR:
-      return spdlog::level::level_enum::err;
-    case Logging::FATAL:
-      return spdlog::level::level_enum::critical;
-    case Logging::MAX:
-      return spdlog::level::level_enum::off;
-    default:
-      std::terminate();
-  }
-}
-
-Logging::Level fromSpdlog(spdlog::level::level_enum level) {
-  switch (level) {
-    case spdlog::level::level_enum::trace:
-      return Logging::VERBOSE;
-    case spdlog::level::level_enum::debug:
-      return Logging::DEBUG;
-    case spdlog::level::level_enum::info:
-      return Logging::INFO;
-    case spdlog::level::level_enum::warn:
-      return Logging::WARNING;
-    case spdlog::level::level_enum::err:
-      return Logging::ERROR;
-    case spdlog::level::level_enum::critical:
-      return Logging::FATAL;
-    case spdlog::level::level_enum::off:
-      return Logging::MAX;
-    default:
-      std::terminate();
-  }
-}
 
 class CustomLevelFormatter : public spdlog::custom_flag_formatter {
  public:
@@ -206,6 +165,48 @@ const Logger& getDummyLogger() {
   static const std::unique_ptr<const Logger> logger =
       std::make_unique<const Logger>(Logging::Level::MAX, "Dummy");
   return *logger;
+}
+
+spdlog::level::level_enum Logger::toSpdlog(Logging::Level level) {
+  switch (level) {
+    case Logging::VERBOSE:
+      return spdlog::level::level_enum::trace;
+    case Logging::DEBUG:
+      return spdlog::level::level_enum::debug;
+    case Logging::INFO:
+      return spdlog::level::level_enum::info;
+    case Logging::WARNING:
+      return spdlog::level::level_enum::warn;
+    case Logging::ERROR:
+      return spdlog::level::level_enum::err;
+    case Logging::FATAL:
+      return spdlog::level::level_enum::critical;
+    case Logging::MAX:
+      return spdlog::level::level_enum::off;
+    default:
+      std::terminate();
+  }
+}
+
+Logging::Level Logger::fromSpdlog(spdlog::level::level_enum level) {
+  switch (level) {
+    case spdlog::level::level_enum::trace:
+      return Logging::VERBOSE;
+    case spdlog::level::level_enum::debug:
+      return Logging::DEBUG;
+    case spdlog::level::level_enum::info:
+      return Logging::INFO;
+    case spdlog::level::level_enum::warn:
+      return Logging::WARNING;
+    case spdlog::level::level_enum::err:
+      return Logging::ERROR;
+    case spdlog::level::level_enum::critical:
+      return Logging::FATAL;
+    case spdlog::level::level_enum::off:
+      return Logging::MAX;
+    default:
+      std::terminate();
+  }
 }
 
 }  // namespace Acts

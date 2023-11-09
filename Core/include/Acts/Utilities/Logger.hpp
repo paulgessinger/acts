@@ -23,9 +23,7 @@
 #include <thread>
 #include <utility>
 
-namespace spdlog {
-class logger;
-}
+#include <spdlog/spdlog.h>
 
 // clang-format off
 /// @brief macro to use a local Acts::Logger object
@@ -259,6 +257,12 @@ class Logger {
   /// @param [in] input text of debug message
   void log(Logging::Level lvl, const std::string& input) const;
 
+  template <typename F, typename... Args>
+  void log(Logging::Level lvl, F&& input, Args&&... args) const {
+    m_logger->log(toSpdlog(lvl), std::forward<F>(input),
+                  std::forward<Args>(args)...);
+  }
+
   /// Return the level of the filter policy of this logger
   /// @return the level
   Logging::Level level() const;
@@ -293,6 +297,9 @@ class Logger {
   const Logger& operator()() const { return *this; }
 
  private:
+  static spdlog::level::level_enum toSpdlog(Logging::Level level);
+  static Logging::Level fromSpdlog(spdlog::level::level_enum level);
+
   std::shared_ptr<spdlog::logger> m_logger;
 };
 

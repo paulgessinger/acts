@@ -26,7 +26,7 @@ target_link_libraries(
   ActsCore
   PUBLIC Boost::boost Eigen3::Eigen)
 
-target_link_libraries(ActsCore PRIVATE spdlog::spdlog)
+target_link_libraries(ActsCore PUBLIC spdlog::spdlog)
 
 
 if(ACTS_PARAMETER_DEFINITIONS_HEADER)

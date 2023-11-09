@@ -145,5 +145,25 @@ BOOST_AUTO_TEST_CASE(DEBUG_test) {
 BOOST_AUTO_TEST_CASE(VERBOSE_test) {
   debug_level_test("verbose_log.txt", VERBOSE);
 }
+
+BOOST_AUTO_TEST_CASE(FormatTest) {
+  std::stringstream sstr;
+
+  auto logger =
+      std::make_unique<const Logger>(Logging::Level::INFO, "Test", sstr);
+
+  logger->log(Logging::Level::INFO, "Test message");
+
+  BOOST_CHECK_EQUAL(sstr.str(),
+                    "Test                          INFO      Test message\n");
+
+  sstr.str("");
+
+  logger->log(Logging::Level::INFO, "My {} message number {:>05}", "Test", 45);
+
+  BOOST_CHECK_EQUAL(
+      sstr.str(),
+      "Test                          INFO      My Test message number 00045\n");
+}
 }  // namespace Test
 }  // namespace Acts
