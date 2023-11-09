@@ -218,10 +218,7 @@ stripSideVolumes(
     const std::vector<Acts::Experimental::DetectorComponent::PortalContainer>&
         containers,
     const std::vector<unsigned int>& sides,
-    const std::vector<unsigned int>& selectedOnly = {},
-    Acts::Logging::Level logLevel = Acts::Logging::INFO) {
-  ACTS_LOCAL_LOGGER(Acts::getDefaultLogger("::stripSideVolumes", logLevel));
-
+    const std::vector<unsigned int>& selectedOnly = {}) {
   // These are the stripped off outside volumes
   std::map<unsigned int,
            std::vector<std::shared_ptr<Acts::Experimental::DetectorVolume>>>
@@ -976,7 +973,7 @@ Acts::Experimental::detail::CylindricalDetectorHelper::connectInR(
   dShell[2u] = containers[containers.size() - 1u].find(2u)->second;
 
   auto sideVolumes =
-      stripSideVolumes(containers, {0u, 1u, 4u, 5u}, selectedOnly, logLevel);
+      stripSideVolumes(containers, {0u, 1u, 4u, 5u}, selectedOnly);
 
   for (auto [s, volumes] : sideVolumes) {
     auto pR = connectInR(gctx, volumes, {s});
@@ -1037,8 +1034,7 @@ Acts::Experimental::detail::CylindricalDetectorHelper::connectInZ(
   }
 
   // Strip the side volumes
-  auto sideVolumes =
-      stripSideVolumes(containers, nominalSides, selectedOnly, logLevel);
+  auto sideVolumes = stripSideVolumes(containers, nominalSides, selectedOnly);
 
   ACTS_VERBOSE("There remain " << sideVolumes.size()
                                << " side volume packs to be connected");
@@ -1154,7 +1150,7 @@ Acts::Experimental::detail::CylindricalDetectorHelper::wrapInZR(
     ActsScalar pHalfLengthZ =
         pValues[CylinderBounds::BoundValues::eHalfLengthZ];
 
-    auto sideVolumes = stripSideVolumes({innerContainer}, {3u}, {3u}, logLevel);
+    auto sideVolumes = stripSideVolumes({innerContainer}, {3u}, {3u});
 
     // First the left volume sector
     std::vector<std::shared_ptr<DetectorVolume>> innerVolumes = {

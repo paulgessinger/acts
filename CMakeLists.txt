@@ -405,6 +405,8 @@ if(ACTS_CUSTOM_SCALARTYPE)
   message(STATUS "Building Acts with custom scalar type: ${ACTS_CUSTOM_SCALARTYPE}")
 endif()
 
+add_subdirectory(thirdparty/spdlog)
+
 # core library, core plugins, and other components
 add_component(Core Core)
 add_subdirectory(Plugins)
