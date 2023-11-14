@@ -164,6 +164,11 @@ BOOST_AUTO_TEST_CASE(FormatTest) {
   BOOST_CHECK_EQUAL(
       sstr.str(),
       "Test                          INFO      My Test message number 00045\n");
+
+  // using Logging::key;
+  // logger->log(Logging::Level::INFO, "Structured {}", key("answer") = 42);
+
+  // std::cout << (key("answer") = 42) << std::endl;
 }
 }  // namespace Test
 }  // namespace Acts

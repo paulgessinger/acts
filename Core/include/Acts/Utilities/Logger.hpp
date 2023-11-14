@@ -23,7 +23,11 @@
 #include <thread>
 #include <utility>
 
+// #include <fmt/ostream.h>
+#include <fmt/core.h>
 #include <spdlog/spdlog.h>
+
+#include "spdlog/common.h"
 
 // clang-format off
 /// @brief macro to use a local Acts::Logger object
@@ -222,6 +226,36 @@ void setFailureThreshold(Level level);
 class ThresholdFailure : public std::runtime_error {
   using std::runtime_error::runtime_error;
 };
+
+// template <typename T>
+// class key_v;
+// class key {
+// public:
+// key(std::string_view _key) : m_key{_key} {}
+
+// template <typename T>
+// key_v<T> operator=(T&& value) {
+// return key_v<T>{m_key, std::forward<T>(value)};
+// };
+
+// protected:
+// std::string_view m_key;
+// };
+
+// template <typename T>
+// class key_v : public key {
+// public:
+// key_v(std::string_view _key, T&& value)
+// : key{_key}, m_value{std::move(value)} {}
+
+// friend std::ostream& operator<<(std::ostream& os, const key_v& _key) {
+// os << _key.m_key << "=" << _key.m_value;
+// return os;
+// }
+
+// private:
+// T m_value;
+// };
 
 }  // namespace Logging
 
