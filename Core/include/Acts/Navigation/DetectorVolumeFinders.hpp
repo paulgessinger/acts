@@ -11,7 +11,8 @@
 #include "Acts/Detector/Detector.hpp"
 #include "Acts/Detector/DetectorVolume.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
-#include "Acts/Navigation/NavigationDelegates.hpp"
+#include "Acts/Navigation/DetectorVolumeUpdaters.hpp"
+#include "Acts/Navigation/INavigationDelegate.hpp"
 #include "Acts/Navigation/NavigationState.hpp"
 #include "Acts/Navigation/NavigationStateFillers.hpp"
 #include "Acts/Navigation/NavigationStateUpdaters.hpp"
@@ -23,12 +24,12 @@
 namespace Acts {
 namespace Experimental {
 
-struct NoopFinder : public INavigationDelegate {
+struct NoopFinder : public IDetectorVolumeUpdater {
   inline void update(const GeometryContext& /*gctx*/,
                      NavigationState& /*nState*/) const {}
 };
 
-struct RootVolumeFinder : public INavigationDelegate {
+struct RootVolumeFinder : public IDetectorVolumeUpdater {
   inline void update(const GeometryContext& gctx,
                      NavigationState& nState) const {
     if (nState.currentDetector == nullptr) {
@@ -48,7 +49,7 @@ struct RootVolumeFinder : public INavigationDelegate {
   }
 };
 
-struct TrialAndErrorVolumeFinder : public INavigationDelegate {
+struct TrialAndErrorVolumeFinder : public IDetectorVolumeUpdater {
   inline void update(const GeometryContext& gctx,
                      NavigationState& nState) const {
     if (nState.currentVolume == nullptr) {

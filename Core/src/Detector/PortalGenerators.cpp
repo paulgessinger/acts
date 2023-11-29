@@ -12,7 +12,7 @@
 #include "Acts/Detector/Portal.hpp"
 #include "Acts/Geometry/VolumeBounds.hpp"
 #include "Acts/Navigation/DetectorVolumeUpdaters.hpp"
-#include "Acts/Navigation/NavigationDelegates.hpp"
+#include "Acts/Navigation/INavigationDelegate.hpp"
 #include "Acts/Utilities/Enumerate.hpp"
 
 #include <iterator>

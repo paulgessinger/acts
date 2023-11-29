@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Acts/Geometry/GeometryContext.hpp"
-#include "Acts/Navigation/NavigationDelegates.hpp"
+#include "Acts/Navigation/IDetectorVolumeUpdater.hpp"
 #include "Acts/Navigation/NavigationState.hpp"
 #include "Acts/Navigation/NavigationStateFillers.hpp"
 #include "Acts/Navigation/NavigationStateUpdaters.hpp"
@@ -20,13 +20,12 @@
 
 namespace Acts {
 namespace Experimental {
-
 class DetectorVolume;
 
 /// @brief  The end of world sets the volume pointer of the
 /// navigation state to nullptr, usually indicates the end of
 /// the known world, hence the name
-struct EndOfWorldImpl : public INavigationDelegate {
+struct EndOfWorldImpl : public IDetectorVolumeUpdater {
   /// @brief a null volume link - explicitly
   ///
   /// @note the method parameters are ignored
@@ -39,7 +38,7 @@ struct EndOfWorldImpl : public INavigationDelegate {
 /// @brief Single volume updator, it sets the current navigation
 /// volume to the volume in question
 ///
-struct SingleDetectorVolumeImpl : public INavigationDelegate {
+struct SingleDetectorVolumeImpl : public IDetectorVolumeUpdater {
   const DetectorVolume* dVolume = nullptr;
 
   /// @brief Allowed constructor
@@ -61,6 +60,10 @@ struct SingleDetectorVolumeImpl : public INavigationDelegate {
   inline void update(const GeometryContext& /*ignored*/,
                      NavigationState& nState) const {
     nState.currentVolume = dVolume;
+  }
+
+  boost::span<const DetectorVolume* const> volumes() const final {
+    return {&dVolume, 1u};
   }
 };
 
@@ -91,13 +94,17 @@ struct DetectorVolumesCollection {
                                        const SingleIndex& index) const {
     return dVolumes[index];
   }
+
+  boost::span<const DetectorVolume* const> volumes() const {
+    return {dVolumes};
+  }
 };
 
 /// @brief This is used for volumes that are indexed in a bound
 /// 1-dimensional grid, e.g. a z-spaced array, or an r-spaced array
 /// of volumes.
 ///
-struct BoundVolumesGrid1Impl : public INavigationDelegate {
+struct BoundVolumesGrid1Impl : public IDetectorVolumeUpdater {
   using IndexedUpdater =
       IndexedUpdaterImpl<VariableBoundIndexGrid1, DetectorVolumesCollection,
                          DetectorVolumeFiller>;
@@ -138,6 +145,10 @@ struct BoundVolumesGrid1Impl : public INavigationDelegate {
   inline void update(const GeometryContext& gctx,
                      NavigationState& nState) const {
     indexedUpdater.update(gctx, nState);
+  }
+
+  boost::span<const DetectorVolume* const> volumes() const {
+    return {indexedUpdater.extractor.dVolumes};
   }
 };
 

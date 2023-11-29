@@ -10,8 +10,9 @@
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Definitions/Common.hpp"
-#include "Acts/Detector/Portal.hpp"
-#include "Acts/Navigation/NavigationDelegates.hpp"
+#include "Acts/Navigation/IDetectorVolumeUpdater.hpp"
+#include "Acts/Navigation/INavigationDelegate.hpp"
+#include "Acts/Navigation/NavigationState.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/BinningType.hpp"
 #include "Acts/Utilities/Enumerate.hpp"
@@ -34,24 +35,7 @@ namespace Experimental {
 /// @param nState [in,out] is the navigation state to be updated
 ///
 /// @todo for surfaces skip the non-reached ones, while keep for portals
-inline void updateCandidates(const GeometryContext& gctx,
-                             NavigationState& nState) {
-  const auto& position = nState.position;
-  const auto& direction = nState.direction;
-  auto& nCandidates = nState.surfaceCandidates;
-
-  for (auto& c : nCandidates) {
-    // Get the surface representation: either native surfcae of portal
-    const Surface& sRep =
-        c.surface != nullptr ? *c.surface : c.portal->surface();
-
-    // Get the intersection @todo make a templated intersector
-    // TODO surface tolerance
-    auto sIntersection = sRep.intersect(gctx, position, direction,
-                                        c.boundaryCheck, s_onSurfaceTolerance);
-    c.objectIntersection = sIntersection[c.objectIntersection.index()];
-  }
-}
+void updateCandidates(const GeometryContext& gctx, NavigationState& nState);
 
 /// @brief  This sets a single object, e.g. single surface or single volume
 /// @tparam object_type the type of the object to be filled
@@ -112,7 +96,7 @@ class StaticUpdaterImpl : public INavigationDelegate {
 /// @tparam extractor_type is the helper to extract the object
 /// @tparam filler_type is the helper to fill the object into the nState
 template <typename grid_t, typename extractor_type, typename filler_type>
-class IndexedUpdaterImpl : public INavigationDelegate {
+class IndexedUpdaterImpl {
  public:
   /// Broadcast the grid type
   using grid_type = grid_t;

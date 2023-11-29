@@ -14,7 +14,7 @@
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryHierarchyMap.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
-#include "Acts/Navigation/NavigationDelegates.hpp"
+#include "Acts/Navigation/INavigationDelegate.hpp"
 #include "Acts/Utilities/Delegate.hpp"
 
 #include <cstddef>

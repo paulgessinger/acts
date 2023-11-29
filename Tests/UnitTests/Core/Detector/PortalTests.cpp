@@ -18,7 +18,8 @@
 #include "Acts/Geometry/GeometryIdentifier.hpp"
 #include "Acts/Material/HomogeneousSurfaceMaterial.hpp"
 #include "Acts/Material/MaterialSlab.hpp"
-#include "Acts/Navigation/NavigationDelegates.hpp"
+#include "Acts/Navigation/IDetectorVolumeUpdater.hpp"
+#include "Acts/Navigation/INavigationDelegate.hpp"
 #include "Acts/Navigation/NavigationState.hpp"
 #include "Acts/Navigation/SurfaceCandidatesUpdaters.hpp"
 #include "Acts/Surfaces/PlaneSurface.hpp"
@@ -35,19 +36,24 @@ namespace Acts {
 namespace Experimental {
 
 /// a simple link to volume struct
-class LinkToVolumeImpl : public INavigationDelegate {
+class LinkToVolumeImpl : public IDetectorVolumeUpdater {
  public:
   std::shared_ptr<DetectorVolume> dVolume = nullptr;
+  const DetectorVolume* dVolumePtr = nullptr;
 
   /// Constructor from volume
   LinkToVolumeImpl(std::shared_ptr<DetectorVolume> dv)
-      : dVolume(std::move(dv)) {}
+      : dVolume(std::move(dv)), dVolumePtr{dVolume.get()} {}
 
   /// @return the link to the contained volume
   /// @note the parameters are ignored
   void link(const GeometryContext& /*gctx*/, NavigationState& nState) const {
     nState.currentVolume = dVolume.get();
   }
+
+  boost::span<const DetectorVolume* const> volumes() const final {
+    return {&dVolumePtr, 1};
+  };
 };
 
 }  // namespace Experimental

@@ -12,7 +12,8 @@
 #include "Acts/Definitions/Direction.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
-#include "Acts/Navigation/NavigationDelegates.hpp"
+#include "Acts/Navigation/DetectorVolumeUpdaters.hpp"
+#include "Acts/Navigation/INavigationDelegate.hpp"
 #include "Acts/Navigation/NavigationState.hpp"
 #include "Acts/Surfaces/BoundaryCheck.hpp"
 #include "Acts/Surfaces/RegularSurface.hpp"
@@ -132,8 +133,7 @@ class Portal {
   std::shared_ptr<RegularSurface> m_surface;
 
   /// The portal targets along/opposite the normal vector
-  DetectorVolumeUpdaters m_volumeUpdaters = {unconnectedUpdater(),
-                                             unconnectedUpdater()};
+  DetectorVolumeUpdaters m_volumeUpdaters;
 
   /// The portal attaches to the following volumes
   AttachedDetectorVolumes m_attachedVolumes;

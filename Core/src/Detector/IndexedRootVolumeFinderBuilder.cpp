@@ -77,9 +77,21 @@ Acts::Experimental::IndexedRootVolumeFinderBuilder::construct(
       std::array<std::vector<ActsScalar>, 2u>{rzphis[1], rzphis[0]};
   fillGridIndices2D(gctx, grid, rootVolumes, boundaries, casts);
 
-  using IndexedDetectorVolumesImpl =
-      IndexedUpdaterImpl<GridType, IndexedDetectorVolumeExtractor,
-                         DetectorVolumeFiller>;
+  // using IndexedDetectorVolumesImpl =
+  // IndexedUpdaterImpl<GridType, IndexedDetectorVolumeExtractor,
+  // DetectorVolumeFiller>;
+
+  struct IndexedDetectorVolumesImpl
+      : private IndexedUpdaterImpl<GridType, IndexedDetectorVolumeExtractor,
+                                   DetectorVolumeFiller>,
+        public IDetectorVolumeUpdater {
+    using IndexedUpdaterImpl::IndexedUpdaterImpl;
+
+    inline void update(const GeometryContext& gctx,
+                       NavigationState& nState) const {
+      IndexedUpdaterImpl::update(gctx, nState);
+    }
+  };
 
   auto indexedDetectorVolumeImpl =
       std::make_unique<const IndexedDetectorVolumesImpl>(std::move(grid),

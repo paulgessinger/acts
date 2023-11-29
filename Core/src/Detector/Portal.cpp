@@ -9,6 +9,7 @@
 #include "Acts/Detector/Portal.hpp"
 
 #include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Navigation/DetectorVolumeUpdaters.hpp"
 #include "Acts/Navigation/NavigationState.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/Delegate.hpp"
@@ -21,7 +22,8 @@
 namespace Acts::Experimental {
 
 Portal::Portal(std::shared_ptr<RegularSurface> surface)
-    : m_surface(std::move(surface)) {
+    : m_surface(std::move(surface)),
+      m_volumeUpdaters{DetectorVolumeUpdater{}, DetectorVolumeUpdater{}} {
   throw_assert(m_surface, "Portal surface is nullptr");
 }
 

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Acts/Detector/DetectorVolume.hpp"
-#include "Acts/Navigation/NavigationDelegates.hpp"
+#include "Acts/Navigation/INavigationDelegate.hpp"
 #include "Acts/Navigation/NavigationStateFillers.hpp"
 #include "Acts/Navigation/NavigationStateUpdaters.hpp"
 #include "Acts/Utilities/VectorHelpers.hpp"
