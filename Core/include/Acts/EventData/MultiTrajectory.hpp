@@ -641,6 +641,14 @@ class MultiTrajectory {
       self().copyDynamicFrom_impl(dstIdx, key, srcPtr);
     }
   }
+<<<<<<< HEAD
+=======
+
+  friend class detail_lt::TrackStateProxy<Derived, MeasurementSizeMax, true>;
+  friend class detail_lt::TrackStateProxy<Derived, MeasurementSizeMax, false>;
+  template <typename T>
+  friend class MultiTrajectory;
+>>>>>>> origin/main
 };
 
 }  // namespace Acts
