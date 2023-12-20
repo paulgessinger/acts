@@ -158,6 +158,16 @@ class RootTrackSummaryWriter final : public WriterT<ConstTrackContainer> {
   std::vector<float> m_eTHETA_fit;  ///< Fitted parameters eTHETA of track
   std::vector<float> m_eQOP_fit;    ///< Fitted parameters eQOP of track
   std::vector<float> m_eT_fit;      ///< Fitted parameters eT of track
+
+  std::vector<float> m_eFreePos0_fit;
+  std::vector<float> m_eFreePos1_fit;
+  std::vector<float> m_eFreePos2_fit;
+  std::vector<float> m_eFreeTime_fit;
+  std::vector<float> m_eFreeDir0_fit;
+  std::vector<float> m_eFreeDir1_fit;
+  std::vector<float> m_eFreeDir2_fit;
+  std::vector<float> m_eFreeQOverP_fit;
+
   // The error of fitted parameters
   std::vector<float> m_err_eLOC0_fit;  ///< Fitted parameters eLOC err of track
   std::vector<float>

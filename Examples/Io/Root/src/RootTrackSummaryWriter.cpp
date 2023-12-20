@@ -120,6 +120,16 @@ ActsExamples::RootTrackSummaryWriter::RootTrackSummaryWriter(
     m_outputTree->Branch("eTHETA_fit", &m_eTHETA_fit);
     m_outputTree->Branch("eQOP_fit", &m_eQOP_fit);
     m_outputTree->Branch("eT_fit", &m_eT_fit);
+
+    m_outputTree->Branch("eFreePos0_fit", &m_eFreePos0_fit);
+    m_outputTree->Branch("eFreePos1_fit", &m_eFreePos1_fit);
+    m_outputTree->Branch("eFreePos2_fit", &m_eFreePos2_fit);
+    m_outputTree->Branch("eFreeTime_fit", &m_eFreeTime_fit);
+    m_outputTree->Branch("eFreeDir0_fit", &m_eFreeDir0_fit);
+    m_outputTree->Branch("eFreeDir1_fit", &m_eFreeDir1_fit);
+    m_outputTree->Branch("eFreeDir2_fit", &m_eFreeDir2_fit);
+    m_outputTree->Branch("eFreeQOverP_fit", &m_eFreeQOverP_fit);
+
     m_outputTree->Branch("err_eLOC0_fit", &m_err_eLOC0_fit);
     m_outputTree->Branch("err_eLOC1_fit", &m_err_eLOC1_fit);
     m_outputTree->Branch("err_ePHI_fit", &m_err_ePHI_fit);
@@ -429,6 +439,18 @@ ActsExamples::ProcessCode ActsExamples::RootTrackSummaryWriter::writeT(
     m_eQOP_fit.push_back(param[Acts::eBoundQOverP]);
     m_eT_fit.push_back(param[Acts::eBoundTime]);
 
+    Acts::FreeVector freePars = Acts::detail::transformBoundToFreeParameters(
+        track.referenceSurface(), ctx.geoContext, track.parameters());
+
+    m_eFreePos0_fit.push_back(freePars[Acts::eFreePos0]);
+    m_eFreePos1_fit.push_back(freePars[Acts::eFreePos1]);
+    m_eFreePos2_fit.push_back(freePars[Acts::eFreePos2]);
+    m_eFreeTime_fit.push_back(freePars[Acts::eFreeTime]);
+    m_eFreeDir0_fit.push_back(freePars[Acts::eFreeDir0]);
+    m_eFreeDir1_fit.push_back(freePars[Acts::eFreeDir1]);
+    m_eFreeDir2_fit.push_back(freePars[Acts::eFreeDir2]);
+    m_eFreeQOverP_fit.push_back(freePars[Acts::eFreeQOverP]);
+
     m_res_eLOC0_fit.push_back(res[Acts::eBoundLoc0]);
     m_res_eLOC1_fit.push_back(res[Acts::eBoundLoc1]);
     m_res_ePHI_fit.push_back(res[Acts::eBoundPhi]);
@@ -635,6 +657,15 @@ ActsExamples::ProcessCode ActsExamples::RootTrackSummaryWriter::writeT(
     m_cov_eT_eQOP.clear();
     m_cov_eT_eT.clear();
   }
+
+  m_eFreePos0_fit.clear();
+  m_eFreePos1_fit.clear();
+  m_eFreePos2_fit.clear();
+  m_eFreeTime_fit.clear();
+  m_eFreeDir0_fit.clear();
+  m_eFreeDir1_fit.clear();
+  m_eFreeDir2_fit.clear();
+  m_eFreeQOverP_fit.clear();
 
   m_nUpdatesGx2f.clear();
 
