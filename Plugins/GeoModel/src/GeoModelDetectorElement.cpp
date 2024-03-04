@@ -14,19 +14,12 @@
 
 #include <utility>
 
-std::shared_ptr<Acts::GeoModelDetectorElement>
-Acts::GeoModelDetectorElement::createPlanarElement(
-    const GeoFullPhysVol& geoPhysVol, const std::shared_ptr<PlanarBounds> pBounds,
-    const Transform3& sfTransform, ActsScalar thickness) {
-  return std::make_shared<GeoModelDetectorElement>(
-      geoPhysVol, std::move(pBounds), sfTransform, thickness);
-}
-
 Acts::GeoModelDetectorElement::GeoModelDetectorElement(
-    const GeoFullPhysVol& geoPhysVol, const std::shared_ptr<PlanarBounds> pBounds,
-    const Transform3& sfTransform, ActsScalar thickness)
+    const GeoFullPhysVol& geoPhysVol,
+    const std::shared_ptr<PlanarBounds> pBounds, const Transform3& sfTransform,
+    ActsScalar thickness)
     : m_geoPhysVol(&geoPhysVol),
-      m_surface(Surface::makeShared<PlaneSurface>(sfTransform, pBounds)),
+      m_surface(Surface::makeShared<PlaneSurface>(pBounds, *this)),
       m_surfaceTransform(sfTransform),
       m_thickness(thickness) {}
 

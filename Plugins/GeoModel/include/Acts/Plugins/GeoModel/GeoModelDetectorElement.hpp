@@ -29,24 +29,6 @@ class PlanarBounds;
 /// sensitive elements.
 class GeoModelDetectorElement : public DetectorElementBase {
  public:
-  /// Broadcast the context type
-  using ContextType = GeometryContext;
-
-  // Deleted default constructor
-  GeoModelDetectorElement() = delete;
-
-  /// @brief Factory to create a planar detector element with connected surfcace
-  ///
-  /// @param geoPhysVol reprsenting the physical volume
-  /// @param pBounds the planar bounds
-  /// @param sfTransform the surface transform
-  /// @param thickness the thickness of the detector element
-  /// @return
-  static std::shared_ptr<GeoModelDetectorElement> createPlanarElement(
-      const GeoFullPhysVol& geoPhysVol,
-                          const std::shared_ptr<PlanarBounds> pBounds,
-                          const Transform3& sfTransform, ActsScalar thickness);
-
   /// Constructor
   GeoModelDetectorElement(const GeoFullPhysVol& geoPhysVol,
                           const std::shared_ptr<PlanarBounds> pBounds,
