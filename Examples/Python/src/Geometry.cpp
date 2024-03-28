@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2021-2024 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,6 +25,7 @@
 #include "Acts/Detector/interface/IInternalStructureBuilder.hpp"
 #include "Acts/Detector/interface/IRootVolumeFinderBuilder.hpp"
 #include "Acts/Geometry/CylinderVolumeBounds.hpp"
+#include "Acts/Geometry/CylinderVolumeStack.hpp"
 #include "Acts/Geometry/Extent.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryHierarchyMap.hpp"
@@ -86,6 +87,9 @@ struct IdentifierSurfacesCollector {
 }  // namespace
 
 namespace Acts::Python {
+
+void addBlueprint(Context& ctx);
+
 void addGeometry(Context& ctx) {
   auto m = ctx.get("main");
 
@@ -142,6 +146,28 @@ void addGeometry(Context& ctx) {
         .value("Trapezoid", Acts::VolumeBounds::BoundsType::eTrapezoid)
         .value("Other", Acts::VolumeBounds::BoundsType::eOther);
   }
+
+  {
+    py::class_<Acts::VolumeBounds, std::shared_ptr<Acts::VolumeBounds>>(
+        m, "VolumeBounds")
+        .def("type", &Acts::VolumeBounds::type)
+        .def("__str__", [](Acts::VolumeBounds& self) {
+          std::stringstream ss;
+          ss << self;
+          return ss.str();
+        });
+
+    py::class_<Acts::CylinderVolumeBounds, Acts::VolumeBounds,
+               std::shared_ptr<Acts::CylinderVolumeBounds>>(
+        m, "CylinderVolumeBounds")
+        .def(py::init<ActsScalar, ActsScalar, ActsScalar, ActsScalar,
+                      ActsScalar, ActsScalar, ActsScalar>(),
+             py::arg("rmin"), py::arg("rmax"), py::arg("halfz"),
+             py::arg("halfphi") = M_PI, py::arg("avgphi") = 0.,
+             py::arg("bevelMinZ") = 0., py::arg("bevelMaxZ") = 0.);
+  }
+
+  { py::class_<Acts::GeometryContext>(m, "GeometryContext").def(py::init<>()); }
 
   {
     py::class_<Acts::TrackingGeometry, std::shared_ptr<Acts::TrackingGeometry>>(
@@ -208,6 +234,23 @@ void addGeometry(Context& ctx) {
                                                   self.max(bval)};
         });
   }
+
+  {
+    auto cylStack = py::class_<CylinderVolumeStack>(m, "CylinderVolumeStack");
+
+    py::enum_<CylinderVolumeStack::AttachmentStrategy>(cylStack,
+                                                       "AttachmentStrategy")
+        .value("Gap", CylinderVolumeStack::AttachmentStrategy::Gap)
+        .value("First", CylinderVolumeStack::AttachmentStrategy::First)
+        .value("Second", CylinderVolumeStack::AttachmentStrategy::Second)
+        .value("Midpoint", CylinderVolumeStack::AttachmentStrategy::Midpoint);
+
+    py::enum_<CylinderVolumeStack::ResizeStrategy>(cylStack, "ResizeStrategy")
+        .value("Gap", CylinderVolumeStack::ResizeStrategy::Gap)
+        .value("Expand", CylinderVolumeStack::ResizeStrategy::Expand);
+  }
+
+  addBlueprint(ctx);
 }
 
 void addExperimentalGeometry(Context& ctx) {

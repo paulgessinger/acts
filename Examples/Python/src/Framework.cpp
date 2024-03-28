@@ -116,8 +116,6 @@ void addFramework(Context& ctx) {
            py::arg("level"), py::arg("name") = "WhiteBoard")
       .def("exists", &WhiteBoard::exists);
 
-  py::class_<Acts::GeometryContext>(m, "GeometryContext").def(py::init<>());
-
   py::class_<AlgorithmContext>(mex, "AlgorithmContext")
       .def(py::init<std::size_t, std::size_t, WhiteBoard&>())
       .def_readonly("algorithmNumber", &AlgorithmContext::algorithmNumber)

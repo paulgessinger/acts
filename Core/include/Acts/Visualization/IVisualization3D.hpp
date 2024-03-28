@@ -74,6 +74,8 @@ class IVisualization3D {
   ///
   virtual void clear() = 0;
 
+  virtual ~IVisualization3D() = default;
+
  protected:
   /// Helper: check for extension
   ///
