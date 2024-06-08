@@ -391,6 +391,15 @@ class Axis<AxisType::Equidistant, bdt> final : public IAxis {
     return binEdges;
   }
 
+  friend std::ostream& operator<<(std::ostream& os, const Axis& axis) {
+    os << "Axis<" << axis.type << ", Equidistant>(";
+    os << axis.m_min << ", ";
+    os << axis.m_max << ", ";
+    os << axis.m_bins << ")";
+    os << ")";
+    return os;
+  }
+
  private:
   /// minimum of binning range
   ActsScalar m_min{};
@@ -691,6 +700,16 @@ class Axis<AxisType::Variable, bdt> final : public IAxis {
   /// @brief Return a vector of bin edges
   /// @return Vector which contains the bin edges
   std::vector<ActsScalar> getBinEdges() const override { return m_binEdges; }
+
+  friend std::ostream& operator<<(std::ostream& os, const Axis& axis) {
+    os << "Axis<" << axis.type << ", Variable>(";
+    os << axis.m_binEdges.front();
+    for (std::size_t i = 1; i < axis.m_binEdges.size(); i++) {
+      os << ", " << axis.m_binEdges[i];
+    }
+    os << ")";
+    return os;
+  }
 
  private:
   /// vector of bin edges (sorted in ascending order)
