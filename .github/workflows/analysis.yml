@@ -55,12 +55,11 @@ jobs:
           -DACTS_LOG_FAILURE_THRESHOLD=WARNING
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: Build
-        run: cmake --build build -- ActsUnitTestEigenStepper
+        run: cmake --build build
       - name: ccache stats
         run: ccache -s
       - name: Unit tests
-        # run: cmake --build build --target test
-        run: build/bin/ActsUnitTestEigenStepper
+        run: cmake --build build --target test
 
       - name: Remove .o files
         run: >
