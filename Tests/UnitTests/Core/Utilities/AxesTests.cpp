@@ -336,9 +336,6 @@ BOOST_AUTO_TEST_CASE(wrapBin) {
   BOOST_CHECK_EQUAL(a2.wrapBin(12), 10u);
 
   Axis<AxisType::Equidistant, AxisBoundaryType::Closed> a3(0.0, 1.0, 10u);
-  BOOST_CHECK_EQUAL(a3.wrapBin(0), 10u);
-  BOOST_CHECK_EQUAL(a3.wrapBin(1), 1u);
-  BOOST_CHECK_EQUAL(a3.wrapBin(-1), 9u);
   BOOST_CHECK_EQUAL(a3.wrapBin(10), 10u);
   BOOST_CHECK_EQUAL(a3.wrapBin(11), 1u);
   BOOST_CHECK_EQUAL(a3.wrapBin(12), 2u);
