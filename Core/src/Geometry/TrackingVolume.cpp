@@ -622,7 +622,9 @@ const Acts::Layer* TrackingVolume::associatedLayer(
     const GeometryContext& /*gctx*/, const Vector3& position) const {
   // confined static layers - highest hierarchy
   if (m_confinedLayers != nullptr) {
-    return (m_confinedLayers->object(position).get());
+    // some dummy change
+    auto ret = (m_confinedLayers->object(position).get());
+    return ret;
   }
 
   // return the null pointer
