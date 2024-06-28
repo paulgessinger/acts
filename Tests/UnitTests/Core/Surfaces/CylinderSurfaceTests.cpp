@@ -426,12 +426,16 @@ BOOST_DATA_TEST_CASE(ZDirection,
   auto cyl2 = Surface::makeShared<CylinderSurface>(
       base * Translation3{Vector3::UnitZ() * 200_mm}, 30_mm, 100_mm);
 
-  auto cyl3 = cyl->mergedWith(testContext, *cyl2, Acts::binZ, *logger);
+  auto [cyl3, reversed] =
+      cyl->mergedWith(testContext, *cyl2, Acts::binZ, *logger);
   BOOST_REQUIRE_NE(cyl3, nullptr);
+  BOOST_CHECK(!reversed);
 
-  auto cyl3Reversed = cyl2->mergedWith(testContext, *cyl, Acts::binZ, *logger);
+  auto [cyl3Reversed, reversed2] =
+      cyl2->mergedWith(testContext, *cyl, Acts::binZ, *logger);
   BOOST_REQUIRE_NE(cyl3Reversed, nullptr);
   BOOST_CHECK(*cyl3 == *cyl3Reversed);
+  BOOST_CHECK(reversed2);
 
   auto bounds = cyl3->bounds();
 
@@ -506,14 +510,17 @@ BOOST_DATA_TEST_CASE(RPhiDirection,
   auto cyl2 = Surface::makeShared<CylinderSurface>(base, 30_mm, 100_mm,
                                                    45_degree, a(95_degree));
 
-  auto cyl3 = cyl->mergedWith(testContext, *cyl2, Acts::binRPhi, *logger);
+  auto [cyl3, reversed] =
+      cyl->mergedWith(testContext, *cyl2, Acts::binRPhi, *logger);
   BOOST_REQUIRE_NE(cyl3, nullptr);
   BOOST_CHECK_EQUAL(base.matrix(), cyl3->transform(testContext).matrix());
+  BOOST_CHECK(reversed);
 
-  auto cyl3Reversed =
+  auto [cyl3Reversed, reversed2] =
       cyl2->mergedWith(testContext, *cyl, Acts::binRPhi, *logger);
   BOOST_REQUIRE_NE(cyl3Reversed, nullptr);
   BOOST_CHECK(*cyl3 == *cyl3Reversed);
+  BOOST_CHECK(!reversed2);
 
   const auto& bounds = cyl3->bounds();
 
@@ -527,12 +534,16 @@ BOOST_DATA_TEST_CASE(RPhiDirection,
                                                    20_degree, a(170_degree));
   auto cyl5 = Surface::makeShared<CylinderSurface>(base, 30_mm, 100_mm,
                                                    10_degree, a(-160_degree));
-  auto cyl45 = cyl4->mergedWith(testContext, *cyl5, Acts::binRPhi, *logger);
+  auto [cyl45, reversed45] =
+      cyl4->mergedWith(testContext, *cyl5, Acts::binRPhi, *logger);
   BOOST_REQUIRE_NE(cyl45, nullptr);
   BOOST_CHECK_EQUAL(base.matrix(), cyl45->transform(testContext).matrix());
+  BOOST_CHECK(reversed45);
 
-  auto cyl54 = cyl5->mergedWith(testContext, *cyl4, Acts::binRPhi, *logger);
+  auto [cyl54, reversed54] =
+      cyl5->mergedWith(testContext, *cyl4, Acts::binRPhi, *logger);
   BOOST_REQUIRE_NE(cyl54, nullptr);
+  BOOST_CHECK(!reversed54);
 
   BOOST_CHECK(*cyl54 == *cyl45);
 

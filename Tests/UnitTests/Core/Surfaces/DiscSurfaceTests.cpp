@@ -470,12 +470,16 @@ BOOST_DATA_TEST_CASE(RDirection,
 
   auto disc2 = makeDisc(base, 100_mm, 150_mm);
 
-  auto disc3 = disc->mergedWith(tgContext, *disc2, Acts::binR, *logger);
+  auto [disc3, reversed] =
+      disc->mergedWith(tgContext, *disc2, Acts::binR, *logger);
   BOOST_REQUIRE_NE(disc3, nullptr);
+  BOOST_CHECK(!reversed);
 
-  auto disc3Reversed = disc2->mergedWith(tgContext, *disc, Acts::binR, *logger);
+  auto [disc3Reversed, reversed2] =
+      disc2->mergedWith(tgContext, *disc, Acts::binR, *logger);
   BOOST_REQUIRE_NE(disc3Reversed, nullptr);
   BOOST_CHECK(*disc3 == *disc3Reversed);
+  BOOST_CHECK(reversed2);
 
   const auto* bounds = dynamic_cast<const RadialBounds*>(&disc3->bounds());
   BOOST_REQUIRE_NE(bounds, nullptr);
@@ -551,14 +555,17 @@ BOOST_DATA_TEST_CASE(PhiDirection,
   auto disc = makeDisc(base, 30_mm, 100_mm, 10_degree, a(40_degree));
   auto disc2 = makeDisc(base, 30_mm, 100_mm, 45_degree, a(95_degree));
 
-  auto disc3 = disc->mergedWith(tgContext, *disc2, Acts::binPhi, *logger);
+  auto [disc3, reversed] =
+      disc->mergedWith(tgContext, *disc2, Acts::binPhi, *logger);
   BOOST_REQUIRE_NE(disc3, nullptr);
   BOOST_CHECK_EQUAL(base.matrix(), disc3->transform(tgContext).matrix());
+  BOOST_CHECK(reversed);
 
-  auto disc3Reversed =
+  auto [disc3Reversed, reversed2] =
       disc2->mergedWith(tgContext, *disc, Acts::binPhi, *logger);
   BOOST_REQUIRE_NE(disc3Reversed, nullptr);
   BOOST_CHECK(*disc3 == *disc3Reversed);
+  BOOST_CHECK(!reversed2);
 
   const auto* bounds = dynamic_cast<const RadialBounds*>(&disc3->bounds());
   BOOST_REQUIRE_NE(bounds, nullptr);
@@ -571,12 +578,16 @@ BOOST_DATA_TEST_CASE(PhiDirection,
 
   auto disc4 = makeDisc(base, 30_mm, 100_mm, 20_degree, a(170_degree));
   auto disc5 = makeDisc(base, 30_mm, 100_mm, 10_degree, a(-160_degree));
-  auto disc45 = disc4->mergedWith(tgContext, *disc5, Acts::binPhi, *logger);
+  auto [disc45, reversed45] =
+      disc4->mergedWith(tgContext, *disc5, Acts::binPhi, *logger);
   BOOST_REQUIRE_NE(disc45, nullptr);
   BOOST_CHECK_EQUAL(base.matrix(), disc45->transform(tgContext).matrix());
+  BOOST_CHECK(reversed45);
 
-  auto disc54 = disc5->mergedWith(tgContext, *disc4, Acts::binPhi, *logger);
+  auto [disc54, reversed54] =
+      disc5->mergedWith(tgContext, *disc4, Acts::binPhi, *logger);
   BOOST_REQUIRE_NE(disc54, nullptr);
+  BOOST_CHECK(!reversed54);
 
   BOOST_CHECK(*disc54 == *disc45);
 
