@@ -76,7 +76,8 @@ std::set<typename grid_type::index_t> localIndices(
   std::array<Acts::AxisBoundaryType, grid_type::DIM> axisTypes{};
   std::array<std::size_t, grid_type::DIM> axisBins{};
   // Fill the axis types
-  for (auto [ia, a] : enumerate(grid.axes())) {
+  auto axes = grid.axes();
+  for (auto [ia, a] : enumerate(axes)) {
     axisTypes[ia] = a->getBoundaryType();
     axisBins[ia] = a->getNBins();
   }
