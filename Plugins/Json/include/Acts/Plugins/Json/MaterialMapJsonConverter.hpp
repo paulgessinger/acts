@@ -63,7 +63,7 @@ class MaterialMapJsonConverter {
   class Config {
    public:
     /// Default geometry context to extract surface transforms
-    GeometryContext context = GeometryContext();
+    GeometryContext context = GeometryContext::dangerouslyDefaultConstruct();
 
     /// Steering to handle sensitive data
     bool processSensitives = true;

@@ -32,7 +32,7 @@ namespace Acts::Test {
 using Covariance = BoundSquareMatrix;
 
 // Create a test context
-GeometryContext geoContext = GeometryContext();
+GeometryContext geoContext = GeometryContext::dangerouslyDefaultConstruct();
 
 BOOST_AUTO_TEST_CASE(gaussian_grid_density_test) {
   // Define the size of the grids

@@ -21,9 +21,8 @@ namespace Acts {
 /// outside of this use-case.
 class ContextType {
  public:
-  /// Default constructor, does nothing
-  ///
-  ContextType() = default;
+  struct IKnowWhatIAmDoing {};
+  ContextType(IKnowWhatIAmDoing /*sentinel*/) {};
 
   /// Move construct a new Context Type object from anything. Must be explicit.
   ///

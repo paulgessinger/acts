@@ -8,6 +8,7 @@
 
 #include "Acts/Plugins/GeoModel/detail/GeoShiftConverter.hpp"
 
+#include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Plugins/GeoModel/GeoModelConversionError.hpp"
 #include "Acts/Plugins/GeoModel/detail/GeoBoxConverter.hpp"
 #include "Acts/Plugins/GeoModel/detail/GeoTrdConverter.hpp"
@@ -49,16 +50,19 @@ Result<GeoModelSensitiveSurface> impl(PVConstLink geoPV,
   const auto& bounds = static_cast<const Bounds&>(surface->bounds());
   auto sharedBounds = std::make_shared<const Bounds>(bounds);
 
+  Acts::GeometryContext gctx =
+      Acts::GeometryContext::dangerouslyDefaultConstruct();
+
   // TODO this procedure could be stripped from all converters because it is
   // pretty generic
   if (!sensitive) {
     auto newSurface = Surface::template makeShared<Surface>(
-        surface->transform({}), sharedBounds);
+        surface->transform(gctx), sharedBounds);
     return std::make_tuple(nullptr, newSurface);
   }
 
   auto newEl = GeoModelDetectorElement::createDetectorElement<Surface>(
-      el->physicalVolume(), sharedBounds, el->transform({}), el->thickness());
+      el->physicalVolume(), sharedBounds, el->transform(gctx), el->thickness());
   auto newSurface = newEl->surface().getSharedPtr();
   return std::make_tuple(newEl, newSurface);
 }

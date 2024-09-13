@@ -53,7 +53,7 @@ using Acts::VectorHelpers::perp;
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 MagneticFieldContext mfContext = MagneticFieldContext();
 
 /// This is a simple cache struct to mimic the
@@ -99,7 +99,8 @@ struct PropagatorState {
       // Previous step size for overstep estimation (ignored here)
       double previousStepSize = 0.;
 
-      GeometryContext geoContext = GeometryContext();
+      GeometryContext geoContext =
+          GeometryContext::dangerouslyDefaultConstruct();
     };
 
     /// State resetter
@@ -251,7 +252,7 @@ struct PropagatorState {
   Navigator::State navigation;
 
   // The context cache for this propagation
-  GeometryContext geoContext = GeometryContext();
+  GeometryContext geoContext = GeometryContext::dangerouslyDefaultConstruct();
 };
 
 template <typename stepper_state_t>

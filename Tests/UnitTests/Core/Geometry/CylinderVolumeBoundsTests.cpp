@@ -173,7 +173,7 @@ BOOST_DATA_TEST_CASE(
   (void)index;
 
   // Create a test context
-  GeometryContext tgContext = GeometryContext();
+  GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
   // position of volume
   const Vector3 pos(posX, posY, posZ);
@@ -245,7 +245,7 @@ BOOST_DATA_TEST_CASE(
 }
 
 BOOST_AUTO_TEST_CASE(CylinderVolumeBoundsBoundingBox) {
-  GeometryContext tgContext = GeometryContext();
+  GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
   float tol = 1e-4;
 
@@ -293,14 +293,14 @@ BOOST_AUTO_TEST_CASE(CylinderVolumeBoundsBoundingBox) {
 }
 
 BOOST_AUTO_TEST_CASE(CylinderVolumeOrientedBoundaries) {
-  GeometryContext tgContext = GeometryContext();
+  GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
   CylinderVolumeBounds cvb(5, 10, 20);
 
   auto cvbOrientedSurfaces = cvb.orientedSurfaces(Transform3::Identity());
   BOOST_CHECK_EQUAL(cvbOrientedSurfaces.size(), 4);
 
-  auto geoCtx = GeometryContext();
+  auto geoCtx = GeometryContext::dangerouslyDefaultConstruct();
   Vector3 xaxis(1., 0., 0.);
   Vector3 yaxis(0., 1., 0.);
   Vector3 zaxis(0., 0., 1.);

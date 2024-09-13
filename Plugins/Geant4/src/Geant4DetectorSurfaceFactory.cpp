@@ -69,7 +69,9 @@ void Acts::Geant4DetectorSurfaceFactory::construct(
         // empty geometry context is fine as the transform was just passed down
         // without context before
         auto detectorElement = std::make_shared<Acts::Geant4DetectorElement>(
-            surface, g4PhysVol, surface->transform({}), 0.1);
+            surface, g4PhysVol,
+            surface->transform(GeometryContext::dangerouslyDefaultConstruct()),
+            0.1);
         surface->assignDetectorElement(*detectorElement);
 
         cache.sensitiveSurfaces.push_back(

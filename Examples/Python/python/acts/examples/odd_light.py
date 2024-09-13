@@ -352,7 +352,7 @@ def main():
         help="Match string for passive surfaces",
     )
     args = p.parse_args()
-    geoContext = GeometryContext()
+    geoContext = GeometryContext.dangerouslyDefaultConstruct()
 
     # Convert the detector surfaces to GDML
     [_, ssurfaces, psurfaces] = acts_g4.convertSurfaces(

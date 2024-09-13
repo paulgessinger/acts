@@ -92,7 +92,7 @@ ActsExamples::MockupSectorBuilder::buildChamber(
 
   // Convert the physical volumes of the detector elements to straw surfaces
   for (auto& detectorElement : detectorElements) {
-    auto context = Acts::GeometryContext();
+    auto context = Acts::GeometryContext::dangerouslyDefaultConstruct();
     auto g4conv = Acts::Geant4PhysicalVolumeConverter();
 
     g4conv.forcedType = Acts::Surface::SurfaceType::Straw;
@@ -253,12 +253,14 @@ ActsExamples::MockupSectorBuilder::buildSector(
 
         // create the shifted surfaces by creating copied surface objects
         auto strawSurfaceObject = Acts::Surface::makeShared<Acts::StrawSurface>(
-            detSurf->transform(Acts::GeometryContext()),
+            detSurf->transform(
+                Acts::GeometryContext::dangerouslyDefaultConstruct()),
             detSurf->bounds().values()[0], detSurf->bounds().values()[1]);
 
         auto copiedTransformStrawSurface =
             Acts::Surface::makeShared<Acts::StrawSurface>(
-                Acts::GeometryContext(), *strawSurfaceObject, shift_surf);
+                Acts::GeometryContext::dangerouslyDefaultConstruct(),
+                *strawSurfaceObject, shift_surf);
 
         shiftedSurfaces.push_back(copiedTransformStrawSurface);
       }
@@ -325,7 +327,8 @@ void ActsExamples::MockupSectorBuilder::drawSector(
   Acts::ObjVisualization3D objSector;
 
   Acts::GeometryView3D::drawDetectorVolume(
-      objSector, *detectorVolumeSector, Acts::GeometryContext(),
+      objSector, *detectorVolumeSector,
+      Acts::GeometryContext::dangerouslyDefaultConstruct(),
       Acts::Transform3::Identity(), sConfig);
 
   objSector.write(nameObjFile);

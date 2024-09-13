@@ -32,7 +32,7 @@ namespace Acts::Test::Layers {
 BOOST_AUTO_TEST_SUITE(Geometry)
 
 BOOST_AUTO_TEST_CASE(ProtoLayerTests) {
-  GeometryContext tgContext = GeometryContext();
+  GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
   // Create a proto layer with 4 surfaces on the x/y grid
   auto recBounds = std::make_shared<RectangleBounds>(3., 6.);

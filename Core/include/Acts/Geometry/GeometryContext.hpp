@@ -30,6 +30,10 @@ class GeometryContext : public ContextType {
   /// Inherit all constructors
   using ContextType::ContextType;
   using ContextType::operator=;
+
+  static GeometryContext dangerouslyDefaultConstruct() {
+    return {IKnowWhatIAmDoing{}};
+  }
 };
 
 /// Helper struct that stores an object and a context, and will print it to

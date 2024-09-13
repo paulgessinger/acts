@@ -46,7 +46,7 @@ using namespace Acts::detail;
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 MagneticFieldContext mfContext = MagneticFieldContext();
 
 /// @brief mockup of stepping state

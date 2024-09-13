@@ -97,13 +97,12 @@ std::pair<Vector3, Vector3> stripEnds(
 }
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
-const GeometryContext geoCtx;
 const MagneticFieldContext magCtx;
 
 // detector geometry
-CubicTrackingGeometry geometryStore(geoCtx);
+CubicTrackingGeometry geometryStore(tgContext);
 const auto geometry = geometryStore();
 
 // detector resolutions
@@ -141,8 +140,8 @@ BOOST_DATA_TEST_CASE(SpacePointBuilder_basic, bdata::xrange(1), index) {
   ConstantFieldPropagator propagator(std::move(stepper), std::move(navigator));
   auto start = makeParameters(phi, theta, p, q);
 
-  auto measurements =
-      createMeasurements(propagator, geoCtx, magCtx, start, resolutions, rng);
+  auto measurements = createMeasurements(propagator, tgContext, magCtx, start,
+                                         resolutions, rng);
 
   const auto sourceLinks = measurements.sourceLinks;
 
@@ -226,7 +225,7 @@ BOOST_DATA_TEST_CASE(SpacePointBuilder_basic, bdata::xrange(1), index) {
     SpacePointBuilderOptions spOpt;
     spOpt.vertex = vertex;
     spOpt.paramCovAccessor = accessor;
-    spBuilder.buildSpacePoint(geoCtx, slinks, spOpt,
+    spBuilder.buildSpacePoint(tgContext, slinks, spOpt,
                               std::back_inserter(spacePoints));
   }
   BOOST_CHECK_EQUAL(spacePoints.size(), 2);
@@ -244,9 +243,9 @@ BOOST_DATA_TEST_CASE(SpacePointBuilder_basic, bdata::xrange(1), index) {
 
   for (auto& slinkPair : slinkPairs) {
     const std::pair<Vector3, Vector3> end1 =
-        stripEnds(geometry, geoCtx, slinkPair.first);
+        stripEnds(geometry, tgContext, slinkPair.first);
     const std::pair<Vector3, Vector3> end2 =
-        stripEnds(geometry, geoCtx, slinkPair.second);
+        stripEnds(geometry, tgContext, slinkPair.second);
 
     std::shared_ptr<const TestSpacePoint> spacePoint = nullptr;
 
@@ -258,23 +257,23 @@ BOOST_DATA_TEST_CASE(SpacePointBuilder_basic, bdata::xrange(1), index) {
     SpacePointBuilderOptions spOpt{strippair, accessor};
 
     // nominal strip sp building
-    spBuilder.buildSpacePoint(geoCtx, slinks, spOpt,
+    spBuilder.buildSpacePoint(tgContext, slinks, spOpt,
                               std::back_inserter(spacePoints));
 
     // sp building without vertex constraint
-    spBuilder_perp.buildSpacePoint(geoCtx, slinks, spOpt,
+    spBuilder_perp.buildSpacePoint(tgContext, slinks, spOpt,
                                    std::back_inserter(spacePoints));
 
     // put measurements slightly outside strips to test recovery
     const std::pair<Vector3, Vector3> end3 =
-        stripEnds(geometry, geoCtx, slinkPair.first, 1.01);
+        stripEnds(geometry, tgContext, slinkPair.first, 1.01);
     const std::pair<Vector3, Vector3> end4 =
-        stripEnds(geometry, geoCtx, slinkPair.second, 1.02);
+        stripEnds(geometry, tgContext, slinkPair.second, 1.02);
     // the other side of the strips
     const std::pair<Vector3, Vector3> end5 =
-        stripEnds(geometry, geoCtx, slinkPair.first, -0.01);
+        stripEnds(geometry, tgContext, slinkPair.first, -0.01);
     const std::pair<Vector3, Vector3> end6 =
-        stripEnds(geometry, geoCtx, slinkPair.second, -0.02);
+        stripEnds(geometry, tgContext, slinkPair.second, -0.02);
 
     auto spBuilderConfig_badStrips = SpacePointBuilderConfig();
 
@@ -291,7 +290,7 @@ BOOST_DATA_TEST_CASE(SpacePointBuilder_basic, bdata::xrange(1), index) {
     spOpt_badStrips1.vertex = vertex;
     spOpt_badStrips1.stripLengthTolerance = 0.0001;
     spOpt_badStrips1.stripLengthGapTolerance = 50.;
-    spBuilder_badStrips.buildSpacePoint(geoCtx, slinks, spOpt_badStrips1,
+    spBuilder_badStrips.buildSpacePoint(tgContext, slinks, spOpt_badStrips1,
                                         std::back_inserter(spacePoints_extra));
 
     SpacePointBuilderOptions spOpt_badStrips2{std::make_pair(end5, end6),
@@ -299,7 +298,7 @@ BOOST_DATA_TEST_CASE(SpacePointBuilder_basic, bdata::xrange(1), index) {
     spOpt_badStrips2.vertex = vertex;
     spOpt_badStrips2.stripLengthTolerance = 0.0001;
     spOpt_badStrips2.stripLengthGapTolerance = 50.;
-    spBuilder_badStrips.buildSpacePoint(geoCtx, slinks, spOpt_badStrips2,
+    spBuilder_badStrips.buildSpacePoint(tgContext, slinks, spOpt_badStrips2,
                                         std::back_inserter(spacePoints_extra));
   }
 

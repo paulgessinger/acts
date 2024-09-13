@@ -28,6 +28,8 @@ class MagneticFieldContext : public ContextType {
   /// Inherit all constructors
   using ContextType::ContextType;
   using ContextType::operator=;
+
+  MagneticFieldContext() : ContextType{IKnowWhatIAmDoing{}} {}
 };
 
 }  // namespace Acts

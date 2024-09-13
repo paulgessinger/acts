@@ -39,7 +39,7 @@ using namespace Acts::UnitLiterals;
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 BOOST_AUTO_TEST_SUITE(PlaneSurfaces)
 /// Unit test for creating compliant/non-compliant PlaneSurface object

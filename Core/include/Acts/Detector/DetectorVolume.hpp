@@ -182,7 +182,8 @@ class DetectorVolume : public std::enable_shared_from_this<DetectorVolume> {
   ///
   /// @return const reference to the contextual transform
   const Transform3& transform(
-      const GeometryContext& gctx = GeometryContext()) const;
+      const GeometryContext& gctx =
+          GeometryContext::dangerouslyDefaultConstruct()) const;
 
   /// Const access to the center
   ///
@@ -192,7 +193,8 @@ class DetectorVolume : public std::enable_shared_from_this<DetectorVolume> {
   ///       is a placeholder for eventually misaligned volumes
   ///
   /// @return a contextually created center
-  Vector3 center(const GeometryContext& gctx = GeometryContext()) const;
+  Vector3 center(const GeometryContext& gctx =
+                     GeometryContext::dangerouslyDefaultConstruct()) const;
 
   /// Const access to the volume bounds
   ///

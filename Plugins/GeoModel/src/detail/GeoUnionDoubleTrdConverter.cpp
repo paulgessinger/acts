@@ -93,9 +93,11 @@ Result<GeoModelSensitiveSurface> GeoUnionDoubleTrdConverter::operator()(
   //          \_______/
   //          3       2
 
+  Acts::GeometryContext gctx =
+      Acts::GeometryContext::dangerouslyDefaultConstruct();
   // First check now, if this actually is correct
-  const auto vtxsa = surfaceA->polyhedronRepresentation({}, 0).vertices;
-  const auto vtxsb = surfaceB->polyhedronRepresentation({}, 0).vertices;
+  const auto vtxsa = surfaceA->polyhedronRepresentation(gctx, 0).vertices;
+  const auto vtxsb = surfaceB->polyhedronRepresentation(gctx, 0).vertices;
 
   if (!trapezoidsAreMergeable(vtxsa, vtxsb)) {
     return GeoModelConversionError::WrongShapeForConverter;
@@ -131,7 +133,7 @@ Result<GeoModelSensitiveSurface> GeoUnionDoubleTrdConverter::operator()(
 
   // Create transform from the transform of surfaceA and translate it in y
   // direction using the half length
-  auto transform = surfaceA->transform({});
+  auto transform = surfaceA->transform(gctx);
   transform.translate(Vector3{
       0.f, boundsA.values()[TrapezoidBounds::eHalfLengthY] - halfLengthY, 0.f});
 

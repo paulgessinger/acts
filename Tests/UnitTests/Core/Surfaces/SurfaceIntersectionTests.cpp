@@ -30,7 +30,7 @@ using namespace Acts::UnitLiterals;
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 // Some random transform
 Transform3 aTransform = Transform3::Identity() *

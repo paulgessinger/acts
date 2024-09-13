@@ -126,7 +126,7 @@ ConstructGeant4World() {
   return std::make_tuple(physWorld, names);
 }
 
-auto gctx = Acts::GeometryContext();
+auto gctx = Acts::GeometryContext::dangerouslyDefaultConstruct();
 
 // Construct the world
 auto [physWorld, names] = ConstructGeant4World();
@@ -392,7 +392,7 @@ BOOST_AUTO_TEST_CASE(Geant4RectangleFromGDML) {
   kdt1DOpt.range[0].set(-100, 100);
   kdt1DOpt.binningValues = {Acts::BinningValue::binZ};
 
-  auto tContext = Acts::GeometryContext();
+  auto tContext = Acts::GeometryContext::dangerouslyDefaultConstruct();
 
   auto planeProvider =
       std::make_shared<Acts::Experimental::Geant4SurfaceProvider<1>>(

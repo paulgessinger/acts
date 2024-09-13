@@ -32,7 +32,7 @@ using namespace Acts::UnitLiterals;
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 /// @brief Unit test for a three layer detector parameters
 /// Testing the Tool chain in the geometry building process

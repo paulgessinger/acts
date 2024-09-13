@@ -50,6 +50,7 @@ inline void sortDetElementsByID(std::vector<dd4hep::DetElement>& det) {
 ///
 ///
 /// @param [in] worldDetElement the DD4hep DetElement of the world
+/// @param gctx The geometry context to use
 /// @param [in] logger A logger instance
 /// geometry building
 /// @param [in] bTypePhi is how the sensitive surfaces (modules) should be
@@ -87,7 +88,6 @@ inline void sortDetElementsByID(std::vector<dd4hep::DetElement>& det) {
 ///                              is needed for navigation. Therefore the
 ///                              different hierarchies need to be sorted
 ///                              ascending. The default is sorting by ID.
-/// @param gctx The geometry context to use
 /// @param matDecorator is the material decorator that loads material maps
 /// @param geometryIdentifierHook Hook to apply to surfaces during geometry closure.
 ///
@@ -101,14 +101,14 @@ inline void sortDetElementsByID(std::vector<dd4hep::DetElement>& det) {
 /// can provide their own function
 
 std::unique_ptr<const TrackingGeometry> convertDD4hepDetector(
-    dd4hep::DetElement worldDetElement, const Logger& logger,
-    BinningType bTypePhi = equidistant, BinningType bTypeR = equidistant,
-    BinningType bTypeZ = equidistant, double layerEnvelopeR = UnitConstants::mm,
+    dd4hep::DetElement worldDetElement, const GeometryContext& gctx,
+    const Logger& logger, BinningType bTypePhi = equidistant,
+    BinningType bTypeR = equidistant, BinningType bTypeZ = equidistant,
+    double layerEnvelopeR = UnitConstants::mm,
     double layerEnvelopeZ = UnitConstants::mm,
     double defaultLayerThickness = UnitConstants::fm,
     const std::function<void(std::vector<dd4hep::DetElement>& detectors)>&
         sortSubDetectors = sortDetElementsByID,
-    const GeometryContext& gctx = GeometryContext(),
     std::shared_ptr<const IMaterialDecorator> matDecorator = nullptr,
     std::shared_ptr<const GeometryIdentifierHook> geometryIdentifierHook =
         std::make_shared<GeometryIdentifierHook>());

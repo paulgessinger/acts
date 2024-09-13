@@ -15,7 +15,7 @@
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 BOOST_AUTO_TEST_CASE(CylindricalTrackingGeometryTest) {
   CylindricalTrackingGeometry cGeometry(tgContext);

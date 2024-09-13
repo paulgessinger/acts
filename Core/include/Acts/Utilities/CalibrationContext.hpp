@@ -28,6 +28,8 @@ class CalibrationContext : public ContextType {
   /// Inherit all constructors
   using ContextType::ContextType;
   using ContextType::operator=;
+
+  CalibrationContext() : ContextType{IKnowWhatIAmDoing{}} {}
 };
 
 }  // namespace Acts

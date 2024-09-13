@@ -20,7 +20,7 @@
 
 namespace Acts::TrackingGeometryView3DTest {
 
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 Test::CylindricalTrackingGeometry cGeometry(tgContext);
 auto tGeometry = cGeometry();

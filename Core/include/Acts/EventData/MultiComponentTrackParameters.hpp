@@ -252,7 +252,8 @@ class MultiComponentCurvilinearTrackParameters
   static BaseConstructionTuple construct(
       const std::vector<ConstructionTuple>& curvi) {
     // TODO where to get a geometry context here
-    Acts::GeometryContext gctx{};
+    Acts::GeometryContext gctx =
+        Acts::GeometryContext::dangerouslyDefaultConstruct();
 
     // Construct and average surface
     Acts::Vector3 avgPos = Acts::Vector3::Zero();

@@ -28,7 +28,7 @@
 
 namespace Acts::Test {
 
-GeometryContext gctx = GeometryContext();
+GeometryContext gctx = GeometryContext::dangerouslyDefaultConstruct();
 
 double hx{10.}, hy{20.}, hz{30.};
 
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(CuboidVolumeBoundarySurfaces) {
 
   BOOST_CHECK_EQUAL(cvbOrientedSurfaces.size(), 6);
 
-  auto geoCtx = GeometryContext();
+  auto geoCtx = GeometryContext::dangerouslyDefaultConstruct();
 
   for (auto& os : cvbOrientedSurfaces) {
     auto osCenter = os.surface->center(geoCtx);

@@ -25,7 +25,7 @@
 
 namespace Acts::Test {
 
-auto tContext = GeometryContext();
+auto tContext = GeometryContext::dangerouslyDefaultConstruct();
 
 BOOST_AUTO_TEST_SUITE(MaterialInteractionAssignmentSuite)
 

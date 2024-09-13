@@ -62,7 +62,7 @@ using Acts::VectorHelpers::perp;
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 MagneticFieldContext mfContext = MagneticFieldContext();
 
 using Covariance = BoundSquareMatrix;

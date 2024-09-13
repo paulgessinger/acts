@@ -25,7 +25,7 @@
 
 namespace Acts::Test {
 
-auto tContext = GeometryContext();
+auto tContext = GeometryContext::dangerouslyDefaultConstruct();
 auto mContext = MagneticFieldContext();
 
 BOOST_AUTO_TEST_SUITE(IntersectionMaterialAssignerTestSuite)

@@ -39,7 +39,8 @@ Acts::Logging::Level logLevel = Acts::Logging::VERBOSE;
 namespace Acts::Test {
 
 // Create a test context
-const GeometryContext tgContext = GeometryContext();
+const GeometryContext tgContext =
+    GeometryContext::dangerouslyDefaultConstruct();
 
 const std::vector<std::tuple<std::string, unsigned int>> testModes = {
     {"Triangulate", 72}, {"Extrema", 1}};

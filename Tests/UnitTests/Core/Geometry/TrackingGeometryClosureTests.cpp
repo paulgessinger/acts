@@ -32,7 +32,7 @@ using namespace Acts::UnitLiterals;
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 TrackingGeometry makeTrackingGeometry(const GeometryIdentifierHook& hook) {
   /// we test a two-level hierarchy

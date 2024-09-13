@@ -33,7 +33,7 @@
 
 namespace Acts::Test {
 
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 ViewConfig red({200, 0, 0});
 ViewConfig green({0, 200, 0});

@@ -36,7 +36,11 @@ namespace Acts::Python {
 void addContext(Context& ctx) {
   auto& m = ctx.get("main");
 
-  py::class_<Acts::GeometryContext>(m, "GeometryContext").def(py::init<>());
+  py::class_<Acts::GeometryContext>(m, "GeometryContext")
+      .def(py::init<>())
+      .def_static("dangerouslyDefaultConstruct",
+                  &Acts::GeometryContext::dangerouslyDefaultConstruct);
+
   py::class_<Acts::MagneticFieldContext>(m, "MagneticFieldContext")
       .def(py::init<>());
   py::class_<Acts::CalibrationContext>(m, "CalibrationContext")

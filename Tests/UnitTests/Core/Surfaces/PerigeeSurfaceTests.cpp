@@ -20,7 +20,7 @@
 namespace Acts::Test {
 
 // Create a test context
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 BOOST_AUTO_TEST_SUITE(PerigeeSurfaces)
 /// Unit test for creating compliant/non-compliant PerigeeSurface object

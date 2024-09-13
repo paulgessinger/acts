@@ -66,7 +66,7 @@ static constexpr auto eps = 2 * std::numeric_limits<double>::epsilon();
 /// These tests are aiming to test whether the state setup is working properly
 BOOST_AUTO_TEST_CASE(straight_line_stepper_state_test) {
   // Set up some variables
-  GeometryContext tgContext = GeometryContext();
+  GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
   MagneticFieldContext mfContext = MagneticFieldContext();
   double stepSize = 123.;
   double tolerance = 234.;
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(straight_line_stepper_state_test) {
 /// The numerical correctness of the stepper is tested in the integration tests
 BOOST_AUTO_TEST_CASE(straight_line_stepper_test) {
   // Set up some variables for the state
-  GeometryContext tgContext = GeometryContext();
+  GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
   MagneticFieldContext mfContext = MagneticFieldContext();
   Direction navDir = Direction::Backward;
   double stepSize = 123.;

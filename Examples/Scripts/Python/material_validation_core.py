@@ -115,7 +115,7 @@ if "__main__" == __name__:
     )
 
     args = p.parse_args()
-    gContext = GeometryContext()
+    gContext = GeometryContext.dangerouslyDefaultConstruct()
     logLevel = acts.logging.INFO
 
     materialDecorator = None
@@ -213,7 +213,7 @@ if "__main__" == __name__:
             cOptions.materialDecorator = materialDecorator
 
             # Context and options
-            geoContext = acts.GeometryContext()
+            geoContext = acts.GeometryContext.dangerouslyDefaultConstruct()
             [detector, contextors, store] = dd4hepDetector.finalize(
                 geoContext, cOptions
             )

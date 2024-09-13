@@ -18,7 +18,8 @@ auto GenericDetector::finalize(
     const Config& cfg,
     std::shared_ptr<const Acts::IMaterialDecorator> mdecorator)
     -> std::pair<TrackingGeometryPtr, ContextDecorators> {
-  DetectorElement::ContextType nominalContext;
+  DetectorElement::ContextType nominalContext =
+      Acts::GeometryContext::dangerouslyDefaultConstruct();
   /// Return the generic detector
   TrackingGeometryPtr gGeometry =
       ActsExamples::Generic::buildDetector<DetectorElement>(

@@ -45,7 +45,7 @@ struct RootGeometry {
 
 RootGeometry rGeometry = RootGeometry();
 
-GeometryContext tgContext = GeometryContext();
+GeometryContext tgContext = GeometryContext::dangerouslyDefaultConstruct();
 
 /// @brief Unit test checking the match probability
 BOOST_AUTO_TEST_CASE(TGeoLayerBuilderTests) {

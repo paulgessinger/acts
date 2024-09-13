@@ -37,7 +37,7 @@
 
 namespace Acts::Test {
 
-auto tContext = GeometryContext();
+auto tContext = GeometryContext::dangerouslyDefaultConstruct();
 auto mContext = MagneticFieldContext();
 
 ActsScalar rMin = 0.;

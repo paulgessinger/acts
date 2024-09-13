@@ -34,7 +34,7 @@
 
 using namespace Acts::Experimental;
 
-auto tContext = Acts::GeometryContext();
+auto tContext = Acts::GeometryContext::dangerouslyDefaultConstruct();
 
 /// @brief A mockup volume builder, it generates volumes with
 /// a single surface filled in in order to use the CuboidalContainerBuilder

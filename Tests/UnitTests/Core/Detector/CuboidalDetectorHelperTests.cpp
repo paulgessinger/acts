@@ -25,7 +25,7 @@
 #include <stdexcept>
 
 auto portalGenerator = Acts::Experimental::defaultPortalGenerator();
-auto tContext = Acts::GeometryContext();
+auto tContext = Acts::GeometryContext::dangerouslyDefaultConstruct();
 
 BOOST_AUTO_TEST_SUITE(Experimental)
 
