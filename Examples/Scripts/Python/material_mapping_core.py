@@ -246,6 +246,7 @@ if "__main__" == __name__:
 
             materialSurfaces = detector.extractMaterialSurfaces()
         else:
+
             from acts.examples.dd4hep import (
                 DD4hepDetector,
                 DD4hepDetectorOptions,
@@ -273,13 +274,22 @@ if "__main__" == __name__:
 
             materialSurfaces = detector.extractMaterialSurfaces()
     else:
-        matDeco = None
-        if args.matconfig != "":
-            matDeco = acts.IMaterialDecorator.fromFile(args.matconfig)
+        if len(args.geomodel_input) > 0:
 
-        [detector, trackingGeometry, decorators] = getOpenDataDetector(matDeco)
+            import blueprint_itk
 
-        materialSurfaces = trackingGeometry.extractMaterialSurfaces()
+            gctx = acts.GeometryContext()
+            trackingGeometry, detector_elements = blueprint_itk.build_itk_gen3(gctx)
+            materialSurfaces = trackingGeometry.extractMaterialSurfaces()
+
+        else:
+            matDeco = None
+            if args.matconfig != "":
+                matDeco = acts.IMaterialDecorator.fromFile(args.matconfig)
+
+            [detector, trackingGeometry, decorators] = getOpenDataDetector(matDeco)
+
+            materialSurfaces = trackingGeometry.extractMaterialSurfaces()
 
     runMaterialMapping(
         materialSurfaces, args.input, args.output, args.map, logLevel
