@@ -156,12 +156,12 @@ std::unique_ptr<PortalLinkBase> PortalLinkBase::merge(
                                                    direction);
 
     } else if (dynamic_cast<const TrivialPortalLink*>(b.get()) != nullptr) {
-      ACTS_WARNING("Merging a composite portal with a trivial portal");
+      ACTS_VERBOSE("Merging a composite portal with a trivial portal");
       return std::make_unique<CompositePortalLink>(std::move(a), std::move(b),
                                                    direction);
 
     } else if (dynamic_cast<CompositePortalLink*>(b.get()) != nullptr) {
-      ACTS_WARNING("Merging two composite portals");
+      ACTS_VERBOSE("Merging two composite portals");
       return std::make_unique<CompositePortalLink>(std::move(a), std::move(b),
                                                    direction);
 
