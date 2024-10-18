@@ -52,8 +52,8 @@ if(ACTS_ENABLE_CPU_PROFILING OR ACTS_ENABLE_MEMORY_PROFILING)
 endif()
 
 # assign to global CXX flags
-set(CMAKE_CXX_FLAGS "${cxx_flags} ${CMAKE_CXX_FLAGS}")
-message(STATUS "Using compiler flags: ${CMAKE_CXX_FLAGS}")
+set(ACTS_CXX_FLAGS "${cxx_flags} ${CMAKE_CXX_FLAGS}")
+message(STATUS "Using compiler flags: ${ACTS_CXX_FLAGS}")
 
 # silence warning about missing RPATH on Mac OSX
 set(CMAKE_MACOSX_RPATH 1)
