@@ -13,4 +13,21 @@ endfunction()
 function(_add_options name type)
     string(REPLACE " " ";" cxx_flags ${ACTS_CXX_FLAGS})
     target_compile_options(${name} PUBLIC ${cxx_flags})
+
+    if(ACTS_RUN_UB_SANITIZER)
+        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            target_compile_options(
+                ${name}
+                PUBLIC
+                    "-fsanitize=undefined"
+                    "-fno-omit-frame-pointer"
+                    "-fno-sanitize-recover=all"
+            )
+
+            target_link_options(
+                ${name}
+                PUBLIC "SHELL:-fuse-ld=lld -fsanitize=undefined"
+            )
+        endif()
+    endif()
 endfunction()

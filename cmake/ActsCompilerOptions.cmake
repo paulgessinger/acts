@@ -62,3 +62,18 @@ set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # set relative library path for ACTS libraries
 set(CMAKE_INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+
+set(ACTS_RUN_SANITIZERS OFF)
+
+if(ACTS_RUN_UB_SANITIZER)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set(ACTS_RUN_SANITIZERS ON)
+        find_program(lld_EXECUTABLE NAMES lld REQUIRED)
+        find_library(ubsan_LIBRARY NAMES libubsan libubsan.so.1 REQUIRED)
+    else()
+        message(
+            WARNING
+            "Undefined behavior sanitizer is only supported by Clang at this time"
+        )
+    endif()
+endif()
