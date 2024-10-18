@@ -1,4 +1,4 @@
-add_executable(ActsAnalysisResidualsAndPulls ResidualsAndPulls.cpp)
+acts_add_executable(ActsAnalysisResidualsAndPulls ResidualsAndPulls.cpp)
 target_link_libraries(
     ActsAnalysisResidualsAndPulls
     ROOT::Core
@@ -8,7 +8,7 @@ target_link_libraries(
     Boost::program_options
 )
 
-add_executable(ActsAnalysisTrackSummary TrackSummary.cpp)
+acts_add_executable(ActsAnalysisTrackSummary TrackSummary.cpp)
 target_link_libraries(
     ActsAnalysisTrackSummary
     ActsExamplesFramework

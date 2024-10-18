@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsFatrasGeant4
     SHARED
     src/Geant4Decay.cpp

@@ -1,4 +1,4 @@
-add_library(ActsExamplesTraccc INTERFACE)
+acts_add_library(ActsExamplesTraccc INTERFACE)
 
 target_include_directories(
     ActsExamplesTraccc

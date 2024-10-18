@@ -1,4 +1,4 @@
-add_library(ActsExamplesHepMC3 SHARED src/HepMCProcessExtractor.cpp)
+acts_add_library(ActsExamplesHepMC3 SHARED src/HepMCProcessExtractor.cpp)
 target_include_directories(
     ActsExamplesHepMC3
     SYSTEM

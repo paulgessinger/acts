@@ -1,6 +1,6 @@
 include(ActsTargetLinkLibrariesSystem)
 
-add_library(
+acts_add_library(
     ActsPluginJson
     SHARED
     src/AlgebraJsonConverter.cpp

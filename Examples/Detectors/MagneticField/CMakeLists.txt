@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesMagneticField
     SHARED
     src/FieldMapRootIo.cpp

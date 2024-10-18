@@ -1,6 +1,6 @@
 include(FetchContent)
 
-add_library(
+acts_add_library(
     ActsPluginGeant4
     SHARED
     src/Geant4Converters.cpp

@@ -1,4 +1,4 @@
-add_library(ActsPluginEDM4hep SHARED src/EDM4hepUtil.cpp)
+acts_add_library(ActsPluginEDM4hep SHARED src/EDM4hepUtil.cpp)
 
 target_include_directories(
     ActsPluginEDM4hep

@@ -1,4 +1,4 @@
-add_library(ActsPluginLegacy INTERFACE)
+acts_add_library(ActsPluginLegacy INTERFACE)
 target_compile_features(ActsPluginLegacy INTERFACE cxx_std_17)
 target_include_directories(
     ActsPluginLegacy

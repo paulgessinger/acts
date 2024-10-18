@@ -5,7 +5,7 @@ set(SOURCES
     src/SeedFilterMLAlgorithm.cpp
 )
 
-add_library(ActsExamplesTrackFindingML SHARED ${SOURCES})
+acts_add_library(ActsExamplesTrackFindingML SHARED ${SOURCES})
 
 target_include_directories(
     ActsExamplesTrackFindingML

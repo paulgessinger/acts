@@ -13,7 +13,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
     "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 )
 
-add_executable(ShowActsVersion ShowActsVersion.cpp)
+acts_add_executable(ShowActsVersion ShowActsVersion.cpp)
 target_link_libraries(
     ShowActsVersion
     PRIVATE ActsCore Boost::boost Eigen3::Eigen

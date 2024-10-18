@@ -1,4 +1,4 @@
-add_library(ActsPluginFpeMonitoring SHARED src/FpeMonitor.cpp)
+acts_add_library(ActsPluginFpeMonitoring SHARED src/FpeMonitor.cpp)
 target_include_directories(
     ActsPluginFpeMonitoring
     PUBLIC

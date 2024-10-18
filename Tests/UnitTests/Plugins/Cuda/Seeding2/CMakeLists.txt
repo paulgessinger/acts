@@ -1,4 +1,4 @@
-add_executable(
+acts_add_executable(
     ActsUnitTestSeedFinderCuda2
     main.cpp
     CommandLineArguments.hpp

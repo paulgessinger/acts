@@ -1,6 +1,6 @@
 include(FetchContent)
 
-add_library(
+acts_add_library(
     ActsPluginGeoModel
     SHARED
     src/GeoModelBlueprintCreater.cpp

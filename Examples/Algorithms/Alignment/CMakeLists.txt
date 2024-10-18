@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesAlignment
     SHARED
     src/AlignmentAlgorithm.cpp

@@ -21,7 +21,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
 
 # link with all optional components even when they are not really used
 # to check e.g. for possible linker issues
-add_executable(ShowActsVersion ShowActsVersion.cpp)
+acts_add_executable(ShowActsVersion ShowActsVersion.cpp)
 target_link_libraries(
     ShowActsVersion
     PRIVATE

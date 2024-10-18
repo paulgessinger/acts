@@ -1,4 +1,4 @@
-add_library(ActsPluginPodio SHARED src/PodioUtil.cpp)
+acts_add_library(ActsPluginPodio SHARED src/PodioUtil.cpp)
 
 target_include_directories(
     ActsPluginPodio
@@ -30,7 +30,7 @@ target_link_libraries(
 target_compile_options(ActsPodioEdm PRIVATE "-Wno-old-style-cast")
 
 podio_add_root_io_dict(ActsPodioEdmDict ActsPodioEdm "${headers}" src/selection.xml)
-add_library(Acts::ActsPodioEdmDict ALIAS ActsPodioEdmDict)
+acts_add_library(Acts::ActsPodioEdmDict ALIAS ActsPodioEdmDict)
 
 target_compile_options(ActsPodioEdmDict PRIVATE "-Wno-old-style-cast")
 

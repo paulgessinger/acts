@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesIoHepMC3
     SHARED
     src/HepMC3Event.cpp

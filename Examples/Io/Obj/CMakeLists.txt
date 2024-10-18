@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesIoObj
     SHARED
     src/ObjTrackingGeometryWriter.cpp

@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesDetectorDD4hep
     SHARED
     src/DD4hepDetector.cpp
@@ -28,13 +28,13 @@ else()
 endif()
 
 # not sure why this needs to be set, but dd4hep fails to compile otherwise
-set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
-set_target_properties(
-    ActsExamplesDetectorDD4hep
-    PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-dd4hep_set_version(ActsExamplesDetectorDD4hep MAJOR 1 MINOR 0 PATCH 0)
-dd4hep_generate_rootmap(ActsExamplesDetectorDD4hep)
+# set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
+# set_target_properties(
+#     ActsExamplesDetectorDD4hep
+#     PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+# )
+# dd4hep_set_version(ActsExamplesDetectorDD4hep MAJOR 1 MINOR 0 PATCH 0)
+# dd4hep_generate_rootmap(ActsExamplesDetectorDD4hep)
 
 install(
     TARGETS ActsExamplesDetectorDD4hep

@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesUtilities
     SHARED
     src/PrototracksToSeeds.cpp

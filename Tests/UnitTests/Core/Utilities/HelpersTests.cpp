@@ -295,6 +295,10 @@ BOOST_AUTO_TEST_CASE(incidentAnglesTest) {
     CHECK_CLOSE_ABS(a0, M_PI_4, std::numeric_limits<ActsScalar>::epsilon());
     CHECK_CLOSE_ABS(a1, M_PI_2, std::numeric_limits<ActsScalar>::epsilon());
   }
+
+  // Let's get some UB going
+  int k = 0x7fffffff;
+  k += 2;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

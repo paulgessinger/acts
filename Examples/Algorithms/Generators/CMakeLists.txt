@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesGenerators
     SHARED
     ActsExamples/Generators/EventGenerator.cpp

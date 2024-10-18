@@ -1,6 +1,6 @@
 include(FetchContent)
 
-add_library(
+acts_add_library(
     ActsPluginDD4hep
     SHARED
     src/ConvertDD4hepDetector.cpp

@@ -2,7 +2,7 @@ include(ActsTargetLinkLibrariesSystem)
 
 set(ActsExamplesFramework_SOURCES)
 
-add_library(
+acts_add_library(
     ActsExamplesFramework
     SHARED
     src/EventData/Measurement.cpp

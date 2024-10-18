@@ -1,4 +1,4 @@
-add_executable(ActsAnalysisMaterialComposition MaterialComposition.cpp)
+acts_add_executable(ActsAnalysisMaterialComposition MaterialComposition.cpp)
 target_link_libraries(
     ActsAnalysisMaterialComposition
     ActsExamplesFramework

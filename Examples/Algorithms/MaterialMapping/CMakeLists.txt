@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesMaterialMapping
     SHARED
     src/CoreMaterialMapping.cpp

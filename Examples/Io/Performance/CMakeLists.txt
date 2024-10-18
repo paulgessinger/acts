@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesIoPerformance
     SHARED
     ActsExamples/Io/Performance/CKFPerformanceWriter.cpp

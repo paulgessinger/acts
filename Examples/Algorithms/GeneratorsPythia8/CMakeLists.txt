@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesGeneratorsPythia8
     SHARED
     ActsExamples/Generators/Pythia8ProcessGenerator.cpp

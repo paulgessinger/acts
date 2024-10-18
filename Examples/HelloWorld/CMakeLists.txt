@@ -1,4 +1,4 @@
-add_executable(
+acts_add_executable(
     ActsExampleHelloWorld
     HelloWorld.cpp
     HelloLoggerAlgorithm.cpp

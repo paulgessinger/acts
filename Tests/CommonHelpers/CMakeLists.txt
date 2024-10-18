@@ -1,7 +1,7 @@
 # get the path of the test data directory
 file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../Data" acts_test_data_dir)
 
-add_library(
+acts_add_library(
     ActsTestsCommonHelpers
     SHARED
     Acts/Tests/CommonHelpers/DataDirectory.cpp

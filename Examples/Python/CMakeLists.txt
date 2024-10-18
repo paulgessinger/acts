@@ -1,4 +1,4 @@
-add_library(ActsPythonUtilities INTERFACE)
+acts_add_library(ActsPythonUtilities INTERFACE)
 target_include_directories(ActsPythonUtilities INTERFACE include)
 
 set(_python_dir "${CMAKE_BINARY_DIR}/python")

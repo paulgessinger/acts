@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesTrackFinding
     SHARED
     src/SeedingAlgorithm.cpp

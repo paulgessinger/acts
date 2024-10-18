@@ -1,7 +1,7 @@
 # Set up the "CUDA 1" plugin.
 find_library(CUDART_LIBRARY cudart ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
 
-add_library(ActsPluginCuda SHARED src/Seeding/Kernels.cu)
+acts_add_library(ActsPluginCuda SHARED src/Seeding/Kernels.cu)
 target_include_directories(
     ActsPluginCuda
     PUBLIC
@@ -12,7 +12,7 @@ target_include_directories(
 target_link_libraries(ActsPluginCuda PUBLIC ActsCore ${CUDART_LIBRARY})
 
 # Set up the "CUDA 2" plugin.
-add_library(
+acts_add_library(
     ActsPluginCuda2
     STATIC
     include/Acts/Plugins/Cuda/Seeding2/Details/CountDublets.hpp

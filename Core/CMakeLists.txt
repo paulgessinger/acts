@@ -4,7 +4,7 @@ configure_file(
 )
 
 # source files will be added later
-add_library(ActsCore SHARED "")
+acts_add_library(ActsCore SHARED "")
 
 target_sources(ActsCore PRIVATE src/ActsVersion.cpp)
 

@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsFatras
     SHARED
     src/Digitization/Segmentizer.cpp

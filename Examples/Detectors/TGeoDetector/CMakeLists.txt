@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesDetectorTGeo
     SHARED
     src/TGeoDetector.cpp

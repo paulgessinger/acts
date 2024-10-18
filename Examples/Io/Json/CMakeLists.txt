@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesIoJson
     SHARED
     src/JsonGeometryList.cpp

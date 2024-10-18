@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesTruthTracking
     SHARED
     ActsExamples/TruthTracking/ParticleSelector.cpp

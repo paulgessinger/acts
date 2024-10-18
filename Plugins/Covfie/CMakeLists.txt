@@ -1,4 +1,4 @@
-add_library(ActsPluginCovfie SHARED src/FieldConversion.cpp)
+acts_add_library(ActsPluginCovfie SHARED src/FieldConversion.cpp)
 
 target_include_directories(
     ActsPluginCovfie

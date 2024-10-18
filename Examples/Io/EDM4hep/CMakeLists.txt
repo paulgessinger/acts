@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesIoEDM4hep
     SHARED
     src/EDM4hepMeasurementReader.cpp

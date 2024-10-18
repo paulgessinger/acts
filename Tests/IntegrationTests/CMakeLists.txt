@@ -9,7 +9,7 @@ add_custom_target(integrationtests)
 macro(add_integrationtest _name)
     # automatically prefix the target name
     set(_target "ActsIntegrationTest${_name}")
-    add_executable(${_target} ${ARGN})
+    acts_add_executable(${_target} ${ARGN})
     # define required BOOST_TEST_... macros here to ensure consistent names
     target_compile_definitions(
         ${_target}

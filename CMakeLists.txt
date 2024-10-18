@@ -199,6 +199,7 @@ include(GNUInstallDirs) # GNU-like installation paths, e.g. lib/, include/, ...
 include(ActsCompilerOptions) # default compile options
 include(ActsComponentsHelpers) # handle components via add_..._if commands
 include(ActsStaticAnalysis)
+include(ActsFunctions)
 
 # place build products in `<build>/bin` and `<build>/lib` for simple use
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY

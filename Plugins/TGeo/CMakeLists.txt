@@ -18,7 +18,7 @@ else()
     )
 endif()
 
-add_library(ActsPluginTGeo SHARED ${library_sources})
+acts_add_library(ActsPluginTGeo SHARED ${library_sources})
 
 target_include_directories(
     ActsPluginTGeo

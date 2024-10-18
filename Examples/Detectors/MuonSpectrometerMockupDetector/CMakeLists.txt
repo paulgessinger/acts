@@ -1,4 +1,4 @@
-add_library(
+acts_add_library(
     ActsExamplesMuonSpectrometerMockupDetector
     SHARED
     src/MockupSectorBuilder.cpp

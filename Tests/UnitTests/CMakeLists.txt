@@ -9,7 +9,7 @@ add_custom_target(unit_tests)
 macro(add_unittest _name _source)
     # automatically prefix the target name
     set(_target "ActsUnitTest${_name}")
-    add_executable(${_target} ${_source})
+    acts_add_executable(${_target} ${_source})
     # define required BOOST_TEST_... macros here to ensure consistent names
     target_compile_definitions(${_target} PRIVATE "-DBOOST_TEST_DYN_LINK")
     set_source_files_properties(
@@ -66,7 +66,7 @@ function(add_non_compile_test name src)
     # dependencies, so that it's generated when required.
     set(test "ActsNonCompileTest${name}Closure")
     set(target "${test}_Executable")
-    add_executable(${target} ${_processed_source})
+    acts_add_executable(${target} ${_processed_source})
     target_link_libraries(${target} PUBLIC ActsCore ActsTestsCommonHelpers)
     add_dependencies(${target} "${name}_generated_source")
 
@@ -105,7 +105,7 @@ function(add_non_compile_test name src)
 
         set(test "ActsNonCompileTest${name}${match}")
         set(target "${test}_Executable")
-        add_executable(${target} ${_processed_source})
+        acts_add_executable(${target} ${_processed_source})
         target_link_libraries(${target} PUBLIC ActsCore ActsTestsCommonHelpers)
         target_compile_definitions(${target} PRIVATE "-D${match}")
         add_dependencies(${target} "${name}_generated_source")
