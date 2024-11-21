@@ -1,18 +1,20 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Geometry/PlaneLayer.hpp"
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Geometry/GenericApproachDescriptor.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
+#include "Acts/Surfaces/RegularSurface.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 
+#include <algorithm>
 #include <vector>
 
 Acts::PlaneLayer::PlaneLayer(const Transform3& transform,
@@ -52,10 +54,10 @@ void Acts::PlaneLayer::buildApproachDescriptor() {
   // get the appropriate transform, the center and the normal vector
 
   //@todo fix with representing volume
-  const Transform3& lTransform = PlaneSurface::transform(GeometryContext());
+  const Transform3& lTransform = transform(GeometryContext());
   RotationMatrix3 lRotation = lTransform.rotation();
-  const Vector3& lCenter = PlaneSurface::center(GeometryContext());
-  const Vector3& lVector = Surface::normal(GeometryContext(), lCenter);
+  const Vector3& lCenter = center(GeometryContext());
+  const Vector3& lVector = normal(GeometryContext(), lCenter);
   // create new surfaces
   const Transform3 apnTransform = Transform3(
       Translation3(lCenter - 0.5 * Layer::m_layerThickness * lVector) *

@@ -1,22 +1,23 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2022 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
+#include "ActsExamples/EventData/Cluster.hpp"
 #include "ActsExamples/EventData/Measurement.hpp"
+#include "ActsExamples/Framework/DataHandle.hpp"
 #include "ActsExamples/Framework/WriterT.hpp"
 
 #include <string>
 
-#include "edm4hep/TrackerHitCollection.h"
-#include "edm4hep/TrackerHitPlaneCollection.h"
-#include "podio/EventStore.h"
-#include "podio/ROOTWriter.h"
+#include <edm4hep/TrackerHitCollection.h>
+#include <edm4hep/TrackerHitPlaneCollection.h>
 
 namespace ActsExamples {
 
@@ -37,10 +38,6 @@ class EDM4hepMeasurementWriter final : public WriterT<MeasurementContainer> {
     std::string inputMeasurements;
     /// Which cluster collection to write (optional)
     std::string inputClusters;
-    /// Which simulated (truth) hits collection to use.
-    std::string inputSimHits;
-    /// Input collection to map measured hits to simulated hits.
-    std::string inputMeasurementSimHitsMap;
     /// Where to the write the file to.
     std::string outputPath;
   };
@@ -50,7 +47,7 @@ class EDM4hepMeasurementWriter final : public WriterT<MeasurementContainer> {
   /// @param level logging level
   EDM4hepMeasurementWriter(const Config& config, Acts::Logging::Level level);
 
-  ProcessCode endRun() final;
+  ProcessCode finalize() final;
 
   /// Readonly access to the config
   const Config& config() const { return m_cfg; }
@@ -67,11 +64,11 @@ class EDM4hepMeasurementWriter final : public WriterT<MeasurementContainer> {
  private:
   Config m_cfg;
 
-  podio::ROOTWriter m_writer;
-  podio::EventStore m_store;
+  Acts::PodioUtil::ROOTWriter m_writer;
 
-  edm4hep::TrackerHitPlaneCollection* m_trackerHitPlaneCollection;
-  edm4hep::TrackerHitCollection* m_trackerHitRawCollection;
+  std::mutex m_writeMutex;
+
+  ReadDataHandle<ClusterContainer> m_inputClusters{this, "InputClusters"};
 };
 
 }  // namespace ActsExamples

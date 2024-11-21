@@ -1,21 +1,19 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2022 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "ActsExamples/EventData/SimParticle.hpp"
 #include "ActsExamples/Framework/WriterT.hpp"
 
+#include <mutex>
 #include <string>
-
-#include "edm4hep/MCParticleCollection.h"
-#include "podio/EventStore.h"
-#include "podio/ROOTWriter.h"
 
 namespace ActsExamples {
 
@@ -41,7 +39,7 @@ class EDM4hepParticleWriter final : public WriterT<SimParticleContainer> {
   /// @params lvl is the logging level
   EDM4hepParticleWriter(const Config& cfg, Acts::Logging::Level lvl);
 
-  ProcessCode endRun() final;
+  ProcessCode finalize() final;
 
   /// Readonly access to the config
   const Config& config() const { return m_cfg; }
@@ -57,10 +55,9 @@ class EDM4hepParticleWriter final : public WriterT<SimParticleContainer> {
  private:
   Config m_cfg;
 
-  podio::ROOTWriter m_writer;
-  podio::EventStore m_store;
+  std::mutex m_writeMutex;
 
-  edm4hep::MCParticleCollection* m_mcParticleCollection;
+  Acts::PodioUtil::ROOTWriter m_writer;
 };
 
 }  // namespace ActsExamples

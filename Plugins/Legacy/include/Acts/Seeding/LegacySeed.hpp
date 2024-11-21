@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 ///////////////////////////////////////////////////////////////////
 // Seed.hpp Acts project
@@ -13,8 +13,7 @@
 #pragma once
 #include <list>
 
-namespace Acts {
-namespace Legacy {
+namespace Acts::Legacy {
 
 template <typename SpacePoint>
 class Seed {
@@ -24,13 +23,14 @@ class Seed {
 
  public:
   Seed();
-  Seed(const SpacePoint*, const SpacePoint*, const SpacePoint*, const double);
-  Seed(const Seed&);
-  Seed& operator=(const Seed&);
+  Seed(const SpacePoint* /*b*/, const SpacePoint* /*m*/,
+       const SpacePoint* /*u*/, const double /*vertex*/);
+  Seed(const Seed& /*s*/);
+  Seed& operator=(const Seed& /*s*/);
   virtual ~Seed();
   void erase();
-  void add(const SpacePoint*&);
-  void setZVertex(const double&);
+  void add(const SpacePoint*& /*sp*/);
+  void setZVertex(const double& /*z*/);
   const std::list<const SpacePoint*>& spacePoints() const;
   const double& zVertex() const;
 
@@ -40,7 +40,7 @@ class Seed {
 
  protected:
   std::list<const SpacePoint*> m_spacepoints;
-  double m_zvertex;
+  double m_zvertex = 0;
 };
 
 /// @cond
@@ -93,7 +93,7 @@ Seed<SpacePoint>& Seed<SpacePoint>::operator=(const Seed<SpacePoint>& s) {
 }
 
 template <typename SpacePoint>
-Seed<SpacePoint>::Seed() {}
+Seed<SpacePoint>::Seed() = default;
 
 template <typename SpacePoint>
 Seed<SpacePoint>::Seed(const SpacePoint* b, const SpacePoint* m,
@@ -105,9 +105,8 @@ Seed<SpacePoint>::Seed(const SpacePoint* b, const SpacePoint* m,
 }
 
 template <typename SpacePoint>
-Seed<SpacePoint>::~Seed() {}
+Seed<SpacePoint>::~Seed() = default;
 
 /// @endcond
 
-}  // namespace Legacy
-}  // namespace Acts
+}  // namespace Acts::Legacy

@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -27,14 +27,14 @@ class RunAction final : public G4UserRunAction {
 
   /// Construct the action and ensure singleton usage.
   RunAction();
-  ~RunAction() final override;
+  ~RunAction() override;
 
   /// Interface method at the begin of the run
   /// @note resets the event action
-  void BeginOfRunAction(const G4Run* /*unused*/) final override;
+  void BeginOfRunAction(const G4Run* run) override;
 
   /// Interface method at the end of the run
-  void EndOfRunAction(const G4Run* /*unused*/) final override;
+  void EndOfRunAction(const G4Run* run) override;
 
  private:
   /// Instance of the EventAction

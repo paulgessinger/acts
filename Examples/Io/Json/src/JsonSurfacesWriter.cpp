@@ -1,31 +1,48 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsExamples/Io/Json/JsonSurfacesWriter.hpp"
 
+#include "Acts/Geometry/ApproachDescriptor.hpp"
+#include "Acts/Geometry/BoundarySurfaceT.hpp"
 #include "Acts/Geometry/GeometryHierarchyMap.hpp"
+#include "Acts/Geometry/GeometryIdentifier.hpp"
+#include "Acts/Geometry/Layer.hpp"
+#include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/Geometry/TrackingVolume.hpp"
 #include "Acts/Plugins/Json/GeometryHierarchyMapJsonConverter.hpp"
 #include "Acts/Plugins/Json/SurfaceJsonConverter.hpp"
+#include "Acts/Plugins/Json/VolumeJsonConverter.hpp"
 #include "Acts/Surfaces/Surface.hpp"
+#include "Acts/Surfaces/SurfaceArray.hpp"
+#include "Acts/Utilities/BinnedArray.hpp"
+#include "Acts/Utilities/Logger.hpp"
+#include "ActsExamples/Framework/AlgorithmContext.hpp"
 #include "ActsExamples/Utilities/Paths.hpp"
 
+#include <cstddef>
+#include <fstream>
+#include <iomanip>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
+
+#include <nlohmann/json.hpp>
 
 using namespace ActsExamples;
 
 JsonSurfacesWriter::JsonSurfacesWriter(const JsonSurfacesWriter::Config& config,
                                        Acts::Logging::Level level)
     : m_cfg(config),
-      m_world(nullptr),
       m_logger(Acts::getDefaultLogger("JsonSurfacesWriter", level)) {
-  if (not m_cfg.trackingGeometry) {
+  if (!m_cfg.trackingGeometry) {
     throw std::invalid_argument("Missing tracking geometry");
   }
   m_world = m_cfg.trackingGeometry->highestTrackingVolume();
@@ -52,7 +69,7 @@ void collectSurfaces(std::vector<SurfaceContainer::InputElement>& cSurfaces,
                      bool writeBoundary) {
   // Process all layers that are directly stored within this volume
   if (volume.confinedLayers() != nullptr) {
-    for (auto layer : volume.confinedLayers()->arrayObjects()) {
+    for (const auto& layer : volume.confinedLayers()->arrayObjects()) {
       // We jump navigation layers
       if (layer->layerType() == Acts::navigation) {
         continue;
@@ -64,15 +81,15 @@ void collectSurfaces(std::vector<SurfaceContainer::InputElement>& cSurfaces,
             layer->surfaceRepresentation().geometryId(), layerSurfacePtr});
       }
       // Approach surfaces
-      if (writeApproach and layer->approachDescriptor() != nullptr) {
+      if (writeApproach && layer->approachDescriptor() != nullptr) {
         for (auto sf : layer->approachDescriptor()->containedSurfaces()) {
           cSurfaces.push_back(SurfaceContainer::InputElement{
               sf->geometryId(), sf->getSharedPtr()});
         }
       }
       // Check for sensitive surfaces
-      if (layer->surfaceArray() != nullptr and writeSensitive) {
-        for (auto surface : layer->surfaceArray()->surfaces()) {
+      if (layer->surfaceArray() != nullptr && writeSensitive) {
+        for (const auto& surface : layer->surfaceArray()->surfaces()) {
           if (surface != nullptr) {
             cSurfaces.push_back(SurfaceContainer::InputElement{
                 surface->geometryId(), surface->getSharedPtr()});
@@ -82,7 +99,7 @@ void collectSurfaces(std::vector<SurfaceContainer::InputElement>& cSurfaces,
     }
     // This is a navigation volume, write the boundaries
     if (writeBoundary) {
-      for (auto bsurface : volume.boundarySurfaces()) {
+      for (const auto& bsurface : volume.boundarySurfaces()) {
         const auto& bsRep = bsurface->surfaceRepresentation();
         cSurfaces.push_back(SurfaceContainer::InputElement{
             bsRep.geometryId(), bsRep.getSharedPtr()});
@@ -91,7 +108,7 @@ void collectSurfaces(std::vector<SurfaceContainer::InputElement>& cSurfaces,
   }
   // Step down into hierarchy to process all child volumnes
   if (volume.confinedVolumes()) {
-    for (auto confined : volume.confinedVolumes()->arrayObjects()) {
+    for (const auto& confined : volume.confinedVolumes()->arrayObjects()) {
       collectSurfaces(cSurfaces, *confined.get(), writeLayer, writeApproach,
                       writeSensitive, writeBoundary);
     }
@@ -100,7 +117,7 @@ void collectSurfaces(std::vector<SurfaceContainer::InputElement>& cSurfaces,
 }  // namespace
 
 ProcessCode JsonSurfacesWriter::write(const AlgorithmContext& ctx) {
-  if (not m_cfg.writePerEvent) {
+  if (!m_cfg.writePerEvent) {
     return ProcessCode::SUCCESS;
   }
 
@@ -112,8 +129,8 @@ ProcessCode JsonSurfacesWriter::write(const AlgorithmContext& ctx) {
                   m_cfg.writeSensitive, m_cfg.writeBoundary);
   SurfaceContainer sContainer(cSurfaces);
 
-  if (not m_cfg.writeOnlyNames) {
-    auto j = SurfaceConverter("surfaces").toJson(sContainer);
+  if (!m_cfg.writeOnlyNames) {
+    auto j = SurfaceConverter("surfaces").toJson(sContainer, nullptr);
     out << std::setprecision(m_cfg.outputPrecision) << j.dump(2);
     out.close();
   } else {
@@ -121,14 +138,14 @@ ProcessCode JsonSurfacesWriter::write(const AlgorithmContext& ctx) {
     using NamedConverter = Acts::GeometryHierarchyMapJsonConverter<std::string>;
 
     std::vector<std::pair<Acts::GeometryIdentifier, std::string>> namedEntries;
-    for (size_t is = 0; is < sContainer.size(); ++is) {
+    for (std::size_t is = 0; is < sContainer.size(); ++is) {
       Acts::GeometryIdentifier geometryId = sContainer.idAt(is);
       std::stringstream geoTypeName;
       geoTypeName << geometryId;
       namedEntries.push_back({geometryId, geoTypeName.str()});
     }
     NamedContainer nContainer(namedEntries);
-    auto j = NamedConverter("surface_types").toJson(nContainer);
+    auto j = NamedConverter("surface_types").toJson(nContainer, nullptr);
     out << j.dump(2);
     out.close();
   }
@@ -136,7 +153,7 @@ ProcessCode JsonSurfacesWriter::write(const AlgorithmContext& ctx) {
   return ProcessCode::SUCCESS;
 }
 
-ProcessCode JsonSurfacesWriter::endRun() {
+ProcessCode JsonSurfacesWriter::finalize() {
   std::ofstream out;
   out.open(joinPaths(m_cfg.outputDir, "detector.csv"));
 
@@ -145,7 +162,7 @@ ProcessCode JsonSurfacesWriter::endRun() {
                   m_cfg.writeSensitive, m_cfg.writeBoundary);
   SurfaceContainer sContainer(cSurfaces);
 
-  auto j = SurfaceConverter("surfaces").toJson(sContainer);
+  auto j = SurfaceConverter("surfaces").toJson(sContainer, nullptr);
   out << std::setprecision(m_cfg.outputPrecision) << j.dump(2);
   out.close();
 

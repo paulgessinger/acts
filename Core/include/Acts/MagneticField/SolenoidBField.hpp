@@ -1,17 +1,19 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/MagneticField/MagneticFieldContext.hpp"
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
+#include "Acts/Utilities/Result.hpp"
 
+#include <cstddef>
 #include <functional>
 
 namespace Acts {
@@ -69,9 +71,7 @@ class SolenoidBField final : public MagneticFieldProvider {
  public:
   struct Cache {
     /// @brief Constructor with magnetic field context
-    ///
-    /// @param mctx the magnetic field context
-    Cache(const MagneticFieldContext& mctx) { (void)mctx; }
+    Cache(const MagneticFieldContext& /*mctx*/) {}
   };
 
   /// Config struct for the SolenoidBfield.
@@ -82,13 +82,13 @@ class SolenoidBField final : public MagneticFieldProvider {
     /// -length/2 to +length/2 by convention
     double length;
     /// The number of coils that make up the solenoid
-    size_t nCoils;
+    std::size_t nCoils;
     /// The target magnetic field strength at the center.
     /// This will be used to scale coefficients
     double bMagCenter;
   };
 
-  /// @brief the constructur with a shared pointer
+  /// @brief the constructor with a shared pointer
   /// @note since it is a shared field, we enforce it to be const
   /// @tparam bField is the shared BField to be stored
   SolenoidBField(Config config);

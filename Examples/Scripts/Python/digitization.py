@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 import acts
 import acts.examples
@@ -9,23 +9,24 @@ import acts.examples
 u = acts.UnitConstants
 
 
-def configureDigitization(
+def runDigitization(
     trackingGeometry: acts.TrackingGeometry,
     field: acts.MagneticFieldProvider,
     outputDir: Path,
+    digiConfigFile: Path,
     particlesInput: Optional[Path] = None,
     outputRoot: bool = True,
     outputCsv: bool = True,
     s: Optional[acts.examples.Sequencer] = None,
     doMerge: Optional[bool] = None,
 ) -> acts.examples.Sequencer:
-
     from acts.examples.simulation import (
         addParticleGun,
         EtaConfig,
         PhiConfig,
         ParticleConfig,
         addFatras,
+        addDigitization,
     )
 
     s = s or acts.examples.Sequencer(
@@ -34,7 +35,7 @@ def configureDigitization(
     rnd = acts.examples.RandomNumbers(seed=42)
 
     if particlesInput is None:
-        s = addParticleGun(
+        addParticleGun(
             s,
             EtaConfig(-2.0, 2.0),
             ParticleConfig(4, acts.PdgParticle.eMuon, True),
@@ -46,27 +47,24 @@ def configureDigitization(
         # Read input from input collection (e.g. Pythia8 output)
         evGen = acts.examples.RootParticleReader(
             level=s.config.logLevel,
-            particleCollection="particles_input",
             filePath=str(particlesInput),
-            orderedEvents=False,
+            outputParticles="particles_input",
         )
         s.addReader(evGen)
 
     outputDir = Path(outputDir)
-    s = addFatras(
+    addFatras(
         s,
         trackingGeometry,
         field,
         rnd=rnd,
     )
-    from acts.examples.simulation import addDigitization
 
-    s = addDigitization(
+    addDigitization(
         s,
         trackingGeometry,
         field,
-        digiConfigFile=Path(__file__).resolve().parent.parent.parent.parent
-        / "Examples/Algorithms/Digitization/share/default-smearing-config-generic.json",
+        digiConfigFile=digiConfigFile,
         outputDirCsv=outputDir / "csv" if outputCsv else None,
         outputDirRoot=outputDir if outputRoot else None,
         rnd=rnd,
@@ -79,6 +77,12 @@ def configureDigitization(
 if "__main__" == __name__:
     detector, trackingGeometry, _ = acts.examples.GenericDetector.create()
 
+    digiConfigFile = (
+        Path(__file__).resolve().parent.parent.parent.parent
+        / "Examples/Algorithms/Digitization/share/default-smearing-config-generic.json"
+    )
+    assert digiConfigFile.exists()
+
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
-    configureDigitization(trackingGeometry, field, outputDir=Path.cwd()).run()
+    runDigitization(trackingGeometry, field, outputDir=Path.cwd()).run()

@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 ///////////////////////////////////////////////////////////////////
 // RealQuadraticEquation.h, Acts project
@@ -14,8 +14,7 @@
 #include <cmath>
 #include <utility>
 
-namespace Acts {
-namespace detail {
+namespace Acts::detail {
 
 /// @struct RealQuadradicEquation
 ///   Mathematic struct for solving real quadratic equations
@@ -45,21 +44,18 @@ namespace detail {
 ///
 
 struct RealQuadraticEquation {
-  double first;
-  double second;
-  int solutions;
+  double first = 0;
+  double second = 0;
+  int solutions = 0;
 
   /// Constructor
   ///
   /// @param alpha is the first parameter of the quad equation
   /// @param beta is the second parameter of the quad equation
   /// @param gamma is the third parameter of the quad equation
-  RealQuadraticEquation(double alpha, double beta, double gamma)
-      : first(0.), second(0.) {
+  RealQuadraticEquation(double alpha, double beta, double gamma) {
     double discriminant = beta * beta - 4 * alpha * gamma;
-    if (discriminant < 0) {
-      solutions = 0;
-    } else {
+    if (discriminant >= 0) {
       solutions = (discriminant == 0) ? 1 : 2;
       double q = -0.5 * (beta + (beta > 0 ? std::sqrt(discriminant)
                                           : -std::sqrt(discriminant)));
@@ -69,5 +65,4 @@ struct RealQuadraticEquation {
   }
 };
 
-}  // namespace detail
-}  // namespace Acts
+}  // namespace Acts::detail

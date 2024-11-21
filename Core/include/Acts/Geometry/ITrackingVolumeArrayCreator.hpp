@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -52,7 +52,7 @@ class ITrackingVolumeArrayCreator {
   /// @param vols are the TrackingVolumes ordered in a tracker
   /// @param bVal is the binning value for the volume binning
   ///
-  /// @return sahred pointer to a new TrackingVolumeArray
+  /// @return shared pointer to a new TrackingVolumeArray
   virtual std::shared_ptr<const TrackingVolumeArray> trackingVolumeArray(
       const GeometryContext& gctx, const TrackingVolumeVector& vols,
       BinningValue bVal) const = 0;

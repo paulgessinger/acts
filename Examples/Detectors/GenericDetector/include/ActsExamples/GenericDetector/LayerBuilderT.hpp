@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -20,27 +20,25 @@
 #include "Acts/Material/Material.hpp"
 #include "Acts/Material/MaterialSlab.hpp"
 #include "Acts/Surfaces/Surface.hpp"
-#include "Acts/Utilities/Helpers.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "ActsExamples/GenericDetector/GenericDetectorElement.hpp"
 #include "ActsExamples/GenericDetector/ProtoLayerCreatorT.hpp"
 
 #include <iostream>
 
-namespace ActsExamples {
-namespace Generic {
+namespace ActsExamples::Generic {
 
 using Acts::VectorHelpers::eta;
 using Acts::VectorHelpers::perp;
 using Acts::VectorHelpers::phi;
 
-typedef std::pair<const Acts::Surface*, Acts::Vector3> SurfacePosition;
+using SurfacePosition = std::pair<const Acts::Surface*, Acts::Vector3>;
 
 /// @class LayerBuilderT
 ///
 /// The LayerBuilderT is able to build cylinder & disc layers
 /// from hard-coded input.
-/// This is ment for the simple detector examples.
+/// This is meant for the simple detector examples.
 template <typename detector_element_t>
 class LayerBuilderT : public Acts::ILayerBuilder {
  public:
@@ -91,18 +89,18 @@ class LayerBuilderT : public Acts::ILayerBuilder {
 
   /// LayerBuilder interface method - returning the layers at negative side
   const Acts::LayerVector negativeLayers(
-      const Acts::GeometryContext& gctx) const final override;
+      const Acts::GeometryContext& gctx) const override;
 
   /// LayerBuilder interface method - returning the central layers
   const Acts::LayerVector centralLayers(
-      const Acts::GeometryContext& gctx) const final override;
+      const Acts::GeometryContext& gctx) const override;
 
   /// LayerBuilder interface method - returning the layers at positive side
   const Acts::LayerVector positiveLayers(
-      const Acts::GeometryContext& gctx) const final override;
+      const Acts::GeometryContext& gctx) const override;
 
   /// ILayerBuilder method
-  const std::string& identification() const final override {
+  const std::string& identification() const override {
     return m_cfg.layerIdentification;
   }
 
@@ -127,14 +125,14 @@ const Acts::LayerVector LayerBuilderT<detector_element_t>::centralLayers(
   Acts::LayerVector cLayers;
   cLayers.reserve(m_cfg.centralProtoLayers.size());
   // the layer counter
-  size_t icl = 0;
+  std::size_t icl = 0;
   for (auto& cpl : m_cfg.centralProtoLayers) {
     // create the layer actually
     Acts::MutableLayerPtr cLayer = m_cfg.layerCreator->cylinderLayer(
         gctx, cpl.surfaces, cpl.bins0, cpl.bins1, cpl.protoLayer);
 
     // the layer is built let's see if it needs material
-    if (m_cfg.centralLayerMaterial.size()) {
+    if (!m_cfg.centralLayerMaterial.empty()) {
       std::shared_ptr<const Acts::ISurfaceMaterial> layerMaterialPtr =
           m_cfg.centralLayerMaterial.at(icl);
       // central material
@@ -199,7 +197,7 @@ LayerBuilderT<detector_element_t>::constructEndcapLayers(
   eLayers.reserve(protoLayers.size());
 
   // the layer counter
-  size_t ipnl = 0;
+  std::size_t ipnl = 0;
   // loop over the proto layers and create the actual layers
   for (auto& ple : protoLayers) {
     /// the layer is created
@@ -207,7 +205,7 @@ LayerBuilderT<detector_element_t>::constructEndcapLayers(
         gctx, ple.surfaces, ple.bins0, ple.bins1, ple.protoLayer);
 
     // the layer is built let's see if it needs material
-    if (m_cfg.posnegLayerMaterial.size()) {
+    if (!m_cfg.posnegLayerMaterial.empty()) {
       std::shared_ptr<const Acts::ISurfaceMaterial> layerMaterialPtr =
           m_cfg.posnegLayerMaterial[ipnl];
       // central material
@@ -244,5 +242,4 @@ LayerBuilderT<detector_element_t>::constructEndcapLayers(
   return eLayers;
 }
 
-}  // end of namespace Generic
-}  // end of namespace ActsExamples
+}  // namespace ActsExamples::Generic

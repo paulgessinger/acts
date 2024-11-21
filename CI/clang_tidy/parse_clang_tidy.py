@@ -7,24 +7,17 @@ Currently implemented is clang-tidy warnings.
 
 import argparse
 import re
-from collections import namedtuple
-from itertools import groupby
 import os
-import html
 from fnmatch import fnmatch
-import json
-import sys
-from dataclasses import dataclass
 from pathlib import Path
 
 from item import Item, ItemCollection
 
 
 def parse_clang_tidy_item(itemstr):
-
     try:
         m = re.match(
-            r"(?P<file>[/.\-+\w]+):(?P<line>\d+):(?P<col>\d+): (?P<sev>.*?):(?P<msg>[\s\S]*?)\[(?P<code>.*)\]\n(?P<info>[\s\S]*)",
+            r"(?P<file>[/.\-+\w]+):(?P<line>\d+):(?P<col>\d+): (?P<sev>.*?):(?P<msg>[\s\S]*)\[(?P<code>.*)\]\n(?P<info>[\s\S]*)",
             itemstr,
         )
 
@@ -35,7 +28,7 @@ def parse_clang_tidy_item(itemstr):
             line=int(m.group("line")),
             col=int(m.group("col")),
             #  message=m.group("msg").strip(),
-            message="\n".join(lines[1:]),
+            message=m.group("msg").strip() + "\n" + "\n".join(lines[1:]),
             code=m.group("code"),
             severity=m.group("sev"),
         )
@@ -52,7 +45,6 @@ def parse_clang_tidy_item(itemstr):
 
 
 def parse_clang_tidy_output(output):
-
     # cleanup
     itemstr = output
     itemstr = re.sub(r"Enabled checks:\n[\S\s]+?\n\n", "", itemstr)
@@ -101,6 +93,12 @@ def main():
         default=[],
         help="Only include files that match any of these patterns",
     )
+    p.add_argument(
+        "--ignore",
+        action="append",
+        default=[],
+        help="Ignore items with codes matching any of these patterns",
+    )
     p.add_argument("--cwd", type=Path)
     p.add_argument("--strip-common", action="store_true")
 
@@ -116,6 +114,9 @@ def main():
             accept = accept and all(fnmatch(item.path, e) for e in args.filter)
 
         accept = accept and not any(fnmatch(item.path, e) for e in args.exclude)
+
+        accept = accept and not any(fnmatch(item.code, i) for i in args.ignore)
+
         return accept
 
     items = list(filter(select, items))
@@ -139,7 +140,7 @@ def main():
 
     print("Write to", args.output)
     with open(args.output, "w+") as jf:
-        jf.write(ItemCollection(__root__=items).json(indent=2))
+        jf.write(ItemCollection(root=items).model_dump_json(indent=2))
 
 
 if "__main__" == __name__:

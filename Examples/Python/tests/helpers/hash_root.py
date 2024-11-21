@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import hashlib
 from pathlib import Path
-import sys
-from typing import Optional
 import argparse
 
 import uproot
@@ -15,7 +13,7 @@ def hash_root_file(path: Path, ordering_invariant: bool = True) -> str:
 
     gh = hashlib.sha256()
 
-    for tree_name in sorted(rf.keys()):
+    for tree_name in sorted(rf.keys(cycle=False)):
         gh.update(tree_name.encode("utf8"))
 
         try:
@@ -29,7 +27,6 @@ def hash_root_file(path: Path, ordering_invariant: bool = True) -> str:
         branches = tree.arrays(library="ak")
 
         if not ordering_invariant:
-
             h = hashlib.sha256()
             for name in keys:
                 h.update(name.encode("utf8"))

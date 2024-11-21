@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -12,13 +12,12 @@
 
 #include <vector>
 
-namespace ActsFatras {
-namespace detail {
+namespace ActsFatras::detail {
 
 /// @brief Data storage of the parametrized nuclear interaction
 struct NuclearInteractionParameters {
   using CumulativeDistribution =
-      std::pair<std::vector<float>, std::vector<uint32_t>>;
+      std::pair<std::vector<float>, std::vector<std::uint32_t>>;
   using Distributions = std::vector<CumulativeDistribution>;
   using PdgMap =
       std::vector<std::pair<int, std::vector<std::pair<int, float>>>>;
@@ -43,15 +42,17 @@ struct NuclearInteractionParameters {
       const unsigned int sizeMom = eigenvaluesMomentum.size();
       eigenvectorsMomentum.resize(sizeMom, sizeMom);
       for (unsigned int i = 0; i < sizeMom; i++) {
-        for (unsigned int j = 0; j < sizeMom; j++)
+        for (unsigned int j = 0; j < sizeMom; j++) {
           eigenvectorsMomentum(i, j) = eVecMom[i * sizeMom + j];
+        }
       }
 
       const unsigned int sizeInvMass = eigenvaluesInvariantMass.size();
       eigenvectorsInvariantMass.resize(sizeInvMass, sizeInvMass);
       for (unsigned int i = 0; i < sizeInvMass; i++) {
-        for (unsigned int j = 0; j < sizeInvMass; j++)
+        for (unsigned int j = 0; j < sizeInvMass; j++) {
           eigenvectorsInvariantMass(i, j) = eVecIM[i * sizeInvMass + j];
+        }
       }
     }
 
@@ -79,9 +80,9 @@ struct NuclearInteractionParameters {
   };
 
   /// Initial momentum
-  float momentum;
+  float momentum = 0;
   /// Probability for soft nuclear interacion
-  float softInteractionProbability;
+  float softInteractionProbability = 0;
   /// PDG ID based branching probabilities
   PdgMap pdgMap;
   /// Probability for nuclear interaction
@@ -102,5 +103,4 @@ using NuclearInteractionParametrisation =
 /// Parametrisation of multiple particles
 using MultiParticleNuclearInteractionParametrisation =
     std::vector<std::pair<int, NuclearInteractionParametrisation>>;
-}  // namespace detail
-}  // namespace ActsFatras
+}  // namespace ActsFatras::detail

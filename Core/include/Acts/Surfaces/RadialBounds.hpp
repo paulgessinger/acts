@@ -1,19 +1,25 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/Surfaces/BoundaryTolerance.hpp"
 #include "Acts/Surfaces/DiscBounds.hpp"
+#include "Acts/Surfaces/SurfaceBounds.hpp"
 #include "Acts/Utilities/detail/periodic.hpp"
 
 #include <array>
+#include <cmath>
+#include <iosfwd>
+#include <numbers>
+#include <stdexcept>
 #include <vector>
 
 namespace Acts {
@@ -42,7 +48,7 @@ class RadialBounds : public DiscBounds {
   /// @param maxR The outer radius
   /// @param halfPhi The half opening angle (Pi for full angular coverage)
   /// @param avgPhi The average phi for the disc/ring sector
-  RadialBounds(double minR, double maxR, double halfPhi = M_PI,
+  RadialBounds(double minR, double maxR, double halfPhi = std::numbers::pi,
                double avgPhi = 0.) noexcept(false)
       : m_values({minR, maxR, halfPhi, avgPhi}) {
     checkConsistency();
@@ -68,11 +74,11 @@ class RadialBounds : public DiscBounds {
   /// For disc surfaces the local position in (r,phi) is checked
   ///
   /// @param lposition local position to be checked
-  /// @param bcheck boundary check directive
+  /// @param boundaryTolerance boundary check directive
   ///
   /// @return is a boolean indicating the operation success
   bool inside(const Vector2& lposition,
-              const BoundaryCheck& bcheck) const final;
+              const BoundaryTolerance& boundaryTolerance) const final;
 
   /// Outstream operator
   ///
@@ -137,11 +143,11 @@ inline double RadialBounds::rMax() const {
 }
 
 inline bool RadialBounds::coversFullAzimuth() const {
-  return (get(eHalfPhiSector) == M_PI);
+  return (get(eHalfPhiSector) == std::numbers::pi);
 }
 
 inline bool RadialBounds::insideRadialBounds(double R, double tolerance) const {
-  return (R + tolerance > get(eMinR) and R - tolerance < get(eMaxR));
+  return (R + tolerance > get(eMinR) && R - tolerance < get(eMaxR));
 }
 
 inline double RadialBounds::binningValueR() const {
@@ -159,14 +165,14 @@ inline std::vector<double> RadialBounds::values() const {
 }
 
 inline void RadialBounds::checkConsistency() noexcept(false) {
-  if (get(eMinR) < 0. or get(eMaxR) <= 0. or get(eMinR) > get(eMaxR)) {
+  if (get(eMinR) < 0. || get(eMaxR) <= 0. || get(eMinR) > get(eMaxR)) {
     throw std::invalid_argument("RadialBounds: invalid radial setup");
   }
-  if (get(eHalfPhiSector) < 0. or get(eHalfPhiSector) > M_PI) {
-    throw std::invalid_argument("CylinderBounds: invalid phi sector setup.");
+  if (get(eHalfPhiSector) < 0. || get(eHalfPhiSector) > std::numbers::pi) {
+    throw std::invalid_argument("RadialBounds: invalid phi sector setup.");
   }
   if (get(eAveragePhi) != detail::radian_sym(get(eAveragePhi))) {
-    throw std::invalid_argument("CylinderBounds: invalid phi positioning.");
+    throw std::invalid_argument("RadialBounds: invalid phi positioning.");
   }
 }
 

@@ -1,3 +1,4 @@
+import multiprocessing
 from pathlib import Path
 import sys
 import os
@@ -17,13 +18,20 @@ sys.path += [
 
 import helpers
 import helpers.hash_root
-from common import getOpenDataDetectorDirectory
-from acts.examples.odd import getOpenDataDetector
 
 import pytest
 
 import acts
 import acts.examples
+from acts.examples.odd import getOpenDataDetector
+from acts.examples.simulation import addParticleGun, EtaConfig, ParticleConfig
+
+try:
+    import ROOT
+
+    ROOT.gSystem.ResetSignals()
+except ImportError:
+    pass
 
 try:
     if acts.logging.getFailureThreshold() != acts.logging.WARNING:
@@ -80,7 +88,7 @@ def root_file_exp_hashes():
 
 
 @pytest.fixture(name="assert_root_hash")
-def assert_root_hash(request, root_file_exp_hashes, record_property):
+def assert_root_hash(request, root_file_exp_hashes):
     if not helpers.doHashChecks:
 
         def fn(*args, **kwargs):
@@ -194,18 +202,40 @@ def basic_prop_seq(rng):
         if s is None:
             s = acts.examples.Sequencer(events=10, numThreads=1)
 
+        addParticleGun(
+            s,
+            ParticleConfig(num=10, pdg=acts.PdgParticle.eMuon, randomizeCharge=True),
+            EtaConfig(-4.0, 4.0),
+            rnd=rng,
+        )
+
+        # Run particle smearing
+        trackParametersGenerator = acts.examples.ParticleSmearing(
+            level=acts.logging.INFO,
+            inputParticles="particles_input",
+            outputTrackParameters="start_parameters",
+            randomNumbers=rng,
+            sigmaD0=0.0,
+            sigmaZ0=0.0,
+            sigmaPhi=0.0,
+            sigmaTheta=0.0,
+            sigmaPtRel=0.0,
+        )
+        s.addAlgorithm(trackParametersGenerator)
+
         nav = acts.Navigator(trackingGeometry=geo)
         stepper = acts.StraightLineStepper()
 
         prop = acts.examples.ConcretePropagator(acts.Propagator(stepper, nav))
+
         alg = acts.examples.PropagationAlgorithm(
+            level=acts.logging.WARNING,
             propagatorImpl=prop,
-            level=acts.logging.INFO,
-            randomNumberSvc=rng,
-            ntests=10,
             sterileLogger=False,
-            propagationStepCollection="propagation-steps",
+            inputTrackParameters="start_parameters",
+            outputSummaryCollection="propagation_summary",
         )
+
         s.addAlgorithm(alg)
         return s, alg
 
@@ -213,7 +243,7 @@ def basic_prop_seq(rng):
 
 
 @pytest.fixture
-def trk_geo(request):
+def trk_geo():
     detector, geo, contextDecorators = acts.examples.GenericDetector.create()
     yield geo
 
@@ -221,9 +251,7 @@ def trk_geo(request):
 DetectorConfig = namedtuple(
     "DetectorConfig",
     [
-        "detector",
-        "trackingGeometry",
-        "decorators",
+        "detectorTuple",
         "geometrySelection",
         "digiConfigFile",
         "name",
@@ -231,21 +259,14 @@ DetectorConfig = namedtuple(
 )
 
 
-@pytest.fixture(
-    params=[
-        "generic",
-        "odd",
-    ]
-)
+@pytest.fixture(params=["generic", pytest.param("odd", marks=pytest.mark.odd)])
 def detector_config(request):
     srcdir = Path(__file__).resolve().parent.parent.parent.parent
 
     if request.param == "generic":
-        detector, trackingGeometry, decorators = acts.examples.GenericDetector.create()
+        detectorTuple = acts.examples.GenericDetector.create()
         return DetectorConfig(
-            detector,
-            trackingGeometry,
-            decorators,
+            detectorTuple,
             geometrySelection=(
                 srcdir
                 / "Examples/Algorithms/TrackFinding/share/geoSelection-genericDetector.json"
@@ -264,13 +285,9 @@ def detector_config(request):
             srcdir / "thirdparty/OpenDataDetector/data/odd-material-maps.root",
             level=acts.logging.INFO,
         )
-        detector, trackingGeometry, decorators = getOpenDataDetector(
-            getOpenDataDetectorDirectory(), matDeco
-        )
+        detectorTuple = getOpenDataDetector(matDeco)
         return DetectorConfig(
-            detector,
-            trackingGeometry,
-            decorators,
+            detectorTuple,
             digiConfigFile=(
                 srcdir
                 / "thirdparty/OpenDataDetector/config/odd-digi-smearing-config.json"
@@ -280,7 +297,6 @@ def detector_config(request):
             ),
             name=request.param,
         )
-
     else:
         raise ValueError(f"Invalid detector {detector}")
 
@@ -306,6 +322,7 @@ def ptcl_gun(rng):
                 )
             ],
             outputParticles="particles_input",
+            outputVertices="vertices_input",
             randomNumbers=rng,
         )
 
@@ -325,26 +342,29 @@ def fatras(ptcl_gun, trk_geo, rng):
         simAlg = acts.examples.FatrasSimulation(
             level=acts.logging.INFO,
             inputParticles=evGen.config.outputParticles,
-            outputParticlesInitial="particles_initial",
-            outputParticlesFinal="particles_final",
+            outputParticles="particles_simulated",
             outputSimHits="simhits",
             randomNumbers=rng,
             trackingGeometry=trk_geo,
             magneticField=field,
             generateHitsOnSensitive=True,
+            emScattering=False,
+            emEnergyLossIonisation=False,
+            emEnergyLossRadiation=False,
+            emPhotonConversion=False,
         )
 
         s.addAlgorithm(simAlg)
 
         # Digitization
-        digiCfg = acts.examples.DigitizationConfig(
-            acts.examples.readDigiConfigFromJson(
+        digiCfg = acts.examples.DigitizationAlgorithm.Config(
+            digitizationConfigs=acts.examples.readDigiConfigFromJson(
                 str(
                     Path(__file__).parent.parent.parent.parent
                     / "Examples/Algorithms/Digitization/share/default-smearing-config-generic.json"
                 )
             ),
-            trackingGeometry=trk_geo,
+            surfaceByIdentifier=trk_geo.geoIdSurfaceMap(),
             randomNumbers=rng,
             inputSimHits=simAlg.config.outputSimHits,
         )
@@ -357,33 +377,37 @@ def fatras(ptcl_gun, trk_geo, rng):
     return _factory
 
 
+def _do_material_recording(d: Path):
+    from material_recording import runMaterialRecording
+
+    s = acts.examples.Sequencer(events=2, numThreads=1)
+
+    with getOpenDataDetector() as (detector, trackingGeometry, decorators):
+        detectorConstructionFactory = (
+            acts.examples.geant4.dd4hep.DDG4DetectorConstructionFactory(detector)
+        )
+
+        runMaterialRecording(
+            detectorConstructionFactory, str(d), tracksPerEvent=100, s=s
+        )
+
+        s.run()
+
+
 @pytest.fixture(scope="session")
 def material_recording_session():
     if not helpers.geant4Enabled:
         pytest.skip("Geantino recording requested, but Geant4 is not set up")
 
     if not helpers.dd4hepEnabled:
-        pytest.skip("DD4hep recording requested, but Geant4 is not set up")
-
-    from material_recording import runMaterialRecording
-
-    dd4hepSvc = acts.examples.dd4hep.DD4hepGeometryService(
-        xmlFileNames=[str(getOpenDataDetectorDirectory() / "xml/OpenDataDetector.xml")]
-    )
-    dd4hepG4Construction = acts.examples.geant4.dd4hep.DDG4DetectorConstruction(
-        dd4hepSvc
-    )
+        pytest.skip("DD4hep recording requested, but DD4hep is not set up")
 
     with tempfile.TemporaryDirectory() as d:
-
-        s = acts.examples.Sequencer(events=2, numThreads=1)
-
-        runMaterialRecording(dd4hepG4Construction, str(d), tracksPerEvent=100, s=s)
-        s.run()
-
-        del s
-        del dd4hepSvc
-        del dd4hepG4Construction
+        p = multiprocessing.Process(target=_do_material_recording, args=(d,))
+        p.start()
+        p.join()
+        if p.exitcode != 0:
+            raise RuntimeError("Failure to exeecute material recording")
 
         yield Path(d)
 

@@ -1,16 +1,22 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021-2022 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
-#include "Acts/Definitions/Common.hpp"
-#include "Acts/EventData/detail/TransformationFreeToBound.hpp"
+#include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/Direction.hpp"
+#include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/Geometry/GeometryContext.hpp"
+#include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/Logger.hpp"
+
+#include <optional>
+#include <tuple>
 
 namespace Acts {
 
@@ -33,14 +39,14 @@ struct FreeToBoundCorrection {
 
   /// Construct from boolean and UKF parameters (alpha, beta)
   ///
-  /// @param apply_ Wheter to apply correction
+  /// @param apply_ Whether to apply correction
   /// @param alpha_ The UKF tuning parameter alpha
   /// @param beta_ The UKF tuning parameter beta
   FreeToBoundCorrection(bool apply_, ActsScalar alpha_, ActsScalar beta_);
 
   /// Construct from boolean only
   ///
-  /// @param apply_ Wheter to apply correction
+  /// @param apply_ Whether to apply correction
   explicit FreeToBoundCorrection(bool apply_);
 
   /// Return boolean for applying correction or not
@@ -87,11 +93,11 @@ struct CorrectedFreeToBoundTransformer {
   /// @param geoContext The geometry context
   /// @param navDir The navigation direction
   /// @param logger The logger
-  std::optional<std::tuple<BoundVector, BoundSymMatrix>> operator()(
-      const FreeVector& freeParams, const FreeSymMatrix& freeCovariance,
+  std::optional<std::tuple<BoundVector, BoundSquareMatrix>> operator()(
+      const FreeVector& freeParams, const FreeSquareMatrix& freeCovariance,
       const Surface& surface, const GeometryContext& geoContext,
-      NavigationDirection navDir = NavigationDirection::Forward,
-      LoggerWrapper logger = getDummyLogger()) const;
+      Direction navDir = Direction::Forward,
+      const Logger& logger = getDummyLogger()) const;
 
  private:
   /// The parameters to tune the weight in UKF (0 < alpha <=1)

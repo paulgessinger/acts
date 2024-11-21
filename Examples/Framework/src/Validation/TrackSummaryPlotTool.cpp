@@ -1,14 +1,17 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsExamples/Validation/TrackSummaryPlotTool.hpp"
 
-#include "Acts/Utilities/Helpers.hpp"
+#include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Utilities/VectorHelpers.hpp"
+
+#include <TProfile.h>
 
 ActsExamples::TrackSummaryPlotTool::TrackSummaryPlotTool(
     const ActsExamples::TrackSummaryPlotTool::Config& cfg,
@@ -86,12 +89,12 @@ void ActsExamples::TrackSummaryPlotTool::write(
 
 void ActsExamples::TrackSummaryPlotTool::fill(
     TrackSummaryPlotTool::TrackSummaryPlotCache& trackSummaryPlotCache,
-    const Acts::BoundTrackParameters& fittedParameters, size_t nStates,
-    size_t nMeasurements, size_t nOutliers, size_t nHoles,
-    size_t nSharedHits) const {
+    const Acts::BoundTrackParameters& fittedParameters, std::size_t nStates,
+    std::size_t nMeasurements, std::size_t nOutliers, std::size_t nHoles,
+    std::size_t nSharedHits) const {
   using Acts::VectorHelpers::eta;
   using Acts::VectorHelpers::perp;
-  const auto& momentum = fittedParameters.momentum();
+  const auto momentum = fittedParameters.momentum();
   const double fit_eta = eta(momentum);
   const double fit_pT = perp(momentum);
 

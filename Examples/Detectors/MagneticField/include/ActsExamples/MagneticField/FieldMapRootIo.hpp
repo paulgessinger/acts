@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -12,6 +12,7 @@
 #include "ActsExamples/MagneticField/MagneticField.hpp"
 
 #include <array>
+#include <cstddef>
 #include <functional>
 #include <string>
 
@@ -33,7 +34,7 @@ namespace ActsExamples {
 ///
 /// @code
 /// In this case the function would look like:
-/// [](std::array<size_t, 2> binsRZ, std::array<size_t, 2> nBinsRZ) {
+/// [](std::array<std::size_t, 2> binsRZ, std::array<std::size_t, 2> nBinsRZ) {
 ///    return (binsRZ.at(0) * nBinsRZ.at(1) + binsRZ.at(1));
 /// }
 /// @endcode
@@ -52,11 +53,12 @@ namespace ActsExamples {
 /// {-1,0,1}
 /// and the BFieldValues will be set to {3,2,3}.
 detail::InterpolatedMagneticField2 makeMagneticFieldMapRzFromRoot(
-    std::function<size_t(std::array<size_t, 2> binsRZ,
-                         std::array<size_t, 2> nBinsRZ)>
+    const std::function<std::size_t(std::array<std::size_t, 2> binsRZ,
+                                    std::array<std::size_t, 2> nBinsRZ)>&
         localToGlobalBin,
-    std::string fieldMapFile, std::string treeName, Acts::ActsScalar lengthUnit,
-    Acts::ActsScalar BFieldUnit, bool firstOctant = false);
+    const std::string& fieldMapFile, const std::string& treeName,
+    Acts::ActsScalar lengthUnit, Acts::ActsScalar BFieldUnit,
+    bool firstQuadrant = false);
 
 /// Method to setup the FieldMap
 /// @param localToGlobalBin Function mapping the local bins of x,y,z to the
@@ -78,7 +80,8 @@ detail::InterpolatedMagneticField2 makeMagneticFieldMapRzFromRoot(
 ///
 /// @code
 /// In this case the function would look like:
-/// [](std::array<size_t, 3> binsXYZ, std::array<size_t, 3> nBinsXYZ) {
+/// [](std::array<std::size_t, 3> binsXYZ, std::array<std::size_t, 3> nBinsXYZ)
+/// {
 ///   return (binsXYZ.at(0) * (nBinsXYZ.at(1) * nBinsXYZ.at(2))
 ///        + binsXYZ.at(1) * nBinsXYZ.at(2)
 ///        + binsXYZ.at(2));
@@ -98,10 +101,11 @@ detail::InterpolatedMagneticField2 makeMagneticFieldMapRzFromRoot(
 /// {-1,0,1}
 /// and the BFieldValues will be set to {3,2,3}.
 detail::InterpolatedMagneticField3 makeMagneticFieldMapXyzFromRoot(
-    std::function<size_t(std::array<size_t, 3> binsXYZ,
-                         std::array<size_t, 3> nBinsXYZ)>
+    const std::function<std::size_t(std::array<std::size_t, 3> binsXYZ,
+                                    std::array<std::size_t, 3> nBinsXYZ)>&
         localToGlobalBin,
-    std::string fieldMapFile, std::string treeName, Acts::ActsScalar lengthUnit,
-    Acts::ActsScalar BFieldUnit, bool firstOctant = false);
+    const std::string& fieldMapFile, const std::string& treeName,
+    Acts::ActsScalar lengthUnit, Acts::ActsScalar BFieldUnit,
+    bool firstOctant = false);
 
 }  // namespace ActsExamples

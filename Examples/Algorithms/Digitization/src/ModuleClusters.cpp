@@ -1,14 +1,26 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsExamples/Digitization/ModuleClusters.hpp"
 
 #include "Acts/Clusterization/Clusterization.hpp"
+#include "Acts/Utilities/Helpers.hpp"
+#include "ActsExamples/Digitization/MeasurementCreation.hpp"
+#include "ActsFatras/Digitization/Channelizer.hpp"
+
+#include <array>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
+#include <limits>
+#include <memory>
+#include <stdexcept>
+#include <type_traits>
 
 namespace ActsExamples {
 
@@ -19,9 +31,9 @@ void ModuleClusters::add(DigitizedParameters params, simhit_t simhit) {
   mval.paramVariances = std::move(params.variances);
   mval.sources = {simhit};
 
-  if (m_merge and not params.cluster.channels.empty()) {
+  if (m_merge && !params.cluster.channels.empty()) {
     // Break-up the cluster
-    for (auto cell : params.cluster.channels) {
+    for (const auto& cell : params.cluster.channels) {
       ModuleValue mval_cell = mval;
       mval_cell.value = cell;
       m_moduleValues.push_back(std::move(mval_cell));
@@ -94,7 +106,7 @@ void ModuleClusters::merge() {
 
   std::vector<ModuleValue> newVals;
 
-  if (not cells.empty()) {
+  if (!cells.empty()) {
     // Case where we actually have geometric clusters
     std::vector<std::vector<ModuleValue>> merged =
         Acts::Ccl::createClusters<std::vector<ModuleValue>,
@@ -123,13 +135,12 @@ void ModuleClusters::merge() {
 }
 
 // ATTN: returns vector of index into `indices'
-std::vector<size_t> ModuleClusters::nonGeoEntries(
+std::vector<std::size_t> ModuleClusters::nonGeoEntries(
     std::vector<Acts::BoundIndices>& indices) {
-  std::vector<size_t> retv;
-  for (size_t i = 0; i < indices.size(); i++) {
+  std::vector<std::size_t> retv;
+  for (std::size_t i = 0; i < indices.size(); i++) {
     auto idx = indices.at(i);
-    if (std::find(m_geoIndices.begin(), m_geoIndices.end(), idx) ==
-        m_geoIndices.end()) {
+    if (!rangeContainsValue(m_geoIndices, idx)) {
       retv.push_back(i);
     }
   }
@@ -142,7 +153,7 @@ std::vector<std::vector<ModuleValue>> ModuleClusters::mergeParameters(
   std::vector<std::vector<ModuleValue>> retv;
 
   std::vector<bool> used(values.size(), false);
-  for (size_t i = 0; i < values.size(); i++) {
+  for (std::size_t i = 0; i < values.size(); i++) {
     if (used.at(i)) {
       continue;
     }
@@ -157,7 +168,7 @@ std::vector<std::vector<ModuleValue>> ModuleClusters::mergeParameters(
     // Values previously visited by index `i' have already been added
     // to a cluster or used to seed a new cluster, so start at the
     // next unseen one
-    for (size_t j = i + 1; j < values.size(); j++) {
+    for (std::size_t j = i + 1; j < values.size(); j++) {
       // Still may have already been used, so check it
       if (used.at(j)) {
         continue;
@@ -180,7 +191,7 @@ std::vector<std::vector<ModuleValue>> ModuleClusters::mergeParameters(
           Acts::ActsScalar v_i = thisval.paramVariances.at(k);
           Acts::ActsScalar v_j = values.at(j).paramVariances.at(k);
 
-          Acts::ActsScalar left, right;
+          Acts::ActsScalar left = 0, right = 0;
           if (p_i < p_j) {
             left = p_i + m_nsigma * std::sqrt(v_i);
             right = p_j - m_nsigma * std::sqrt(v_j);
@@ -208,7 +219,7 @@ std::vector<std::vector<ModuleValue>> ModuleClusters::mergeParameters(
         thisvec.push_back(std::move(values.at(j)));
       }
     }  // Loop on `j'
-  }    // Loop on `i'
+  }  // Loop on `i'
   return retv;
 }
 
@@ -230,14 +241,12 @@ ModuleValue ModuleClusters::squash(std::vector<ModuleValue>& values) {
   }
 
   // Now, go over the non-geometric indices
-  for (size_t i = 0; i < values.size(); i++) {
+  for (std::size_t i = 0; i < values.size(); i++) {
     ModuleValue& other = values.at(i);
-    for (size_t j = 0; j < other.paramIndices.size(); j++) {
+    for (std::size_t j = 0; j < other.paramIndices.size(); j++) {
       auto idx = other.paramIndices.at(j);
-      if (std::find(m_geoIndices.begin(), m_geoIndices.end(), idx) ==
-          m_geoIndices.end()) {
-        if (std::find(mval.paramIndices.begin(), mval.paramIndices.end(),
-                      idx) == mval.paramIndices.end()) {
+      if (!rangeContainsValue(m_geoIndices, idx)) {
+        if (!rangeContainsValue(mval.paramIndices, idx)) {
           mval.paramIndices.push_back(idx);
         }
         if (mval.paramValues.size() < (j + 1)) {
@@ -260,22 +269,22 @@ ModuleValue ModuleClusters::squash(std::vector<ModuleValue>& values) {
   Acts::Vector2 pos(0., 0.);
   Acts::Vector2 var(0., 0.);
 
-  size_t b0min = SIZE_MAX;
-  size_t b0max = 0;
-  size_t b1min = SIZE_MAX;
-  size_t b1max = 0;
+  std::size_t b0min = std::numeric_limits<std::size_t>::max();
+  std::size_t b0max = 0;
+  std::size_t b1min = std::numeric_limits<std::size_t>::max();
+  std::size_t b1max = 0;
 
-  for (size_t i = 0; i < values.size(); i++) {
+  for (std::size_t i = 0; i < values.size(); i++) {
     ModuleValue& other = values.at(i);
-    if (not std::holds_alternative<Cluster::Cell>(other.value)) {
+    if (!std::holds_alternative<Cluster::Cell>(other.value)) {
       continue;
     }
 
     Cluster::Cell ch = std::get<Cluster::Cell>(other.value);
     auto bin = ch.bin;
 
-    size_t b0 = bin[0];
-    size_t b1 = bin[1];
+    std::size_t b0 = bin[0];
+    std::size_t b1 = bin[1];
 
     b0min = std::min(b0min, b0);
     b0max = std::max(b0max, b0);
@@ -296,7 +305,7 @@ ModuleValue ModuleClusters::squash(std::vector<ModuleValue>& values) {
 
     clus.channels.push_back(std::move(ch));
 
-    // Will have the right value at last interation Do it here to
+    // Will have the right value at last iteration Do it here to
     // avoid having bogus values when there are no clusters
     clus.sizeLoc0 = b0max - b0min + 1;
     clus.sizeLoc1 = b1max - b1min + 1;

@@ -1,20 +1,26 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Plugins/TGeo/TGeoCylinderDiscSplitter.hpp"
 
+#include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Plugins/TGeo/TGeoDetectorElement.hpp"
 #include "Acts/Surfaces/CylinderBounds.hpp"
-#include "Acts/Surfaces/PlaneSurface.hpp"
 #include "Acts/Surfaces/RadialBounds.hpp"
+#include "Acts/Surfaces/RectangleBounds.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Surfaces/SurfaceBounds.hpp"
 #include "Acts/Surfaces/TrapezoidBounds.hpp"
+
+#include <cmath>
+#include <cstdlib>
+#include <numbers>
+#include <utility>
 
 Acts::TGeoCylinderDiscSplitter::TGeoCylinderDiscSplitter(
     const TGeoCylinderDiscSplitter::Config& cfg,
@@ -32,9 +38,9 @@ Acts::TGeoCylinderDiscSplitter::split(
   ActsScalar tgThickness = tgde->thickness();
 
   // Disc segments are detected, attempt a split
-  if (m_cfg.discPhiSegments > 0 or m_cfg.discRadialSegments > 0) {
+  if (m_cfg.discPhiSegments > 0 || m_cfg.discRadialSegments > 0) {
     // Splitting for discs detected
-    if (sf.type() == Acts::Surface::Disc and
+    if (sf.type() == Acts::Surface::Disc &&
         sf.bounds().type() == Acts::SurfaceBounds::eDisc) {
       ACTS_DEBUG("- splitting detected for a Disc shaped sensor.");
 
@@ -49,7 +55,7 @@ Acts::TGeoCylinderDiscSplitter::split(
       ActsScalar discMinR = boundValues[Acts::RadialBounds::eMinR];
       ActsScalar discMaxR = boundValues[Acts::RadialBounds::eMaxR];
 
-      ActsScalar phiStep = 2 * M_PI / m_cfg.discPhiSegments;
+      ActsScalar phiStep = 2 * std::numbers::pi / m_cfg.discPhiSegments;
       ActsScalar cosPhiHalf = std::cos(0.5 * phiStep);
       ActsScalar sinPhiHalf = std::sin(0.5 * phiStep);
 
@@ -64,7 +70,7 @@ Acts::TGeoCylinderDiscSplitter::split(
         radialValues = {discMinR, discMaxR};
       }
 
-      for (size_t ir = 1; ir < radialValues.size(); ++ir) {
+      for (std::size_t ir = 1; ir < radialValues.size(); ++ir) {
         ActsScalar minR = radialValues[ir - 1];
         ActsScalar maxR = radialValues[ir];
 
@@ -81,11 +87,11 @@ Acts::TGeoCylinderDiscSplitter::split(
 
         for (int im = 0; im < m_cfg.discPhiSegments; ++im) {
           // Get the moduleTransform
-          ActsScalar phi = -M_PI + im * phiStep;
-          auto tgTransform =
-              Transform3(Translation3(hR * std::cos(phi), hR * std::sin(phi),
-                                      discCenter.z()) *
-                         AngleAxis3(phi - 0.5 * M_PI, Vector3::UnitZ()));
+          ActsScalar phi = -std::numbers::pi + im * phiStep;
+          auto tgTransform = Transform3(
+              Translation3(hR * std::cos(phi), hR * std::sin(phi),
+                           discCenter.z()) *
+              AngleAxis3(phi - std::numbers::pi / 2., Vector3::UnitZ()));
 
           // Create a new detector element per split
           auto tgDetectorElement = std::make_shared<Acts::TGeoDetectorElement>(
@@ -100,8 +106,8 @@ Acts::TGeoCylinderDiscSplitter::split(
   }
 
   // Cylinder segments are detected, attempt a split
-  if (m_cfg.cylinderPhiSegments > 0 or m_cfg.cylinderLongitudinalSegments > 0) {
-    if (sf.type() == Acts::Surface::Cylinder and
+  if (m_cfg.cylinderPhiSegments > 0 || m_cfg.cylinderLongitudinalSegments > 0) {
+    if (sf.type() == Acts::Surface::Cylinder &&
         sf.bounds().type() == Acts::SurfaceBounds::eCylinder) {
       ACTS_DEBUG("- splitting detected for a Cylinder shaped sensor.");
 
@@ -115,7 +121,7 @@ Acts::TGeoCylinderDiscSplitter::split(
       ActsScalar cylinderHalfZ =
           boundValues[Acts::CylinderBounds::eHalfLengthZ];
 
-      ActsScalar phiStep = 2 * M_PI / m_cfg.cylinderPhiSegments;
+      ActsScalar phiStep = 2 * std::numbers::pi / m_cfg.cylinderPhiSegments;
       ActsScalar cosPhiHalf = std::cos(0.5 * phiStep);
       ActsScalar sinPhiHalf = std::sin(0.5 * phiStep);
 
@@ -134,7 +140,7 @@ Acts::TGeoCylinderDiscSplitter::split(
       ActsScalar planeR = cylinderR * cosPhiHalf;
       ActsScalar planeHalfX = cylinderR * sinPhiHalf;
 
-      for (size_t iz = 1; iz < zValues.size(); ++iz) {
+      for (std::size_t iz = 1; iz < zValues.size(); ++iz) {
         ActsScalar minZ = zValues[iz - 1];
         ActsScalar maxZ = zValues[iz];
 
@@ -146,7 +152,7 @@ Acts::TGeoCylinderDiscSplitter::split(
 
         for (int im = 0; im < m_cfg.cylinderPhiSegments; ++im) {
           // Get the moduleTransform
-          ActsScalar phi = -M_PI + im * phiStep;
+          ActsScalar phi = -std::numbers::pi + im * phiStep;
           ActsScalar cosPhi = std::cos(phi);
           ActsScalar sinPhi = std::sin(phi);
           ActsScalar planeX = planeR * cosPhi;

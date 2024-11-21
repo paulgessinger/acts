@@ -1,16 +1,16 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Definitions/Units.hpp"
 #include "Acts/Surfaces/AnnulusBounds.hpp"
 #include "Acts/Tests/CommonHelpers/BenchmarkTools.hpp"
-#include "Acts/Utilities/Helpers.hpp"
+#include "Acts/Utilities/VectorHelpers.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -55,14 +55,14 @@ int main(int /*argc*/, char** /*argv[]*/) {
   ActsMatrix<2, 2> cov;
   cov << 1.0, 0, 0, 0.05;
 
-  BoundaryCheck bcAbs{true};
-  BoundaryCheck bcTol0{true, false, 1.0, 0};
-  BoundaryCheck bcTol1{false, true, 0, 0.2};
-  BoundaryCheck bcTol01{true, true, 1.0, 0.2};
-  BoundaryCheck bcCov{cov, 1};
+  BoundaryTolerance bcAbs = BoundaryTolerance::None();
+  BoundaryTolerance bcTol0 = BoundaryTolerance::AbsoluteBound{1.0, 0};
+  BoundaryTolerance bcTol1 = BoundaryTolerance::AbsoluteBound{0, 0.2};
+  BoundaryTolerance bcTol01 = BoundaryTolerance::AbsoluteBound{1.0, 0.2};
+  BoundaryTolerance bcCov = BoundaryTolerance::Chi2Bound{cov, 1};
 
   // visualization to make sense of things
-  for (size_t i = 0; i < 10000; i++) {
+  for (std::size_t i = 0; i < 10000; i++) {
     const Vector2 loc{xDist(rng), yDist(rng)};
     auto locPC = toStripFrame(loc);
     bool isInsideAbs = aBounds.inside(locPC, bcAbs);
@@ -129,14 +129,14 @@ int main(int /*argc*/, char** /*argv[]*/) {
     auto bench_result = Acts::Test::microBenchmark(iterationWithArg, inputs);
     print_bench_result(bench_name, bench_result);
   };
-  auto run_all_benches = [&](const BoundaryCheck& check,
+  auto run_all_benches = [&](const BoundaryTolerance& check,
                              const std::string& check_name, const Mode mode) {
     // Announce a set of benchmarks
     print_bench_header(check_name);
 
     // Pre-determined "interesting" test points
-    int num_inside_points;
-    int num_outside_points;
+    int num_inside_points = 0;
+    int num_outside_points = 0;
     switch (mode) {
       case Mode::FastOutside:
         num_inside_points = NTESTS;
@@ -145,6 +145,8 @@ int main(int /*argc*/, char** /*argv[]*/) {
       case Mode::SlowOutside:
         num_inside_points = NTESTS;
         num_outside_points = NTESTS_SLOW;
+      default:  // do nothing
+        break;
     };
 
     for (const auto& [loc, inside, label] : testPoints) {

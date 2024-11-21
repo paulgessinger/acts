@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -19,15 +19,22 @@
 #include <Acts/Utilities/Logger.hpp>
 
 #include <map>
+#include <memory>
 #include <mutex>
+#include <string>
+#include <utility>
 
 class TFile;
 
 namespace Acts {
+class ISurfaceMaterial;
+class IVolumeMaterial;
+
 using SurfaceMaterialMap =
     std::map<GeometryIdentifier, std::shared_ptr<const ISurfaceMaterial>>;
 using VolumeMaterialMap =
     std::map<GeometryIdentifier, std::shared_ptr<const IVolumeMaterial>>;
+using DetectorMaterialMaps = std::pair<SurfaceMaterialMap, VolumeMaterialMap>;
 }  // namespace Acts
 
 namespace ActsExamples {
@@ -87,7 +94,7 @@ class RootMaterialDecorator : public Acts::IMaterialDecorator {
   RootMaterialDecorator(const Config& config, Acts::Logging::Level level);
 
   /// Destructor
-  ~RootMaterialDecorator();
+  ~RootMaterialDecorator() override;
 
   /// Decorate a surface
   ///
@@ -118,6 +125,14 @@ class RootMaterialDecorator : public Acts::IMaterialDecorator {
       volume.assignVolumeMaterial(vMaterial->second);
     }
   }
+
+  /// Return the maps
+  const Acts::DetectorMaterialMaps materialMaps() const {
+    return std::make_pair(m_surfaceMaterialMap, m_volumeMaterialMap);
+  }
+
+  /// Get readonly access to the config parameters
+  const Config& config() const { return m_cfg; }
 
  private:
   /// The config class

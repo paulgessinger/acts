@@ -1,15 +1,16 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Surfaces/SurfaceArray.hpp"
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Geometry/SurfaceArrayCreator.hpp"
+#include "Acts/Utilities/Helpers.hpp"
 #include "Acts/Utilities/ThrowAssert.hpp"
 
 #include <utility>
@@ -42,17 +43,17 @@ std::ostream& Acts::SurfaceArray::toStream(const GeometryContext& /*gctx*/,
 
   auto axes = p_gridLookup->getAxes();
 
-  for (size_t j = 0; j < axes.size(); ++j) {
-    detail::AxisBoundaryType bdt = axes.at(j)->getBoundaryType();
+  for (std::size_t j = 0; j < axes.size(); ++j) {
+    AxisBoundaryType bdt = axes.at(j)->getBoundaryType();
     sl << " - axis " << (j + 1) << std::endl;
     sl << "   - boundary type: ";
-    if (bdt == detail::AxisBoundaryType::Open) {
+    if (bdt == AxisBoundaryType::Open) {
       sl << "open";
     }
-    if (bdt == detail::AxisBoundaryType::Bound) {
+    if (bdt == AxisBoundaryType::Bound) {
       sl << "bound";
     }
-    if (bdt == detail::AxisBoundaryType::Closed) {
+    if (bdt == AxisBoundaryType::Closed) {
       sl << "closed";
     }
     sl << std::endl;
@@ -62,7 +63,7 @@ std::ostream& Acts::SurfaceArray::toStream(const GeometryContext& /*gctx*/,
     sl << "   - n bins: " << axes.at(j)->getNBins() << std::endl;
     sl << "   - bin edges: [ ";
     auto binEdges = axes.at(j)->getBinEdges();
-    for (size_t i = 0; i < binEdges.size(); ++i) {
+    for (std::size_t i = 0; i < binEdges.size(); ++i) {
       if (i > 0) {
         sl << ", ";
       }

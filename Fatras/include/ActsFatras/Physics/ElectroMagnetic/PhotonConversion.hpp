@@ -1,22 +1,30 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/Common.hpp"
+#include "Acts/Definitions/PdgParticle.hpp"
 #include "Acts/Definitions/Units.hpp"
 #include "Acts/Material/MaterialSlab.hpp"
 #include "Acts/Utilities/UnitVectors.hpp"
+#include "ActsFatras/EventData/Barcode.hpp"
 #include "ActsFatras/EventData/Particle.hpp"
 #include "ActsFatras/EventData/ProcessType.hpp"
 
+#include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
+#include <numbers>
 #include <random>
+#include <utility>
 #include <vector>
 
 namespace ActsFatras {
@@ -52,7 +60,7 @@ class PhotonConversion {
   /// @param [in, out] particle The interacting photon
   /// @param [out] generated List of generated particles
   ///
-  /// @return True if the conversion occured, else false
+  /// @return True if the conversion occurred, else false
   template <typename generator_t>
   bool run(generator_t& generator, Particle& particle,
            std::vector<Particle>& generated) const;
@@ -123,9 +131,10 @@ PhotonConversion::generatePathLimits(generator_t& generator,
 
   // Fast exit if not a photon or the energy is too low
   if (particle.pdg() != Acts::PdgParticle::eGamma ||
-      particle.absoluteMomentum() < (2 * kElectronMass))
+      particle.absoluteMomentum() < (2 * kElectronMass)) {
     return std::make_pair(std::numeric_limits<Scalar>::infinity(),
                           std::numeric_limits<Scalar>::infinity());
+  }
 
   // Use for the moment only Al data - Yung Tsai - Rev.Mod.Particle Physics Vol.
   // 46, No.4, October 1974 optainef from a fit given in the momentum range 100
@@ -197,7 +206,7 @@ Particle::Scalar PhotonConversion::generateFirstChildEnergyFraction(
 
   // We will need 3 uniform random number for each trial of sampling
   Scalar greject = 0.;
-  Scalar eps;
+  Scalar eps = 0.;
   std::uniform_real_distribution<Scalar> rndmEngine;
   do {
     if (NormF1 > rndmEngine(generator) * (NormF1 + NormF2)) {
@@ -233,10 +242,10 @@ Particle::Vector3 PhotonConversion::generateChildDirection(
                : u * 1. / 3.;  // 9./(9.+27) = 0.25
 
   // draw the random orientation angle
-  const auto psi =
-      std::uniform_real_distribution<double>(-M_PI, M_PI)(generator);
+  const auto psi = std::uniform_real_distribution<double>(
+      -std::numbers::pi, std::numbers::pi)(generator);
 
-  Acts::Vector3 direction = particle.unitDirection();
+  Acts::Vector3 direction = particle.direction();
   // construct the combined rotation to the scattered direction
   Acts::RotationMatrix3 rotation(
       // rotation of the scattering deflector axis relative to the reference
@@ -247,7 +256,7 @@ Particle::Vector3 PhotonConversion::generateChildDirection(
   return direction;
 }
 
-std::array<Particle, 2> PhotonConversion::generateChildren(
+inline std::array<Particle, 2> PhotonConversion::generateChildren(
     const Particle& photon, Scalar childEnergy,
     const Particle::Vector3& childDirection) const {
   using namespace Acts::UnitLiterals;
@@ -273,13 +282,15 @@ std::array<Particle, 2> PhotonConversion::generateChildren(
           .setPosition4(photon.fourPosition())
           .setDirection(childDirection)
           .setAbsoluteMomentum(momentum1)
-          .setProcess(ProcessType::ePhotonConversion),
+          .setProcess(ProcessType::ePhotonConversion)
+          .setReferenceSurface(photon.referenceSurface()),
       Particle(photon.particleId().makeDescendant(1), Acts::ePositron, 1_e,
                kElectronMass)
           .setPosition4(photon.fourPosition())
           .setDirection(childDirection)
           .setAbsoluteMomentum(momentum2)
-          .setProcess(ProcessType::ePhotonConversion),
+          .setProcess(ProcessType::ePhotonConversion)
+          .setReferenceSurface(photon.referenceSurface()),
   };
   return children;
 }
@@ -288,13 +299,15 @@ template <typename generator_t>
 bool PhotonConversion::run(generator_t& generator, Particle& particle,
                            std::vector<Particle>& generated) const {
   // Fast exit if particle is not a photon
-  if (particle.pdg() != Acts::PdgParticle::eGamma)
+  if (particle.pdg() != Acts::PdgParticle::eGamma) {
     return false;
+  }
 
   // Fast exit if momentum is too low
   const Scalar p = particle.absoluteMomentum();
-  if (p < (2 * kElectronMass))
+  if (p < (2 * kElectronMass)) {
     return false;
+  }
 
   // Get one child energy
   const Scalar childEnergy = p * generateFirstChildEnergyFraction(generator, p);

@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -12,13 +12,14 @@
 #include "Acts/Material/ISurfaceMaterial.hpp"
 #include "Acts/Material/MaterialSlab.hpp"
 
+#include <cstddef>
 #include <iosfwd>
 
 namespace Acts {
 
 /// @class HomogeneousSurfaceMaterial
 ///
-/// It extends the ISurfaceMaterial virutal base class to describe
+/// It extends the ISurfaceMaterial virtual base class to describe
 /// a simple homogeneous material on a surface
 class HomogeneousSurfaceMaterial : public ISurfaceMaterial {
  public:
@@ -77,17 +78,13 @@ class HomogeneousSurfaceMaterial : public ISurfaceMaterial {
   /// @copydoc ISurfaceMaterial::materialSlab(const Vector3&) const
   ///
   /// @note the input parameter is ignored
-  const MaterialSlab& materialSlab(const Vector3& gp) const final;
-
-  /// @copydoc ISurfaceMaterial::materialSlab(size_t, size_t) const
-  ///
-  /// @note the input parameters are ignored
-  const MaterialSlab& materialSlab(size_t bin0, size_t bin1) const final;
+  const MaterialSlab& materialSlab(const Vector3& gp = Vector3{0., 0.,
+                                                               0.}) const final;
 
   /// The inherited methods - for MaterialSlab access
   using ISurfaceMaterial::materialSlab;
 
-  /// The interited methods - for scale access
+  /// The inherited methods - for scale access
   using ISurfaceMaterial::factor;
 
   /// Output Method for std::ostream
@@ -107,11 +104,6 @@ inline const MaterialSlab& HomogeneousSurfaceMaterial::materialSlab(
 
 inline const MaterialSlab& HomogeneousSurfaceMaterial::materialSlab(
     const Vector3& /*gp*/) const {
-  return (m_fullMaterial);
-}
-
-inline const MaterialSlab& HomogeneousSurfaceMaterial::materialSlab(
-    size_t /*ib0*/, size_t /*ib1*/) const {
   return (m_fullMaterial);
 }
 

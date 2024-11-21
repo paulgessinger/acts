@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 #include "Acts/Definitions/Algebra.hpp"
@@ -13,15 +13,21 @@
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/Logger.hpp"
 
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "DD4hep/DetElement.h"
+
 class TrackingVolume;
+namespace Acts {
+class Logger;
+}  // namespace Acts
+
 using MutableTrackingVolumePtr = std::shared_ptr<TrackingVolume>;
 using MutableTrackingVolumeVector = std::vector<MutableTrackingVolumePtr>;
 
 class TGeoMatrix;
-
-namespace dd4hep {
-class DetElement;
-}
 
 namespace Acts {
 
@@ -75,7 +81,7 @@ class DD4hepVolumeBuilder : public IConfinedTrackingVolumeBuilder {
   void setLogger(std::unique_ptr<const Logger> logger);
 
  private:
-  /// Configruation object
+  /// Configuration object
   Config m_cfg;
 
   /// Logging instance

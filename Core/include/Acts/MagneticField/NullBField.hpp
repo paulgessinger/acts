@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 #include "Acts/Definitions/Algebra.hpp"
@@ -54,19 +54,15 @@ class NullBField final : public MagneticFieldProvider {
   /// @copydoc MagneticFieldProvider::makeCache(const MagneticFieldContext&) const
   Acts::MagneticFieldProvider::Cache makeCache(
       const Acts::MagneticFieldContext& mctx) const override {
-    return Acts::MagneticFieldProvider::Cache::make<Cache>(mctx);
+    return Acts::MagneticFieldProvider::Cache(std::in_place_type<Cache>, mctx);
   }
 
   /// @brief check whether given 3D position is inside look-up domain
   ///
-  /// @param [in] position global 3D position
   /// @return @c true if position is inside the defined look-up grid,
   ///         otherwise @c false
   /// @note The method will always return true for the null B-Field
-  bool isInside(const Vector3& position) const {
-    (void)position;
-    return true;
-  }
+  bool isInside(const Vector3& /*position*/) const { return true; }
 
  private:
   /// magnetic field vector

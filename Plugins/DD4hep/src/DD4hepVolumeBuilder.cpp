@@ -1,22 +1,25 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Plugins/DD4hep/DD4hepVolumeBuilder.hpp"
 
 #include "Acts/Definitions/Units.hpp"
 #include "Acts/Geometry/CylinderVolumeBounds.hpp"
-#include "Acts/Material/HomogeneousVolumeMaterial.hpp"
-#include "Acts/Plugins/DD4hep/DD4hepDetectorElement.hpp"
 #include "Acts/Plugins/TGeo/TGeoPrimitivesHelper.hpp"
-#include "Acts/Surfaces/CylinderSurface.hpp"
-#include "Acts/Surfaces/RadialBounds.hpp"
+#include "Acts/Utilities/Logger.hpp"
 
-#include "DD4hep/Detector.h"
+#include <stdexcept>
+#include <utility>
+
+#include <DD4hep/Alignments.h>
+#include <DD4hep/DetElement.h>
+#include <DD4hep/Volumes.h>
+#include <RtypesCore.h>
 
 Acts::DD4hepVolumeBuilder::DD4hepVolumeBuilder(
     const Acts::DD4hepVolumeBuilder::Config& config,
@@ -46,7 +49,7 @@ Acts::DD4hepVolumeBuilder::centralVolumes() const {
   // Resulting volumes
   MutableTrackingVolumeVector volumes;
   // Inner/outer radius and half length of the barrel
-  double rMin, rMax, dz;
+  double rMin = 0, rMax = 0, dz = 0;
 
   // Go through volumes
   for (auto& detElement : m_cfg.centralVolumes) {
@@ -61,6 +64,8 @@ Acts::DD4hepVolumeBuilder::centralVolumes() const {
       if (tube == nullptr) {
         ACTS_ERROR(
             "[L] Cylinder layer has wrong shape - needs to be TGeoTubeSeg!");
+        throw std::logic_error{
+            "[L] Cylinder layer has wrong shape - needs to be TGeoTubeSeg!"};
       }
 
       // Extract the boundaries
@@ -76,9 +81,8 @@ Acts::DD4hepVolumeBuilder::centralVolumes() const {
                       "constructor!"));
     }
     // Build boundaries
-    CylinderVolumeBounds cvBounds(rMin, rMax, dz);
-    volumes.push_back(TrackingVolume::create(
-        transform, std::make_shared<const CylinderVolumeBounds>(cvBounds)));
+    volumes.push_back(std::make_shared<TrackingVolume>(
+        transform, std::make_shared<CylinderVolumeBounds>(rMin, rMax, dz)));
   }
   return volumes;
 }

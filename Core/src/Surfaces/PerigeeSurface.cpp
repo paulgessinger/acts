@@ -1,16 +1,19 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Surfaces/PerigeeSurface.hpp"
 
+#include "Acts/Geometry/GeometryObject.hpp"
+
 #include <iomanip>
 #include <iostream>
-#include <utility>
+#include <memory>
+#include <vector>
 
 Acts::PerigeeSurface::PerigeeSurface(const Vector3& gp)
     : LineSurface(Transform3(Translation3(gp.x(), gp.y(), gp.z())), nullptr) {}
@@ -42,8 +45,8 @@ std::string Acts::PerigeeSurface::name() const {
   return "Acts::PerigeeSurface";
 }
 
-std::ostream& Acts::PerigeeSurface::toStream(const GeometryContext& gctx,
-                                             std::ostream& sl) const {
+std::ostream& Acts::PerigeeSurface::toStreamImpl(const GeometryContext& gctx,
+                                                 std::ostream& sl) const {
   sl << std::setiosflags(std::ios::fixed);
   sl << std::setprecision(7);
   sl << "Acts::PerigeeSurface:" << std::endl;
@@ -55,7 +58,7 @@ std::ostream& Acts::PerigeeSurface::toStream(const GeometryContext& gctx,
 }
 
 Acts::Polyhedron Acts::PerigeeSurface::polyhedronRepresentation(
-    const GeometryContext& gctx, size_t /*lseg*/) const {
+    const GeometryContext& gctx, unsigned int /*quarterSegments*/) const {
   // Prepare vertices and faces
   std::vector<Vector3> vertices;
   std::vector<Polyhedron::FaceType> faces;

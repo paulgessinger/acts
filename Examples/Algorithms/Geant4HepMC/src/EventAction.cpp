@@ -1,12 +1,14 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "EventAction.hpp"
+
+#include "Acts/Utilities/Helpers.hpp"
 
 #include <stdexcept>
 
@@ -23,7 +25,7 @@ namespace {
 /// @param [in] processFilter List of processes that will be filtered
 ///
 /// @return True if the process was found, false if not
-bool findAttribute(HepMC3::ConstGenVertexPtr vertex,
+bool findAttribute(const HepMC3::ConstGenVertexPtr& vertex,
                    const std::vector<std::string>& processFilter) {
   // Consider only 1->1 vertices to keep a correct history
   if ((vertex->particles_in().size() == 1) &&
@@ -32,8 +34,7 @@ bool findAttribute(HepMC3::ConstGenVertexPtr vertex,
     const std::vector<std::string> vertexAttributes = vertex->attribute_names();
     for (const auto& att : vertexAttributes) {
       const std::string process = vertex->attribute_as_string(att);
-      if (std::find(processFilter.begin(), processFilter.end(), process) !=
-          processFilter.end()) {
+      if (Acts::rangeContainsValue(processFilter, process)) {
         return true;
       }
     }
@@ -107,7 +108,7 @@ void reduceVertex(HepMC3::GenEvent& event, HepMC3::GenVertexPtr vertex,
 /// @param [in, out] The current vertex under investigation
 /// @param [in] processFilter List of processes that will be filtered
 void followOutgoingParticles(HepMC3::GenEvent& event,
-                             HepMC3::GenVertexPtr vertex,
+                             const HepMC3::GenVertexPtr& vertex,
                              const std::vector<std::string>& processFilter) {
   // Replace and reduce vertex if it should be filtered
   if (findAttribute(vertex, processFilter)) {
@@ -125,7 +126,7 @@ namespace ActsExamples::Geant4::HepMC3 {
 EventAction* EventAction::s_instance = nullptr;
 
 EventAction* EventAction::instance() {
-  // Static acces function via G4RunManager
+  // Static access function via G4RunManager
   return s_instance;
 }
 
@@ -142,13 +143,13 @@ EventAction::~EventAction() {
   s_instance = nullptr;
 }
 
-void EventAction::BeginOfEventAction(const G4Event*) {
+void EventAction::BeginOfEventAction(const G4Event* /*event*/) {
   SteppingAction::instance()->clear();
   m_event = ::HepMC3::GenEvent(::HepMC3::Units::GEV, ::HepMC3::Units::MM);
   m_event.add_beam_particle(std::make_shared<::HepMC3::GenParticle>());
 }
 
-void EventAction::EndOfEventAction(const G4Event*) {
+void EventAction::EndOfEventAction(const G4Event* /*event*/) {
   // Fast exit if the event is empty
   if (m_event.vertices().empty()) {
     return;
@@ -165,7 +166,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
   // vertices
   while (true) {
     bool sane = true;
-    for (auto v : m_event.vertices()) {
+    for (const auto& v : m_event.vertices()) {
       if (!v) {
         continue;
       }
@@ -174,7 +175,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
         sane = false;
       }
     }
-    for (auto p : m_event.particles()) {
+    for (const auto& p : m_event.particles()) {
       if (!p) {
         continue;
       }

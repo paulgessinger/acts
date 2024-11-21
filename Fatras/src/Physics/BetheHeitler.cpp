@@ -1,12 +1,23 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsFatras/Physics/ElectroMagnetic/BetheHeitler.hpp"
+
+#include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/PdgParticle.hpp"
+#include "Acts/Utilities/UnitVectors.hpp"
+#include "ActsFatras/EventData/Barcode.hpp"
+#include "ActsFatras/EventData/ProcessType.hpp"
+
+#include <algorithm>
+#include <cmath>
+#include <numbers>
+#include <utility>
 
 ActsFatras::Particle ActsFatras::BetheHeitler::bremPhoton(
     const Particle &particle, Scalar gammaE, Scalar rndPsi, Scalar rndTheta1,
@@ -20,7 +31,7 @@ ActsFatras::Particle ActsFatras::BetheHeitler::bremPhoton(
   // later
   //      the azimutal angle
 
-  Scalar psi = 2. * M_PI * rndPsi;
+  Scalar psi = 2. * std::numbers::pi * rndPsi;
 
   // the start of the equation
   Scalar theta = 0.;
@@ -36,7 +47,7 @@ ActsFatras::Particle ActsFatras::BetheHeitler::bremPhoton(
     theta *= (rndTheta1 < 0.25) ? u : u / 3.;  // 9./(9.+27) = 0.25
   }
 
-  Vector3 particleDirection = particle.unitDirection();
+  Vector3 particleDirection = particle.direction();
   Vector3 photonDirection = particleDirection;
 
   // construct the combined rotation to the scattered direction
@@ -52,6 +63,7 @@ ActsFatras::Particle ActsFatras::BetheHeitler::bremPhoton(
   photon.setProcess(ActsFatras::ProcessType::eBremsstrahlung)
       .setPosition4(particle.fourPosition())
       .setDirection(photonDirection)
-      .setAbsoluteMomentum(gammaE);
+      .setAbsoluteMomentum(gammaE)
+      .setReferenceSurface(particle.referenceSurface());
   return photon;
 }

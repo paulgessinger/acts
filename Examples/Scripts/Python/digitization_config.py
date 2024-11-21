@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os
 from pathlib import Path
 
 import acts
@@ -8,7 +7,7 @@ from acts.examples import (
     DigitizationConfigurator,
     writeDigiConfigToJson,
     GenericDetector,
-    GeometryHierarchyMap_DigiComponentsConfig,
+    DigiConfigContainer,
 )
 
 
@@ -28,9 +27,7 @@ def runDigitizationConfig(
 
     trackingGeometry.visitSurfaces(digiConfigurator)
 
-    outputConfig = GeometryHierarchyMap_DigiComponentsConfig(
-        digiConfigurator.outputDigiComponents
-    )
+    outputConfig = DigiConfigContainer(digiConfigurator.outputDigiComponents)
 
     writeDigiConfigToJson(outputConfig, str(output))
 

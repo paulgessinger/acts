@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 ///////////////////////////////////////////////////////////////////
 // InternalSeed.hpp Acts project
@@ -14,8 +14,7 @@
 #include "Acts/Seeding/LegacySeed.hpp"
 #include "Acts/Seeding/SPForSeed.hpp"
 
-namespace Acts {
-namespace Legacy {
+namespace Acts::Legacy {
 template <typename SpacePoint>
 class InternalSeed {
   /////////////////////////////////////////////////////////////////////////////////
@@ -24,11 +23,11 @@ class InternalSeed {
 
  public:
   InternalSeed();
-  InternalSeed(SPForSeed<SpacePoint>*&, SPForSeed<SpacePoint>*&,
-               SPForSeed<SpacePoint>*&, float);
-  InternalSeed(const InternalSeed<SpacePoint>&);
+  InternalSeed(SPForSeed<SpacePoint>*& /*s0*/, SPForSeed<SpacePoint>*& /*s1*/,
+               SPForSeed<SpacePoint>*& /*s2*/, float /*z*/);
+  InternalSeed(const InternalSeed<SpacePoint>& /*sp*/);
   virtual ~InternalSeed();
-  InternalSeed<SpacePoint>& operator=(const InternalSeed<SpacePoint>&);
+  InternalSeed<SpacePoint>& operator=(const InternalSeed<SpacePoint>& /*sp*/);
 
   SPForSeed<SpacePoint>* spacepoint0() { return m_s0; }
   SPForSeed<SpacePoint>* spacepoint1() { return m_s1; }
@@ -36,19 +35,19 @@ class InternalSeed {
   const float& z() const { return m_z; }
   const float& quality() const { return m_q; }
 
-  void set(SPForSeed<SpacePoint>*&, SPForSeed<SpacePoint>*&,
-           SPForSeed<SpacePoint>*&, float);
+  void set(SPForSeed<SpacePoint>*& /*s0*/, SPForSeed<SpacePoint>*& /*s1*/,
+           SPForSeed<SpacePoint>*& /*s2*/, float /*z*/);
 
-  bool setQuality(float);
+  bool setQuality(float /*q*/);
 
-  bool set3(Acts::Legacy::Seed<SpacePoint>&);
+  bool set3(Acts::Legacy::Seed<SpacePoint>& /*s*/);
 
  protected:
-  SPForSeed<SpacePoint>* m_s0;
-  SPForSeed<SpacePoint>* m_s1;
-  SPForSeed<SpacePoint>* m_s2;
-  float m_z;
-  float m_q;
+  SPForSeed<SpacePoint>* m_s0 = nullptr;
+  SPForSeed<SpacePoint>* m_s1 = nullptr;
+  SPForSeed<SpacePoint>* m_s2 = nullptr;
+  float m_z = 0;
+  float m_q = 0;
 };
 
 /// @cond
@@ -59,9 +58,9 @@ class InternalSeed {
 
 template <typename SpacePoint>
 inline InternalSeed<SpacePoint>::InternalSeed() {
-  m_s0 = 0;
-  m_s1 = 0;
-  m_s2 = 0;
+  m_s0 = nullptr;
+  m_s1 = nullptr;
+  m_s2 = nullptr;
   m_z = 0.;
   m_q = 0.;
 }
@@ -103,7 +102,7 @@ inline InternalSeed<SpacePoint>::InternalSeed(const InternalSeed& sp)
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename SpacePoint>
-inline InternalSeed<SpacePoint>::~InternalSeed() {}
+inline InternalSeed<SpacePoint>::~InternalSeed() = default;
 
 /////////////////////////////////////////////////////////////////////////////////
 // Set
@@ -143,7 +142,7 @@ inline bool InternalSeed<SpacePoint>::set3(Acts::Legacy::Seed<SpacePoint>& s) {
   s.add(m_s0->spacepoint);
   s.add(m_s1->spacepoint);
   s.add(m_s2->spacepoint);
-  s.setZVertex(double(m_z));
+  s.setZVertex(static_cast<double>(m_z));
   return true;
 }
 
@@ -170,5 +169,4 @@ inline bool InternalSeed<SpacePoint>::setQuality(float q) {
 
 /// @endcond
 
-}  // namespace Legacy
-}  // namespace Acts
+}  // namespace Acts::Legacy

@@ -1,18 +1,25 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/Tolerance.hpp"
+#include "Acts/Surfaces/BoundaryTolerance.hpp"
 #include "Acts/Surfaces/SurfaceBounds.hpp"
 #include "Acts/Utilities/detail/periodic.hpp"
 
 #include <array>
+#include <cmath>
+#include <cstdlib>
+#include <iosfwd>
+#include <numbers>
+#include <stdexcept>
 #include <vector>
 
 namespace Acts {
@@ -49,7 +56,7 @@ class ConeBounds : public SurfaceBounds {
   /// @param halfphi is the half opening angle (default is pi)
   /// @param avphi is the phi value around which the bounds are opened
   /// (default=0)
-  ConeBounds(double alpha, bool symm, double halfphi = M_PI,
+  ConeBounds(double alpha, bool symm, double halfphi = std::numbers::pi,
              double avphi = 0.) noexcept(false);
 
   /// Constructor - open cone with alpha, minz and maxz, by
@@ -61,7 +68,8 @@ class ConeBounds : public SurfaceBounds {
   /// @param halfphi is the half opening angle (default is pi)
   /// @param avphi is the phi value around which the bounds are opened
   /// (default=0)
-  ConeBounds(double alpha, double minz, double maxz, double halfphi = M_PI,
+  ConeBounds(double alpha, double minz, double maxz,
+             double halfphi = std::numbers::pi,
              double avphi = 0.) noexcept(false);
 
   /// Constructor - from parameters array
@@ -81,15 +89,16 @@ class ConeBounds : public SurfaceBounds {
   /// inside method for local position
   ///
   /// @param lposition is the local position to be checked
-  /// @param bcheck is the boundary check directive
+  /// @param boundaryTolerance is the boundary check directive
   /// @return is a boolean indicating if the position is inside
   bool inside(const Vector2& lposition,
-              const BoundaryCheck& bcheck = true) const final;
+              const BoundaryTolerance& boundaryTolerance =
+                  BoundaryTolerance::None()) const final;
 
   /// Output Method for std::ostream
   ///
   /// @param sl is the ostrea into which the dump is done
-  /// @return is the input obect
+  /// @return is the input object
   std::ostream& toStream(std::ostream& sl) const final;
 
   /// Return the radius at a specific z values
@@ -113,7 +122,7 @@ class ConeBounds : public SurfaceBounds {
   /// if consistency is not given
   void checkConsistency() noexcept(false);
 
-  /// Private helper functin to shift a local 2D position
+  /// Private helper function to shift a local 2D position
   ///
   /// @param lposition The original local position
   Vector2 shifted(const Vector2& lposition) const;
@@ -134,14 +143,14 @@ inline std::vector<double> ConeBounds::values() const {
 }
 
 inline void ConeBounds::checkConsistency() noexcept(false) {
-  if (get(eAlpha) < 0. or get(eAlpha) >= M_PI) {
+  if (get(eAlpha) < 0. || get(eAlpha) >= std::numbers::pi) {
     throw std::invalid_argument("ConeBounds: invalid open angle.");
   }
-  if (get(eMinZ) > get(eMaxZ) or
+  if (get(eMinZ) > get(eMaxZ) ||
       std::abs(get(eMinZ) - get(eMaxZ)) < s_epsilon) {
     throw std::invalid_argument("ConeBounds: invalid z range setup.");
   }
-  if (get(eHalfPhiSector) < 0. or abs(eHalfPhiSector) > M_PI) {
+  if (get(eHalfPhiSector) < 0. || abs(eHalfPhiSector) > std::numbers::pi) {
     throw std::invalid_argument("ConeBounds: invalid phi sector setup.");
   }
   if (get(eAveragePhi) != detail::radian_sym(get(eAveragePhi))) {

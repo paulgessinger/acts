@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
-import os
 
+import os
+import argparse
+
+import acts
+from acts import (
+    SurfaceMaterialMapper,
+    VolumeMaterialMapper,
+    Navigator,
+    Propagator,
+    StraightLineStepper,
+    MaterialMapJsonConverter,
+)
 from acts.examples import (
     Sequencer,
     WhiteBoard,
@@ -12,19 +23,6 @@ from acts.examples import (
     JsonMaterialWriter,
     JsonFormat,
 )
-
-import acts
-from acts import (
-    Vector4,
-    UnitConstants as u,
-    SurfaceMaterialMapper,
-    VolumeMaterialMapper,
-    Navigator,
-    Propagator,
-    StraightLineStepper,
-    MaterialMapJsonConverter,
-)
-from common import getOpenDataDetectorDirectory
 from acts.examples.odd import getOpenDataDetector
 
 
@@ -34,8 +32,11 @@ def runMaterialMapping(
     outputDir,
     inputDir,
     mapName="material-map",
+    mapFormat=JsonFormat.Json,
     mapSurface=True,
     mapVolume=True,
+    readCachedSurfaceInformation=False,
+    mappingStep=1,
     s=None,
 ):
     s = s or Sequencer(numThreads=1)
@@ -54,8 +55,18 @@ def runMaterialMapping(
     s.addReader(
         RootMaterialTrackReader(
             level=acts.logging.INFO,
-            collection="material-tracks",
-            fileList=[os.path.join(inputDir, "geant4_material_tracks.root")],
+            outputMaterialTracks="material-tracks",
+            fileList=[
+                os.path.join(
+                    inputDir,
+                    (
+                        mapName + "_tracks.root"
+                        if readCachedSurfaceInformation
+                        else "geant4_material_tracks.root"
+                    ),
+                )
+            ],
+            readCachedSurfaceInformation=readCachedSurfaceInformation,
         )
     )
 
@@ -63,7 +74,7 @@ def runMaterialMapping(
 
     mmAlgCfg = MaterialMapping.Config(context.geoContext, context.magFieldContext)
     mmAlgCfg.trackingGeometry = trackingGeometry
-    mmAlgCfg.collection = "material-tracks"
+    mmAlgCfg.inputMaterialTracks = "material-tracks"
 
     if mapSurface:
         navigator = Navigator(
@@ -82,7 +93,7 @@ def runMaterialMapping(
         )
         propagator = Propagator(stepper, navigator)
         mapper = VolumeMaterialMapper(
-            level=acts.logging.INFO, propagator=propagator, mappingStep=999
+            level=acts.logging.INFO, propagator=propagator, mappingStep=mappingStep
         )
         mmAlgCfg.materialVolumeMapper = mapper
 
@@ -99,13 +110,17 @@ def runMaterialMapping(
         level=acts.logging.VERBOSE,
         converterCfg=jmConverterCfg,
         fileName=os.path.join(outputDir, mapName),
-        writeFormat=JsonFormat.Json,
+        writeFormat=mapFormat,
     )
+
+    mmAlgCfg.materialWriters = [jmw]
+
+    s.addAlgorithm(MaterialMapping(level=acts.logging.INFO, config=mmAlgCfg))
 
     s.addWriter(
         RootMaterialTrackWriter(
             level=acts.logging.INFO,
-            collection=mmAlgCfg.mappingMaterialCollection,
+            inputMaterialTracks=mmAlgCfg.mappingMaterialCollection,
             filePath=os.path.join(
                 outputDir,
                 mapName + "_tracks.root",
@@ -115,19 +130,39 @@ def runMaterialMapping(
         )
     )
 
-    mmAlgCfg.materialWriters = [jmw]
-
-    s.addAlgorithm(MaterialMapping(level=acts.logging.INFO, config=mmAlgCfg))
-
     return s
 
 
 if "__main__" == __name__:
-    matDeco = acts.IMaterialDecorator.fromFile("geometry-map.json")
-    detector, trackingGeometry, decorators = getOpenDataDetector(
-        getOpenDataDetectorDirectory(), matDeco
+    p = argparse.ArgumentParser(description="Script to generate ACTS material map")
+    p.add_argument(
+        "-o",
+        "--outFile",
+        type=str,
+        default="material-map.json",
+        help="Output filename for the generated material map. Supported formats: JSON, CBOR.",
     )
+    args = p.parse_args()
+    if ".json" in args.outFile:
+        mapFormat = JsonFormat.Json
+    elif ".cbor" in args.outFile:
+        mapFormat = JsonFormat.Cbor
+    else:
+        print(
+            "ERROR(material_mapping.py): please provide an output name ending with .json or .cbor"
+        )
+        exit()
+
+    mapName = args.outFile.split(".")[0]
+
+    detector, trackingGeometry, decorators = getOpenDataDetector(None)
 
     runMaterialMapping(
-        trackingGeometry, decorators, outputDir=os.getcwd(), inputDir=os.getcwd()
+        trackingGeometry,
+        decorators,
+        outputDir=os.getcwd(),
+        inputDir=os.getcwd(),
+        readCachedSurfaceInformation=False,
+        mapName=mapName,
+        mapFormat=mapFormat,
     ).run()

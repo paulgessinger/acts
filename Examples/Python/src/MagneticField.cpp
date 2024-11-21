@@ -1,13 +1,14 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsExamples/MagneticField/MagneticField.hpp"
 
+#include "Acts/Definitions/Units.hpp"
 #include "Acts/MagneticField/BFieldMapUtils.hpp"
 #include "Acts/MagneticField/ConstantBField.hpp"
 #include "Acts/MagneticField/MagneticFieldProvider.hpp"
@@ -17,22 +18,48 @@
 #include "ActsExamples/MagneticField/FieldMapRootIo.hpp"
 #include "ActsExamples/MagneticField/FieldMapTextIo.hpp"
 
+#include <array>
+#include <cstddef>
+#include <filesystem>
 #include <memory>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <utility>
 
-#include <boost/filesystem.hpp>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
 
 namespace Acts::Python {
 
+/// @brief Get the value of a field, throwing an exception if the result is
+/// invalid.
+Acts::Vector3 getField(Acts::MagneticFieldProvider& self,
+                       const Acts::Vector3& position,
+                       Acts::MagneticFieldProvider::Cache& cache) {
+  if (Result<Vector3> res = self.getField(position, cache); !res.ok()) {
+    std::stringstream ss;
+
+    ss << "Field lookup failure with error: \"" << res.error() << "\"";
+
+    throw std::runtime_error{ss.str()};
+  } else {
+    return *res;
+  }
+}
+
 void addMagneticField(Context& ctx) {
   auto [m, mex, prop] = ctx.get("main", "examples", "propagation");
 
   py::class_<Acts::MagneticFieldProvider,
              std::shared_ptr<Acts::MagneticFieldProvider>>(
-      m, "MagneticFieldProvider");
+      m, "MagneticFieldProvider")
+      .def("getField", &getField)
+      .def("makeCache", &Acts::MagneticFieldProvider::makeCache);
 
   py::class_<Acts::InterpolatedMagneticField,
              std::shared_ptr<Acts::InterpolatedMagneticField>>(
@@ -66,7 +93,7 @@ void addMagneticField(Context& ctx) {
         py::class_<Acts::SolenoidBField, Acts::MagneticFieldProvider,
                    std::shared_ptr<Acts::SolenoidBField>>(m, "SolenoidBField")
             .def(py::init<Config>())
-            .def(py::init([](double radius, double length, size_t nCoils,
+            .def(py::init([](double radius, double length, std::size_t nCoils,
                              double bMagCenter) {
                    return Acts::SolenoidBField{
                        Config{radius, length, nCoils, bMagCenter}};
@@ -84,12 +111,12 @@ void addMagneticField(Context& ctx) {
 
   mex.def(
       "MagneticFieldMapXyz",
-      [](std::string filename, std::string tree, double lengthUnit,
-         double BFieldUnit, bool firstOctant) {
-        const boost::filesystem::path file = filename;
+      [](const std::string& filename, const std::string& tree,
+         double lengthUnit, double BFieldUnit, bool firstOctant) {
+        const std::filesystem::path file = filename;
 
-        auto mapBins = [](std::array<size_t, 3> bins,
-                          std::array<size_t, 3> sizes) {
+        auto mapBins = [](std::array<std::size_t, 3> bins,
+                          std::array<std::size_t, 3> sizes) {
           return (bins[0] * (sizes[1] * sizes[2]) + bins[1] * sizes[2] +
                   bins[2]);
         };
@@ -117,12 +144,12 @@ void addMagneticField(Context& ctx) {
 
   mex.def(
       "MagneticFieldMapRz",
-      [](std::string filename, std::string tree, double lengthUnit,
-         double BFieldUnit, bool firstQuadrant) {
-        const boost::filesystem::path file = filename;
+      [](const std::string& filename, const std::string& tree,
+         double lengthUnit, double BFieldUnit, bool firstQuadrant) {
+        const std::filesystem::path file = filename;
 
-        auto mapBins = [](std::array<size_t, 2> bins,
-                          std::array<size_t, 2> sizes) {
+        auto mapBins = [](std::array<std::size_t, 2> bins,
+                          std::array<std::size_t, 2> sizes) {
           return (bins[1] * sizes[0] + bins[0]);
         };
 

@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -17,6 +17,7 @@
 #include "Acts/MagneticField/MagneticFieldContext.hpp"
 #include "Acts/Material/AccumulatedSurfaceMaterial.hpp"
 #include "Acts/Material/ISurfaceMaterial.hpp"
+#include "Acts/Material/MaterialInteraction.hpp"
 #include "Acts/Propagator/MaterialInteractor.hpp"
 #include "Acts/Propagator/Navigator.hpp"
 #include "Acts/Propagator/Propagator.hpp"
@@ -27,14 +28,17 @@
 #include "Acts/Utilities/Logger.hpp"
 
 #include <array>
+#include <functional>
 #include <map>
 #include <memory>
+#include <vector>
 
 namespace Acts {
 
 class IVolumeMaterial;
 class ISurfaceMaterial;
 class TrackingGeometry;
+struct MaterialInteraction;
 
 /// @brief selector for finding surface
 struct MaterialSurface {
@@ -169,6 +173,24 @@ class SurfaceMaterialMapper {
   /// @note the RecordedMaterialSlab of the track are assumed
   /// to be ordered from the starting position along the starting direction
   void mapMaterialTrack(State& mState, RecordedMaterialTrack& mTrack) const;
+
+  /// Loop through all the material interactions and add them to the
+  /// associated surface
+  ///
+  /// @param mState The current state map
+  /// @param mTrack The material track to be mapped
+  ///
+  void mapInteraction(State& mState, RecordedMaterialTrack& mTrack) const;
+
+  /// Loop through all the material interactions and add them to the
+  /// associated surface
+  ///
+  /// @param mState The current state map
+  /// @param rMaterial Vector of all the material interactions that will be mapped
+  ///
+  /// @note The material interactions are assumed to have an associated surface ID
+  void mapSurfaceInteraction(State& mState,
+                             std::vector<MaterialInteraction>& rMaterial) const;
 
  private:
   /// @brief finds all surfaces with ProtoSurfaceMaterial of a volume

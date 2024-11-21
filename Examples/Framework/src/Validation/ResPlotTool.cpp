@@ -1,15 +1,25 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsExamples/Validation/ResPlotTool.hpp"
 
-#include "Acts/Surfaces/PerigeeSurface.hpp"
-#include "Acts/Utilities/Helpers.hpp"
+#include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/Surfaces/Surface.hpp"
+#include "Acts/Utilities/Result.hpp"
+#include "ActsExamples/EventData/SimParticle.hpp"
+
+#include <cmath>
+#include <optional>
+#include <ostream>
+
+#include <TH1.h>
+#include <TH2.h>
+#include <TString.h>
 
 ActsExamples::ResPlotTool::ResPlotTool(
     const ActsExamples::ResPlotTool::Config& cfg, Acts::Logging::Level lvl)
@@ -134,7 +144,7 @@ void ActsExamples::ResPlotTool::write(
 
 void ActsExamples::ResPlotTool::fill(
     ResPlotTool::ResPlotCache& resPlotCache, const Acts::GeometryContext& gctx,
-    const ActsFatras::Particle& truthParticle,
+    const SimParticleState& truthParticle,
     const Acts::BoundTrackParameters& fittedParamters) const {
   using ParametersVector = Acts::BoundTrackParameters::ParametersVector;
   using Acts::VectorHelpers::eta;
@@ -146,32 +156,37 @@ void ActsExamples::ResPlotTool::fill(
   auto trackParameter = fittedParamters.parameters();
 
   // get the perigee surface
-  auto pSurface = &fittedParamters.referenceSurface();
+  const auto& pSurface = fittedParamters.referenceSurface();
 
   // get the truth position and momentum
   ParametersVector truthParameter = ParametersVector::Zero();
 
   // get the truth perigee parameter
-  auto lpResult = pSurface->globalToLocal(gctx, truthParticle.position(),
-                                          truthParticle.unitDirection());
-  if (lpResult.ok()) {
+  auto intersection =
+      pSurface
+          .intersect(gctx, truthParticle.position(), truthParticle.direction())
+          .closest();
+  if (intersection.isValid()) {
+    auto lpResult = pSurface.globalToLocal(gctx, intersection.position(),
+                                           truthParticle.direction());
+    assert(lpResult.ok());
+
     truthParameter[Acts::BoundIndices::eBoundLoc0] =
         lpResult.value()[Acts::BoundIndices::eBoundLoc0];
     truthParameter[Acts::BoundIndices::eBoundLoc1] =
         lpResult.value()[Acts::BoundIndices::eBoundLoc1];
   } else {
-    ACTS_ERROR("Global to local transformation did not succeed.");
+    ACTS_ERROR("Cannot get the truth perigee parameter");
   }
   truthParameter[Acts::BoundIndices::eBoundPhi] =
-      phi(truthParticle.unitDirection());
+      phi(truthParticle.direction());
   truthParameter[Acts::BoundIndices::eBoundTheta] =
-      theta(truthParticle.unitDirection());
-  truthParameter[Acts::BoundIndices::eBoundQOverP] =
-      truthParticle.charge() / truthParticle.absoluteMomentum();
+      theta(truthParticle.direction());
+  truthParameter[Acts::BoundIndices::eBoundQOverP] = truthParticle.qOverP();
   truthParameter[Acts::BoundIndices::eBoundTime] = truthParticle.time();
 
   // get the truth eta and pT
-  const auto truthEta = eta(truthParticle.unitDirection());
+  const auto truthEta = eta(truthParticle.direction());
   const auto truthPt = truthParticle.transverseMomentum();
 
   // fill the histograms for residual and pull
@@ -214,7 +229,7 @@ void ActsExamples::ResPlotTool::refinement(
   for (unsigned int parID = 0; parID < Acts::eBoundSize; parID++) {
     std::string parName = m_cfg.paramNames.at(parID);
     // refine the plots vs eta
-    for (int j = 1; j <= bEta.nBins; j++) {
+    for (int j = 1; j <= static_cast<int>(bEta.nBins()); j++) {
       TH1D* temp_res = resPlotCache.res_vs_eta.at(parName)->ProjectionY(
           Form("%s_projy_bin%d", "Residual_vs_eta_Histo", j), j, j);
       PlotHelpers::anaHisto(temp_res, j,
@@ -229,7 +244,7 @@ void ActsExamples::ResPlotTool::refinement(
     }
 
     // refine the plots vs pT
-    for (int j = 1; j <= bPt.nBins; j++) {
+    for (int j = 1; j <= static_cast<int>(bPt.nBins()); j++) {
       TH1D* temp_res = resPlotCache.res_vs_pT.at(parName)->ProjectionY(
           Form("%s_projy_bin%d", "Residual_vs_pT_Histo", j), j, j);
       PlotHelpers::anaHisto(temp_res, j, resPlotCache.resMean_vs_pT.at(parName),

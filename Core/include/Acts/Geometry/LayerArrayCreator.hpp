@@ -1,16 +1,20 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/ILayerArrayCreator.hpp"
+#include "Acts/Utilities/BinningType.hpp"
 #include "Acts/Utilities/Logger.hpp"
+
+#include <memory>
+#include <utility>
 
 namespace Acts {
 
@@ -45,7 +49,7 @@ class LayerArrayCreator : public ILayerArrayCreator {
 
   /// LayerArrayCreator interface method
   ///
-  /// @param gctx ist the geometry context for witch the array is built
+  /// @param gctx is the geometry context for witch the array is built
   /// @param layersInput are the layers to be moved into an array
   /// @param min is the minimum value for binning
   /// @param max is the maximum value for binning
@@ -56,7 +60,7 @@ class LayerArrayCreator : public ILayerArrayCreator {
   std::unique_ptr<const LayerArray> layerArray(
       const GeometryContext& gctx, const LayerVector& layersInput, double min,
       double max, BinningType bType = arbitrary,
-      BinningValue bValue = binX) const override;
+      BinningValue bValue = BinningValue::binX) const override;
 
   /// set logging instance
   void setLogger(std::unique_ptr<const Logger> logger) {

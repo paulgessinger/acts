@@ -1,16 +1,21 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsExamples/Io/Root/RootSimHitWriter.hpp"
 
 #include "Acts/Definitions/Units.hpp"
+#include "Acts/Geometry/GeometryIdentifier.hpp"
+#include "ActsExamples/Framework/AlgorithmContext.hpp"
+#include "ActsFatras/EventData/Barcode.hpp"
+#include "ActsFatras/EventData/Hit.hpp"
 
 #include <ios>
+#include <ostream>
 #include <stdexcept>
 
 #include <TFile.h>
@@ -69,24 +74,19 @@ ActsExamples::RootSimHitWriter::~RootSimHitWriter() {
   }
 }
 
-ActsExamples::ProcessCode ActsExamples::RootSimHitWriter::endRun() {
-  if (m_outputFile != nullptr) {
-    m_outputFile->cd();
-    m_outputTree->Write();
-    ACTS_VERBOSE("Wrote hits to tree '" << m_cfg.treeName << "' in '"
-                                        << m_cfg.filePath << "'");
-    m_outputFile->Close();
-  }
+ActsExamples::ProcessCode ActsExamples::RootSimHitWriter::finalize() {
+  m_outputFile->cd();
+  m_outputTree->Write();
+  m_outputFile->Close();
+
+  ACTS_VERBOSE("Wrote hits to tree '" << m_cfg.treeName << "' in '"
+                                      << m_cfg.filePath << "'");
+
   return ProcessCode::SUCCESS;
 }
 
 ActsExamples::ProcessCode ActsExamples::RootSimHitWriter::writeT(
     const AlgorithmContext& ctx, const ActsExamples::SimHitContainer& hits) {
-  if (m_outputFile == nullptr) {
-    ACTS_ERROR("Missing output file");
-    return ProcessCode::ABORT;
-  }
-
   // ensure exclusive access to tree/file while writing
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
@@ -99,7 +99,7 @@ ActsExamples::ProcessCode ActsExamples::RootSimHitWriter::writeT(
     m_tx = hit.fourPosition().x() / Acts::UnitConstants::mm;
     m_ty = hit.fourPosition().y() / Acts::UnitConstants::mm;
     m_tz = hit.fourPosition().z() / Acts::UnitConstants::mm;
-    m_tt = hit.fourPosition().w() / Acts::UnitConstants::ns;
+    m_tt = hit.fourPosition().w() / Acts::UnitConstants::mm;
     // write four-momentum before interaction
     m_tpx = hit.momentum4Before().x() / Acts::UnitConstants::GeV;
     m_tpy = hit.momentum4Before().y() / Acts::UnitConstants::GeV;

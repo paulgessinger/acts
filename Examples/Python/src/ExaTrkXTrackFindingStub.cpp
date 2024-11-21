@@ -1,18 +1,17 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2022 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-#include "Acts/Plugins/Python/Utilities.hpp"
-
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 namespace Acts::Python {
-void addExaTrkXTrackFinding(Context&) {
+struct Context;
+}  // namespace Acts::Python
+
+namespace Acts::Python {
+void addExaTrkXTrackFinding(Context& /*ctx*/) {
   // dummy function
 }
 }  // namespace Acts::Python

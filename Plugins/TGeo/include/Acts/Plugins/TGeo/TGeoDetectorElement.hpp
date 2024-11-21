@@ -1,17 +1,20 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
+
+#include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Geometry/DetectorElementBase.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
-#include "Acts/Plugins/Identification/IdentifiedDetectorElement.hpp"
-#include "Acts/Plugins/Identification/Identifier.hpp"
 
 #include <iostream>
+#include <memory>
+#include <string>
 
 #include "TGeoManager.h"
 
@@ -22,18 +25,23 @@ class SurfaceBounds;
 class PlanarBounds;
 class DiscBounds;
 class DigitizationModule;
+class Surface;
 
 /// @class TGeoDetectorElement
 ///
 /// DetectorElement plugin for ROOT TGeo shapes. Added possibility to hand over
 /// transformation matrix.
 ///
-/// @todo what if shape conversion failes? add implementation of more than one
+/// @todo what if shape conversion fails? add implementation of more than one
 /// surface per module, implementing also for other shapes->Cone,ConeSeg,Tube?
 /// what if not used with DD4hep?
 ///
-class TGeoDetectorElement : public IdentifiedDetectorElement {
+class TGeoDetectorElement : public Acts::DetectorElementBase {
  public:
+  using identifier_type = unsigned long long;
+  using identifier_diff = long long;
+  using Identifier = identifier_type;
+
   /// Broadcast the context type
   using ContextType = GeometryContext;
 
@@ -84,7 +92,7 @@ class TGeoDetectorElement : public IdentifiedDetectorElement {
   /// @param tgThickness the thickness of this detector element
   TGeoDetectorElement(const Identifier& identifier, const TGeoNode& tGeoNode,
                       const Transform3& tgTransform,
-                      std::shared_ptr<const PlanarBounds> tgBounds,
+                      const std::shared_ptr<const PlanarBounds>& tgBounds,
                       double tgThickness = 0.);
 
   /// Constructor with pre-computed disk surface.
@@ -99,26 +107,25 @@ class TGeoDetectorElement : public IdentifiedDetectorElement {
   /// @param tgThickness the thickness of this detector element
   TGeoDetectorElement(const Identifier& identifier, const TGeoNode& tGeoNode,
                       const Transform3& tgTransform,
-                      std::shared_ptr<const DiscBounds> tgBounds,
+                      const std::shared_ptr<const DiscBounds>& tgBounds,
                       double tgThickness = 0.);
 
   ~TGeoDetectorElement() override;
 
-  Identifier identifier() const final;
+  Identifier identifier() const;
 
   /// Return local to global transform associated with this identifier
   ///
   /// @param gctx The current geometry context object, e.g. alignment
   const Transform3& transform(const GeometryContext& gctx) const override;
 
-  /// Return surface associated with this identifier, which should come from the
+  /// Return surface associated with this detector element
   const Surface& surface() const override;
 
-  /// Retrieve the DigitizationModule
-  const std::shared_ptr<const DigitizationModule> digitizationModule()
-      const final {
-    return nullptr;
-  };
+  /// Return surface associated with this detector element
+  ///
+  /// @note this is the non-const access
+  Surface& surface() override;
 
   /// Returns the thickness of the module
   double thickness() const override;
@@ -141,7 +148,7 @@ class TGeoDetectorElement : public IdentifiedDetectorElement {
   std::shared_ptr<Surface> m_surface{nullptr};
 };
 
-inline Identifier TGeoDetectorElement::identifier() const {
+inline TGeoDetectorElement::Identifier TGeoDetectorElement::identifier() const {
   return m_identifier;
 }
 
@@ -151,6 +158,10 @@ inline const Transform3& TGeoDetectorElement::transform(
 }
 
 inline const Surface& TGeoDetectorElement::surface() const {
+  return (*m_surface);
+}
+
+inline Surface& TGeoDetectorElement::surface() {
   return (*m_surface);
 }
 

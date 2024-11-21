@@ -1,12 +1,14 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "SteppingAction.hpp"
+
+#include "Acts/Utilities/Helpers.hpp"
 
 #include <stdexcept>
 
@@ -23,7 +25,7 @@ namespace ActsExamples::Geant4::HepMC3 {
 SteppingAction* SteppingAction::s_instance = nullptr;
 
 SteppingAction* SteppingAction::instance() {
-  // Static acces function via G4RunManager
+  // Static access function via G4RunManager
   return s_instance;
 }
 
@@ -43,10 +45,10 @@ SteppingAction::~SteppingAction() {
 
 void SteppingAction::UserSteppingAction(const G4Step* step) {
   // Test if the event should be aborted
-  if (std::find(m_eventRejectionProcess.begin(), m_eventRejectionProcess.end(),
-                step->GetPostStepPoint()
-                    ->GetProcessDefinedStep()
-                    ->GetProcessName()) != m_eventRejectionProcess.end()) {
+  if (Acts::rangeContainsValue(m_eventRejectionProcess,
+                               step->GetPostStepPoint()
+                                   ->GetProcessDefinedStep()
+                                   ->GetProcessName())) {
     m_eventAborted = true;
     G4RunManager::GetRunManager()->AbortEvent();
     return;
@@ -77,7 +79,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
   auto postParticle = std::make_shared<::HepMC3::GenParticle>(
       mom4, track->GetDynamicParticle()->GetPDGcode());
 
-  // The process the led to the current state
+  // The process that led to the current state
   auto process = std::make_shared<::HepMC3::StringAttribute>(
       step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
 

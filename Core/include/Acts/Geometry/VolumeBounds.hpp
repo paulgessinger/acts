@@ -1,42 +1,47 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/Direction.hpp"
 #include "Acts/Geometry/Volume.hpp"
+#include "Acts/Surfaces/RegularSurface.hpp"
 #include "Acts/Utilities/BinningType.hpp"
 
 #include <cmath>
 #include <iostream>
 #include <memory>
+#include <numbers>
 #include <utility>
 #include <vector>
 
 namespace Acts {
 
 class Surface;
-
 class VolumeBounds;
-using VolumeBoundsPtr = std::shared_ptr<const VolumeBounds>;
+class Direction;
 
-using SurfacePtr = std::shared_ptr<const Surface>;
-using OrientedSurface = std::pair<SurfacePtr, NavigationDirection>;
-using OrientedSurfaces = std::vector<OrientedSurface>;
+struct OrientedSurface {
+  std::shared_ptr<RegularSurface> surface;
+  Direction direction;
+};
 
 // Planar definitions to help construct the boundary surfaces
 static const Transform3 s_planeXY = Transform3::Identity();
-static const Transform3 s_planeYZ = AngleAxis3(0.5 * M_PI, Vector3::UnitY()) *
-                                    AngleAxis3(0.5 * M_PI, Vector3::UnitZ()) *
-                                    Transform3::Identity();
-static const Transform3 s_planeZX = AngleAxis3(-0.5 * M_PI, Vector3::UnitX()) *
-                                    AngleAxis3(-0.5 * M_PI, Vector3::UnitZ()) *
-                                    Transform3::Identity();
+static const Transform3 s_planeYZ =
+    AngleAxis3(std::numbers::pi / 2., Vector3::UnitY()) *
+    AngleAxis3(std::numbers::pi / 2., Vector3::UnitZ()) *
+    Transform3::Identity();
+static const Transform3 s_planeZX =
+    AngleAxis3(-std::numbers::pi / 2., Vector3::UnitX()) *
+    AngleAxis3(-std::numbers::pi / 2., Vector3::UnitZ()) *
+    Transform3::Identity();
 
 /// @class VolumeBounds
 ///
@@ -55,15 +60,21 @@ class VolumeBounds {
   // @enum BoundsType
   /// This is nested to the VolumeBounds, as also SurfaceBounds will have
   /// Bounds Type.
-  enum BoundsType : int {
-    eCone = 0,
-    eCuboid = 1,
-    eCutoutCylinder = 2,
-    eCylinder = 3,
-    eGenericCuboid = 4,
-    eTrapezoid = 5,
-    eOther = 6
+  enum class BoundsType {
+    eCone,
+    eCuboid,
+    eCutoutCylinder,
+    eCylinder,
+    eGenericCuboid,
+    eTrapezoid,
+    eOther,
+
   };
+
+  using enum BoundsType;
+
+  /// Static member to get the name of the BoundsType
+  static const std::vector<std::string> s_boundsTypeNames;
 
   VolumeBounds() = default;
 
@@ -98,7 +109,7 @@ class VolumeBounds {
   /// It will throw an exception if the orientation prescription is not adequate
   ///
   /// @return a vector of surfaces bounding this volume
-  virtual OrientedSurfaces orientedSurfaces(
+  virtual std::vector<OrientedSurface> orientedSurfaces(
       const Transform3& transform = Transform3::Identity()) const = 0;
 
   /// Construct bounding box for this shape
@@ -109,6 +120,19 @@ class VolumeBounds {
   virtual Volume::BoundingBox boundingBox(
       const Transform3* trf = nullptr, const Vector3& envelope = {0, 0, 0},
       const Volume* entity = nullptr) const = 0;
+
+  /// Get the canonical binning values, i.e. the binning values
+  /// for that fully describe the shape's extent
+  ///
+  /// @return vector of canonical binning values
+  ///
+  /// @note This is the default implementation that
+  /// returns the bounding box binning. Individual shapes
+  /// should override this method
+  virtual std::vector<Acts::BinningValue> canonicalBinning() const {
+    return {Acts::BinningValue::binX, Acts::BinningValue::binY,
+            Acts::BinningValue::binZ};
+  };
 
   /// Binning offset - overloaded for some R-binning types
   ///
@@ -149,5 +173,7 @@ inline bool operator==(const VolumeBounds& lhs, const VolumeBounds& rhs) {
   }
   return (lhs.type() == rhs.type()) && (lhs.values() == rhs.values());
 }
+
+std::ostream& operator<<(std::ostream& sl, const VolumeBounds::BoundsType& bt);
 
 }  // namespace Acts

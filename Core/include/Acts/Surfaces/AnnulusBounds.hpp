@@ -1,20 +1,27 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/Tolerance.hpp"
 #include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/Surfaces/BoundaryTolerance.hpp"
 #include "Acts/Surfaces/DiscBounds.hpp"
+#include "Acts/Surfaces/SurfaceBounds.hpp"
 #include "Acts/Utilities/detail/periodic.hpp"
 
 #include <array>
+#include <cmath>
 #include <exception>
+#include <iosfwd>
+#include <numbers>
+#include <stdexcept>
 #include <vector>
 
 namespace Acts {
@@ -79,10 +86,10 @@ class AnnulusBounds : public DiscBounds {
   /// the bounds  Inside can be called without/with tolerances.
   ///
   /// @param lposition Local position (assumed to be in right surface frame)
-  /// @param bcheck boundary check directive
+  /// @param boundaryTolerance boundary check directive
   /// @return boolean indicator for the success of this operation
-  virtual bool inside(const Vector2& lposition,
-                      const BoundaryCheck& bcheck) const final;
+  bool inside(const Vector2& lposition,
+              const BoundaryTolerance& boundaryTolerance) const final;
 
   /// Outstream operator
   ///
@@ -121,25 +128,26 @@ class AnnulusBounds : public DiscBounds {
   Vector2 moduleOrigin() const;
 
   /// This method returns the four corners of the bounds in polar coordinates
-  /// Starting from the upper right (max R, pos locX) and proceding clock-wise
+  /// Starting from the upper right (max R, pos locX) and proceeding clock-wise
   /// i.e. (max R; pos locX), (min R; pos locX), (min R; neg loc X), (max R: neg
   /// locX)
   std::vector<Vector2> corners() const;
 
   /// This method returns the xy coordinates of the four corners of the
-  /// bounds in module coorindates (in x/y)
-  /// Starting from the upper right (max R, pos locX) and proceding clock-wise
+  /// bounds in module coordinates (in x/y), and if quarterSegments is bigger or
+  /// equal to 0, the curved part of the segment is included and approximated
+  /// by the corresponding number of segments.
+  ///
+  /// Starting from the upper right (max R, pos locX) and proceeding clock-wise
   /// i.e. (max R; pos locX), (min R; pos locX), (min R; neg loc X), (max R: neg
   /// locX)
   ///
-  /// @param lseg the number of segments used to approximate
-  /// and eventually curved line
-  ///
-  /// @note that that if @c lseg > 0, the extrema points are given,
-  ///  which may slightly alter the number of segments returned
+  /// @param quarterSegments the number of segments used to approximate
+  /// a quarter of a circle
   ///
   /// @return vector for vertices in 2D
-  std::vector<Vector2> vertices(unsigned int lseg) const;
+  std::vector<Vector2> vertices(
+      unsigned int quarterSegments = 2u) const override;
 
   /// This method returns inner radius
   double rMin() const final;
@@ -188,7 +196,7 @@ class AnnulusBounds : public DiscBounds {
   virtual bool inside(const Vector2& lposition, double tolR,
                       double tolPhi) const final;
 
-  /// Transform the strip cartesien
+  /// Transform the strip cartesian
   /// into the module polar system
   ///
   /// @param vStripXY the position in the cartesian strip system
@@ -197,10 +205,10 @@ class AnnulusBounds : public DiscBounds {
 
   /// Private helper method
   Vector2 closestOnSegment(const Vector2& a, const Vector2& b, const Vector2& p,
-                           const SymMatrix2& weight) const;
+                           const SquareMatrix2& weight) const;
 
-  /// Private helper mehtod
-  double squaredNorm(const Vector2& v, const SymMatrix2& weight) const;
+  /// Private helper method
+  double squaredNorm(const Vector2& v, const SquareMatrix2& weight) const;
 };
 
 inline SurfaceBounds::BoundsType AnnulusBounds::type() const {
@@ -224,13 +232,13 @@ inline double AnnulusBounds::phiMax() const {
 }
 
 inline bool AnnulusBounds::coversFullAzimuth() const {
-  return (std::abs((get(eMinPhiRel) - get(eMaxPhiRel)) - M_PI) <
+  return (std::abs((get(eMinPhiRel) - get(eMaxPhiRel)) - std::numbers::pi) <
           s_onSurfaceTolerance);
 }
 
 inline bool AnnulusBounds::insideRadialBounds(double R,
                                               double tolerance) const {
-  return ((R + tolerance) > get(eMinR) and (R - tolerance) < get(eMaxR));
+  return ((R + tolerance) > get(eMinR) && (R - tolerance) < get(eMaxR));
 }
 
 inline double AnnulusBounds::binningValueR() const {
@@ -248,12 +256,12 @@ inline std::vector<double> AnnulusBounds::values() const {
 }
 
 inline void AnnulusBounds::checkConsistency() noexcept(false) {
-  if (get(eMinR) < 0. or get(eMaxR) < 0. or get(eMinR) > get(eMaxR) or
+  if (get(eMinR) < 0. || get(eMaxR) < 0. || get(eMinR) > get(eMaxR) ||
       std::abs(get(eMinR) - get(eMaxR)) < s_epsilon) {
     throw std::invalid_argument("AnnulusBounds: invalid radial setup.");
   }
-  if (get(eMinPhiRel) != detail::radian_sym(get(eMinPhiRel)) or
-      get(eMaxPhiRel) != detail::radian_sym(get(eMaxPhiRel)) or
+  if (get(eMinPhiRel) != detail::radian_sym(get(eMinPhiRel)) ||
+      get(eMaxPhiRel) != detail::radian_sym(get(eMaxPhiRel)) ||
       get(eMinPhiRel) > get(eMaxPhiRel)) {
     throw std::invalid_argument("AnnulusBounds: invalid phi boundary setup.");
   }

@@ -1,15 +1,14 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018-2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Material/MaterialSlab.hpp"
-#include "Acts/Utilities/TypeTraits.hpp"
 #include "ActsFatras/EventData/Particle.hpp"
 
 #include <bitset>
@@ -37,7 +36,7 @@ struct TupleIndexOf<T, std::tuple<U, Types...>> {
 
 // Construct an index sequence for a subset of the tuple elements.
 //
-// Whether an element is part of the subset is defined by a the predicate
+// Whether an element is part of the subset is defined by the predicate
 // template type. It must take the element type as its only template parameter
 // and must provide a static `value` member value. If the value evaluates to
 // `true`, then the corresponding index will be part of the index sequence.
@@ -53,7 +52,7 @@ struct TupleIndexOf<T, std::tuple<U, Types...>> {
 //     -> TupleFilterImpl<..., kCounter=0, 0, 1, 3> // terminate
 //
 template <template <typename> typename predicate_t, typename tuple_t,
-          size_t kCounter, size_t... kIndices>
+          std::size_t kCounter, std::size_t... kIndices>
 struct TupleFilterImpl {
   static constexpr auto kIndex = kCounter - 1u;
   static constexpr bool kElementSelection =
@@ -69,7 +68,7 @@ struct TupleFilterImpl {
       std::conditional_t<kElementSelection, SelectElement, SkipElement>;
 };
 template <template <typename> typename predicate_t, typename tuple_t,
-          size_t... kIndices>
+          std::size_t... kIndices>
 struct TupleFilterImpl<predicate_t, tuple_t, 0u, kIndices...> {
   using Type = std::index_sequence<kIndices...>;
 };
@@ -81,34 +80,31 @@ using TupleFilter = typename TupleFilterImpl<predicate_t, tuple_t,
 ///
 /// Only checks for the existence of the templated `generatePathLimits` method
 template <typename process_t>
-class IsPointLikeProcess {
-  struct MockUniformRandomBitGenerator {
-    using result_type = unsigned int;
-
-    static constexpr result_type min() { return 0u; }
-    static constexpr result_type max() { return 1u << 15u; }
-    constexpr result_type operator()() { return 0u; }
-  };
-
-  METHOD_TRAIT(generatePathLimits_method_t, generatePathLimits);
-
-  using scalar_pair_t = std::pair<Particle::Scalar, Particle::Scalar>;
-
- public:
-  static constexpr bool value = Acts::Concepts::has_method<
-      const process_t, scalar_pair_t, generatePathLimits_method_t,
-      MockUniformRandomBitGenerator&, const Particle&>;
+concept PointLikeProcessConcept = requires(
+    const process_t& p, std::uniform_int_distribution<unsigned int>& rng,
+    const Particle& prt) {
+  {
+    p.generatePathLimits(rng, prt)
+  } -> std::same_as<std::pair<Particle::Scalar, Particle::Scalar>>;
 };
 
 template <typename process_t>
-struct IsContinuousProcess {
-  static constexpr bool value = not IsPointLikeProcess<process_t>::value;
+concept ContinuousProcessConcept = !PointLikeProcessConcept<process_t>;
+
+template <typename process_t>
+struct PointLikeProcessTrait {
+  static constexpr bool value = PointLikeProcessConcept<process_t>;
+};
+
+template <typename process_t>
+struct ContinuousProcessTrait {
+  static constexpr bool value = ContinuousProcessConcept<process_t>;
 };
 
 template <typename processes_t>
-using ContinuousIndices = TupleFilter<IsContinuousProcess, processes_t>;
+using ContinuousIndices = TupleFilter<ContinuousProcessTrait, processes_t>;
 template <typename processes_t>
-using PointLikeIndices = TupleFilter<IsPointLikeProcess, processes_t>;
+using PointLikeIndices = TupleFilter<PointLikeProcessTrait, processes_t>;
 
 }  // namespace detail
 
@@ -119,7 +115,7 @@ using PointLikeIndices = TupleFilter<IsPointLikeProcess, processes_t>;
 ///
 /// Continuous processes scale with the passed material. They tpyically
 /// describe effective results of a large number of small interactions such as
-/// multiple scattering or ionisation. Continous process types **must** provide
+/// multiple scattering or ionisation. Continuous process types **must** provide
 /// a call operator with the following signature:
 ///
 ///     template <typename generator_t>
@@ -167,7 +163,7 @@ using PointLikeIndices = TupleFilter<IsPointLikeProcess, processes_t>;
 ///   destruction is typically of more interest to the user and this simplifies
 ///   validation.
 ///
-/// The physics processes are extendable by the user to accomodate their
+/// The physics processes are extendable by the user to accommodate their
 /// specific requirements. While the set of available physics processes must be
 /// configured at compile-time, within that set, processes can again be
 /// selectively disabled at run-time. By default all processes are applied.
@@ -185,12 +181,12 @@ class InteractionList {
         std::numeric_limits<Particle::Scalar>::infinity();
     Particle::Scalar l0Limit =
         std::numeric_limits<Particle::Scalar>::infinity();
-    size_t x0Process = SIZE_MAX;
-    size_t l0Process = SIZE_MAX;
+    std::size_t x0Process = std::numeric_limits<std::size_t>::max();
+    std::size_t l0Process = std::numeric_limits<std::size_t>::max();
   };
 
   /// Disable a specific process identified by index.
-  void disable(size_t process) { m_mask.set(process); }
+  void disable(std::size_t process) { m_mask.set(process); }
   /// Disable a specific process identified by type.
   ///
   /// @note Disables only the first element, if multiple elements of the same
@@ -201,7 +197,7 @@ class InteractionList {
   }
 
   /// Access a specific process identified by index.
-  template <size_t kProcess>
+  template <std::size_t kProcess>
   std::tuple_element_t<kProcess, Processes>& get() {
     return std::get<kProcess>(m_processes);
   }
@@ -221,7 +217,7 @@ class InteractionList {
   /// @param[in]     slab      is the passed material
   /// @param[in,out] particle  is the particle being updated
   /// @param[out]    generated is the container of generated particles
-  /// @return Break condition, i.e. whether a process stoped the propagation
+  /// @return Break condition, i.e. whether a process stopped the propagation
   template <typename generator_t>
   bool runContinuous(generator_t& rng, const Acts::MaterialSlab& slab,
                      Particle& particle,
@@ -257,7 +253,8 @@ class InteractionList {
   /// `armPointLike(...)` call, but this is not enforced. How to select the
   /// correct process requires more information that is not available here.
   template <typename generator_t>
-  bool runPointLike(generator_t& rng, size_t processIndex, Particle& particle,
+  bool runPointLike(generator_t& rng, std::size_t processIndex,
+                    Particle& particle,
                     std::vector<Particle>& generated) const {
     return runPointLikeImpl(rng, processIndex, particle, generated,
                             PointLikeIndices());
@@ -274,10 +271,10 @@ class InteractionList {
   template <typename generator_t, std::size_t kI0, std::size_t... kIs>
   bool runContinuousImpl(generator_t& rng, const Acts::MaterialSlab& slab,
                          Particle& particle, std::vector<Particle>& generated,
-                         std::index_sequence<kI0, kIs...>) const {
+                         std::index_sequence<kI0, kIs...> /*indices*/) const {
     const auto& process = std::get<kI0>(m_processes);
     // only call process if it is not masked
-    if (not m_mask[kI0] and process(rng, slab, particle, generated)) {
+    if (!m_mask[kI0] && process(rng, slab, particle, generated)) {
       // exit early in case the process signals an abort
       return true;
     }
@@ -285,8 +282,11 @@ class InteractionList {
                              std::index_sequence<kIs...>());
   }
   template <typename generator_t>
-  bool runContinuousImpl(generator_t&, const Acts::MaterialSlab&, Particle&,
-                         std::vector<Particle>&, std::index_sequence<>) const {
+  bool runContinuousImpl(generator_t& /*rng*/,
+                         const Acts::MaterialSlab& /*slab*/,
+                         Particle& /*particle*/,
+                         std::vector<Particle>& /*generated*/,
+                         std::index_sequence<> /*indices*/) const {
     return false;
   }
 
@@ -296,9 +296,9 @@ class InteractionList {
   template <typename generator_t, std::size_t kI0, std::size_t... kIs>
   void armPointLikeImpl(generator_t& rng, const Particle& particle,
                         Selection& selection,
-                        std::index_sequence<kI0, kIs...>) const {
+                        std::index_sequence<kI0, kIs...> /*indices*/) const {
     // only arm the process if it is not masked
-    if (not m_mask[kI0]) {
+    if (!m_mask[kI0]) {
       auto [x0Limit, l0Limit] =
           std::get<kI0>(m_processes).generatePathLimits(rng, particle);
       if (x0Limit < selection.x0Limit) {
@@ -314,17 +314,18 @@ class InteractionList {
     armPointLikeImpl(rng, particle, selection, std::index_sequence<kIs...>());
   }
   template <typename generator_t>
-  void armPointLikeImpl(generator_t&, const Particle&, Selection&,
-                        std::index_sequence<>) const {}
+  void armPointLikeImpl(generator_t& /*rng*/, const Particle& /*particle*/,
+                        Selection& /*selection*/,
+                        std::index_sequence<> /*indices*/) const {}
 
   // for the `runPointLike` call we need to call just one process. since we can
   // not select a tuple element with a runtime index, we need to iterate over
   // all processes with a compile-time recursive function until we reach the
   // requested one.
-  template <typename generator_t, size_t kI0, size_t... kIs>
-  bool runPointLikeImpl(generator_t& rng, size_t processIndex,
+  template <typename generator_t, std::size_t kI0, std::size_t... kIs>
+  bool runPointLikeImpl(generator_t& rng, std::size_t processIndex,
                         Particle& particle, std::vector<Particle>& generated,
-                        std::index_sequence<kI0, kIs...>) const {
+                        std::index_sequence<kI0, kIs...> /*indices*/) const {
     if (kI0 == processIndex) {
       if (m_mask[kI0]) {
         // the selected process is masked. since nothing is executed the
@@ -338,8 +339,10 @@ class InteractionList {
                             std::index_sequence<kIs...>());
   }
   template <typename generator_t>
-  bool runPointLikeImpl(generator_t&, size_t, Particle&, std::vector<Particle>&,
-                        std::index_sequence<>) const {
+  bool runPointLikeImpl(generator_t& /*rng*/, std::size_t /*processIndex*/,
+                        Particle& /*particle*/,
+                        std::vector<Particle>& /*generated*/,
+                        std::index_sequence<> /*indices*/) const {
     // the requested process index is outside the possible range. **do not**
     // treat this as an error to simplify the case of an empty physics lists or
     // a default process index.

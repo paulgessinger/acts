@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -19,7 +19,6 @@
 #include "Acts/Geometry/PlaneLayer.hpp"
 #include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/Geometry/TrackingVolume.hpp"
-#include "Acts/Geometry/detail/DefaultDetectorElementBase.hpp"
 #include "Acts/Material/HomogeneousSurfaceMaterial.hpp"
 #include "Acts/Surfaces/PlaneSurface.hpp"
 #include "Acts/Surfaces/RectangleBounds.hpp"
@@ -32,11 +31,10 @@
 #include <functional>
 #include <vector>
 
-namespace Acts {
-namespace Test {
+namespace Acts::Test {
 
 struct CubicTrackingGeometry {
-  /// Default constructor for the Cubit tracking geometry
+  /// Default constructor for the Cubic tracking geometry
   ///
   /// @param gctx the geometry context for this geometry at building time
   CubicTrackingGeometry(const GeometryContext& gctx) : geoContext(gctx) {
@@ -74,12 +72,29 @@ struct CubicTrackingGeometry {
     translations.push_back({2_m - eps, 0., 0.});
     translations.push_back({2_m + eps, 0., 0.});
 
+    std::vector<double> rotAngle;
+    rotAngle.push_back(0.);
+    rotAngle.push_back(0.);
+    rotAngle.push_back(0.026);
+    rotAngle.push_back(-0.026);
+    rotAngle.push_back(0.026);
+    rotAngle.push_back(-0.026);
+
     // Construct surfaces
     std::array<std::shared_ptr<const Surface>, 6> surfaces;
-    unsigned int i;
-    for (i = 0; i < translations.size(); i++) {
-      Transform3 trafo(Transform3::Identity() * rotation);
+    for (unsigned int i = 0; i < translations.size(); i++) {
+      RotationMatrix3 rotation_strip;
+      double angle = rotAngle[i];
+      Vector3 xPos(cos(angle), sin(angle), 0.);
+      Vector3 yPos(-sin(angle), cos(angle), 0.);
+      Vector3 zPos(0., 0., 1.);
+      rotation_strip.col(0) = xPos;
+      rotation_strip.col(1) = yPos;
+      rotation_strip.col(2) = zPos;
+
+      Transform3 trafo(Transform3::Identity() * rotation * rotation_strip);
       trafo.translation() = translations[i];
+
       // Create the detector element
       auto detElement = std::make_unique<const DetectorElementStub>(
           trafo, rBounds, 1._um, surfaceMaterial);
@@ -90,8 +105,8 @@ struct CubicTrackingGeometry {
     }
 
     // Construct layers
-    std::array<LayerPtr, 6> layers;
-    for (i = 0; i < 6; i++) {
+    std::array<LayerPtr, 6> layers{};
+    for (unsigned int i = 0; i < 6; i++) {
       Transform3 trafo(Transform3::Identity() * rotation);
       trafo.translation() = translations[i];
 
@@ -108,8 +123,7 @@ struct CubicTrackingGeometry {
     Transform3 trafoVol1(Transform3::Identity());
     trafoVol1.translation() = Vector3(-1.5_m, 0., 0.);
 
-    auto boundsVol =
-        std::make_shared<const CuboidVolumeBounds>(1.5_m, 0.5_m, 0.5_m);
+    auto boundsVol = std::make_shared<CuboidVolumeBounds>(1.5_m, 0.5_m, 0.5_m);
 
     LayerArrayCreator::Config lacConfig;
     LayerArrayCreator layArrCreator(
@@ -122,24 +136,25 @@ struct CubicTrackingGeometry {
         geoContext, layVec, -2_m - 1._mm, -1._m + 1._mm, BinningType::arbitrary,
         BinningValue::binX));
 
-    auto trackVolume1 =
-        TrackingVolume::create(trafoVol1, boundsVol, nullptr,
-                               std::move(layArr1), nullptr, {}, "Volume 1");
+    auto trackVolume1 = std::make_shared<TrackingVolume>(
+        trafoVol1, boundsVol, nullptr, std::move(layArr1), nullptr,
+        MutableTrackingVolumeVector{}, "Volume 1");
 
     // Build volume for surfaces with positive x-values
     Transform3 trafoVol2(Transform3::Identity());
     trafoVol2.translation() = Vector3(1.5_m, 0., 0.);
 
     layVec.clear();
-    for (i = 2; i < 6; i++)
+    for (unsigned int i = 2; i < 6; i++) {
       layVec.push_back(layers[i]);
+    }
     std::unique_ptr<const LayerArray> layArr2(
         layArrCreator.layerArray(geoContext, layVec, 1._m - 2._mm, 2._m + 2._mm,
                                  BinningType::arbitrary, BinningValue::binX));
 
-    auto trackVolume2 =
-        TrackingVolume::create(trafoVol2, boundsVol, nullptr,
-                               std::move(layArr2), nullptr, {}, "Volume 2");
+    auto trackVolume2 = std::make_shared<TrackingVolume>(
+        trafoVol2, boundsVol, nullptr, std::move(layArr2), nullptr,
+        MutableTrackingVolumeVector{}, "Volume 2");
 
     // Glue volumes
     trackVolume2->glueTrackingVolume(
@@ -154,8 +169,7 @@ struct CubicTrackingGeometry {
     Transform3 trafoWorld(Transform3::Identity());
     trafoWorld.translation() = Vector3(0., 0., 0.);
 
-    auto worldVol =
-        std::make_shared<const CuboidVolumeBounds>(3._m, 0.5_m, 0.5_m);
+    auto worldVolBds = std::make_shared<CuboidVolumeBounds>(3._m, 0.5_m, 0.5_m);
 
     std::vector<std::pair<TrackingVolumePtr, Vector3>> tapVec;
 
@@ -170,12 +184,12 @@ struct CubicTrackingGeometry {
     std::shared_ptr<const TrackingVolumeArray> trVolArr(
         new BinnedArrayXD<TrackingVolumePtr>(tapVec, std::move(bu)));
 
-    MutableTrackingVolumePtr mtvpWorld(
-        TrackingVolume::create(trafoWorld, worldVol, trVolArr, "World"));
+    MutableTrackingVolumePtr mtvpWorld(std::make_shared<TrackingVolume>(
+        trafoWorld, worldVolBds, nullptr, nullptr, trVolArr,
+        MutableTrackingVolumeVector{}, "World"));
 
     // Build and return tracking geometry
-    return std::shared_ptr<TrackingGeometry>(
-        new Acts::TrackingGeometry(mtvpWorld));
+    return std::make_shared<TrackingGeometry>(mtvpWorld);
   }
 
   RotationMatrix3 rotation = RotationMatrix3::Identity();
@@ -186,5 +200,4 @@ struct CubicTrackingGeometry {
 
   std::reference_wrapper<const GeometryContext> geoContext;
 };
-}  // namespace Test
-}  // namespace Acts
+}  // namespace Acts::Test

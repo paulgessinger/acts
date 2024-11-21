@@ -1,14 +1,19 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Geometry/ConeLayer.hpp"
 
 #include "Acts/Definitions/Algebra.hpp"
+
+namespace Acts {
+class ConeBounds;
+}  // namespace Acts
+
 Acts::ConeLayer::ConeLayer(const Transform3& transform,
                            std::shared_ptr<const ConeBounds> cbounds,
                            std::unique_ptr<SurfaceArray> surfaceArray,

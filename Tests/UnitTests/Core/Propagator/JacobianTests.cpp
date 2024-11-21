@@ -1,39 +1,48 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018-2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/tools/output_test_stream.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/Definitions/Units.hpp"
+#include "Acts/EventData/GenericCurvilinearTrackParameters.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/MagneticField/ConstantBField.hpp"
 #include "Acts/MagneticField/MagneticFieldContext.hpp"
 #include "Acts/Propagator/AtlasStepper.hpp"
 #include "Acts/Propagator/EigenStepper.hpp"
+#include "Acts/Surfaces/CurvilinearSurface.hpp"
 #include "Acts/Surfaces/CylinderSurface.hpp"
 #include "Acts/Surfaces/DiscSurface.hpp"
 #include "Acts/Surfaces/PerigeeSurface.hpp"
 #include "Acts/Surfaces/PlaneSurface.hpp"
 #include "Acts/Surfaces/StrawSurface.hpp"
+#include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Tests/CommonHelpers/FloatComparisons.hpp"
 
-namespace bdata = boost::unit_test::data;
-namespace tt = boost::test_tools;
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <type_traits>
+#include <utility>
+
 using namespace Acts::UnitLiterals;
 
-namespace Acts {
-namespace Test {
+namespace Acts::Test {
 
 using BFieldType = ConstantBField;
 using EigenStepperType = EigenStepper<>;
 using AtlasStepperType = AtlasStepper;
-using Covariance = BoundSymMatrix;
+using Covariance = BoundSquareMatrix;
 
 // Create a test context
 GeometryContext tgContext = GeometryContext();
@@ -47,7 +56,7 @@ static auto bField = std::make_shared<BFieldType>(Vector3{0, 0, 1_T});
 ///
 /// @param nnomal The nominal normal direction
 /// @param angleT Rotation around the norminal normal
-/// @param angleU Roation around the original U axis
+/// @param angleU Rotation around the original U axis
 Transform3 createCylindricTransform(const Vector3& nposition, double angleX,
                                     double angleY) {
   Transform3 ctransform;
@@ -64,7 +73,7 @@ Transform3 createCylindricTransform(const Vector3& nposition, double angleX,
 ///
 /// @param nnomal The nominal normal direction
 /// @param angleT Rotation around the norminal normal
-/// @param angleU Roation around the original U axis
+/// @param angleU Rotation around the original U axis
 Transform3 createPlanarTransform(const Vector3& nposition,
                                  const Vector3& nnormal, double angleT,
                                  double angleU) {
@@ -108,9 +117,9 @@ Transform3 createPlanarTransform(const Vector3& nposition,
 BoundToFreeMatrix convertToMatrix(const std::array<double, 60> P) {
   // initialize to zero
   BoundToFreeMatrix jMatrix = BoundToFreeMatrix::Zero();
-  for (size_t j = 0; j < eBoundSize; ++j) {
-    for (size_t i = 0; i < eFreeSize; ++i) {
-      size_t ijc = eFreeSize + j * eFreeSize + i;
+  for (std::size_t j = 0; j < eBoundSize; ++j) {
+    for (std::size_t i = 0; i < eFreeSize; ++i) {
+      std::size_t ijc = eFreeSize + j * eFreeSize + i;
       jMatrix(i, j) = P[ijc];
     }
   }
@@ -146,7 +155,8 @@ BOOST_AUTO_TEST_CASE(JacobianCurvilinearToGlobalTest) {
   cov << 10_mm, 0, 0, 0, 0, 0, 0, 10_mm, 0, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0,
       0, 0.1, 0, 0, 0, 0, 0, 0, 1. / (10_GeV), 0, 0, 0, 0, 0, 0, 0;
   CurvilinearTrackParameters curvilinear(Vector4(341., 412., 93., 0.),
-                                         Vector3(1.2, 8.3, 0.45), 10.0, 1, cov);
+                                         Vector3(1.2, 8.3, 0.45), 1 / 10.0, cov,
+                                         ParticleHypothesis::pion());
 
   // run the test
   testJacobianToGlobal(curvilinear);
@@ -165,7 +175,8 @@ BOOST_AUTO_TEST_CASE(JacobianCylinderToGlobalTest) {
   BoundVector pars;
   pars << 182.34, -82., 0.134, 0.85, 1. / (100_GeV), 0;
 
-  BoundTrackParameters atCylinder(cSurface, pars, std::move(cov));
+  BoundTrackParameters atCylinder(cSurface, pars, std::move(cov),
+                                  ParticleHypothesis::pion());
 
   // run the test
   testJacobianToGlobal(atCylinder);
@@ -185,7 +196,8 @@ BOOST_AUTO_TEST_CASE(JacobianDiscToGlobalTest) {
   BoundVector pars;
   pars << 192.34, 1.823, 0.734, 0.235, 1. / (100_GeV), 0;
 
-  BoundTrackParameters atDisc(dSurface, pars, std::move(cov));
+  BoundTrackParameters atDisc(dSurface, pars, std::move(cov),
+                              ParticleHypothesis::pion());
 
   // run the test
   testJacobianToGlobal(atDisc);
@@ -198,7 +210,7 @@ BOOST_AUTO_TEST_CASE(JacobianPlaneToGlobalTest) {
   Vector3 sNormal = Vector3(1.2, -0.3, 0.05).normalized();
 
   // Create a surface & parameters with covariance on the surface
-  auto pSurface = Surface::makeShared<PlaneSurface>(sPosition, sNormal);
+  auto pSurface = CurvilinearSurface(sPosition, sNormal).planeSurface();
 
   Covariance cov;
   cov << 10_mm, 0, 0, 0, 0, 0, 0, 10_mm, 0, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0,
@@ -207,7 +219,8 @@ BOOST_AUTO_TEST_CASE(JacobianPlaneToGlobalTest) {
   BoundVector pars;
   pars << 12.34, -8722., 2.134, 0.85, 1. / (100_GeV), 0;
 
-  BoundTrackParameters atPlane(pSurface, pars, std::move(cov));
+  BoundTrackParameters atPlane(pSurface, pars, std::move(cov),
+                               ParticleHypothesis::pion());
 
   // run the test
   testJacobianToGlobal(atPlane);
@@ -224,7 +237,8 @@ BOOST_AUTO_TEST_CASE(JacobianPerigeeToGlobalTest) {
   BoundVector pars;
   pars << -3.34, -822., -0.734, 0.85, 1. / (100_GeV), 0;
 
-  BoundTrackParameters perigee(pSurface, pars, std::move(cov));
+  BoundTrackParameters perigee(pSurface, pars, std::move(cov),
+                               ParticleHypothesis::pion());
 
   // run the test
   testJacobianToGlobal(perigee);
@@ -243,11 +257,11 @@ BOOST_AUTO_TEST_CASE(JacobianStrawToGlobalTest) {
   BoundVector pars;
   pars << -8.34, 812., 0.734, 0.25, 1. / (100_GeV), 0;
 
-  BoundTrackParameters atStraw(sSurface, pars, std::move(cov));
+  BoundTrackParameters atStraw(sSurface, pars, std::move(cov),
+                               ParticleHypothesis::pion());
 
   // run the test
   testJacobianToGlobal(atStraw);
 }
 
-}  // namespace Test
-}  // namespace Acts
+}  // namespace Acts::Test

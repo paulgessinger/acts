@@ -1,21 +1,21 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2022 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "ActsExamples/EventData/Trajectories.hpp"
+#include "ActsExamples/Framework/DataHandle.hpp"
 #include "ActsExamples/Framework/WriterT.hpp"
+#include "ActsFatras/EventData/Hit.hpp"
+#include "ActsFatras/EventData/Particle.hpp"
 
 #include <string>
-
-#include "edm4hep/TrackCollection.h"
-#include "podio/EventStore.h"
-#include "podio/ROOTWriter.h"
 
 namespace ActsExamples {
 
@@ -39,6 +39,11 @@ class EDM4hepMultiTrajectoryWriter : public WriterT<TrajectoriesContainer> {
     std::string inputMeasurementParticlesMap;
     /// Where to place output file
     std::string outputPath;
+    /// B field in the longitudinal direction
+    double Bz{};
+    /// Particle hypothesis
+    Acts::ParticleHypothesis particleHypothesis =
+        Acts::ParticleHypothesis::pion();
   };
 
   /// constructor
@@ -47,7 +52,7 @@ class EDM4hepMultiTrajectoryWriter : public WriterT<TrajectoriesContainer> {
   EDM4hepMultiTrajectoryWriter(
       const Config& config, Acts::Logging::Level level = Acts::Logging::INFO);
 
-  ProcessCode endRun() final;
+  ProcessCode finalize() final;
 
   /// Readonly access to the config
   const Config& config() const { return m_cfg; }
@@ -62,10 +67,11 @@ class EDM4hepMultiTrajectoryWriter : public WriterT<TrajectoriesContainer> {
  private:
   Config m_cfg;
 
-  podio::ROOTWriter m_writer;
-  podio::EventStore m_store;
+  std::mutex m_writeMutex;
+  Acts::PodioUtil::ROOTWriter m_writer;
 
-  edm4hep::TrackCollection* m_trackCollection;
+  ReadDataHandle<IndexMultimap<ActsFatras::Barcode>>
+      m_inputMeasurementParticlesMap{this, "InputMeasurementParticlesMaps"};
 };
 
 }  // namespace ActsExamples

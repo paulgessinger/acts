@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -17,9 +17,9 @@ namespace Cuda {
 /// Structure holding pointers to the user defined filter functions
 struct TripletFilterConfig {
   /// Type for the seed weighting functions
-  typedef float (*seedWeightFunc_t)(const Details::SpacePoint&,
-                                    const Details::SpacePoint&,
-                                    const Details::SpacePoint&);
+  using seedWeightFunc_t = float (*)(const Details::SpacePoint &,
+                                     const Details::SpacePoint &,
+                                     const Details::SpacePoint &);
 
   /// Pointer to a function assigning weights to seed candidates
   ///
@@ -33,9 +33,9 @@ struct TripletFilterConfig {
   seedWeightFunc_t seedWeight = nullptr;
 
   /// Type for the seed filtering functions
-  typedef bool (*singleSeedCutFunc_t)(float, const Details::SpacePoint&,
-                                      const Details::SpacePoint&,
-                                      const Details::SpacePoint&);
+  using singleSeedCutFunc_t = bool (*)(float, const Details::SpacePoint &,
+                                       const Details::SpacePoint &,
+                                       const Details::SpacePoint &);
 
   /// Pointer to a function filtering seed candidates
   ///

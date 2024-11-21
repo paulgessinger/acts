@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -13,6 +13,7 @@
 #include "Acts/Material/MaterialSlab.hpp"
 #include "Acts/Utilities/BinUtility.hpp"
 
+#include <cstddef>
 #include <iosfwd>
 #include <vector>
 
@@ -99,9 +100,6 @@ class BinnedSurfaceMaterial : public ISurfaceMaterial {
   /// @copydoc ISurfaceMaterial::materialSlab(const Vector3&) const
   const MaterialSlab& materialSlab(const Vector3& gp) const final;
 
-  /// @copydoc ISurfaceMaterial::materialSlab(size_t, size_t) const
-  const MaterialSlab& materialSlab(size_t bin0, size_t bin1) const final;
-
   /// Output Method for std::ostream, to be overloaded by child classes
   std::ostream& toStream(std::ostream& sl) const final;
 
@@ -121,8 +119,4 @@ inline const MaterialSlabMatrix& BinnedSurfaceMaterial::fullMaterial() const {
   return m_fullMaterial;
 }
 
-inline const MaterialSlab& BinnedSurfaceMaterial::materialSlab(
-    size_t bin0, size_t bin1) const {
-  return m_fullMaterial[bin1][bin0];
-}
 }  // namespace Acts

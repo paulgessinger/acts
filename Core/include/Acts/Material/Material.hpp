@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -12,10 +12,12 @@
 
 #include <iosfwd>
 #include <limits>
+#include <utility>
 
 namespace Acts {
 
 /// Material description for interactions with matter.
+/// @defgroup Material Material
 ///
 /// The following parameters are used to specify the material and its
 /// interactions with traversing particles:
@@ -72,7 +74,7 @@ class Material {
   /// Construct a vacuum representation.
   Material() = default;
   /// Construct from an encoded parameters vector.
-  Material(const ParametersVector& parameters);
+  explicit Material(const ParametersVector& parameters);
 
   Material(Material&& mat) = default;
   Material(const Material& mat) = default;
@@ -81,9 +83,9 @@ class Material {
   Material& operator=(const Material& mat) = default;
 
   /// Check if the material is valid, i.e. it is not vacuum.
-  constexpr operator bool() const { return 0.0f < m_ar; }
+  bool isValid() const { return 0.0f < m_ar; }
 
-  /// Return the radition length. Infinity in case of vacuum.
+  /// Return the radiation length. Infinity in case of vacuum.
   constexpr float X0() const { return m_x0; }
   /// Return the nuclear interaction length. Infinity in case of vacuum.
   constexpr float L0() const { return m_l0; }
@@ -111,12 +113,9 @@ class Material {
   float m_molarRho = 0.0f;
 
   friend constexpr bool operator==(const Material& lhs, const Material& rhs) {
-    return (lhs.m_x0 == rhs.m_x0) and (lhs.m_l0 == rhs.m_l0) and
-           (lhs.m_ar == rhs.m_ar) and (lhs.m_z == rhs.m_z) and
+    return (lhs.m_x0 == rhs.m_x0) && (lhs.m_l0 == rhs.m_l0) &&
+           (lhs.m_ar == rhs.m_ar) && (lhs.m_z == rhs.m_z) &&
            (lhs.m_molarRho == rhs.m_molarRho);
-  }
-  friend constexpr bool operator!=(const Material& lhs, const Material& rhs) {
-    return !(lhs == rhs);
   }
 };
 

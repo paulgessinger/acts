@@ -1,20 +1,28 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Plugins/Python/Utilities.hpp"
+#include "ActsExamples/EventData/Cluster.hpp"
+#include "ActsExamples/Io/Csv/CsvDriftCircleReader.hpp"
+#include "ActsExamples/Io/Csv/CsvExaTrkXGraphReader.hpp"
 #include "ActsExamples/Io/Csv/CsvMeasurementReader.hpp"
+#include "ActsExamples/Io/Csv/CsvMuonSimHitReader.hpp"
 #include "ActsExamples/Io/Csv/CsvParticleReader.hpp"
-#include "ActsExamples/Io/Csv/CsvPlanarClusterReader.hpp"
 #include "ActsExamples/Io/Csv/CsvSimHitReader.hpp"
 #include "ActsExamples/Io/Csv/CsvSpacePointReader.hpp"
+#include "ActsExamples/Io/Csv/CsvTrackParameterReader.hpp"
+#include "ActsExamples/Io/Root/RootAthenaDumpReader.hpp"
+#include "ActsExamples/Io/Root/RootAthenaNTupleReader.hpp"
 #include "ActsExamples/Io/Root/RootMaterialTrackReader.hpp"
 #include "ActsExamples/Io/Root/RootParticleReader.hpp"
-#include "ActsExamples/Io/Root/RootTrajectorySummaryReader.hpp"
+#include "ActsExamples/Io/Root/RootSimHitReader.hpp"
+#include "ActsExamples/Io/Root/RootTrackSummaryReader.hpp"
+#include "ActsExamples/Io/Root/RootVertexReader.hpp"
 
 #include <memory>
 
@@ -27,168 +35,82 @@ using namespace pybind11::literals;
 using namespace ActsExamples;
 
 namespace Acts::Python {
+
 void addInput(Context& ctx) {
   auto mex = ctx.get("examples");
 
   // ROOT READERS
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::RootParticleReader, mex,
+                             "RootParticleReader", outputParticles, treeName,
+                             filePath);
 
-  {
-    using Reader = ActsExamples::RootParticleReader;
-    using Config = Reader::Config;
-    auto reader =
-        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
-            mex, "RootParticleReader")
-            .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Reader::config);
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::RootVertexReader, mex,
+                             "RootVertexReader", outputVertices, treeName,
+                             filePath);
 
-    auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(particleCollection);
-    ACTS_PYTHON_MEMBER(vertexPrimaryCollection);
-    ACTS_PYTHON_MEMBER(vertexSecondaryCollection);
-    ACTS_PYTHON_MEMBER(treeName);
-    ACTS_PYTHON_MEMBER(filePath);
-    ACTS_PYTHON_MEMBER(orderedEvents);
-    ACTS_PYTHON_STRUCT_END();
-  }
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::RootMaterialTrackReader, mex,
+                             "RootMaterialTrackReader", outputMaterialTracks,
+                             treeName, fileList, readCachedSurfaceInformation);
 
-  {
-    using Reader = ActsExamples::RootMaterialTrackReader;
-    using Config = Reader::Config;
-    auto reader =
-        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
-            mex, "RootMaterialTrackReader")
-            .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Reader::config);
-
-    auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(collection);
-    ACTS_PYTHON_MEMBER(treeName);
-    ACTS_PYTHON_MEMBER(fileList);
-    ACTS_PYTHON_MEMBER(orderedEvents);
-    ACTS_PYTHON_STRUCT_END();
-  }
-
-  {
-    using Reader = ActsExamples::RootTrajectorySummaryReader;
-    using Config = Reader::Config;
-    auto reader =
-        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
-            mex, "RootTrajectorySummaryReader")
-            .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Reader::config);
-
-    auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(outputTracks);
-    ACTS_PYTHON_MEMBER(outputParticles);
-    ACTS_PYTHON_MEMBER(treeName);
-    ACTS_PYTHON_MEMBER(filePath);
-    ACTS_PYTHON_MEMBER(orderedEvents);
-    ACTS_PYTHON_STRUCT_END();
-  }
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::RootTrackSummaryReader, mex,
+                             "RootTrackSummaryReader", outputTracks,
+                             outputParticles, treeName, filePath);
 
   // CSV READERS
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::CsvParticleReader, mex,
+                             "CsvParticleReader", inputDir, inputStem,
+                             outputParticles);
 
-  {
-    using Reader = ActsExamples::CsvParticleReader;
-    using Config = Reader::Config;
-    auto reader =
-        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
-            mex, "CsvParticleReader")
-            .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Reader::config);
+  ACTS_PYTHON_DECLARE_READER(
+      ActsExamples::CsvMeasurementReader, mex, "CsvMeasurementReader", inputDir,
+      outputMeasurements, outputMeasurementSimHitsMap, outputClusters,
+      outputMeasurementParticlesMap, inputSimHits);
 
-    auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(inputDir);
-    ACTS_PYTHON_MEMBER(inputStem);
-    ACTS_PYTHON_MEMBER(outputParticles);
-    ACTS_PYTHON_STRUCT_END();
-  }
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::CsvSimHitReader, mex,
+                             "CsvSimHitReader", inputDir, inputStem,
+                             outputSimHits);
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::CsvMuonSimHitReader, mex,
+                             "CsvMuonSimHitReader", inputDir, inputStem,
+                             outputSimHits);
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::CsvDriftCircleReader, mex,
+                             "CsvDriftCircleReader", inputDir, inputStem,
+                             outputDriftCircles);
 
-  {
-    using Reader = ActsExamples::CsvMeasurementReader;
-    using Config = Reader::Config;
-    auto reader =
-        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
-            mex, "CsvMeasurementReader")
-            .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Reader::config);
+  ACTS_PYTHON_DECLARE_READER(
+      ActsExamples::CsvSpacePointReader, mex, "CsvSpacePointReader", inputDir,
+      inputStem, inputCollection, outputSpacePoints, extendCollection);
 
-    auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(inputDir);
-    ACTS_PYTHON_MEMBER(outputMeasurements);
-    ACTS_PYTHON_MEMBER(outputMeasurementSimHitsMap);
-    ACTS_PYTHON_MEMBER(outputSourceLinks);
-    ACTS_PYTHON_MEMBER(outputClusters);
-    ACTS_PYTHON_STRUCT_END();
-  }
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::CsvTrackParameterReader, mex,
+                             "CsvTrackParameterReader", inputDir, inputStem,
+                             outputTrackParameters, beamspot);
 
-  {
-    using Reader = ActsExamples::CsvPlanarClusterReader;
-    using Config = Reader::Config;
-    auto reader =
-        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
-            mex, "CsvPlanarClusterReader")
-            .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Reader::config);
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::RootAthenaNTupleReader, mex,
+                             "RootAthenaNTupleReader", inputTreeName,
+                             inputFilePath, outputTrackParameters,
+                             outputTruthVtxParameters, outputRecoVtxParameters,
+                             outputBeamspotConstraint);
 
-    auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(inputDir);
-    ACTS_PYTHON_MEMBER(outputClusters);
-    ACTS_PYTHON_MEMBER(outputHitIds);
-    ACTS_PYTHON_MEMBER(outputMeasurementParticlesMap);
-    ACTS_PYTHON_MEMBER(outputSimHits);
-    ACTS_PYTHON_MEMBER(trackingGeometry);
-    ACTS_PYTHON_STRUCT_END();
-  }
+  ACTS_PYTHON_DECLARE_READER(
+      ActsExamples::RootAthenaDumpReader, mex, "RootAthenaDumpReader", treename,
+      inputfile, outputMeasurements, outputPixelSpacePoints,
+      outputStripSpacePoints, outputSpacePoints, outputClusters,
+      outputMeasurementParticlesMap, outputParticles, onlyPassedParticles,
+      skipOverlapSPsPhi, skipOverlapSPsEta, geometryIdMap, trackingGeometry,
+      absBoundaryTolerance);
 
-  {
-    using Reader = ActsExamples::CsvSimHitReader;
-    using Config = Reader::Config;
-    auto reader =
-        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
-            mex, "CsvSimHitReader")
-            .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Reader::config);
+#ifdef WITH_GEOMODEL_PLUGIN
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::RootAthenaDumpGeoIdCollector, mex,
+                             "RootAthenaDumpGeoIdCollector", treename,
+                             inputfile, trackingGeometry, geometryIdMap);
+#endif
 
-    auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(inputDir);
-    ACTS_PYTHON_MEMBER(inputStem);
-    ACTS_PYTHON_MEMBER(outputSimHits);
-    ACTS_PYTHON_STRUCT_END();
-  }
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::RootSimHitReader, mex,
+                             "RootSimHitReader", treeName, filePath,
+                             outputSimHits);
 
-  {
-    using Reader = ActsExamples::CsvSpacePointReader;
-    using Config = Reader::Config;
-    auto reader =
-        py::class_<Reader, ActsExamples::IReader, std::shared_ptr<Reader>>(
-            mex, "CsvSpacePointReader")
-            .def(py::init<const Config&, Acts::Logging::Level>(),
-                 py::arg("config"), py::arg("level"))
-            .def_property_readonly("config", &Reader::config);
-
-    auto c = py::class_<Config>(reader, "Config").def(py::init<>());
-    ACTS_PYTHON_STRUCT_BEGIN(c, Config);
-    ACTS_PYTHON_MEMBER(inputDir);
-    ACTS_PYTHON_MEMBER(inputStem);
-    ACTS_PYTHON_MEMBER(inputCollection);
-    ACTS_PYTHON_MEMBER(outputSpacePoints);
-    ACTS_PYTHON_MEMBER(extendCollection);
-    ACTS_PYTHON_STRUCT_END();
-  }
+  ACTS_PYTHON_DECLARE_READER(ActsExamples::CsvExaTrkXGraphReader, mex,
+                             "CsvExaTrkXGraphReader", inputDir, inputStem,
+                             outputGraph);
 }
+
 }  // namespace Acts::Python

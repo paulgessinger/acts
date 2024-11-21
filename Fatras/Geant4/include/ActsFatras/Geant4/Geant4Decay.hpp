@@ -1,18 +1,20 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include "Acts/Definitions/PdgParticle.hpp"
 #include "Acts/Definitions/Units.hpp"
 #include "ActsFatras/EventData/Particle.hpp"
 #include "ActsFatras/Geant4/PDGtoG4Converter.hpp"
 
 #include <cmath>
+#include <limits>
 #include <random>
 #include <vector>
 
@@ -48,7 +50,7 @@ class Geant4Decay {
   ///
   /// @return Vector containing decay products
   template <typename generator_t>
-  std::vector<Particle> run(generator_t&, Particle& particle) const;
+  std::vector<Particle> run(generator_t& generator, Particle& particle) const;
 
  private:
   /// This function evaluates the decay products of a given particle
@@ -70,8 +72,9 @@ Particle::Scalar Geant4Decay::generateProperTimeLimit(
   // Get the particle properties
   const Acts::PdgParticle pdgCode = particle.pdg();
   // Keep muons stable
-  if (makeAbsolutePdgParticle(pdgCode) == Acts::PdgParticle::eMuon)
+  if (makeAbsolutePdgParticle(pdgCode) == Acts::PdgParticle::eMuon) {
     return std::numeric_limits<Scalar>::infinity();
+  }
 
   // Get the Geant4 particle
   G4ParticleDefinition* pDef = m_pdgToG4Conv.getParticleDefinition(pdgCode);
@@ -91,7 +94,8 @@ Particle::Scalar Geant4Decay::generateProperTimeLimit(
 }
 
 template <typename generator_t>
-std::vector<Particle> Geant4Decay::run(generator_t&, Particle& particle) const {
+std::vector<Particle> Geant4Decay::run(generator_t& /*generator*/,
+                                       Particle& particle) const {
   return decayParticle(particle);
 }
 }  // namespace ActsFatras

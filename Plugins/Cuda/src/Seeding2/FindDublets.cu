@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 // CUDA plugin include(s).
 #include "Acts/Plugins/Cuda/Seeding2/Details/FindDublets.hpp"
@@ -93,14 +93,14 @@ __device__ float getCotTheta<TopSP>(float middleZ, float topZ, float deltaR) {
 ///            @c otherSPs
 /// @param[in] otherSPs Properties of all of the other (bottom or top)
 ///            spacepoints
-/// @param[in] deltaRMin Configuration parameter from @c Acts::SeedfinderConfig
-/// @param[in] deltaRMax Configuration parameter from @c Acts::SeedfinderConfig
+/// @param[in] deltaRMin Configuration parameter from @c Acts::SeedFinderConfig
+/// @param[in] deltaRMax Configuration parameter from @c Acts::SeedFinderConfig
 /// @param[in] cotThetaMax Configuration parameter from
-///            @c Acts::SeedfinderConfig
+///            @c Acts::SeedFinderConfig
 /// @param[in] collisionRegionMin Configuration parameter from
-///            @c Acts::SeedfinderConfig
+///            @c Acts::SeedFinderConfig
 /// @param[in] collisionRegionMax Configuration parameter from
-///            @c Acts::SeedfinderConfig
+///            @c Acts::SeedFinderConfig
 /// @param[out] dubletCounts 1-D array of the middle-other dublets found
 ///             for each middle spacepoint
 /// @param[out] dublets 2-D matrix of size @c nMiddleSPs x @c nOtherSPs, holding

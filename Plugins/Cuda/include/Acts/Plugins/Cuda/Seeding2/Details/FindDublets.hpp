@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -37,14 +37,14 @@ namespace Details {
 /// @param[in] middleSPs Properties of all of the middle spacepoints
 /// @param[in] nTopSPs The number of top spacepoints in @c topSPs
 /// @param[in] topSPs Properties of all of the top spacepoints
-/// @param[in] deltaRMin Configuration parameter from @c Acts::SeedfinderConfig
-/// @param[in] deltaRMax Configuration parameter from @c Acts::SeedfinderConfig
+/// @param[in] deltaRMin Configuration parameter from @c Acts::SeedFinderConfig
+/// @param[in] deltaRMax Configuration parameter from @c Acts::SeedFinderConfig
 /// @param[in] cotThetaMax Configuration parameter from
-///            @c Acts::SeedfinderConfig
+///            @c Acts::SeedFinderConfig
 /// @param[in] collisionRegionMin Configuration parameter from
-///            @c Acts::SeedfinderConfig
+///            @c Acts::SeedFinderConfig
 /// @param[in] collisionRegionMax Configuration parameter from
-///            @c Acts::SeedfinderConfig
+///            @c Acts::SeedFinderConfig
 /// @param[out] middleBottomCounts 1-D array of the number of middle-bottom
 ///             dublets found for each middle spacepoint
 /// @param[out] middleBottomDublets 2-D matrix of size

@@ -1,14 +1,16 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Material/VolumeMaterialMapper.hpp"
 
-#include "Acts/EventData/NeutralTrackParameters.hpp"
+#include "Acts/Definitions/Direction.hpp"
+#include "Acts/Definitions/Tolerance.hpp"
+#include "Acts/EventData/ParticleHypothesis.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
 #include "Acts/Geometry/ApproachDescriptor.hpp"
 #include "Acts/Geometry/BoundarySurfaceT.hpp"
@@ -22,23 +24,28 @@
 #include "Acts/Material/MaterialGridHelper.hpp"
 #include "Acts/Material/MaterialInteraction.hpp"
 #include "Acts/Material/ProtoVolumeMaterial.hpp"
-#include "Acts/Propagator/AbortList.hpp"
-#include "Acts/Propagator/ActionList.hpp"
-#include "Acts/Propagator/PropagatorError.hpp"
-#include "Acts/Propagator/StandardAborters.hpp"
+#include "Acts/Propagator/ActorList.hpp"
 #include "Acts/Propagator/SurfaceCollector.hpp"
 #include "Acts/Propagator/VolumeCollector.hpp"
 #include "Acts/Surfaces/SurfaceArray.hpp"
 #include "Acts/Utilities/BinAdjustmentVolume.hpp"
 #include "Acts/Utilities/BinnedArray.hpp"
-#include "Acts/Utilities/Helpers.hpp"
+#include "Acts/Utilities/Grid.hpp"
 #include "Acts/Utilities/Result.hpp"
-#include "Acts/Utilities/detail/AxisFwd.hpp"
-#include "Acts/Utilities/detail/Grid.hpp"
 
+#include <cmath>
+#include <cstddef>
 #include <iosfwd>
+#include <ostream>
 #include <stdexcept>
+#include <string>
 #include <tuple>
+#include <type_traits>
+#include <vector>
+
+namespace Acts {
+struct EndOfWorldReached;
+}  // namespace Acts
 
 Acts::VolumeMaterialMapper::VolumeMaterialMapper(
     const Config& cfg, StraightLinePropagator propagator,
@@ -63,7 +70,7 @@ Acts::VolumeMaterialMapper::State Acts::VolumeMaterialMapper::createState(
 void Acts::VolumeMaterialMapper::resolveMaterialVolume(
     State& mState, const TrackingVolume& tVolume) const {
   ACTS_VERBOSE("Checking volume '" << tVolume.volumeName()
-                                   << "' for material surfaces.")
+                                   << "' for material surfaces.");
 
   ACTS_VERBOSE("- Insert Volume ...");
   checkAndInsert(mState, tVolume);
@@ -90,17 +97,15 @@ void Acts::VolumeMaterialMapper::checkAndInsert(
   // Check if the volume has a proxy
   if (volumeMaterial != nullptr) {
     auto geoID = volume.geometryId();
-    size_t volumeID = geoID.volume();
+    std::size_t volumeID = geoID.volume();
     ACTS_DEBUG("Material volume found with volumeID " << volumeID);
     ACTS_DEBUG("       - ID is " << geoID);
-
-    const BinUtility* bu;
 
     // We need a dynamic_cast to either a volume material proxy or
     // proper surface material
     auto psm = dynamic_cast<const ProtoVolumeMaterial*>(volumeMaterial);
     // Get the bin utility: try proxy material first
-    bu = (psm != nullptr) ? (&psm->binUtility()) : nullptr;
+    const BinUtility* bu = (psm != nullptr) ? (&psm->binUtility()) : nullptr;
     if (bu != nullptr) {
       // Screen output for Binned Surface material
       ACTS_DEBUG("       - (proto) binning is " << *bu);
@@ -175,7 +180,7 @@ void Acts::VolumeMaterialMapper::checkAndInsert(
 void Acts::VolumeMaterialMapper::collectMaterialSurfaces(
     State& mState, const TrackingVolume& tVolume) const {
   ACTS_VERBOSE("Checking volume '" << tVolume.volumeName()
-                                   << "' for material surfaces.")
+                                   << "' for material surfaces.");
 
   ACTS_VERBOSE("- boundary surfaces ...");
   // Check the boundary surfaces
@@ -236,7 +241,8 @@ void Acts::VolumeMaterialMapper::collectMaterialSurfaces(
 void Acts::VolumeMaterialMapper::createExtraHits(
     State& mState,
     std::pair<const GeometryIdentifier, BinUtility>& currentBinning,
-    Acts::MaterialSlab properties, Vector3 position, Vector3 direction) const {
+    Acts::MaterialSlab properties, const Vector3& position,
+    Vector3 direction) const {
   if (currentBinning.second.dimensions() == 0) {
     // Writing homogeneous material for the current volumes no need to create
     // extra hits. We directly accumulate the material
@@ -245,7 +251,8 @@ void Acts::VolumeMaterialMapper::createExtraHits(
   }
 
   // Computing the extra hits properties based on the mappingStep length
-  int volumeStep = floor(properties.thickness() / m_cfg.mappingStep);
+  int volumeStep =
+      static_cast<int>(std::floor(properties.thickness() / m_cfg.mappingStep));
   float remainder = properties.thickness() - m_cfg.mappingStep * volumeStep;
   properties.scaleThickness(m_cfg.mappingStep / properties.thickness());
   direction = direction * (m_cfg.mappingStep / direction.norm());
@@ -278,7 +285,7 @@ void Acts::VolumeMaterialMapper::createExtraHits(
   }
 
   if (remainder > 0) {
-    // We need to had an additional extra hit with the remainder length. Adjust
+    // We need to have an additional extra hit with the remainder length. Adjust
     // the thickness of the last extrapolated step
     properties.scaleThickness(remainder / properties.thickness());
     Vector3 extraPosition = position + volumeStep * direction;
@@ -358,19 +365,19 @@ void Acts::VolumeMaterialMapper::mapMaterialTrack(
   using VectorHelpers::makeVector4;
 
   // Neutral curvilinear parameters
-  NeutralCurvilinearTrackParameters start(makeVector4(mTrack.first.first, 0),
-                                          mTrack.first.second,
-                                          1 / mTrack.first.second.norm());
+  NeutralCurvilinearTrackParameters start(
+      makeVector4(mTrack.first.first, 0), mTrack.first.second,
+      1 / mTrack.first.second.norm(), std::nullopt,
+      NeutralParticleHypothesis::geantino());
 
   // Prepare Action list and abort list
   using BoundSurfaceCollector = SurfaceCollector<BoundSurfaceSelector>;
   using MaterialVolumeCollector = VolumeCollector<MaterialVolumeSelector>;
-  using ActionList = ActionList<BoundSurfaceCollector, MaterialVolumeCollector>;
-  using AbortList = AbortList<EndOfWorldReached>;
+  using ActionList = ActorList<BoundSurfaceCollector, MaterialVolumeCollector,
+                               EndOfWorldReached>;
 
-  auto propLogger = getDefaultLogger("Propagator", Logging::INFO);
-  PropagatorOptions<ActionList, AbortList> options(
-      mState.geoContext, mState.magFieldContext, LoggerWrapper{*propLogger});
+  StraightLinePropagator::Options<ActionList> options(mState.geoContext,
+                                                      mState.magFieldContext);
 
   // Now collect the material volume by using the straight line propagator
   const auto& result = m_propagator.propagate(start, options).value();
@@ -383,19 +390,17 @@ void Acts::VolumeMaterialMapper::mapMaterialTrack(
   // Retrieve the recorded material from the recorded material track
   auto& rMaterial = mTrack.second.materialInteractions;
   ACTS_VERBOSE("Retrieved " << rMaterial.size()
-                            << " recorded material steps to map.")
+                            << " recorded material steps to map.");
 
   // These should be mapped onto the mapping surfaces found
   ACTS_VERBOSE("Found     " << mappingVolumes.size()
                             << " mapping volumes for this track.");
-  ACTS_VERBOSE("Mapping volumes are :")
+  ACTS_VERBOSE("Mapping volumes are :");
   for (auto& mVolumes : mappingVolumes) {
     ACTS_VERBOSE(" - Volume : " << mVolumes.volume->geometryId()
                                 << " at position = (" << mVolumes.position.x()
                                 << ", " << mVolumes.position.y() << ", "
                                 << mVolumes.position.z() << ")");
-
-    mappingVolumes.push_back(mVolumes);
   }
   // Run the mapping process, i.e. take the recorded material and map it
   // onto the mapping volume:
@@ -422,7 +427,7 @@ void Acts::VolumeMaterialMapper::mapMaterialTrack(
     if (volIter != mappingVolumes.end() &&
         !volIter->volume->inside(rmIter->position)) {
       // Check if the material point is past the entry point to the current
-      // volume (this prevent switching volume before the first volume has been
+      // volume (this prevents switching volume before the first volume has been
       // reached)
       double distVol = (volIter->position - mTrack.first.first).norm();
       double distMat = (rmIter->position - mTrack.first.first).norm();
@@ -436,13 +441,13 @@ void Acts::VolumeMaterialMapper::mapMaterialTrack(
         volIter->volume->inside(rmIter->position, s_epsilon)) {
       currentID = volIter->volume->geometryId();
       direction = rmIter->direction;
-      if (not(currentID == lastID)) {
+      if (!(currentID == lastID)) {
         // Let's (re-)assess the information
         lastID = currentID;
         lastPositionEnd = volIter->position;
         currentBinning = mState.materialBin.find(currentID);
       }
-      // If the curent volume has a ProtoVolumeMaterial
+      // If the current volume has a ProtoVolumeMaterial
       // and the material hit has a non 0 thickness
       if (currentBinning != mState.materialBin.end() &&
           rmIter->materialSlab.thickness() > 0) {
@@ -494,6 +499,8 @@ void Acts::VolumeMaterialMapper::mapMaterialTrack(
         }
       }
       rmIter->volume = volIter->volume;
+      rmIter->intersectionID = currentID;
+      rmIter->intersection = rmIter->position;
     }
     ++rmIter;
   }

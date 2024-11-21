@@ -1,18 +1,16 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
-#include "Acts/Plugins/Identification/IdentifiedDetectorElement.hpp"
-#include "Acts/Plugins/Identification/Identifier.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 #include "ActsExamples/GenericDetector/GenericDetectorElement.hpp"
 
@@ -21,9 +19,7 @@
 #include <mutex>
 #include <unordered_map>
 
-namespace ActsExamples {
-
-namespace Contextual {
+namespace ActsExamples::Contextual {
 
 /// @class InternallyAlignedDetectorElement extends GenericDetectorElement
 ///
@@ -31,7 +27,7 @@ namespace Contextual {
 /// it simply implements the base class.
 ///
 /// The AlignedDetectorElement demonstrates how a GeometryContext
-/// can be used if it carries an intervall of validity concept
+/// can be used if it carries an interval of validity concept
 ///
 /// The nominal transform is only used to once create the alignment
 /// store and then in a contextual call the actual detector element
@@ -55,7 +51,7 @@ class InternallyAlignedDetectorElement
   ///
   /// @note this is called from the surface().transform(gctx)
   const Acts::Transform3& transform(
-      const Acts::GeometryContext& gctx) const final override;
+      const Acts::GeometryContext& gctx) const override;
 
   /// Return the nominal local to global transform
   ///
@@ -66,7 +62,7 @@ class InternallyAlignedDetectorElement
   /// Return local to global transform associated with this identifier
   ///
   /// @param alignedTransform is a new transform
-  /// @oaram iov is the batch for which it is meant
+  /// @param iov is the batch for which it is meant
   void addAlignedTransform(const Acts::Transform3& alignedTransform,
                            unsigned int iov);
 
@@ -121,5 +117,4 @@ inline void InternallyAlignedDetectorElement::clearAlignedTransform(
   }
 }
 
-}  // namespace Contextual
-}  // end of namespace ActsExamples
+}  // namespace ActsExamples::Contextual

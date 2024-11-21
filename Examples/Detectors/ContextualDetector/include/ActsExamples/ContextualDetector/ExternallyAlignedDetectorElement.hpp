@@ -1,26 +1,22 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
-#include "Acts/Plugins/Identification/IdentifiedDetectorElement.hpp"
-#include "Acts/Plugins/Identification/Identifier.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 #include "ActsExamples/GenericDetector/GenericDetectorElement.hpp"
 
 #include <map>
 
-namespace ActsExamples {
-
-namespace Contextual {
+namespace ActsExamples::Contextual {
 
 /// @class ExternallyAlignedDetectorElement extends GenericDetectorElement
 ///
@@ -44,7 +40,7 @@ class ExternallyAlignedDetectorElement
   struct AlignmentStore {
     // GenericDetector identifiers are sequential
     std::vector<Acts::Transform3> transforms;
-    size_t lastAccessed;
+    std::size_t lastAccessed = 0;
   };
 
   /// @class ContextType
@@ -62,7 +58,7 @@ class ExternallyAlignedDetectorElement
   ///
   /// @note this is called from the surface().transform(gctx)
   const Acts::Transform3& transform(
-      const Acts::GeometryContext& gctx) const final override;
+      const Acts::GeometryContext& gctx) const override;
 };
 
 inline const Acts::Transform3& ExternallyAlignedDetectorElement::transform(
@@ -72,7 +68,7 @@ inline const Acts::Transform3& ExternallyAlignedDetectorElement::transform(
   }
   // cast into the right context object
   const auto& alignContext = gctx.get<ContextType>();
-  identifier_type idValue = identifier_type(identifier());
+  identifier_type idValue = static_cast<identifier_type>(identifier());
 
   if (alignContext.alignmentStore == nullptr) {
     // geometry construction => nominal alignment
@@ -84,5 +80,4 @@ inline const Acts::Transform3& ExternallyAlignedDetectorElement::transform(
   return alignContext.alignmentStore->transforms[idValue];
 }
 
-}  // end of namespace Contextual
-}  // end of namespace ActsExamples
+}  // namespace ActsExamples::Contextual

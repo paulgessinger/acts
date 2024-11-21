@@ -1,28 +1,26 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
-
-#include "Acts/Utilities/TypeTraits.hpp"
 
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <cmath>
 #include <iomanip>
+#include <numbers>
 #include <numeric>
 #include <ostream>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
-namespace Acts {
-namespace Test {
+namespace Acts::Test {
 
 // === INTRODUCTION ===
 //
@@ -183,7 +181,7 @@ inline void assumeWritten(T& clobber) {
 struct MicroBenchmarkResult {
   using Duration = std::chrono::duration<double, std::nano>;
 
-  size_t iters_per_run;
+  std::size_t iters_per_run = 0;
   std::vector<Duration> run_timings;
 
   // Total benchmark running time
@@ -236,7 +234,7 @@ struct MicroBenchmarkResult {
   // Sorted benchmark run times, used for computing outlier-robust statistics
   std::vector<Duration> sortedRunTimes() const {
     std::vector<Duration> sorted_timings = run_timings;
-    std::sort(sorted_timings.begin(), sorted_timings.end());
+    std::ranges::sort(sorted_timings);
     return sorted_timings;
   }
 
@@ -246,9 +244,9 @@ struct MicroBenchmarkResult {
   // run time distribution is roughly symmetric.
   //
   Duration runTimeMedian() const {
-    assert(run_timings.size() >= 1);
+    assert(!run_timings.empty());
     const std::vector<Duration> sorted_timings = sortedRunTimes();
-    const size_t midpoint = sorted_timings.size() / 2;
+    const std::size_t midpoint = sorted_timings.size() / 2;
     if (sorted_timings.size() % 2 == 0) {
       return (sorted_timings[midpoint - 1] + sorted_timings[midpoint]) / 2;
     } else {
@@ -274,9 +272,9 @@ struct MicroBenchmarkResult {
     //
     assert(run_timings.size() >= 2);
     const std::vector<Duration> sorted_timings = sortedRunTimes();
-    const size_t first_point = (sorted_timings.size() - 2) / 4;
-    const size_t offset = (sorted_timings.size() - 2) % 4;
-    const size_t third_point = (sorted_timings.size() - 1) - first_point;
+    const std::size_t first_point = (sorted_timings.size() - 2) / 4;
+    const std::size_t offset = (sorted_timings.size() - 2) % 4;
+    const std::size_t third_point = (sorted_timings.size() - 1) - first_point;
     if (offset == 0) {
       return {sorted_timings[first_point], sorted_timings[third_point]};
     } else {
@@ -302,7 +300,8 @@ struct MicroBenchmarkResult {
   //
   Duration runTimeRobustStddev() const {
     auto [firstq, thirdq] = runTimeQuartiles();
-    return (thirdq - firstq) / (2. * std::sqrt(2.) * 0.4769362762044698733814);
+    return (thirdq - firstq) /
+           (2. * std::numbers::sqrt2 * 0.4769362762044698733814);
   }
 
   // Standard error on the median benchmark run time
@@ -393,14 +392,11 @@ using call_without_input_t = decltype(std::declval<T>()());
 // this specialization will be selected...
 template <typename Callable, typename Input = void>
 struct MicroBenchmarkIter {
-  constexpr static bool is_callable =
-      Concepts ::exists<call_with_input_t, Callable, Input>;
-  static inline void iter(const Callable& iteration, const Input* input) {
-    static_assert(is_callable, "Gave callable that is not callable with input");
-    if constexpr (is_callable) {
-      using Result = std::invoke_result_t<Callable, const Input&>;
-      MicroBenchmarkIterImpl<Callable, Input, Result>::iter(iteration, *input);
-    }
+  static inline void iter(const Callable& iteration, const Input* input)
+    requires std::invocable<Callable, Input>
+  {
+    using Result = std::invoke_result_t<Callable, const Input&>;
+    MicroBenchmarkIterImpl<Callable, Input, Result>::iter(iteration, *input);
   }
 };
 
@@ -408,23 +404,20 @@ struct MicroBenchmarkIter {
 // picked instead of the one above...
 template <typename Callable>
 struct MicroBenchmarkIter<Callable, void> {
-  constexpr static bool is_callable =
-      Concepts ::exists<call_without_input_t, Callable>;
-
-  static inline void iter(const Callable& iteration, const void* = nullptr) {
-    static_assert(is_callable,
-                  "Gave callable that is not callable without input");
-    if constexpr (is_callable) {
-      using Result = std::invoke_result_t<Callable>;
-      MicroBenchmarkIterImpl<Callable, void, Result>::iter(iteration);
-    }
+  static inline void iter(const Callable& iteration,
+                          const void* /*input*/ = nullptr)
+    requires std::invocable<Callable>
+  {
+    using Result = std::invoke_result_t<Callable>;
+    MicroBenchmarkIterImpl<Callable, void, Result>::iter(iteration);
   }
 };
 
 // Common logic between iteration-based and data-based microBenchmark
 template <typename Callable>
-MicroBenchmarkResult microBenchmarkImpl(Callable&& run, size_t iters_per_run,
-                                        size_t num_runs,
+MicroBenchmarkResult microBenchmarkImpl(Callable&& run,
+                                        std::size_t iters_per_run,
+                                        std::size_t num_runs,
                                         std::chrono::milliseconds warmup_time) {
   using Clock = std::chrono::steady_clock;
 
@@ -437,7 +430,7 @@ MicroBenchmarkResult microBenchmarkImpl(Callable&& run, size_t iters_per_run,
     run();
   }
 
-  for (size_t i = 0; i < num_runs; ++i) {
+  for (std::size_t i = 0; i < num_runs; ++i) {
     const auto start = Clock::now();
     run();
     result.run_timings[i] = Clock::now() - start;
@@ -479,7 +472,7 @@ MicroBenchmarkResult microBenchmarkImpl(Callable&& run, size_t iters_per_run,
 //   a ~GHz CPU clock this gives you a clock-related bias and noise of ~10ns. At
 //   ~10µs run times, that only contributes for 1/1000 of observed timings.
 // - The main source of benchmark noise is that your operating system's
-//   scheduler disturbs the program every few miliseconds. With run timings of
+//   scheduler disturbs the program every few milliseconds. With run timings of
 //   ~10µs, this disturbance affects less than 1% of data points, and is thus
 //   perfectly eliminated by our outlier-robust statistics.
 //
@@ -495,13 +488,13 @@ MicroBenchmarkResult microBenchmarkImpl(Callable&& run, size_t iters_per_run,
 // is appropriate for the run timings distribution otherwise.
 //
 // You shouldn't usually need to adjust the number of runs and warmup time, but
-// here are some guidelines for those times where you need to:
+// here are some guidelines for those times when you need to:
 // - `num_runs` is a somewhat delicate compromise between several concerns:
 //       * Quality of error bars (many runs mean more precise error bars)
 //       * Outlier rejection (many runs mean better outlier rejection)
 //       * Benchmark running time (many runs take longer)
 //       * Handling of short-lived background disturbances (these have a higher
-//         chance of occuring in longer-lived benchmarks, but if they only take
+//         chance of occurring in longer-lived benchmarks, but if they only take
 //         a small portion of the benchmark's running time, they can be taken
 //         care of by outlier rejection instead of polluting the results)
 // - `warmup_time` should be chosen based on the time it takes for run timings
@@ -517,11 +510,12 @@ MicroBenchmarkResult microBenchmarkImpl(Callable&& run, size_t iters_per_run,
 
 template <typename Callable>
 MicroBenchmarkResult microBenchmark(
-    Callable&& iteration, size_t iters_per_run, size_t num_runs = 20000,
+    Callable&& iteration, std::size_t iters_per_run,
+    std::size_t num_runs = 20000,
     std::chrono::milliseconds warmup_time = std::chrono::milliseconds(2000)) {
   return benchmark_tools_internal::microBenchmarkImpl(
       [&] {
-        for (size_t iter = 0; iter < iters_per_run; ++iter) {
+        for (std::size_t iter = 0; iter < iters_per_run; ++iter) {
           benchmark_tools_internal::MicroBenchmarkIter<Callable>::iter(
               iteration);
         }
@@ -538,7 +532,7 @@ MicroBenchmarkResult microBenchmark(
 template <typename Callable, typename Input>
 MicroBenchmarkResult microBenchmark(
     Callable&& iterationWithInput, const std::vector<Input>& inputs,
-    size_t num_runs = 20000,
+    std::size_t num_runs = 20000,
     std::chrono::milliseconds warmup_time = std::chrono::milliseconds(2000)) {
   return benchmark_tools_internal::microBenchmarkImpl(
       [&] {
@@ -550,5 +544,4 @@ MicroBenchmarkResult microBenchmark(
       inputs.size(), num_runs, warmup_time);
 }
 
-}  // namespace Test
-}  // namespace Acts
+}  // namespace Acts::Test

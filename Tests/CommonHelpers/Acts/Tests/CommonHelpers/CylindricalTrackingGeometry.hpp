@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -36,10 +36,10 @@
 #include "Acts/Tests/CommonHelpers/PredefinedMaterials.hpp"
 
 #include <functional>
+#include <numbers>
 #include <vector>
 
-namespace Acts {
-namespace Test {
+namespace Acts::Test {
 
 struct CylindricalTrackingGeometry {
   std::reference_wrapper<const GeometryContext> geoContext;
@@ -55,19 +55,19 @@ struct CylindricalTrackingGeometry {
   /// Generator of surfaces for a ring
   ///
   /// @param detStore The DetectorStore for storing the modules
-  /// @param moduleHalfXminY The half lenght in X (at Y min) of the module
-  /// @param moduleHalfXmaxY The half lenght in X (at Y max) of the module
-  /// @param moduleHalfY The half lenght in Y of the module
+  /// @param moduleHalfXminY The half length in X (at Y min) of the module
+  /// @param moduleHalfXmaxY The half length in X (at Y max) of the module
+  /// @param moduleHalfY The half length in Y of the module
   /// @param moduleThickness The module thickness
   /// @param moduleTilt The tilt out of the plane for discs
   /// @param ringRadius The central radius of the ring
   /// @param ringZ The z position of the ring
-  /// @param zStagger The z offset of phi moudles
+  /// @param zStagger The z offset of phi modules
   /// @param nPhi The number of phi modules
   ///
   /// @return A vector of Surfaces
   std::vector<const Surface*> surfacesRing(
-      DetectorStore& detStore, double moduleHalfXminY, double moudleHalfXmaxY,
+      DetectorStore& detStore, double moduleHalfXminY, double moduleHalfXmaxY,
       double moduleHalfY, double moduleThickness, double moduleTilt,
       double ringRadius, double ringZ, double zStagger, int nPhi) {
     std::vector<const Surface*> layerSurfaces;
@@ -82,22 +82,22 @@ struct CylindricalTrackingGeometry {
 
     // The rectangle/trapezoid bounds for all modules
     std::shared_ptr<PlanarBounds> mBounds = nullptr;
-    if (moduleHalfXminY == moudleHalfXmaxY) {
+    if (moduleHalfXminY == moduleHalfXmaxY) {
       mBounds = std::make_shared<RectangleBounds>(moduleHalfXminY, moduleHalfY);
     } else {
       mBounds = std::make_shared<TrapezoidBounds>(moduleHalfXminY,
-                                                  moudleHalfXmaxY, moduleHalfY);
+                                                  moduleHalfXmaxY, moduleHalfY);
     }
 
-    double phiStep = 2 * M_PI / nPhi;
+    double phiStep = 2 * std::numbers::pi / nPhi;
 
     for (int im = 0; im < nPhi; ++im) {
       // Get the moduleTransform
-      double phi = -M_PI + im * phiStep;
+      double phi = -std::numbers::pi + im * phiStep;
       auto mModuleTransform = Transform3(
           Translation3(ringRadius * std::cos(phi), ringRadius * std::sin(phi),
                        ringZ + (im % 2) * zStagger) *
-          AngleAxis3(phi - 0.5 * M_PI, Vector3::UnitZ()) *
+          AngleAxis3(phi - std::numbers::pi / 2., Vector3::UnitZ()) *
           AngleAxis3(moduleTilt, Vector3::UnitY()));
 
       // Create the detector element
@@ -114,11 +114,11 @@ struct CylindricalTrackingGeometry {
   /// Generator of surfaces for a cylindrical layer
   ///
   /// @param detStore The DetectorStore for storing the modules
-  /// @param moduleHalfX The half lenght in X of the module
-  /// @param moduleHalfY The half lenght in Y of the module
+  /// @param moduleHalfX The half length in X of the module
+  /// @param moduleHalfY The half length in Y of the module
   /// @param moduleThickness The module thickness
   /// @param moduleTilePhi The tilt in phi direction of the module
-  /// @param layerRadius The radius fo the cylindrical layer
+  /// @param layerRadius The radius of the cylindrical layer
   /// @param radialStagger The radial delta of modules next in z
   /// @param longitudinalOverlap The z overlap of modules next in z
   /// @param binningSchema The number of bins in phi/z
@@ -187,17 +187,19 @@ struct CylindricalTrackingGeometry {
     std::vector<Vector3> mPositions;
     mPositions.reserve(nPhiBins * nZbins);
     // prep work
-    double phiStep = 2 * M_PI / (nPhiBins);
-    double minPhi = -M_PI + 0.5 * phiStep;
+    double phiStep = 2 * std::numbers::pi / (nPhiBins);
+    double minPhi = -std::numbers::pi + phiStep / 2.;
     double zStart = -0.5 * (nZbins - 1) * (2 * moduleHalfLength - lOverlap);
     double zStep = 2 * std::abs(zStart) / (nZbins - 1);
     // loop over the bins
-    for (size_t zBin = 0; zBin < size_t(nZbins); ++zBin) {
+    for (std::size_t zBin = 0; zBin < static_cast<std::size_t>(nZbins);
+         ++zBin) {
       // prepare z and r
       double moduleZ = zStart + zBin * zStep;
       double moduleR =
           (zBin % 2) != 0u ? radius - 0.5 * zStagger : radius + 0.5 * zStagger;
-      for (size_t phiBin = 0; phiBin < size_t(nPhiBins); ++phiBin) {
+      for (std::size_t phiBin = 0; phiBin < static_cast<std::size_t>(nPhiBins);
+           ++phiBin) {
         // calculate the current phi value
         double modulePhi = minPhi + phiBin * phiStep;
         mPositions.push_back(Vector3(moduleR * cos(modulePhi),
@@ -259,7 +261,6 @@ struct CylindricalTrackingGeometry {
     bpvConfig.layerBuilder = beamPipeBuilder;
     bpvConfig.layerEnvelopeR = {1_mm, 1_mm};
     bpvConfig.buildToRadiusZero = true;
-    bpvConfig.volumeSignature = 0;
     auto beamPipeVolumeBuilder = std::make_shared<const CylinderVolumeBuilder>(
         bpvConfig, getDefaultLogger("BeamPipeVolumeBuilder", volumeLLevel));
 
@@ -288,7 +289,7 @@ struct CylindricalTrackingGeometry {
 
     std::vector<LayerPtr> pLayers;
 
-    for (size_t ilp = 0; ilp < pLayerRadii.size(); ++ilp) {
+    for (std::size_t ilp = 0; ilp < pLayerRadii.size(); ++ilp) {
       std::vector<const Surface*> layerSurfaces =
           surfacesCylinder(detectorStore, pModuleHalfX[ilp], pModuleHalfY[ilp],
                            pModuleThickness[ilp], pModuleTiltPhi[ilp],
@@ -303,7 +304,7 @@ struct CylindricalTrackingGeometry {
 
       // create the layer and store it
       ProtoLayer protoLayer(geoContext, layerSurfaces);
-      protoLayer.envelope[binR] = {0.5, 0.5};
+      protoLayer.envelope[BinningValue::binR] = {0.5, 0.5};
       auto pLayer = layerCreator->cylinderLayer(
           geoContext, std::move(layerSurfacePtrs), pLayerBinning[ilp].first,
           pLayerBinning[ilp].second, protoLayer);
@@ -317,14 +318,14 @@ struct CylindricalTrackingGeometry {
     }  // loop over layers
 
     // layer array
-    auto pLayerArray = layerArrayCreator->layerArray(geoContext, pLayers, 25.,
-                                                     300., arbitrary, binR);
+    auto pLayerArray = layerArrayCreator->layerArray(
+        geoContext, pLayers, 25., 300., arbitrary, BinningValue::binR);
     auto pVolumeBounds =
-        std::make_shared<const CylinderVolumeBounds>(25., 300., 1100.);
+        std::make_shared<CylinderVolumeBounds>(25., 300., 1100.);
     // create the Tracking volume
-    auto pVolume = TrackingVolume::create(Transform3::Identity(), pVolumeBounds,
-                                          nullptr, std::move(pLayerArray),
-                                          nullptr, {}, "Pixel::Barrel");
+    auto pVolume = std::make_shared<TrackingVolume>(
+        Transform3::Identity(), pVolumeBounds, nullptr, std::move(pLayerArray),
+        nullptr, MutableTrackingVolumeVector{}, "Pixel::Barrel");
 
     // The combined volume
     auto detectorVolume = cylinderVolumeHelper->createContainerTrackingVolume(
@@ -335,5 +336,4 @@ struct CylindricalTrackingGeometry {
   }
 };
 
-}  // namespace Test
-}  // namespace Acts
+}  // namespace Acts::Test

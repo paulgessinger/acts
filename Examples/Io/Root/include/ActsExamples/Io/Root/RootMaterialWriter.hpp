@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -21,11 +21,20 @@
 #include <Acts/Utilities/Logger.hpp>
 
 #include <map>
+#include <memory>
 #include <mutex>
+#include <string>
+#include <utility>
 
 class TFile;
 
 namespace Acts {
+class ISurfaceMaterial;
+class IVolumeMaterial;
+class Layer;
+class TrackingGeometry;
+class TrackingVolume;
+
 using SurfaceMaterialMap =
     std::map<GeometryIdentifier, std::shared_ptr<const ISurfaceMaterial>>;
 using VolumeMaterialMap =
@@ -109,7 +118,7 @@ class RootMaterialWriter : public IMaterialWriter {
   RootMaterialWriter(const Config& config, Acts::Logging::Level level);
 
   /// Virtual destructor
-  ~RootMaterialWriter();
+  ~RootMaterialWriter() override;
 
   /// Write out the material map
   ///
@@ -120,6 +129,9 @@ class RootMaterialWriter : public IMaterialWriter {
   ///
   /// @param tGeometry is the TrackingGeometry
   void write(const Acts::TrackingGeometry& tGeometry);
+
+  /// Get readonly access to the config parameters
+  const Config& config() const { return m_cfg; }
 
  private:
   /// Collect the material from the tracking geometry

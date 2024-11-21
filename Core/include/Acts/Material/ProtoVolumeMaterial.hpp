@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -28,7 +28,7 @@ namespace Acts {
 
 class ProtoVolumeMaterial : public IVolumeMaterial {
  public:
-  /// Constructor without BinUtility - homogenous material
+  /// Constructor without BinUtility - homogeneous material
   ProtoVolumeMaterial() = default;
 
   /// Constructor with BinUtility - multidimensional material
@@ -37,12 +37,12 @@ class ProtoVolumeMaterial : public IVolumeMaterial {
   ///        and binning of the material on the volume
   ProtoVolumeMaterial(const BinUtility& binUtility);
 
-  /// Copy constuctor
+  /// Copy constructor
   ///
   /// @param vmproxy The source proxy
   ProtoVolumeMaterial(const ProtoVolumeMaterial& vmproxy) = default;
 
-  /// Copy move constuctor
+  /// Copy move constructor
   ///
   /// @param vmproxy The source proxy
   ProtoVolumeMaterial(ProtoVolumeMaterial&& vmproxy) = default;

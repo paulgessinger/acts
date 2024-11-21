@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -18,11 +18,19 @@
 #include "ActsExamples/Framework/ProcessCode.hpp"
 #include "ActsExamples/MaterialMapping/IMaterialWriter.hpp"
 
+#include <cstdint>
+#include <limits>
+#include <map>
+#include <memory>
 #include <mutex>
+#include <string>
+#include <utility>
 
 namespace Acts {
 
 class TrackingGeometry;
+class ISurfaceMaterial;
+class IVolumeMaterial;
 
 using SurfaceMaterialMap =
     std::map<GeometryIdentifier, std::shared_ptr<const ISurfaceMaterial>>;
@@ -35,11 +43,11 @@ using DetectorMaterialMaps = std::pair<SurfaceMaterialMap, VolumeMaterialMap>;
 
 namespace ActsExamples {
 
-enum class JsonFormat : uint8_t {
+enum class JsonFormat : std::uint8_t {
   NoOutput = 0,
   Json = 1,
   Cbor = 2,
-  All = std::numeric_limits<uint8_t>::max()
+  All = std::numeric_limits<std::uint8_t>::max()
 };
 
 ACTS_DEFINE_ENUM_BITWISE_OPERATORS(JsonFormat)
@@ -66,7 +74,7 @@ class JsonMaterialWriter : public IMaterialWriter {
   JsonMaterialWriter(const Config& config, Acts::Logging::Level level);
 
   /// Virtual destructor
-  ~JsonMaterialWriter();
+  ~JsonMaterialWriter() override;
 
   /// Write out the material map
   ///

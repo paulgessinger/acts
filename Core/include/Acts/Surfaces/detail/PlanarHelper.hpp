@@ -1,20 +1,18 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Utilities/Intersection.hpp"
 
-namespace Acts {
-
 /// @brief Helpers for planar surfaces that share the same maths
-namespace PlanarHelper {
+namespace Acts::PlanarHelper {
 
 /// Intersection with a planar surface
 ///
@@ -25,7 +23,8 @@ namespace PlanarHelper {
 /// @return The intersection
 inline Intersection3D intersect(const Transform3& transform,
                                 const Vector3& position,
-                                const Vector3& direction) {
+                                const Vector3& direction,
+                                ActsScalar tolerance) {
   // Get the matrix from the transform (faster access)
   const auto& tMatrix = transform.matrix();
   const Vector3 pnormal = tMatrix.block<3, 1>(0, 2).transpose();
@@ -36,15 +35,13 @@ inline Intersection3D intersect(const Transform3& transform,
     // Translate that into a path
     ActsScalar path = (pnormal.dot((pcenter - position))) / (denom);
     // Is valid hence either on surface or reachable
-    Intersection3D::Status status =
-        (path * path < s_onSurfaceTolerance * s_onSurfaceTolerance)
-            ? Intersection3D::Status::onSurface
-            : Intersection3D::Status::reachable;
+    Intersection3D::Status status = std::abs(path) < std::abs(tolerance)
+                                        ? Intersection3D::Status::onSurface
+                                        : Intersection3D::Status::reachable;
     // Return the intersection
     return Intersection3D{(position + path * direction), path, status};
   }
-  return Intersection3D();
+  return Intersection3D::invalid();
 }
 
-}  // namespace PlanarHelper
-}  // namespace Acts
+}  // namespace Acts::PlanarHelper

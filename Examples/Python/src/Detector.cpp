@@ -1,22 +1,31 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/Material/IMaterialDecorator.hpp"
 #include "Acts/Plugins/Python/Utilities.hpp"
+#include "Acts/Utilities/BinningType.hpp"
+#include "Acts/Utilities/Logger.hpp"
 #include "ActsExamples/ContextualDetector/AlignedDetector.hpp"
-#include "ActsExamples/Detector/IBaseDetector.hpp"
 #include "ActsExamples/Framework/IContextDecorator.hpp"
 #include "ActsExamples/GenericDetector/GenericDetector.hpp"
 #include "ActsExamples/TGeoDetector/TGeoDetector.hpp"
 #include "ActsExamples/TelescopeDetector/TelescopeDetector.hpp"
+#include "ActsExamples/Utilities/Options.hpp"
 
+#include <array>
+#include <cstddef>
 #include <memory>
+#include <optional>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -56,20 +65,23 @@ void addDetector(Context& ctx) {
   }
 
   {
+    using TelescopeDetector = Telescope::TelescopeDetector;
     using Config = TelescopeDetector::Config;
 
-    auto td = py::class_<TelescopeDetector, std::shared_ptr<TelescopeDetector>>(
-                  mex, "TelescopeDetector")
-                  .def(py::init<>())
-                  .def("finalize",
-                       py::overload_cast<
-                           const Config&,
-                           std::shared_ptr<const Acts::IMaterialDecorator>>(
-                           &TelescopeDetector::finalize));
+    auto td =
+        py::class_<TelescopeDetector, std::shared_ptr<TelescopeDetector>>(
+            mex, "TelescopeDetector")
+            .def(py::init<>())
+            .def("finalize",
+                 py::overload_cast<
+                     const Config&,
+                     const std::shared_ptr<const Acts::IMaterialDecorator>&>(
+                     &TelescopeDetector::finalize));
 
     py::class_<Config>(td, "Config")
         .def(py::init<>())
         .def_readwrite("positions", &Config::positions)
+        .def_readwrite("stereos", &Config::stereos)
         .def_readwrite("offsets", &Config::offsets)
         .def_readwrite("bounds", &Config::bounds)
         .def_readwrite("thickness", &Config::thickness)
@@ -78,7 +90,7 @@ void addDetector(Context& ctx) {
   }
 
   {
-    using AlignedDetector = ActsExamples::Contextual::AlignedDetector;
+    using AlignedDetector = Contextual::AlignedDetector;
     using Config = AlignedDetector::Config;
 
     auto d = py::class_<AlignedDetector, std::shared_ptr<AlignedDetector>>(
@@ -158,6 +170,7 @@ void addDetector(Context& ctx) {
     ACTS_PYTHON_MEMBER(itkModuleSplit);
     ACTS_PYTHON_MEMBER(barrelMap);
     ACTS_PYTHON_MEMBER(discMap);
+    ACTS_PYTHON_MEMBER(splitPatterns);
 
     ACTS_PYTHON_MEMBER(layers);
     ACTS_PYTHON_MEMBER(subVolumeName);
@@ -201,6 +214,8 @@ void addDetector(Context& ctx) {
     ACTS_PYTHON_MEMBER(beamPipeRadius);
     ACTS_PYTHON_MEMBER(beamPipeHalflengthZ);
     ACTS_PYTHON_MEMBER(beamPipeLayerThickness);
+    ACTS_PYTHON_MEMBER(beamPipeEnvelopeR);
+    ACTS_PYTHON_MEMBER(layerEnvelopeR);
     ACTS_PYTHON_MEMBER(unitScalor);
     ACTS_PYTHON_MEMBER(volumes);
     ACTS_PYTHON_STRUCT_END();
@@ -208,4 +223,5 @@ void addDetector(Context& ctx) {
     patchKwargsConstructor(c);
   }
 }
+
 }  // namespace Acts::Python

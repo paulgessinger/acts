@@ -1,16 +1,18 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 
 #include <boost/container/flat_map.hpp>
+#include <boost/version.hpp>
 
 namespace ActsExamples {
 
@@ -18,7 +20,7 @@ namespace ActsExamples {
 ///
 /// We do not expect to have more than 2^32 elements in any given container so a
 /// fixed sized integer type is sufficient.
-using Index = uint32_t;
+using Index = std::uint32_t;
 
 /// Store elements that are identified by an index, e.g. in another container.
 ///
@@ -48,7 +50,16 @@ inline boost::container::flat_multimap<value_t, Index> invertIndexMultimap(
 
   // adopting the unordered sequence will reestablish the correct order
   InverseMultimap inverse;
-  inverse.insert(unordered.begin(), unordered.end());
+#if BOOST_VERSION < 107800
+  for (const auto& i : unordered) {
+    inverse.insert(i);
+  }
+#else
+  std::ranges::sort(unordered);
+  inverse.insert(boost::container::ordered_range_t{}, unordered.begin(),
+                 unordered.end());
+#endif
+
   return inverse;
 }
 

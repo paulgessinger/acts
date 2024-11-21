@@ -1,28 +1,35 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Definitions/Units.hpp"
+#include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/ILayerBuilder.hpp"
 #include "Acts/Geometry/LayerCreator.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/BinUtility.hpp"
+#include "Acts/Utilities/BinningType.hpp"
 #include "Acts/Utilities/Logger.hpp"
+
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <DD4hep/DetElement.h>
 
 class TGeoMatrix;
 
-namespace dd4hep {
-class DetElement;
-}
-
 namespace Acts {
+class LayerCreator;
+class Logger;
+class Surface;
 
 /// @brief build layers of one cylinder-endcap setup from DD4hep input
 ///
@@ -69,7 +76,7 @@ class DD4hepLayerBuilder : public ILayerBuilder {
     ///       However, to allow material layers (not containing surfaces) to be
     ///       attached to each other, this default thickness is needed. In this
     ///       way, the layer will be thin (with space to the next layer), but
-    ///       the material will have the'real' thickness.
+    ///       the material will have the 'real' thickness.
     /// @attention The default thickness should be set thin enough that no
     ///            touching or overlapping with the next layer can happen.
     double defaultThickness = UnitConstants::fm;
@@ -119,7 +126,7 @@ class DD4hepLayerBuilder : public ILayerBuilder {
   void setLogger(std::unique_ptr<const Logger> logger);
 
  private:
-  /// configruation object
+  /// configuration object
   Config m_cfg;
 
   /// logging instance

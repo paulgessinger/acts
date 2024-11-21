@@ -1,20 +1,25 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Utilities/Logger.hpp"
+#include "ActsExamples/EventData/SimParticle.hpp"
 #include "ActsExamples/Utilities/Helpers.hpp"
-#include "ActsFatras/EventData/Particle.hpp"
 
 #include <map>
 #include <memory>
 #include <string>
+
+class TEfficiency;
+namespace ActsFatras {
+class Particle;
+}  // namespace ActsFatras
 
 namespace ActsExamples {
 
@@ -28,7 +33,9 @@ class EffPlotTool {
     std::map<std::string, PlotHelpers::Binning> varBinning = {
         {"Eta", PlotHelpers::Binning("#eta", 40, -4, 4)},
         {"Phi", PlotHelpers::Binning("#phi", 100, -3.15, 3.15)},
-        {"Pt", PlotHelpers::Binning("pT [GeV/c]", 40, 0, 100)}};
+        {"Pt", PlotHelpers::Binning("pT [GeV/c]", 40, 0, 100)},
+        {"Z0", PlotHelpers::Binning("z_0 [mm]", 50, -200, 200)},
+        {"DeltaR", PlotHelpers::Binning("#Delta R", 100, 0, 0.3)}};
   };
 
   /// @brief Nested Cache struct
@@ -36,6 +43,10 @@ class EffPlotTool {
     TEfficiency* trackEff_vs_pT{nullptr};   ///< Tracking efficiency vs pT
     TEfficiency* trackEff_vs_eta{nullptr};  ///< Tracking efficiency vs eta
     TEfficiency* trackEff_vs_phi{nullptr};  ///< Tracking efficiency vs phi
+    TEfficiency* trackEff_vs_z0{nullptr};   ///< Tracking efficiency vs z0
+    TEfficiency* trackEff_vs_DeltaR{
+        nullptr};  ///< Tracking efficiency vs distance to the closest truth
+                   ///< particle
   };
 
   /// Constructor
@@ -53,9 +64,10 @@ class EffPlotTool {
   ///
   /// @param effPlotCache cache object for efficiency plots
   /// @param truthParticle the truth Particle
+  /// @param deltaR the distance to the closest truth particle
   /// @param status the reconstruction status
-  void fill(EffPlotCache& effPlotCache,
-            const ActsFatras::Particle& truthParticle, bool status) const;
+  void fill(EffPlotCache& effPlotCache, const SimParticleState& truthParticle,
+            double deltaR, bool status) const;
 
   /// @brief write the efficiency plots to file
   ///

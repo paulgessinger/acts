@@ -1,18 +1,23 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2021 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/Geometry/GeometryIdentifier.hpp"
 #include "ActsExamples/EventData/Cluster.hpp"
-#include "ActsExamples/EventData/IndexSourceLink.hpp"
 #include "ActsExamples/EventData/Measurement.hpp"
+
+#include <array>
+#include <cstddef>
+#include <tuple>
+#include <vector>
 
 namespace ActsExamples {
 
@@ -29,29 +34,32 @@ struct DigitizedParameters {
 
 /// Helper method for created a measurement from digitized parameters
 ///
+/// @param container The measurement container to insert into
+/// @param geometryId The geometry ID of the measurement surface
 /// @param dParams The digitized parameters of variable size
-/// @param isl The indexed source link for the measurement
 ///
 /// To be used also by the e I/O system
 ///
-/// @return a variant measurement
-Measurement createMeasurement(const DigitizedParameters& dParams,
-                              const IndexSourceLink& isl) noexcept(false);
+/// @return the measurement proxy
+ActsExamples::VariableBoundMeasurementProxy createMeasurement(
+    MeasurementContainer& container, Acts::GeometryIdentifier geometryId,
+    const DigitizedParameters& dParams) noexcept(false);
 
-/// Contruct the constituents of a measurement.
+/// Construct the constituents of a measurement.
 ///
 /// @tparam kMeasDIM the full dimension of the measurement
 ///
 /// @param dParams the struct of arrays of parameters to be created
 ///
 /// @return a tuple of constituents for a measurement
-template <size_t kMeasDIM>
+template <std::size_t kMeasDIM>
 std::tuple<std::array<Acts::BoundIndices, kMeasDIM>, Acts::ActsVector<kMeasDIM>,
-           Acts::ActsSymMatrix<kMeasDIM>>
+           Acts::ActsSquareMatrix<kMeasDIM>>
 measurementConstituents(const DigitizedParameters& dParams) {
-  std::array<Acts::BoundIndices, kMeasDIM> indices;
+  std::array<Acts::BoundIndices, kMeasDIM> indices{};
   Acts::ActsVector<kMeasDIM> par;
-  Acts::ActsSymMatrix<kMeasDIM> cov = Acts::ActsSymMatrix<kMeasDIM>::Identity();
+  Acts::ActsSquareMatrix<kMeasDIM> cov =
+      Acts::ActsSquareMatrix<kMeasDIM>::Identity();
   for (Eigen::Index ei = 0; ei < static_cast<Eigen::Index>(kMeasDIM); ++ei) {
     indices[ei] = dParams.indices[ei];
     par[ei] = dParams.values[ei];

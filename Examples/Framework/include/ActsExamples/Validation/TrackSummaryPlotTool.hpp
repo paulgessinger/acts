@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -13,9 +13,12 @@
 #include "ActsExamples/Utilities/Helpers.hpp"
 #include "ActsFatras/EventData/Particle.hpp"
 
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <string>
+
+class TProfile;
 
 namespace ActsExamples {
 
@@ -67,9 +70,10 @@ class TrackSummaryPlotTool {
   /// @param nOutliers number of outliers
   /// @param nHoles number of holes
   void fill(TrackSummaryPlotCache& trackSummaryPlotCache,
-            const Acts::BoundTrackParameters& fittedParameters, size_t nStates,
-            size_t nMeasurments, size_t Outliers, size_t nHoles,
-            size_t nSharedHits) const;
+            const Acts::BoundTrackParameters& fittedParameters,
+            std::size_t nStates, std::size_t nMeasurements,
+            std::size_t Outliers, std::size_t nHoles,
+            std::size_t nSharedHits) const;
 
   /// @brief write the track info plots to file
   ///

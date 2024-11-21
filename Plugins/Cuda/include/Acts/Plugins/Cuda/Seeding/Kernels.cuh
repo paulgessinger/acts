@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -57,6 +57,7 @@ void searchTriplet(
     const int* nTrplPerSpBLimit_cpu, const int* nTrplPerSpBLimit_cuda,
     const float* deltaInvHelixDiameter, const float* impactWeightFactor,
     const float* deltaRMin, const float* compatSeedWeight,
-    const size_t* compatSeedLimit_cpu, const size_t* compatSeedLimit_cuda,
-    int* nTrplPerSpM, Triplet* TripletsPerSpM, cudaStream_t* stream);
+    const std::size_t* compatSeedLimit_cpu,
+    const std::size_t* compatSeedLimit_cuda, int* nTrplPerSpM,
+    Triplet* TripletsPerSpM, cudaStream_t* stream);
 }  // namespace Acts

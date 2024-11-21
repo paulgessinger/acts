@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -13,9 +13,12 @@
 #include <Acts/Utilities/Logger.hpp>
 #include <Acts/Visualization/ViewConfig.hpp>
 
+#include <cstddef>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <mutex>
+#include <string>
 
 namespace Acts {
 class TrackingVolume;
@@ -23,6 +26,7 @@ class TrackingGeometry;
 }  // namespace Acts
 
 namespace ActsExamples {
+struct AlgorithmContext;
 
 /// @class ObjTrackingGeometryWriter
 ///
@@ -35,15 +39,15 @@ class ObjTrackingGeometryWriter {
   // The nested config class
   class Config {
    public:
-    double outputScalor = 1.0;   ///< scale output values
-    size_t outputPrecision = 6;  ///< floating point precision
+    double outputScalor = 1.0;        ///< scale output values
+    std::size_t outputPrecision = 6;  ///< floating point precision
     std::string outputDir = ".";
 
-    Acts::ViewConfig containerView = Acts::ViewConfig({220, 220, 220});
-    Acts::ViewConfig volumeView = Acts::ViewConfig({220, 220, 0});
-    Acts::ViewConfig sensitiveView = Acts::ViewConfig({0, 180, 240});
-    Acts::ViewConfig passiveView = Acts::ViewConfig({240, 280, 0});
-    Acts::ViewConfig gridView = Acts::ViewConfig({220, 0, 0});
+    Acts::ViewConfig containerView = {.color = {220, 220, 220}};
+    Acts::ViewConfig volumeView = {.color = {220, 220, 0}};
+    Acts::ViewConfig sensitiveView = {.color = {0, 180, 240}};
+    Acts::ViewConfig passiveView = {.color = {240, 280, 0}};
+    Acts::ViewConfig gridView = {.color = {220, 0, 0}};
   };
 
   /// Constructor

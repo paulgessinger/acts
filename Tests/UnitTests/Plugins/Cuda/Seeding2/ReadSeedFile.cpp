@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 // Local include(s).
 #include "ReadSeedFile.hpp"
@@ -45,7 +45,7 @@ std::vector<std::unique_ptr<TestSpacePoint> > readSeedFile(
     int layer;
     float x, y, z, varianceR, varianceZ;
     ss >> layer >> x >> y >> z >> varianceR >> varianceZ;
-    const float r = std::sqrt(x * x + y * y);
+    const float r = std::hypot(x, y);
     const float f22 = varianceR;
     const float wid = varianceZ;
     float cov = wid * wid * .08333;

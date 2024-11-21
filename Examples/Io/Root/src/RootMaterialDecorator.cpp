@@ -1,15 +1,20 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsExamples/Io/Root/RootMaterialDecorator.hpp"
 
+#include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Material/InterpolatedMaterialMap.hpp"
+#include "Acts/Material/Material.hpp"
 #include "Acts/Material/MaterialGridHelper.hpp"
+#include "Acts/Material/MaterialSlab.hpp"
+#include "Acts/Utilities/Grid.hpp"
+#include "Acts/Utilities/Logger.hpp"
 #include <Acts/Geometry/GeometryIdentifier.hpp>
 #include <Acts/Material/BinnedSurfaceMaterial.hpp>
 #include <Acts/Material/HomogeneousSurfaceMaterial.hpp>
@@ -17,27 +22,36 @@
 #include <Acts/Utilities/BinUtility.hpp>
 #include <Acts/Utilities/BinningType.hpp>
 
+#include <algorithm>
 #include <cstdio>
+#include <functional>
 #include <iostream>
-#include <sstream>
 #include <stdexcept>
 #include <string>
+#include <tuple>
+#include <vector>
 
 #include <TFile.h>
-#include <TH2F.h>
+#include <TH1.h>
+#include <TH2.h>
 #include <TIterator.h>
 #include <TKey.h>
 #include <TList.h>
+#include <TObject.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/finder.hpp>
 #include <boost/algorithm/string/iter_find.hpp>
+
+namespace Acts {
+class ISurfaceMaterial;
+class IVolumeMaterial;
+}  // namespace Acts
 
 ActsExamples::RootMaterialDecorator::RootMaterialDecorator(
     const ActsExamples::RootMaterialDecorator::Config& config,
     Acts::Logging::Level level)
     : m_cfg(config),
-      m_logger{Acts::getDefaultLogger("RootMaterialDecorator", level)},
-      m_inputFile(nullptr) {
+      m_logger{Acts::getDefaultLogger("RootMaterialDecorator", level)} {
   // Validate the configuration
   if (m_cfg.folderSurfaceNameBase.empty()) {
     throw std::invalid_argument("Missing surface folder name base");
@@ -50,7 +64,7 @@ ActsExamples::RootMaterialDecorator::RootMaterialDecorator(
   // Setup ROOT I/O
   m_inputFile = TFile::Open(m_cfg.fileName.c_str());
   if (m_inputFile == nullptr) {
-    throw std::ios_base::failure("Could not open '" + m_cfg.fileName);
+    throw std::ios_base::failure("Could not open '" + m_cfg.fileName + "'");
   }
 
   // Get the list of keys from the file
@@ -59,7 +73,7 @@ ActsExamples::RootMaterialDecorator::RootMaterialDecorator(
   tIter->Reset();
 
   // Iterate over the keys in the file
-  while (TKey* key = (TKey*)(tIter->Next())) {
+  while (TKey* key = static_cast<TKey*>(tIter->Next())) {
     // Remember the directory
     std::string tdName(key->GetName());
 
@@ -134,8 +148,8 @@ ActsExamples::RootMaterialDecorator::RootMaterialDecorator(
       std::vector<const TH1*> hists{n, v, o, min, max, t, x0, l0, A, Z, rho};
 
       // Only go on when you have all histograms
-      if (std::all_of(hists.begin(), hists.end(),
-                      [](const auto* hist) { return hist != nullptr; })) {
+      if (std::ranges::all_of(
+              hists, [](const auto* hist) { return hist != nullptr; })) {
         // Get the number of bins
         int nbins0 = t->GetNbinsX();
         int nbins1 = t->GetNbinsY();
@@ -168,9 +182,11 @@ ActsExamples::RootMaterialDecorator::RootMaterialDecorator(
           // Now reconstruct the bin untilities
           Acts::BinUtility bUtility;
           for (int ib = 1; ib < n->GetNbinsX() + 1; ++ib) {
-            size_t nbins = size_t(n->GetBinContent(ib));
-            Acts::BinningValue val = Acts::BinningValue(v->GetBinContent(ib));
-            Acts::BinningOption opt = Acts::BinningOption(o->GetBinContent(ib));
+            std::size_t nbins = static_cast<std::size_t>(n->GetBinContent(ib));
+            Acts::BinningValue val =
+                static_cast<Acts::BinningValue>(v->GetBinContent(ib));
+            Acts::BinningOption opt =
+                static_cast<Acts::BinningOption>(o->GetBinContent(ib));
             float rmin = min->GetBinContent(ib);
             float rmax = max->GetBinContent(ib);
             bUtility += Acts::BinUtility(nbins, rmin, rmax, opt, val);
@@ -189,7 +205,7 @@ ActsExamples::RootMaterialDecorator::RootMaterialDecorator(
           double da = A->GetBinContent(1, 1);
           double dz = Z->GetBinContent(1, 1);
           double drho = rho->GetBinContent(1, 1);
-          // Create and set the homogenous surface material
+          // Create and set the homogeneous surface material
           const auto material =
               Acts::Material::fromMassDensity(dx0, dl0, da, dz, drho);
           sMaterial = std::make_shared<const Acts::HomogeneousSurfaceMaterial>(
@@ -238,22 +254,24 @@ ActsExamples::RootMaterialDecorator::RootMaterialDecorator(
       TH1F* rho = dynamic_cast<TH1F*>(m_inputFile->Get(rhoName.c_str()));
 
       // Only go on when you have all the material histograms
-      if ((x0 != nullptr) and (l0 != nullptr) and (A != nullptr) and
-          (Z != nullptr) and (rho != nullptr)) {
+      if ((x0 != nullptr) && (l0 != nullptr) && (A != nullptr) &&
+          (Z != nullptr) && (rho != nullptr)) {
         // Get the number of grid points
         int points = x0->GetNbinsX();
         // If the bin information histograms are present the material is
         // either a 2D or a 3D grid
-        if ((n != nullptr) and (v != nullptr) and (o != nullptr) and
-            (min != nullptr) and (max != nullptr)) {
+        if ((n != nullptr) && (v != nullptr) && (o != nullptr) &&
+            (min != nullptr) && (max != nullptr)) {
           // Dimension of the grid
           int dim = n->GetNbinsX();
           // Now reconstruct the bin untilities
           Acts::BinUtility bUtility;
           for (int ib = 1; ib < dim + 1; ++ib) {
-            size_t nbins = size_t(n->GetBinContent(ib));
-            Acts::BinningValue val = Acts::BinningValue(v->GetBinContent(ib));
-            Acts::BinningOption opt = Acts::BinningOption(o->GetBinContent(ib));
+            std::size_t nbins = static_cast<std::size_t>(n->GetBinContent(ib));
+            Acts::BinningValue val =
+                static_cast<Acts::BinningValue>(v->GetBinContent(ib));
+            Acts::BinningOption opt =
+                static_cast<Acts::BinningOption>(o->GetBinContent(ib));
             float rmin = min->GetBinContent(ib);
             float rmax = max->GetBinContent(ib);
             bUtility += Acts::BinUtility(nbins, rmin, rmax, opt, val);

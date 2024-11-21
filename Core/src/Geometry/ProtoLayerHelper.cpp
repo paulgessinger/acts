@@ -1,18 +1,21 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Geometry/ProtoLayerHelper.hpp"
 
 #include "Acts/Geometry/Extent.hpp"
 #include "Acts/Geometry/Polyhedron.hpp"
+#include "Acts/Geometry/ProtoLayer.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 
-#include <iosfwd>
+#include <array>
+#include <ostream>
+#include <string>
 
 std::vector<Acts::ProtoLayer> Acts::ProtoLayerHelper::protoLayers(
     const GeometryContext& gctx, const std::vector<const Surface*>& surfaces,
@@ -26,10 +29,10 @@ std::vector<Acts::ProtoLayer> Acts::ProtoLayerHelper::protoLayers(
   ///
   /// @param extent The test extent for finding the cluster
   ///
-  /// @return the referece of the SurfaceCluster for insertion
+  /// @return the reference of the SurfaceCluster for insertion
   auto findCluster = [&](const Extent& extent) -> SurfaceCluster& {
     for (auto& cluster : clusteredSurfaces) {
-      if (cluster.first.intersects(extent, sorting.first, sorting.second)) {
+      if (cluster.first.intersects(extent, sorting.first)) {
         return cluster;
       }
     }
@@ -40,17 +43,20 @@ std::vector<Acts::ProtoLayer> Acts::ProtoLayerHelper::protoLayers(
 
   // Loop over surfaces and sort into clusters
   for (auto& sf : surfaces) {
-    auto sfExtent = sf->polyhedronRepresentation(gctx, 1).extent();
+    // To prevent problematic isInsidePolygon check for straw surfaces with only
+    // one lseg
+    int lseg = (sf->type() != Surface::Straw) ? 1 : 2;
+    auto sfExtent = sf->polyhedronRepresentation(gctx, lseg).extent();
+    sfExtent.envelope()[sorting.first] = {sorting.second, sorting.second};
     auto& sfCluster = findCluster(sfExtent);
     sfCluster.first.extend(sfExtent);
     sfCluster.second.push_back(sf);
   }
-
   // Loop over clusters and create ProtoLayer
   protoLayers.reserve(clusteredSurfaces.size());
   for (auto& clusters : clusteredSurfaces) {
-    ACTS_VERBOSE("Creatingg ProtoLayer with " << clusters.second.size()
-                                              << " surfaces.");
+    ACTS_VERBOSE("Creating ProtoLayer with " << clusters.second.size()
+                                             << " surfaces.");
     protoLayers.push_back(ProtoLayer(gctx, clusters.second));
   }
   return protoLayers;
@@ -63,15 +69,15 @@ std::vector<Acts::ProtoLayer> Acts::ProtoLayerHelper::protoLayers(
   std::vector<std::vector<const Surface*>> sortSurfaces = {surfaces};
   for (const auto& sorting : sortings) {
     ACTS_VERBOSE("-> Sorting a set of " << sortSurfaces.size() << " in "
-                                        << binningValueNames()[sorting.first]);
+                                        << binningValueName(sorting.first));
     std::vector<std::vector<const Surface*>> subSurfaces;
     for (const auto& ssurfaces : sortSurfaces) {
       ACTS_VERBOSE("-> Surfaces for this sorting step: " << ssurfaces.size());
       auto pLayers = protoLayers(gctx, ssurfaces, sorting);
       ACTS_VERBOSE("-> Resulted in " << pLayers.size() << " ProtoLayers.");
       for (const auto& pLayer : pLayers) {
-        ACTS_VERBOSE("--> ProtoLayer containes " << pLayer.surfaces().size()
-                                                 << " surfaces.");
+        ACTS_VERBOSE("--> ProtoLayer contains " << pLayer.surfaces().size()
+                                                << " surfaces.");
         subSurfaces.push_back(pLayer.surfaces());
       }
     }
@@ -81,7 +87,7 @@ std::vector<Acts::ProtoLayer> Acts::ProtoLayerHelper::protoLayers(
 
   std::vector<Acts::ProtoLayer> finalProtoLayers;
 
-  for (auto ssurfaces : sortSurfaces) {
+  for (const auto& ssurfaces : sortSurfaces) {
     finalProtoLayers.push_back(ProtoLayer(gctx, ssurfaces));
   }
 

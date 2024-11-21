@@ -1,14 +1,15 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2022 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ActsExamples/Io/EDM4hep/EDM4hepMeasurementReader.hpp"
 
 #include "Acts/Definitions/Units.hpp"
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "ActsExamples/EventData/Cluster.hpp"
 #include "ActsExamples/EventData/Measurement.hpp"
 #include "ActsExamples/Framework/WhiteBoard.hpp"
@@ -17,8 +18,10 @@
 #include <list>
 #include <stdexcept>
 
-#include "edm4hep/TrackerHit.h"
-#include "edm4hep/TrackerHitPlane.h"
+#include <edm4hep/TrackerHit.h>
+#include <edm4hep/TrackerHitCollection.h>
+#include <edm4hep/TrackerHitPlane.h>
+#include <edm4hep/TrackerHitPlaneCollection.h>
 
 namespace ActsExamples {
 
@@ -30,22 +33,19 @@ EDM4hepMeasurementReader::EDM4hepMeasurementReader(
     throw std::invalid_argument("Missing measurement output collection");
   }
 
-  m_reader.openFile(m_cfg.inputPath);
-  m_store.setReader(&m_reader);
+  m_eventsRange = std::make_pair(0, reader().getEntries("events"));
 
-  m_eventsRange = std::make_pair(0, m_reader.getEntries());
-
-  m_trackerHitPlaneCollection =
-      &m_store.get<edm4hep::TrackerHitPlaneCollection>("ActsTrackerHitsPlane");
-  m_trackerHitRawCollection =
-      &m_store.create<edm4hep::TrackerHitCollection>("ActsTrackerHitsRaw");
+  m_outputMeasurements.initialize(m_cfg.outputMeasurements);
+  m_outputMeasurementSimHitsMap.initialize(m_cfg.outputMeasurementSimHitsMap);
+  m_outputClusters.maybeInitialize(m_cfg.outputClusters);
 }
 
 std::string EDM4hepMeasurementReader::EDM4hepMeasurementReader::name() const {
   return "EDM4hepMeasurementReader";
 }
 
-std::pair<size_t, size_t> EDM4hepMeasurementReader::availableEvents() const {
+std::pair<std::size_t, std::size_t> EDM4hepMeasurementReader::availableEvents()
+    const {
   return m_eventsRange;
 }
 
@@ -54,36 +54,41 @@ ProcessCode EDM4hepMeasurementReader::read(const AlgorithmContext& ctx) {
   ClusterContainer clusters;
   // TODO what about those?
   IndexMultimap<Index> measurementSimHitsMap;
-  IndexSourceLinkContainer sourceLinks;
-  std::list<IndexSourceLink> sourceLinkStorage;
 
-  m_store.clear();
-  m_reader.goToEvent(ctx.eventNumber);
+  podio::Frame frame = reader().readEntry("events", ctx.eventNumber);
 
-  for (const auto& trackerHitPlane : *m_trackerHitPlaneCollection) {
+  const auto& trackerHitPlaneCollection =
+      frame.get<edm4hep::TrackerHitPlaneCollection>("ActsTrackerHitsPlane");
+  const auto& trackerHitRawCollection =
+      frame.get<edm4hep::TrackerHitCollection>("ActsTrackerHitsRaw");
+
+  for (const auto& trackerHitPlane : trackerHitPlaneCollection) {
     Cluster cluster;
-    auto measurement = EDM4hepUtil::readMeasurement(
-        trackerHitPlane, m_trackerHitRawCollection, &cluster,
+    EDM4hepUtil::readMeasurement(
+        measurements, trackerHitPlane, &trackerHitRawCollection, &cluster,
         [](std::uint64_t cellId) { return Acts::GeometryIdentifier(cellId); });
 
-    measurements.push_back(std::move(measurement));
     clusters.push_back(std::move(cluster));
   }
 
   // Write the data to the EventStore
-  ctx.eventStore.add(m_cfg.outputMeasurements, std::move(measurements));
-  ctx.eventStore.add(m_cfg.outputMeasurementSimHitsMap,
-                     std::move(measurementSimHitsMap));
-  ctx.eventStore.add(m_cfg.outputSourceLinks, std::move(sourceLinks));
-  ctx.eventStore.add(m_cfg.outputSourceLinks + "__storage",
-                     std::move(sourceLinkStorage));
-  if (not m_cfg.outputClusters.empty()) {
-    ctx.eventStore.add(m_cfg.outputClusters, std::move(clusters));
+  m_outputMeasurements(ctx, std::move(measurements));
+  m_outputMeasurementSimHitsMap(ctx, std::move(measurementSimHitsMap));
+  if (!m_cfg.outputClusters.empty()) {
+    m_outputClusters(ctx, std::move(clusters));
   }
 
-  m_reader.endOfEvent();
-
   return ProcessCode::SUCCESS;
+}
+
+Acts::PodioUtil::ROOTReader& EDM4hepMeasurementReader::reader() {
+  bool exists = false;
+  auto& reader = m_reader.local(exists);
+  if (!exists) {
+    reader.openFile(m_cfg.inputPath);
+  }
+
+  return reader;
 }
 
 }  // namespace ActsExamples

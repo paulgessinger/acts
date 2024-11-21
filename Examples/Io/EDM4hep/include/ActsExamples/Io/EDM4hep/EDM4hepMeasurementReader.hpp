@@ -1,22 +1,24 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2022 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #pragma once
 
+#include "Acts/Plugins/Podio/PodioUtil.hpp"
 #include "Acts/Utilities/Logger.hpp"
+#include "ActsExamples/EventData/Cluster.hpp"
+#include "ActsExamples/EventData/IndexSourceLink.hpp"
+#include "ActsExamples/EventData/Measurement.hpp"
+#include "ActsExamples/Framework/DataHandle.hpp"
 #include "ActsExamples/Framework/IReader.hpp"
 
 #include <memory>
 #include <string>
 
-#include "edm4hep/TrackerHitCollection.h"
-#include "edm4hep/TrackerHitPlaneCollection.h"
-#include "podio/EventStore.h"
-#include "podio/ROOTReader.h"
+#include <tbb/enumerable_thread_specific.h>
 
 namespace ActsExamples {
 
@@ -39,8 +41,6 @@ class EDM4hepMeasurementReader final : public IReader {
     std::string outputMeasurements;
     /// Output measurement to sim hit collection.
     std::string outputMeasurementSimHitsMap;
-    /// Output source links collection.
-    std::string outputSourceLinks;
     /// Output cluster collection (optional).
     std::string outputClusters;
   };
@@ -54,7 +54,7 @@ class EDM4hepMeasurementReader final : public IReader {
   std::string name() const final;
 
   /// Return the available events range.
-  std::pair<size_t, size_t> availableEvents() const final;
+  std::pair<std::size_t, std::size_t> availableEvents() const final;
 
   /// Read out data from the input stream.
   ProcessCode read(const ActsExamples::AlgorithmContext& ctx) final;
@@ -64,14 +64,20 @@ class EDM4hepMeasurementReader final : public IReader {
 
  private:
   Config m_cfg;
-  std::pair<size_t, size_t> m_eventsRange;
+  std::pair<std::size_t, std::size_t> m_eventsRange;
   std::unique_ptr<const Acts::Logger> m_logger;
 
-  podio::ROOTReader m_reader;
-  podio::EventStore m_store;
+  tbb::enumerable_thread_specific<Acts::PodioUtil::ROOTReader> m_reader;
 
-  const edm4hep::TrackerHitPlaneCollection* m_trackerHitPlaneCollection;
-  const edm4hep::TrackerHitCollection* m_trackerHitRawCollection;
+  Acts::PodioUtil::ROOTReader& reader();
+
+  WriteDataHandle<MeasurementContainer> m_outputMeasurements{
+      this, "OutputMeasurements"};
+
+  WriteDataHandle<IndexMultimap<Index>> m_outputMeasurementSimHitsMap{
+      this, "OutputMeasurementSimHitsMap"};
+
+  WriteDataHandle<ClusterContainer> m_outputClusters{this, "OutputClusters"};
 };
 
 }  // namespace ActsExamples

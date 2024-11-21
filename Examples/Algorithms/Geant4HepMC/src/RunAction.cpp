@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "RunAction.hpp"
 
@@ -34,11 +34,11 @@ RunAction::~RunAction() {
   s_instance = nullptr;
 }
 
-void RunAction::BeginOfRunAction(const G4Run* /*unused*/) {
+void RunAction::BeginOfRunAction(const G4Run* /*run*/) {
   // initialize event cumulative quantities
   EventAction::instance()->clear();
 }
 
-void RunAction::EndOfRunAction(const G4Run* /*unused*/) {}
+void RunAction::EndOfRunAction(const G4Run* /*run*/) {}
 
 }  // namespace ActsExamples::Geant4::HepMC3

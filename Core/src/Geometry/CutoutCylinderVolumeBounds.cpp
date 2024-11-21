@@ -1,14 +1,16 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Acts/Geometry/CutoutCylinderVolumeBounds.hpp"
 
 #include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/Direction.hpp"
+#include "Acts/Definitions/Tolerance.hpp"
 #include "Acts/Geometry/BoundarySurfaceFace.hpp"
 #include "Acts/Geometry/Volume.hpp"
 #include "Acts/Geometry/VolumeBounds.hpp"
@@ -18,11 +20,11 @@
 #include "Acts/Surfaces/RadialBounds.hpp"
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
-#include "Acts/Utilities/Helpers.hpp"
 
 #include <memory>
 #include <ostream>
-#include <vector>
+#include <type_traits>
+#include <utility>
 
 bool Acts::CutoutCylinderVolumeBounds::inside(const Acts::Vector3& gpos,
                                               double tol) const {
@@ -46,9 +48,10 @@ bool Acts::CutoutCylinderVolumeBounds::inside(const Acts::Vector3& gpos,
   return !insideRInner || !insideZInner;  // we are not, inside bounds
 }
 
-Acts::OrientedSurfaces Acts::CutoutCylinderVolumeBounds::orientedSurfaces(
+std::vector<Acts::OrientedSurface>
+Acts::CutoutCylinderVolumeBounds::orientedSurfaces(
     const Transform3& transform) const {
-  OrientedSurfaces oSurfaces;
+  std::vector<OrientedSurface> oSurfaces;
 
   if (get(eMinR) == 0.) {
     oSurfaces.resize(6);  // exactly six surfaces (no choke inner cover)
@@ -60,13 +63,13 @@ Acts::OrientedSurfaces Acts::CutoutCylinderVolumeBounds::orientedSurfaces(
   auto outer =
       Surface::makeShared<CylinderSurface>(transform, m_outerCylinderBounds);
   oSurfaces.at(tubeOuterCover) =
-      OrientedSurface(std::move(outer), NavigationDirection::Backward);
+      OrientedSurface{std::move(outer), Direction::OppositeNormal};
 
   // Inner (cutout) cylinder envelope
   auto cutoutInner =
       Surface::makeShared<CylinderSurface>(transform, m_cutoutCylinderBounds);
   oSurfaces.at(tubeInnerCover) =
-      OrientedSurface(std::move(cutoutInner), NavigationDirection::Forward);
+      OrientedSurface{std::move(cutoutInner), Direction::AlongNormal};
 
   // z position of the pos and neg choke points
   double hlChoke = (get(eHalfLengthZ) - get(eHalfLengthZcutout)) * 0.5;
@@ -77,13 +80,13 @@ Acts::OrientedSurfaces Acts::CutoutCylinderVolumeBounds::orientedSurfaces(
     auto posInner = Surface::makeShared<CylinderSurface>(posChokeTrf,
                                                          m_innerCylinderBounds);
     oSurfaces.at(index7) =
-        OrientedSurface(std::move(posInner), NavigationDirection::Forward);
+        OrientedSurface{std::move(posInner), Direction::AlongNormal};
 
     auto negChokeTrf = transform * Translation3(Vector3(0, 0, -zChoke));
     auto negInner = Surface::makeShared<CylinderSurface>(negChokeTrf,
                                                          m_innerCylinderBounds);
     oSurfaces.at(index6) =
-        OrientedSurface(std::move(negInner), NavigationDirection::Forward);
+        OrientedSurface{std::move(negInner), Direction::AlongNormal};
   }
 
   // Two Outer disks
@@ -92,14 +95,14 @@ Acts::OrientedSurfaces Acts::CutoutCylinderVolumeBounds::orientedSurfaces(
   auto posOutDisc =
       Surface::makeShared<DiscSurface>(posOutDiscTrf, m_outerDiscBounds);
   oSurfaces.at(positiveFaceXY) =
-      OrientedSurface(std::move(posOutDisc), NavigationDirection::Backward);
+      OrientedSurface{std::move(posOutDisc), Direction::OppositeNormal};
 
   auto negOutDiscTrf =
       transform * Translation3(Vector3(0, 0, -get(eHalfLengthZ)));
   auto negOutDisc =
       Surface::makeShared<DiscSurface>(negOutDiscTrf, m_outerDiscBounds);
   oSurfaces.at(negativeFaceXY) =
-      OrientedSurface(std::move(negOutDisc), NavigationDirection::Forward);
+      OrientedSurface{std::move(negOutDisc), Direction::AlongNormal};
 
   // Two Inner disks
   auto posInDiscTrf =
@@ -107,14 +110,14 @@ Acts::OrientedSurfaces Acts::CutoutCylinderVolumeBounds::orientedSurfaces(
   auto posInDisc =
       Surface::makeShared<DiscSurface>(posInDiscTrf, m_innerDiscBounds);
   oSurfaces.at(index5) =
-      OrientedSurface(std::move(posInDisc), NavigationDirection::Forward);
+      OrientedSurface{std::move(posInDisc), Direction::AlongNormal};
 
   auto negInDiscTrf =
       transform * Translation3(Vector3(0, 0, -get(eHalfLengthZcutout)));
   auto negInDisc =
       Surface::makeShared<DiscSurface>(negInDiscTrf, m_innerDiscBounds);
   oSurfaces.at(index4) =
-      OrientedSurface(std::move(negInDisc), NavigationDirection::Backward);
+      OrientedSurface{std::move(negInDisc), Direction::OppositeNormal};
 
   return oSurfaces;
 }

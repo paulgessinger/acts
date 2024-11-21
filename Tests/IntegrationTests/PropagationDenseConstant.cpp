@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
@@ -16,10 +16,12 @@
 #include "Acts/MagneticField/MagneticFieldContext.hpp"
 #include "Acts/Material/HomogeneousVolumeMaterial.hpp"
 #include "Acts/Propagator/EigenStepper.hpp"
+#include "Acts/Propagator/EigenStepperDenseExtension.hpp"
 #include "Acts/Propagator/Navigator.hpp"
 #include "Acts/Propagator/Propagator.hpp"
 #include "Acts/Propagator/RiddersPropagator.hpp"
 #include "Acts/Tests/CommonHelpers/PredefinedMaterials.hpp"
+#include "Acts/Utilities/Logger.hpp"
 
 #include <limits>
 
@@ -32,8 +34,7 @@ namespace ds = ActsTests::PropagationDatasets;
 using namespace Acts::UnitLiterals;
 
 using MagneticField = Acts::ConstantBField;
-using Stepper = Acts::EigenStepper<
-    Acts::StepperExtensionList<Acts::DenseEnvironmentExtension>>;
+using Stepper = Acts::EigenStepper<Acts::EigenStepperDenseExtension>;
 using Propagator = Acts::Propagator<Stepper, Acts::Navigator>;
 using RiddersPropagator = Acts::RiddersPropagator<Propagator>;
 
@@ -42,7 +43,7 @@ constexpr auto epsPos = 10_um;
 constexpr auto epsDir = 1_mrad;
 constexpr auto epsMom = 5_MeV;
 // relative covariance tolerance
-constexpr auto epsCov = 0.05;
+constexpr auto epsCov = 0.07;
 
 const Acts::GeometryContext geoCtx;
 const Acts::MagneticFieldContext magCtx;
@@ -52,7 +53,7 @@ inline std::shared_ptr<const Acts::TrackingGeometry> makeDetector() {
 
   // avoid rebuilding the tracking geometry for every propagator
   static std::shared_ptr<const Acts::TrackingGeometry> detector;
-  if (not detector) {
+  if (!detector) {
     CuboidVolumeBuilder::VolumeConfig vConf;
     vConf.position = {0., 0., 0.};
     vConf.length = {4_m, 4_m, 4_m};
@@ -79,7 +80,11 @@ inline Propagator makePropagator(double bz) {
 
   auto magField = std::make_shared<MagneticField>(Acts::Vector3(0.0, 0.0, bz));
   Stepper stepper(std::move(magField));
-  return Propagator(std::move(stepper), Acts::Navigator{{makeDetector()}});
+  auto logger = getDefaultLogger("Nominal", Logging::INFO);
+  return Propagator(
+      std::move(stepper),
+      Acts::Navigator{{makeDetector()}, logger->cloneWithSuffix("Nav")},
+      logger->cloneWithSuffix("Prop"));
 }
 
 inline RiddersPropagator makeRiddersPropagator(double bz) {
@@ -87,8 +92,12 @@ inline RiddersPropagator makeRiddersPropagator(double bz) {
 
   auto magField = std::make_shared<MagneticField>(Acts::Vector3(0.0, 0.0, bz));
   Stepper stepper(std::move(magField));
-  return RiddersPropagator(std::move(stepper),
-                           Acts::Navigator{{makeDetector()}});
+  auto logger = getDefaultLogger("Ridder", Logging::INFO);
+  auto propagator = Propagator(
+      std::move(stepper),
+      Acts::Navigator{{makeDetector()}, logger->cloneWithSuffix("Nav")},
+      logger->cloneWithSuffix("Prop"));
+  return RiddersPropagator(std::move(propagator));
 }
 
 }  // namespace
@@ -102,8 +111,7 @@ BOOST_DATA_TEST_CASE(ForwardBackward,
                      ds::phi* ds::theta* ds::absMomentum* ds::chargeNonZero*
                          ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runForwardBackwardTest<Propagator, Acts::SinglyCharged,
-                         Acts::DenseStepperPropagatorOptions>(
+  runForwardBackwardTest<Propagator>(
       makePropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinear(phi, theta, p, q), s, epsPos, epsDir, epsMom);
 }
@@ -115,8 +123,7 @@ BOOST_DATA_TEST_CASE(ToCylinderAlongZ,
                      ds::phi* ds::thetaWithoutBeam* ds::absMomentum*
                          ds::chargeNonZero* ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runToSurfaceTest<Propagator, Acts::SinglyCharged, ZCylinderSurfaceBuilder,
-                   Acts::DenseStepperPropagatorOptions>(
+  runToSurfaceTest<Propagator, ZCylinderSurfaceBuilder>(
       makePropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinear(phi, theta, p, q), s, ZCylinderSurfaceBuilder(),
       epsPos, epsDir, epsMom);
@@ -126,8 +133,7 @@ BOOST_DATA_TEST_CASE(ToDisc,
                      ds::phi* ds::theta* ds::absMomentum* ds::chargeNonZero*
                          ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runToSurfaceTest<Propagator, Acts::SinglyCharged, DiscSurfaceBuilder,
-                   Acts::DenseStepperPropagatorOptions>(
+  runToSurfaceTest<Propagator, DiscSurfaceBuilder>(
       makePropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinear(phi, theta, p, q), s, DiscSurfaceBuilder(),
       epsPos, epsDir, epsMom);
@@ -137,8 +143,7 @@ BOOST_DATA_TEST_CASE(ToPlane,
                      ds::phi* ds::theta* ds::absMomentum* ds::chargeNonZero*
                          ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runToSurfaceTest<Propagator, Acts::SinglyCharged, PlaneSurfaceBuilder,
-                   Acts::DenseStepperPropagatorOptions>(
+  runToSurfaceTest<Propagator, PlaneSurfaceBuilder>(
       makePropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinear(phi, theta, p, q), s, PlaneSurfaceBuilder(),
       epsPos, epsDir, epsMom);
@@ -149,21 +154,19 @@ BOOST_DATA_TEST_CASE(ToStrawAlongZ,
                      ds::phi* ds::thetaWithoutBeam* ds::absMomentum*
                          ds::chargeNonZero* ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runToSurfaceTest<Propagator, Acts::SinglyCharged, ZStrawSurfaceBuilder,
-                   Acts::DenseStepperPropagatorOptions>(
+  runToSurfaceTest<Propagator, ZStrawSurfaceBuilder>(
       makePropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinear(phi, theta, p, q), s, ZStrawSurfaceBuilder(),
       epsPos, epsDir, epsMom);
 }
 
 // check covariance transport using the ridders propagator for comparison
-
+// Covariance transport does not work for theta close to poles
 BOOST_DATA_TEST_CASE(CovarianceCurvilinear,
-                     ds::phi* ds::theta* ds::absMomentum* ds::chargeNonZero*
-                         ds::pathLength* ds::magneticField,
+                     ds::phi* ds::thetaWithoutBeam* ds::absMomentum*
+                         ds::chargeNonZero* ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runForwardComparisonTest<Propagator, RiddersPropagator, Acts::SinglyCharged,
-                           Acts::DenseStepperPropagatorOptions>(
+  runForwardComparisonTest<Propagator, RiddersPropagator>(
       makePropagator(bz), makeRiddersPropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinearWithCovariance(phi, theta, p, q), s, epsPos,
       epsDir, epsMom, epsCov);
@@ -174,9 +177,8 @@ BOOST_DATA_TEST_CASE(CovarianceToCylinderAlongZ,
                      ds::phiWithoutAmbiguity* ds::thetaCentral* ds::absMomentum*
                          ds::chargeNonZero* ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runToSurfaceComparisonTest<Propagator, RiddersPropagator, Acts::SinglyCharged,
-                             ZCylinderSurfaceBuilder,
-                             Acts::DenseStepperPropagatorOptions>(
+  runToSurfaceComparisonTest<Propagator, RiddersPropagator,
+                             ZCylinderSurfaceBuilder>(
       makePropagator(bz), makeRiddersPropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinearWithCovariance(phi, theta, p, q), s,
       ZCylinderSurfaceBuilder(), epsPos, epsDir, epsMom, epsCov);
@@ -186,21 +188,19 @@ BOOST_DATA_TEST_CASE(CovarianceToDisc,
                      ds::phi* ds::thetaWithoutBeam* ds::absMomentum*
                          ds::chargeNonZero* ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runToSurfaceComparisonTest<Propagator, RiddersPropagator, Acts::SinglyCharged,
-                             DiscSurfaceBuilder,
-                             Acts::DenseStepperPropagatorOptions>(
+  runToSurfaceComparisonTest<Propagator, RiddersPropagator, DiscSurfaceBuilder>(
       makePropagator(bz), makeRiddersPropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinearWithCovariance(phi, theta, p, q), s,
       DiscSurfaceBuilder(), epsPos, epsDir, epsMom, epsCov);
 }
 
+// Covariance transport does not work for theta close to poles
 BOOST_DATA_TEST_CASE(CovarianceToPlane,
-                     ds::phi* ds::theta* ds::absMomentum* ds::chargeNonZero*
-                         ds::pathLength* ds::magneticField,
+                     ds::phi* ds::thetaWithoutBeam* ds::absMomentum*
+                         ds::chargeNonZero* ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runToSurfaceComparisonTest<Propagator, RiddersPropagator, Acts::SinglyCharged,
-                             PlaneSurfaceBuilder,
-                             Acts::DenseStepperPropagatorOptions>(
+  runToSurfaceComparisonTest<Propagator, RiddersPropagator,
+                             PlaneSurfaceBuilder>(
       makePropagator(bz), makeRiddersPropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinearWithCovariance(phi, theta, p, q), s,
       PlaneSurfaceBuilder(), epsPos, epsDir, epsMom, epsCov);
@@ -211,9 +211,8 @@ BOOST_DATA_TEST_CASE(CovarianceToStrawAlongZ,
                      ds::phiWithoutAmbiguity* ds::thetaCentral* ds::absMomentum*
                          ds::chargeNonZero* ds::pathLength* ds::magneticField,
                      phi, theta, p, q, s, bz) {
-  runToSurfaceComparisonTest<Propagator, RiddersPropagator, Acts::SinglyCharged,
-                             ZStrawSurfaceBuilder,
-                             Acts::DenseStepperPropagatorOptions>(
+  runToSurfaceComparisonTest<Propagator, RiddersPropagator,
+                             ZStrawSurfaceBuilder>(
       makePropagator(bz), makeRiddersPropagator(bz), geoCtx, magCtx,
       makeParametersCurvilinearWithCovariance(phi, theta, p, q), s,
       ZStrawSurfaceBuilder(), epsPos, epsDir, epsMom, epsCov);

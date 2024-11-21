@@ -1,22 +1,20 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <boost/test/unit_test.hpp>
 
 #include "Acts/Utilities/FiniteStateMachine.hpp"
 
 #include <iostream>
+#include <optional>
+#include <stdexcept>
 
-namespace tt = boost::test_tools;
-
-namespace Acts {
-
-namespace Test {
+namespace Acts::Test {
 
 namespace states {
 struct Disconnected {};
@@ -37,48 +35,55 @@ struct Disconnect {};
 
 struct fsm : FiniteStateMachine<fsm, states::Disconnected, states::Connecting,
                                 states::Pinging, states::Connected> {
-  fsm() : fsm_base(states::Disconnected{}){};
+  fsm() : fsm_base(states::Disconnected{}) {}
 
-  event_return on_event(const states::Disconnected&, const events::Connect&) {
+  event_return on_event(const states::Disconnected& /*unused*/,
+                        const events::Connect& /*unused*/) {
     return states::Connecting{};
   }
 
-  event_return on_event(const states::Connecting&, const events::Established&) {
+  event_return on_event(const states::Connecting& /*unused*/,
+                        const events::Established& /*unused*/) {
     return states::Connected{};
   }
 
-  event_return on_event(const states::Connected&, const events::Ping&) {
+  event_return on_event(const states::Connected& /*unused*/,
+                        const events::Ping& /*unused*/) {
     std::cout << "ping!" << std::endl;
     setState(states::Pinging{});
     return process_event(events::Pong{});
   }
 
-  event_return on_event(const states::Pinging&, const events::Pong&) {
+  event_return on_event(const states::Pinging& /*unused*/,
+                        const events::Pong& /*unused*/) {
     std::cout << "pong!" << std::endl;
     return states::Connected{};
   }
 
-  event_return on_event(const states::Connected&, const events::Timeout&) {
+  event_return on_event(const states::Connected& /*unused*/,
+                        const events::Timeout& /*unused*/) {
     return states::Connecting{};
   }
 
-  event_return on_event(const states::Connected&, const events::Disconnect&) {
+  event_return on_event(const states::Connected& /*unused*/,
+                        const events::Disconnect& /*unused*/) {
     return states::Disconnected{};
   }
 
   template <typename State, typename Event>
-  event_return on_event(const State&, const Event&) const {
+  event_return on_event(const State& /*unused*/,
+                        const Event& /*unused*/) const {
     return Terminated{};
   }
 
   template <typename State, typename... Args>
-  void on_enter(const State&, Args&&...) {}
+  void on_enter(const State& /*unused*/, Args&&... /*unused*/) {}
 
   template <typename State, typename... Args>
-  void on_exit(const State&, Args&&...) {}
+  void on_exit(const State& /*unused*/, Args&&... /*unused*/) {}
 
   template <typename... Args>
-  void on_process(Args&&...) {}
+  void on_process(Args&&... /*unused*/) {}
 };
 
 BOOST_AUTO_TEST_SUITE(Utilities)
@@ -113,36 +118,38 @@ BOOST_AUTO_TEST_CASE(Terminted) {
 
 struct fsm2
     : FiniteStateMachine<fsm2, states::Disconnected, states::Connected> {
-  fsm2() : fsm_base(states::Disconnected{}){};
+  fsm2() : fsm_base(states::Disconnected{}) {}
 
-  event_return on_event(const states::Disconnected&, const events::Connect&,
-                        double f) {
+  event_return on_event(const states::Disconnected& /*unused*/,
+                        const events::Connect& /*unused*/, double f) {
     std::cout << "f: " << f << std::endl;
     return states::Connected{};
   }
 
-  event_return on_event(const states::Connected&, const events::Disconnect&) {
+  event_return on_event(const states::Connected& /*unused*/,
+                        const events::Disconnect& /*unused*/) {
     std::cout << "disconnect!" << std::endl;
     return states::Disconnected{};
   }
 
   template <typename State, typename Event, typename... Args>
-  event_return on_event(const State&, const Event&, Args&&...) const {
+  event_return on_event(const State& /*unused*/, const Event& /*unused*/,
+                        Args&&... /*unused*/) const {
     return Terminated{};
   }
 
   template <typename... Args>
-  void on_enter(const Terminated&, Args&&...) {
+  void on_enter(const Terminated& /*unused*/, Args&&... /*unused*/) {
     throw std::runtime_error("FSM terminated!");
   }
 
   template <typename State, typename... Args>
-  void on_enter(const State&, Args&&...) {}
+  void on_enter(const State& /*unused*/, Args&&... /*unused*/) {}
 
   template <typename State, typename... Args>
-  void on_exit(const State&, Args&&...) {}
+  void on_exit(const State& /*unused*/, Args&&... /*unused*/) {}
   template <typename... Args>
-  void on_process(Args&&...) {}
+  void on_process(Args&&... /*unused*/) {}
 };
 
 BOOST_AUTO_TEST_CASE(Arguments) {
@@ -191,42 +198,49 @@ struct fsm3 : FiniteStateMachine<fsm3, S1, S2, S3> {
   }
 
   // S1 + E1 = S2
-  event_return on_event(const S1&, const E1&) { return S2{}; }
+  event_return on_event(const S1& /*unused*/, const E1& /*unused*/) {
+    return S2{};
+  }
 
   // S2 + E1 = S2
   // external transition to self
-  event_return on_event(const S2&, const E1&) { return S2{}; }
+  event_return on_event(const S2& /*unused*/, const E1& /*unused*/) {
+    return S2{};
+  }
 
   // S2 + E2
   // internal transition
-  event_return on_event(const S2&, const E2&) {
+  event_return on_event(const S2& /*unused*/, const E2& /*unused*/) {
     return std::nullopt;
     // return S2{};
   }
 
   // S2 + E3 = S3
   // external transition
-  event_return on_event(const S2&, const E3&) { return S3{}; }
+  event_return on_event(const S2& /*unused*/, const E3& /*unused*/) {
+    return S3{};
+  }
 
   // catchers
 
   template <typename State, typename Event, typename... Args>
-  event_return on_event(const State&, const Event&, Args&&...) const {
+  event_return on_event(const State& /*unused*/, const Event& /*unused*/,
+                        Args&&... /*unused*/) const {
     return Terminated{};
   }
 
   template <typename State, typename... Args>
-  void on_enter(const State&, Args&&...) {
+  void on_enter(const State& /*unused*/, Args&&... /*unused*/) {
     on_enter_called = true;
   }
 
   template <typename State, typename... Args>
-  void on_exit(const State&, Args&&...) {
+  void on_exit(const State& /*unused*/, Args&&... /*unused*/) {
     on_exit_called = true;
   }
 
   template <typename... Args>
-  void on_process(Args&&...) {
+  void on_process(Args&&... /*unused*/) {
     on_process_called = true;
   }
 };
@@ -283,5 +297,4 @@ BOOST_AUTO_TEST_CASE(InternalTransitions) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-}  // namespace Test
-}  // namespace Acts
+}  // namespace Acts::Test

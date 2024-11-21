@@ -1,17 +1,16 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2017 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
 #include <boost/test/unit_test.hpp>
 
 #include "Acts/Definitions/Algebra.hpp"
-#include "Acts/Utilities/TypeTraits.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -24,7 +23,7 @@
 //
 // Test failures are reported in detail, from the floating-point comparison
 // that failed (and the reason why it failed) to the context in which the
-// failure occured (container contents if applicable, source file & line...).
+// failure occurred (container contents if applicable, source file & line...).
 
 // Check if "val" and "ref" are within relative tolerance "tol" of each other.
 #define CHECK_CLOSE_REL(val, ref, reltol) \
@@ -56,8 +55,7 @@
 
 // The relevant infrastructure is implemented below
 
-namespace Acts {
-namespace Test {
+namespace Acts::Test {
 namespace float_compare_internal {
 
 // Under the hood, various scalar comparison logics may be used
@@ -142,7 +140,7 @@ predicate_result matrixCompare(const Eigen::DenseBase<Derived1>& val,
     for (int row = 0; row < val.rows(); ++row) {
       predicate_result res = compareImpl(val(row, col), ref(row, col));
       if (!res) {
-        res.message() << " The failure occured during a matrix comparison,"
+        res.message() << " The failure occurred during a matrix comparison,"
                       << " at index (" << row << ", " << col << ")."
                       << " The value was\n"
                       << val << '\n'
@@ -156,29 +154,27 @@ predicate_result matrixCompare(const Eigen::DenseBase<Derived1>& val,
 }
 
 template <typename T>
-using has_begin_t = decltype(std::declval<T>().cbegin());
-template <typename T>
-using has_end_t = decltype(std::declval<T>().cend());
-template <typename T>
-using has_eval_t = decltype(std::declval<T>().eval());
+concept is_eigen_type = requires(const T& t) {
+  { t.eval() };
+};
 
 // STL container frontend
 //
 // FIXME: The algorithm only supports ordered containers, so the API should
 //        only accept them. Does someone know a clean way to do that in C++?
 //
-template <typename Container,
-          typename = std::enable_if_t<
-              !Acts::Concepts::exists<has_eval_t, Container> &&
-                  Acts::Concepts::exists<has_begin_t, Container> &&
-                  Acts::Concepts::exists<has_end_t, Container>,
-              int>>
+template <typename Container>
 predicate_result compare(const Container& val, const Container& ref,
-                         ScalarComparison&& compareImpl) {
+                         ScalarComparison&& compareImpl)
+  requires(!is_eigen_type<Container>) && requires(const Container& t) {
+    { t.cbegin() };
+    { t.cend() };
+  }
+{
   // Make sure that the two input containers have the same number of items
   // (in order to provide better error reporting when they don't)
-  size_t numVals = std::distance(std::cbegin(val), std::cend(val));
-  size_t numRefs = std::distance(std::cbegin(ref), std::cend(ref));
+  std::size_t numVals = std::distance(std::cbegin(val), std::cend(val));
+  std::size_t numRefs = std::distance(std::cbegin(ref), std::cend(ref));
   if (numVals != numRefs) {
     predicate_result res(false);
     res.message() << "The container size does not match (value has " << numVals
@@ -196,7 +192,7 @@ predicate_result compare(const Container& val, const Container& ref,
     predicate_result res = compareImpl(*valIter, *refIter);
     if (!res) {
       // If content comparison failed, report the container's contents
-      res.message() << " The failure occured during a container comparison,"
+      res.message() << " The failure occurred during a container comparison,"
                     << " at index " << std::distance(valBeg, valIter) << '.'
                     << " The value contained {";
       for (const auto& item : val) {
@@ -307,5 +303,4 @@ boost::test_tools::predicate_result checkCloseCovariance(
   }
   return true;
 }
-}  // namespace Test
-}  // namespace Acts
+}  // namespace Acts::Test

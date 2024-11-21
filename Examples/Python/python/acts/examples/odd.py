@@ -1,8 +1,41 @@
+import os
+import sys
+import math
+from collections import namedtuple
 from pathlib import Path
-import sys, os
+from typing import Optional
+import acts
+import acts.examples
 
 
-def getOpenDataDetector(odd_dir, mdecorator=None):
+def getOpenDataDetectorDirectory():
+    odd_dir = os.environ.get("ODD_PATH")
+    if odd_dir is None:
+        raise RuntimeError("ODD_PATH environment variable not set")
+    odd_dir = Path(odd_dir)
+    return odd_dir
+
+
+def getOpenDataDetector(
+    mdecorator=None,
+    odd_dir: Optional[Path] = None,
+    logLevel=acts.logging.INFO,
+):
+    """This function sets up the open data detector. Requires DD4hep.
+    Parameters
+    ----------
+    mdecorator: Material Decorator, take RootMaterialDecorator if non is given
+    odd_dir: if not given, try to get via ODD_PATH environment variable
+    logLevel: logging level
+    """
+    import acts.examples.dd4hep
+
+    customLogLevel = acts.examples.defaultLogging(logLevel=logLevel)
+
+    if odd_dir is None:
+        odd_dir = getOpenDataDetectorDirectory()
+    if not odd_dir.exists():
+        raise RuntimeError(f"OpenDataDetector not found at {odd_dir}")
 
     odd_xml = odd_dir / "xml" / "OpenDataDetector.xml"
     if not odd_xml.exists():
@@ -33,23 +66,57 @@ def getOpenDataDetector(odd_dir, mdecorator=None):
             )
             raise RuntimeError(msg)
 
-    import acts.examples.dd4hep
+    volumeRadiusCutsMap = {
+        28: [850.0],  # LStrip negative z
+        30: [850.0],  # LStrip positive z
+        23: [400.0, 550.0],  # SStrip negative z
+        25: [400.0, 550.0],  # SStrip positive z
+        16: [100.0],  # Pixels negative z
+        18: [100.0],  # Pixels positive z
+    }
+
+    def geoid_hook(geoid, surface):
+        gctx = acts.GeometryContext()
+        if geoid.volume() in volumeRadiusCutsMap:
+            r = math.sqrt(surface.center(gctx)[0] ** 2 + surface.center(gctx)[1] ** 2)
+
+            geoid.setExtra(1)
+            for cut in volumeRadiusCutsMap[geoid.volume()]:
+                if r > cut:
+                    geoid.setExtra(geoid.extra() + 1)
+
+        return geoid
 
     dd4hepConfig = acts.examples.dd4hep.DD4hepGeometryService.Config(
         xmlFileNames=[str(odd_xml)],
-        logLevel=acts.logging.INFO,
-        dd4hepLogLevel=acts.logging.INFO,
+        logLevel=customLogLevel(),
+        dd4hepLogLevel=customLogLevel(minLevel=acts.logging.WARNING),
+        geometryIdentifierHook=acts.GeometryIdentifierHook(geoid_hook),
     )
     detector = acts.examples.dd4hep.DD4hepDetector()
 
-    config = acts.MaterialMapJsonConverter.Config()
     if mdecorator is None:
-        mdecorator = acts.JsonMaterialDecorator(
-            rConfig=config,
-            jFileName=str(odd_dir / "config/odd-material-mapping-config.json"),
-            level=acts.logging.WARNING,
+        mdecorator = acts.examples.RootMaterialDecorator(
+            fileName=str(odd_dir / "data/odd-material-maps.root"),
+            level=customLogLevel(minLevel=acts.logging.WARNING),
         )
 
-    trackingGeometry, deco = detector.finalize(dd4hepConfig, mdecorator)
+    trackingGeometry, decorators = detector.finalize(dd4hepConfig, mdecorator)
 
-    return detector, trackingGeometry, deco
+    OpenDataDetector = namedtuple(
+        "OpenDataDetector", ["detector", "trackingGeometry", "decorators"]
+    )
+
+    class OpenDataDetectorContextManager(OpenDataDetector):
+        def __new__(cls, detector, trackingGeometry, decorators):
+            return super(OpenDataDetectorContextManager, cls).__new__(
+                cls, detector, trackingGeometry, decorators
+            )
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            self.detector.drop()
+
+    return OpenDataDetectorContextManager(detector, trackingGeometry, decorators)

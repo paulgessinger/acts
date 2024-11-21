@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -12,11 +12,18 @@
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Surfaces/LineBounds.hpp"
 #include "Acts/Surfaces/LineSurface.hpp"
+#include "Acts/Surfaces/Surface.hpp"
+#include "Acts/Surfaces/SurfaceConcept.hpp"
+
+#include <cstddef>
+#include <memory>
+#include <string>
 
 namespace Acts {
 
 class DetectorElementBase;
 struct Polyhedron;
+class LineBounds;
 
 ///  @class StrawSurface
 ///
@@ -26,7 +33,7 @@ struct Polyhedron;
 /// @image html LineSurface.png
 ///
 class StrawSurface : public LineSurface {
-  friend Surface;
+  friend class Surface;
 
  protected:
   /// Constructor from Transform3 and bounds
@@ -63,7 +70,7 @@ class StrawSurface : public LineSurface {
   ///
   /// @param gctx The current geometry context object, e.g. alignment
   /// @param other is the source cone surface
-  /// @param shift is the additional transfrom applied after copying
+  /// @param shift is the additional transform applied after copying
   StrawSurface(const GeometryContext& gctx, const StrawSurface& other,
                const Transform3& shift);
 
@@ -85,13 +92,13 @@ class StrawSurface : public LineSurface {
   /// Return a Polyhedron for the surfaces
   ///
   /// @param gctx The current geometry context object, e.g. alignment
-  /// @param lseg Number of segments along curved lines, it represents
-  /// the full 2*M_PI coverange, if lseg is set to 1 only the extrema
-  /// are given @note if lseg is set to 1 then only the straw is created
+  /// @param quarterSegments is the number of segments used to describe curved
+  /// segments in a quarter of the phi range. If it is 1, then only the extrema
+  /// points in phi are inserted next to the segment corners.
   ///
   /// @return A list of vertices and a face/facett description of it
   Polyhedron polyhedronRepresentation(const GeometryContext& gctx,
-                                      size_t lseg) const final;
+                                      unsigned int quarterSegments) const final;
 };
 
 inline Surface::SurfaceType StrawSurface::type() const {
@@ -101,5 +108,8 @@ inline Surface::SurfaceType StrawSurface::type() const {
 inline std::string Acts::StrawSurface::name() const {
   return "Acts::StrawSurface";
 }
+
+static_assert(SurfaceConcept<StrawSurface>,
+              "StrawSurface does not fulfill SurfaceConcept");
 
 }  // namespace Acts

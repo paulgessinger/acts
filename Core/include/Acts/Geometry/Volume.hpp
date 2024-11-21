@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -13,24 +13,24 @@
 #include "Acts/Geometry/GeometryObject.hpp"
 #include "Acts/Utilities/BinningType.hpp"
 #include "Acts/Utilities/BoundingBox.hpp"
+#include "Acts/Utilities/Logger.hpp"
 
 #include <iosfwd>
 #include <memory>
+#include <optional>
 
 namespace Acts {
 
 class VolumeBounds;
-using VolumeBoundsPtr = std::shared_ptr<const VolumeBounds>;
 
 /// @class Volume
 ///
-/// It inhertis of GeometryObject for TDD identification
+/// It inherits from GeometryObject for geometry identification
 ///
-/// Base class for all volumes inside the tracking realm, it defines
-/// the interface for inherited Volume classes
-/// regarding the geometrical information.
-
-class Volume : public virtual GeometryObject {
+/// Base class for all volumes inside the tracking realm, it defines the
+/// interface for inherited Volume classes regarding the geometrical
+/// information.
+class Volume : public GeometryObject {
  public:
   using BoundingBox = AxisAlignedBoundingBox<Volume, ActsScalar, 3>;
 
@@ -38,16 +38,12 @@ class Volume : public virtual GeometryObject {
   ///
   /// @param transform is the transform to position the volume in 3D space
   /// @param volbounds is the volume boundary definitions
-  /// @note This will automatically build an oriented bounding box with an
-  /// envelope value of (0.05, 0.05, 0.05)mm
-  Volume(const Transform3& transform, VolumeBoundsPtr volbounds);
+  Volume(const Transform3& transform, std::shared_ptr<VolumeBounds> volbounds);
 
   /// Copy Constructor - with optional shift
   ///
   /// @param vol is the source volume for the copy
   /// @param shift is the optional shift applied as : shift * vol.transform()
-  /// @note This will automatically build an oriented bounding box with an
-  /// envelope value of (0.05, 0.05, 0.05)mm
   Volume(const Volume& vol, const Transform3& shift = Transform3::Identity());
 
   Volume() = delete;
@@ -64,11 +60,34 @@ class Volume : public virtual GeometryObject {
   /// Returns the inverted transform of this volume.
   const Transform3& itransform() const;
 
+  void setTransform(const Transform3& transform);
+
   /// returns the center of the volume
   const Vector3& center() const;
 
-  /// returns the volumeBounds()
+  /// Returns a const reference to the volume bounds
   const VolumeBounds& volumeBounds() const;
+
+  /// Returns a mutable reference to the volume bounds
+  VolumeBounds& volumeBounds();
+
+  /// Returns shared pointer to the volume bounds
+  std::shared_ptr<const VolumeBounds> volumeBoundsPtr() const;
+
+  /// Returns shared pointer to the volume bounds
+  std::shared_ptr<VolumeBounds> volumeBoundsPtr();
+
+  /// Set volume bounds and update volume bounding boxes implicitly
+  /// @param volbounds The volume bounds to be assigned
+  void assignVolumeBounds(std::shared_ptr<VolumeBounds> volbounds);
+
+  /// Set the volume bounds and optionally also update the volume transform
+  /// @param volbounds The volume bounds to be assigned
+  /// @param transform The transform to be assigned, can be optional
+  /// @param logger A logger object to log messages
+  virtual void update(std::shared_ptr<VolumeBounds> volbounds,
+                      std::optional<Transform3> transform = std::nullopt,
+                      const Logger& logger = Acts::getDummyLogger());
 
   /// Construct bounding box for this shape
   /// @param envelope Optional envelope to add / subtract from min/max
@@ -76,8 +95,10 @@ class Volume : public virtual GeometryObject {
   BoundingBox boundingBox(const Vector3& envelope = {0, 0, 0}) const;
 
   /// Construct oriented bounding box for this shape
+  /// @note This will build an oriented bounding box with an
+  ///       envelope value of (0.05, 0.05, 0.05)mm
   /// @return Constructed oriented bounding box pointing to this volume
-  const BoundingBox& orientedBoundingBox() const;
+  BoundingBox orientedBoundingBox() const;
 
   /// Inside() method for checks
   ///
@@ -85,7 +106,7 @@ class Volume : public virtual GeometryObject {
   /// @param tol is the tolerance parameter
   ///
   /// @return boolean indicator if the position is inside
-  bool inside(const Vector3& gpos, double tol = 0.) const;
+  bool inside(const Vector3& gpos, ActsScalar tol = 0.) const;
 
   /// The binning position method
   /// - as default the center is given, but may be overloaded
@@ -97,29 +118,23 @@ class Volume : public virtual GeometryObject {
   Vector3 binningPosition(const GeometryContext& gctx,
                           BinningValue bValue) const override;
 
+  bool operator==(const Volume& other) const;
+
+  /// Produces a 3D visualization of this volume
+  /// @param helper The visualization helper describing the output format
+  /// @param gctx The geometry context
+  /// @param viewConfig The view configuration
+  void visualize(IVisualization3D& helper, const GeometryContext& gctx,
+                 const ViewConfig& viewConfig) const;
+
  protected:
   Transform3 m_transform;
   Transform3 m_itransform;
   Vector3 m_center;
-  VolumeBoundsPtr m_volumeBounds;
-  BoundingBox m_orientedBoundingBox;
+
+ private:
+  std::shared_ptr<VolumeBounds> m_volumeBounds;
 };
-
-inline const Transform3& Volume::transform() const {
-  return m_transform;
-}
-
-inline const Transform3& Volume::itransform() const {
-  return m_itransform;
-}
-
-inline const Vector3& Volume::center() const {
-  return m_center;
-}
-
-inline const VolumeBounds& Volume::volumeBounds() const {
-  return (*(m_volumeBounds.get()));
-}
 
 /**Overload of << operator for std::ostream for debug output*/
 std::ostream& operator<<(std::ostream& sl, const Volume& vol);

@@ -1,10 +1,10 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2016-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
@@ -26,7 +26,7 @@ class ScalableBField final : public Acts::MagneticFieldProvider {
     Acts::ActsScalar scalor = 1.;
 
     /// @brief constructor with context
-    Cache(const Acts::MagneticFieldContext& mctx) {
+    explicit Cache(const Acts::MagneticFieldContext& mctx) {
       scalor = mctx.get<const ScalableBFieldContext>().scalor;
     }
   };
@@ -56,7 +56,7 @@ class ScalableBField final : public Acts::MagneticFieldProvider {
   Acts::Result<Acts::Vector3> getField(
       const Acts::Vector3& /*position*/,
       MagneticFieldProvider::Cache& gCache) const override {
-    Cache& cache = gCache.get<Cache>();
+    Cache& cache = gCache.as<Cache>();
     return Acts::Result<Acts::Vector3>::success(m_BField * cache.scalor);
   }
 
@@ -75,13 +75,13 @@ class ScalableBField final : public Acts::MagneticFieldProvider {
   Acts::Result<Acts::Vector3> getFieldGradient(
       const Acts::Vector3& /*position*/, Acts::ActsMatrix<3, 3>& /*derivative*/,
       MagneticFieldProvider::Cache& gCache) const override {
-    Cache& cache = gCache.get<Cache>();
+    Cache& cache = gCache.as<Cache>();
     return Acts::Result<Acts::Vector3>::success(m_BField * cache.scalor);
   }
 
   Acts::MagneticFieldProvider::Cache makeCache(
       const Acts::MagneticFieldContext& mctx) const override {
-    return Acts::MagneticFieldProvider::Cache::make<Cache>(mctx);
+    return Acts::MagneticFieldProvider::Cache(std::in_place_type<Cache>, mctx);
   }
 
   /// @brief check whether given 3D position is inside look-up domain

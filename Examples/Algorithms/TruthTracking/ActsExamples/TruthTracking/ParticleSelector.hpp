@@ -1,33 +1,35 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019-2020 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-/// @file
-/// @date 2018-03-14
-/// @author Moritz Kiehn <msmk@cern.ch>
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
-#include "ActsExamples/Framework/BareAlgorithm.hpp"
-#include "ActsExamples/Utilities/OptionsFwd.hpp"
+#include "Acts/Utilities/Logger.hpp"
+#include "ActsExamples/EventData/SimParticle.hpp"
+#include "ActsExamples/Framework/DataHandle.hpp"
+#include "ActsExamples/Framework/IAlgorithm.hpp"
+#include "ActsExamples/Framework/ProcessCode.hpp"
 
 #include <limits>
+#include <string>
 
 namespace ActsExamples {
+struct AlgorithmContext;
 
 /// Select particles by applying some selection cuts.
-class ParticleSelector final : public BareAlgorithm {
+class ParticleSelector final : public IAlgorithm {
  public:
   struct Config {
     /// The input particles collection.
     std::string inputParticles;
     /// The output particles collection.
     std::string outputParticles;
-    // Minimum/maximum distance from the origin in the tranverse plane.
+
+    // Minimum/maximum distance from the origin in the transverse plane.
     double rhoMin = 0;
     double rhoMax = std::numeric_limits<double>::infinity();
     // Minimum/maximum absolute distance from the origin along z.
@@ -46,16 +48,21 @@ class ParticleSelector final : public BareAlgorithm {
     // Momentum cuts.
     double ptMin = 0;
     double ptMax = std::numeric_limits<double>::infinity();
+    // Rest mass cuts
+    double mMin = 0;
+    double mMax = std::numeric_limits<double>::infinity();
+    /// Measurement number cuts
+    std::size_t measurementsMin = 0;
+    std::size_t measurementsMax = std::numeric_limits<std::size_t>::max();
     /// Remove charged particles.
     bool removeCharged = false;
     /// Remove neutral particles.
     bool removeNeutral = false;
+    /// Remove secondaries.
+    bool removeSecondaries = false;
+    /// Exclude particles depending on absolute pdg value
+    std::vector<int> excludeAbsPdgs;
   };
-
-  /// Add options for the particle selector.
-  static void addOptions(Options::Description& desc);
-  /// Construct particle selector config from user variables.
-  static Config readConfig(const Options::Variables& vars);
 
   ParticleSelector(const Config& config, Acts::Logging::Level level);
 
@@ -66,6 +73,11 @@ class ParticleSelector final : public BareAlgorithm {
 
  private:
   Config m_cfg;
+
+  ReadDataHandle<SimParticleContainer> m_inputParticles{this, "InputParticles"};
+
+  WriteDataHandle<SimParticleContainer> m_outputParticles{this,
+                                                          "OutputParticles"};
 };
 
 }  // namespace ActsExamples

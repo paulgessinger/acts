@@ -1,36 +1,51 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <boost/test/data/test_case.hpp>
-#include <boost/test/tools/output_test_stream.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include "Acts/Definitions/Algebra.hpp"
+#include "Acts/Definitions/Direction.hpp"
+#include "Acts/Definitions/Units.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
+#include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/MagneticField/ConstantBField.hpp"
-#include "Acts/Material/Material.hpp"
-#include "Acts/Propagator/ActionList.hpp"
+#include "Acts/MagneticField/MagneticFieldContext.hpp"
+#include "Acts/Propagator/ActorList.hpp"
 #include "Acts/Propagator/DirectNavigator.hpp"
 #include "Acts/Propagator/EigenStepper.hpp"
 #include "Acts/Propagator/MaterialInteractor.hpp"
 #include "Acts/Propagator/Navigator.hpp"
 #include "Acts/Propagator/Propagator.hpp"
+#include "Acts/Propagator/StandardAborters.hpp"
 #include "Acts/Propagator/SurfaceCollector.hpp"
 #include "Acts/Tests/CommonHelpers/CylindricalTrackingGeometry.hpp"
 #include "Acts/Tests/CommonHelpers/FloatComparisons.hpp"
 
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <iostream>
 #include <memory>
-
-namespace bdata = boost::unit_test::data;
-namespace tt = boost::test_tools;
-using namespace Acts::UnitLiterals;
+#include <numbers>
+#include <random>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 namespace Acts {
-namespace Test {
+class Surface;
+}  // namespace Acts
+
+namespace bdata = boost::unit_test::data;
+using namespace Acts::UnitLiterals;
+
+namespace Acts::Test {
 
 // Create a test context
 GeometryContext tgContext = GeometryContext();
@@ -54,16 +69,15 @@ Stepper estepper(bField);
 Stepper dstepper(bField);
 
 ReferencePropagator rpropagator(std::move(estepper), std::move(navigator));
-DirectPropagator dpropagator(std::move(dstepper), dnavigator);
+DirectPropagator dpropagator(std::move(dstepper), std::move(dnavigator));
 
 const int ntests = 1000;
 const int skip = 0;
-bool debugMode = false;
 bool referenceTiming = false;
 bool oversteppingTest = false;
 double oversteppingMaxStepSize = 1_mm;
 
-/// The actual test nethod that runs the test
+/// The actual test method that runs the test
 /// can be used with several propagator types
 ///
 /// @tparam rpropagator_t is the reference propagator type
@@ -78,7 +92,7 @@ double oversteppingMaxStepSize = 1_mm;
 /// @param index is the run index from the test
 template <typename rpropagator_t, typename dpropagator_t>
 void runTest(const rpropagator_t& rprop, const dpropagator_t& dprop, double pT,
-             double phi, double theta, int charge, double time, int index) {
+             double phi, double theta, int charge, int index) {
   double dcharge = -1 + 2 * charge;
 
   if (index < skip) {
@@ -87,24 +101,24 @@ void runTest(const rpropagator_t& rprop, const dpropagator_t& dprop, double pT,
 
   // Define start parameters from ranom input
   double p = pT / sin(theta);
-  CurvilinearTrackParameters start(Vector4(0, 0, 0, time), phi, theta,
-                                   dcharge / p);
+  CurvilinearTrackParameters start(Vector4(0, 0, 0, 0), phi, theta, dcharge / p,
+                                   std::nullopt, ParticleHypothesis::pion());
 
   using EndOfWorld = EndOfWorldReached;
 
   // Action list and abort list
-  using RefereceActionList = ActionList<MaterialInteractor, SurfaceCollector<>>;
-  using ReferenceAbortList = AbortList<EndOfWorld>;
+  using ReferenceActorList =
+      ActorList<MaterialInteractor, SurfaceCollector<>, EndOfWorld>;
 
   // Options definition
-  using Options = PropagatorOptions<RefereceActionList, ReferenceAbortList>;
-  Options pOptions(tgContext, mfContext, getDummyLogger());
+  using Options = typename rpropagator_t::template Options<ReferenceActorList>;
+  Options pOptions(tgContext, mfContext);
   if (oversteppingTest) {
-    pOptions.maxStepSize = oversteppingMaxStepSize;
+    pOptions.stepping.maxStepSize = oversteppingMaxStepSize;
   }
 
   // Surface collector configuration
-  auto& sCollector = pOptions.actionList.template get<SurfaceCollector<>>();
+  auto& sCollector = pOptions.actorList.template get<SurfaceCollector<>>();
   sCollector.selector.selectSensitive = true;
   sCollector.selector.selectMaterial = true;
 
@@ -117,7 +131,7 @@ void runTest(const rpropagator_t& rprop, const dpropagator_t& dprop, double pT,
   std::cout << " - the standard navigator yielded "
             << cSurfaces.collected.size() << " collected surfaces" << std::endl;
 
-  if (not referenceTiming) {
+  if (!referenceTiming) {
     // Create the surface sequence
     std::vector<const Surface*> surfaceSequence;
     surfaceSequence.reserve(cSurfaces.collected.size());
@@ -125,19 +139,17 @@ void runTest(const rpropagator_t& rprop, const dpropagator_t& dprop, double pT,
       surfaceSequence.push_back(cs.surface);
     }
 
-    // Action list for direct navigator with its initalizer
-    using DirectActionList = ActionList<DirectNavigator::Initializer,
-                                        MaterialInteractor, SurfaceCollector<>>;
+    // Action list for direct navigator with its initializer
+    using DirectActorList = ActorList<MaterialInteractor, SurfaceCollector<>>;
 
     // Direct options definition
-    using DirectOptions = PropagatorOptions<DirectActionList, AbortList<>>;
-    DirectOptions dOptions(tgContext, mfContext, getDummyLogger());
+    using DirectOptions =
+        typename dpropagator_t::template Options<DirectActorList>;
+    DirectOptions dOptions(tgContext, mfContext);
     // Set the surface sequence
-    auto& dInitializer =
-        dOptions.actionList.get<DirectNavigator::Initializer>();
-    dInitializer.navSurfaces = surfaceSequence;
+    dOptions.navigation.surfaces = surfaceSequence;
     // Surface collector configuration
-    auto& dCollector = dOptions.actionList.template get<SurfaceCollector<>>();
+    auto& dCollector = dOptions.actorList.template get<SurfaceCollector<>>();
     dCollector.selector.selectSensitive = true;
     dCollector.selector.selectMaterial = true;
 
@@ -164,26 +176,24 @@ void runTest(const rpropagator_t& rprop, const dpropagator_t& dprop, double pT,
 // - this tests the collection of surfaces
 BOOST_DATA_TEST_CASE(
     test_direct_navigator,
-    bdata::random((bdata::seed = 20,
-                   bdata::distribution =
-                       std::uniform_real_distribution<>(0.15_GeV, 10_GeV))) ^
-        bdata::random((bdata::seed = 21,
-                       bdata::distribution =
-                           std::uniform_real_distribution<>(-M_PI, M_PI))) ^
-        bdata::random((bdata::seed = 22,
-                       bdata::distribution =
-                           std::uniform_real_distribution<>(1.0, M_PI - 1.0))) ^
+    bdata::random((bdata::engine = std::mt19937(), bdata::seed = 20,
+                   bdata::distribution = std::uniform_real_distribution<double>(
+                       0.15_GeV, 10_GeV))) ^
         bdata::random(
-            (bdata::seed = 23,
-             bdata::distribution = std::uniform_int_distribution<>(0, 1))) ^
+            (bdata::engine = std::mt19937(), bdata::seed = 21,
+             bdata::distribution = std::uniform_real_distribution<double>(
+                 -std::numbers::pi, std::numbers::pi))) ^
         bdata::random(
-            (bdata::seed = 24,
-             bdata::distribution = std::uniform_int_distribution<>(0, 100))) ^
+            (bdata::engine = std::mt19937(), bdata::seed = 22,
+             bdata::distribution = std::uniform_real_distribution<double>(
+                 1., std::numbers::pi - 1.))) ^
+        bdata::random((bdata::engine = std::mt19937(), bdata::seed = 23,
+                       bdata::distribution =
+                           std::uniform_int_distribution<std::uint8_t>(0, 1))) ^
         bdata::xrange(ntests),
-    pT, phi, theta, charge, time, index) {
+    pT, phi, theta, charge, index) {
   // Run the test
-  runTest(rpropagator, dpropagator, pT, phi, theta, charge, time, index);
+  runTest(rpropagator, dpropagator, pT, phi, theta, charge, index);
 }
 
-}  // namespace Test
-}  // namespace Acts
+}  // namespace Acts::Test

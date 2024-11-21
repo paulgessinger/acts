@@ -1,24 +1,24 @@
-// This file is part of the Acts project.
+// This file is part of the ACTS project.
 //
-// Copyright (C) 2018 CERN for the benefit of the Acts project
+// Copyright (C) 2016 CERN for the benefit of the ACTS project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <boost/test/unit_test.hpp>
 
-#include "Acts/Seeding/AtlasSeedfinder.hpp"
+#include "Acts/Seeding/AtlasSeedFinder.hpp"
 
 #include <algorithm>
 
 // space point structure with the bare minimum and reasonable default
 // covariances. clusterList default is SCT (strip detector)
 struct SpacePoint {
-  float x;
-  float y;
-  float z;
-  float r;
+  float x = 0;
+  float y = 0;
+  float z = 0;
+  float r = 0;
   float covr = 0.03;
   float covz = 0.03;
   std::pair<int, int> m_clusterList = std::pair<int, int>(1, 1);
@@ -26,21 +26,19 @@ struct SpacePoint {
     m_clusterList = std::pair<int, int>(first, second);
   }
   const std::pair<int, int> clusterList() const { return m_clusterList; }
-  int surface;
+  int surface = 0;
 };
 
 // call sequence to create seeds. Seeds are copied as the
 // call to next() overwrites the previous seed object
 std::vector<Acts::Legacy::Seed<SpacePoint>> runSeeding(
     std::vector<SpacePoint*> spVec) {
-  Acts::Legacy::AtlasSeedfinder<SpacePoint> seedMaker;
+  Acts::Legacy::AtlasSeedFinder<SpacePoint> seedMaker;
   seedMaker.newEvent(0, spVec.begin(), spVec.end());
   seedMaker.find3Sp();
   const Acts::Legacy::Seed<SpacePoint>* seed = seedMaker.next();
-  int numSeeds = 0;
   std::vector<Acts::Legacy::Seed<SpacePoint>> seedVec;
   while (seed != nullptr) {
-    numSeeds++;
     auto spIter = seed->spacePoints().begin();
     spIter++;
     spIter++;
@@ -109,7 +107,7 @@ BOOST_AUTO_TEST_CASE(number_of_seeds_correct_) {
     sp->x = xVec.at(i);
     sp->y = yVec.at(i);
     sp->z = zVec.at(i);
-    sp->r = std::sqrt(sp->x * sp->x + sp->y * sp->y);
+    sp->r = std::hypot(sp->x, sp->y);
     if (sp->r < 200.) {
       sp->setClusterList(1, 0);
     }
@@ -139,8 +137,8 @@ BOOST_AUTO_TEST_CASE(number_of_seeds_correct_) {
 
   // sorting required for set_difference call. sorting assumes space points
   // inside seed are already sorted.
-  std::sort(refVec.begin(), refVec.end(), seedComparator());
-  std::sort(seedVec.begin(), seedVec.end(), seedComparator());
+  std::ranges::sort(refVec, seedComparator());
+  std::ranges::sort(seedVec, seedComparator());
 
   // difference between reference and result shows if results exactly the same
   // (i.e. difference is 0)
