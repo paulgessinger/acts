@@ -27,12 +27,13 @@ namespace Acts {
 /// to empirically determine a scale factor which reproduces this field value
 /// in the center.
 ///
-/// E_1(k^2) = complete elliptic integral of the 1st kind
-/// E_2(k^2) = complete elliptic integral of the 2nd kind
+/// $E_1(k^2)$ = complete elliptic integral of the 1st kind
+/// $E_2(k^2)$ = complete elliptic integral of the 2nd kind
 ///
-/// E_1(k^2) and E_2(k^2) are usually indicated as K(k^2) and E(k^2) in
+/// $E_1(k^2)$ and $E_2(k^2)$ are usually indicated as $K(k^2)$ and $E(k^2)$ in
 /// literature,
 /// respectively
+/// ```
 ///              _
 ///     2       /  pi / 2          2    2          - 1 / 2
 /// E (k )  =   |         ( 1  -  k  sin {theta} )         dtheta
@@ -65,6 +66,7 @@ namespace Acts {
 /// B (r,z)  =  ----- ---- |  | -------------- | E (k )  +  E (k )   |
 ///  z           4pi    __ |  |           2    |  2          1       |
 ///                   |/Rr |_ \   2r(1 - k )   /                    _|
+/// ```
 ///
 class SolenoidBField final : public MagneticFieldProvider {
  public:
