@@ -75,13 +75,14 @@ target_link_libraries(
 )
 
 set(py_files
-    __init__.py
-    examples/__init__.py
-    examples/simulation.py
-    examples/reconstruction.py
-    examples/itk.py
-    examples/odd.py
-    _adapter.py
+    acts.pyi
+    acts/__init__.py
+    acts/examples/__init__.py
+    acts/examples/simulation.py
+    acts/examples/reconstruction.py
+    acts/examples/itk.py
+    acts/examples/odd.py
+    acts/_adapter.py
 )
 
 if(ACTS_BUILD_PLUGIN_JSON)
@@ -135,7 +136,7 @@ if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
         ActsPythonBindingsDD4hep
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts
     )
-    list(APPEND py_files examples/dd4hep.py)
+    list(APPEND py_files acts/examples/dd4hep.py)
 endif()
 
 if(ACTS_BUILD_EXAMPLES_PYTHIA8)
@@ -169,7 +170,7 @@ if(ACTS_BUILD_EXAMPLES_GEANT4)
         ActsPythonBindingsGeant4
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts
     )
-    list(APPEND py_files examples/geant4/__init__.py)
+    list(APPEND py_files acts/examples/geant4/__init__.py)
 
     if(ACTS_BUILD_PLUGIN_DD4HEP AND ACTS_BUILD_EXAMPLES_DD4HEP)
         pybind11_add_module(ActsPythonBindingsDDG4 src/Geant4DD4hepComponent.cpp)
@@ -193,7 +194,7 @@ if(ACTS_BUILD_EXAMPLES_GEANT4)
             ActsPythonBindingsDDG4
             PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts
         )
-        list(APPEND py_files examples/geant4/dd4hep.py)
+        list(APPEND py_files acts/examples/geant4/dd4hep.py)
     endif()
 
     if(ACTS_BUILD_PLUGIN_GEOMODEL)
@@ -218,7 +219,7 @@ if(ACTS_BUILD_EXAMPLES_GEANT4)
             PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts
         )
 
-        list(APPEND py_files examples/geant4/geomodel.py)
+        list(APPEND py_files acts/examples/geant4/geomodel.py)
     endif()
 
     if(ACTS_BUILD_EXAMPLES_HEPMC3)
@@ -227,7 +228,7 @@ if(ACTS_BUILD_EXAMPLES_GEANT4)
             PUBLIC ActsExamplesEventRecording
         )
         target_sources(ActsPythonBindingsGeant4 PRIVATE src/Geant4HepMC3.cpp)
-        list(APPEND py_files examples/geant4/hepmc3.py)
+        list(APPEND py_files acts/examples/geant4/hepmc3.py)
     else()
         target_sources(
             ActsPythonBindingsGeant4
@@ -239,7 +240,7 @@ endif()
 if(ACTS_BUILD_EXAMPLES_HEPMC3)
     target_link_libraries(ActsPythonBindings PUBLIC ActsExamplesHepMC3)
     target_sources(ActsPythonBindings PRIVATE src/HepMC3.cpp)
-    list(APPEND py_files examples/hepmc3.py)
+    list(APPEND py_files acts/examples/hepmc3.py)
 else()
     target_sources(ActsPythonBindings PRIVATE src/HepMC3Stub.cpp)
 endif()
@@ -272,7 +273,7 @@ if(ACTS_BUILD_EXAMPLES_EDM4HEP)
         ActsPythonBindingsEDM4hep
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts
     )
-    list(APPEND py_files examples/edm4hep.py)
+    list(APPEND py_files acts/examples/edm4hep.py)
 endif()
 
 if(ACTS_BUILD_PLUGIN_ONNX)
@@ -282,7 +283,7 @@ if(ACTS_BUILD_PLUGIN_ONNX)
     )
     target_sources(ActsPythonBindings PRIVATE src/Onnx.cpp)
     target_sources(ActsPythonBindings PRIVATE src/OnnxNeuralCalibrator.cpp)
-    list(APPEND py_files examples/onnx/__init__.py)
+    list(APPEND py_files acts/examples/onnx/__init__.py)
 else()
     target_sources(ActsPythonBindings PRIVATE src/OnnxStub.cpp)
     target_sources(ActsPythonBindings PRIVATE src/OnnxNeuralCalibratorStub.cpp)
@@ -291,7 +292,7 @@ endif()
 if(ACTS_BUILD_EXAMPLES_HASHING)
     target_link_libraries(ActsPythonBindings PUBLIC ActsPluginHashing)
     target_sources(ActsPythonBindings PRIVATE src/Hashing.cpp)
-    list(APPEND py_files examples/hashing.py)
+    list(APPEND py_files acts/examples/hashing.py)
 else()
     target_sources(ActsPythonBindings PRIVATE src/HashingStub.cpp)
 endif()
@@ -300,12 +301,12 @@ configure_file(setup.sh.in ${_python_dir}/setup.sh @ONLY)
 install(FILES ${_python_dir}/setup.sh DESTINATION "python")
 
 foreach(f ${py_files})
-    set(_target ${_python_dir}/acts/${f})
+    set(_target ${_python_dir}/${f})
     get_filename_component(_dir ${_target} DIRECTORY)
     file(MAKE_DIRECTORY ${_dir})
 
     file(
-        CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/python/acts/${f} ${_target}
+        CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/python/${f} ${_target}
         SYMBOLIC
     )
 endforeach()
