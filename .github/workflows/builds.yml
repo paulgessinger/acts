@@ -148,6 +148,11 @@ jobs:
           && pytest -rFsv -k "not exatrkx" -v
           && cat ${PYTEST_MD_REPORT_OUTPUT} >> $GITHUB_STEP_SUMMARY
 
+      - uses: mxschmitt/action-tmate@v3
+        if: failure()
+
+
+
   linux_physmon:
     runs-on: ubuntu-latest
     container: ghcr.io/acts-project/ubuntu2404:63
