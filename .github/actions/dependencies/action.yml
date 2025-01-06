@@ -61,7 +61,7 @@ runs:
         path: |
           spack.tar
           spack_cache.tar
-        key: spack-r1-${{ inputs.spack_version }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}-${{ github.sha }}
+        key: ${{ steps.cache-restore.outputs.cache-primary-key }}
 
     - name: Install dependencies
       shell: bash
