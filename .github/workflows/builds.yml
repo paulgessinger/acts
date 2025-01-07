@@ -39,6 +39,7 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/dependencies
         with:
+          compiler: g++
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Restore ccache
