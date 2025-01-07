@@ -26,7 +26,7 @@ runs:
 
     - name: Restore cache
       id: cache-restore
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
         path: spack.tar.zst
         key: spack-r1-${{ inputs.spack_version }}-${{ runner.os }}-${{ github.job }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}
@@ -56,7 +56,7 @@ runs:
 
     - name: Save cache
       if: steps.cache-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: |
           spack.tar
