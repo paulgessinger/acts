@@ -85,7 +85,7 @@ jobs:
         id: ccache-restore
         uses: actions/cache/restore@v4
         with:
-          path: ${{ env.CCACHE_DIR }}
+          path: ${{ github.workspace }}
           key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
           restore-keys: |
             ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
@@ -112,9 +112,9 @@ jobs:
       #   run: ccache -s
       #
       - run: |
-          mkdir -p "${{ env.CCACHE_DIR }}"
-          echo "hallo" > "${{ env.CCACHE_DIR }}/hallo"
-          ls -al "${{ env.CCACHE_DIR }}"
+          mkdir -p "${{ github.workspace }}"
+          echo "hallo" > "${{ github.workspace }}/hallo"
+          ls -al "${{ github.workspace }}"
           ls -al .
           pwd
 
@@ -122,7 +122,7 @@ jobs:
         uses: actions/cache/save@v4
         if: always()
         with:
-          path: ${{ env.CCACHE_DIR }}/ccache
+          path: ${{ github.workspace }}/ccache
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
       # - name: Unit tests
