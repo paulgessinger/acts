@@ -112,8 +112,8 @@ jobs:
       #   run: ccache -s
       #
       - run: |
-          mkdir -p "${{ github.workspace }}/ccache"
-          touch "${{ github.workspace }}/ccache/hallo"
+          mkdir -p "${{ env.CCACHE_DIR }}"
+          touch "${{ env.CCACHE_DIR }}/hallo"
 
       - name: Save ccache
         uses: actions/cache/save@v4
