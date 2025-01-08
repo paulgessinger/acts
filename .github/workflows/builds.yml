@@ -113,7 +113,8 @@ jobs:
       #
       - run: |
           mkdir -p "${{ env.CCACHE_DIR }}"
-          touch "${{ env.CCACHE_DIR }}/hallo"
+          echo "hallo" > "${{ env.CCACHE_DIR }}/hallo"
+          ls -al "${{ env.CCACHE_DIR }}"
 
       - name: Save ccache
         uses: actions/cache/save@v4
