@@ -149,49 +149,49 @@ time spack -e "${env_dir}" spec -l
 time spack -e "${env_dir}" find
 end_section
 
-start_section "Install spack packages"
-if [ "$(uname)" = "Darwin" ]; then
-  NCPUS=$(sysctl -n hw.ncpu)
-else
-  NCPUS=$(nproc)
-fi
-time "${SCRIPT_DIR}"/parallel.sh "$NCPUS" spack -e "${env_dir}" install --use-buildcache only \
-  | tee install.log \
-  | grep -v "^Waiting\|^\[+\]"
-end_section
-
-start_section "Patch up Geant4 data directory"
-# ${SCRIPT_DIR}/with_spack_env.sh ${env_dir} geant4-config --install-datasets
-geant4_dir=$(spack -e "${env_dir}" location -i geant4)
-# Prepare the folder for G4 data, and symlink it to where G4 will look for it
-mkdir -p "${geant4_dir}/share/Geant4"
-ln -s "${geant4_dir}/share/Geant4/data" "${view_dir}/share/Geant4/data"
-end_section
-
-
-start_section "Prepare python environment"
-ls -al
-venv_dir="${view_dir}/venv"
-"${view_dir}"/bin/python3 -m venv \
-  --system-site-packages \
-  "$venv_dir"
-
-"${venv_dir}/bin/python3" -m pip install pyyaml jinja2
-
-end_section
-
-start_section "Set environment variables"
-if [ -n "${GITHUB_ACTIONS:-}" ]; then
-  echo "${view_dir}/bin" >> "$GITHUB_PATH"
-  echo "${venv_dir}/bin" >> "$GITHUB_PATH"
-fi
-set_env PATH "${venv_dir}/bin:${view_dir}/bin/:${PATH}"
-set_env CMAKE_PREFIX_PATH "${venv_dir}:${view_dir}"
-set_env LD_LIBRARY_PATH "${view_dir}/lib"
-set_env ROOT_INCLUDE_PATH "${view_dir}/include"
-# Geant4 puts CLHEP in a subdirectory
-set_env ROOT_INCLUDE_PATH "${view_dir}/include/Geant4"
-end_section
-
-# Pythia8 looks for settings in this directory
-# set_env PYTHIA8DATA "${destination}/share/Pythia8/xmldoc"
+# start_section "Install spack packages"
+# if [ "$(uname)" = "Darwin" ]; then
+#   NCPUS=$(sysctl -n hw.ncpu)
+# else
+#   NCPUS=$(nproc)
+# fi
+# time "${SCRIPT_DIR}"/parallel.sh "$NCPUS" spack -e "${env_dir}" install --use-buildcache only \
+#   | tee install.log \
+#   | grep -v "^Waiting\|^\[+\]"
+# end_section
+#
+# start_section "Patch up Geant4 data directory"
+# # ${SCRIPT_DIR}/with_spack_env.sh ${env_dir} geant4-config --install-datasets
+# geant4_dir=$(spack -e "${env_dir}" location -i geant4)
+# # Prepare the folder for G4 data, and symlink it to where G4 will look for it
+# mkdir -p "${geant4_dir}/share/Geant4"
+# ln -s "${geant4_dir}/share/Geant4/data" "${view_dir}/share/Geant4/data"
+# end_section
+#
+#
+# start_section "Prepare python environment"
+# ls -al
+# venv_dir="${view_dir}/venv"
+# "${view_dir}"/bin/python3 -m venv \
+#   --system-site-packages \
+#   "$venv_dir"
+#
+# "${venv_dir}/bin/python3" -m pip install pyyaml jinja2
+#
+# end_section
+#
+# start_section "Set environment variables"
+# if [ -n "${GITHUB_ACTIONS:-}" ]; then
+#   echo "${view_dir}/bin" >> "$GITHUB_PATH"
+#   echo "${venv_dir}/bin" >> "$GITHUB_PATH"
+# fi
+# set_env PATH "${venv_dir}/bin:${view_dir}/bin/:${PATH}"
+# set_env CMAKE_PREFIX_PATH "${venv_dir}:${view_dir}"
+# set_env LD_LIBRARY_PATH "${view_dir}/lib"
+# set_env ROOT_INCLUDE_PATH "${view_dir}/include"
+# # Geant4 puts CLHEP in a subdirectory
+# set_env ROOT_INCLUDE_PATH "${view_dir}/include/Geant4"
+# end_section
+#
+# # Pythia8 looks for settings in this directory
+# # set_env PYTHIA8DATA "${destination}/share/Pythia8/xmldoc"
