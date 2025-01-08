@@ -19,7 +19,7 @@ env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   CCACHE_DIR: ${{ github.workspace }}/ccache
   CCACHE_MAXSIZE: 500M
-  CCACHE_KEY_SUFFIX: r2
+  CCACHE_KEY_SUFFIX: r2TEST
   DEPENDENCY_TAG: v7_b7
 
 jobs:
@@ -111,6 +111,7 @@ jobs:
       # - name: ccache stats
       #   run: ccache -s
       #
+      - run: touch ${{ github.workspace }}/ccache
       - name: Save ccache
         uses: actions/cache/save@v4
         if: always()
