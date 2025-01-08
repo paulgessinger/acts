@@ -111,7 +111,8 @@ jobs:
       # - name: ccache stats
       #   run: ccache -s
       #
-      - run: touch ${{ github.workspace }}/ccache
+      - run: mkdir -p ${{ github.workspace }}/ccache
+
       - name: Save ccache
         uses: actions/cache/save@v4
         if: always()
