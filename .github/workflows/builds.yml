@@ -54,17 +54,19 @@ jobs:
           rm spack.tar
           rm spack_cache.tar
 
-      # - name: Setup Spack from scratch
-      #   if: steps.cache-restore.outputs.cache-hit != 'true'
-      #   shell: bash
-      #   env:
-      #     SPACK_VERSION: ${{ inputs.spack_version }}
-      #   run: |
-      #     CI/dependencies/setup_spack.sh
-      #     spack/bin/spack list > /dev/null
-      #     rm -rf spack/.git
-      #     tar cf spack.tar spack/
-      #     tar cf spack_cache.tar -C ~ .spack
+      - name: Setup Spack from scratch
+        if: steps.cache-restore.outputs.cache-hit != 'true'
+        shell: bash
+        env:
+          SPACK_VERSION: ${{ inputs.spack_version }}
+        run: |
+          mkdir spack
+          echo "exists" > spack/hallo.txt
+          # CI/dependencies/setup_spack.sh
+          # spack/bin/spack list > /dev/null
+          # rm -rf spack/.git
+          tar cf spack.tar spack/
+          # tar cf spack_cache.tar -C ~ .spack
 
       - name: Save cache
         if: steps.cache-restore.outputs.cache-hit != 'true'
@@ -111,18 +113,18 @@ jobs:
       # - name: ccache stats
       #   run: ccache -s
       #
-      - run: |
-          mkdir -p "${{ env.CCACHE_DIR }}"
-          echo "hallo" > "${{ env.CCACHE_DIR }}/hallo"
-          echo "${{ env.CCACHE_DIR }}"
-          pwd
-
-      - name: Save ccache
-        uses: actions/cache/save@v4
-        if: always()
-        with:
-          path: "${{ env.CCACHE_DIR }}"
-          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
+      # - run: |
+      #     mkdir -p "ccache"
+      #     echo "hallo" > "${{ env.CCACHE_DIR }}/hallo"
+      #     echo "${{ env.CCACHE_DIR }}"
+      #     pwd
+      #
+      # - name: Save ccache
+      #   uses: actions/cache/save@v4
+      #   if: always()
+      #   with:
+      #     path: "${{ env.CCACHE_DIR }}"
+      #     key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
       # - name: Unit tests
       #   run: ctest --test-dir build -j$(nproc)
