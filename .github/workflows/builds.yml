@@ -40,7 +40,7 @@ jobs:
         id: cache-restore
         uses: actions/cache/restore@v4
         with:
-          path: spack.tar
+          path: spack
           # key: spack-r2-${{ runner.os }}-${{ github.job }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}
           # restore-keys: |
           #   spack-r2-${{ runner.os }}-${{ github.job }}-
@@ -48,13 +48,13 @@ jobs:
           restore-keys: |
             ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
 
-      - name: Extract cached Spack
-        if: steps.cache-restore.outputs.cache-hit == 'true'
-        shell: bash
-        run: |
-          tar xf spack.tar
+      # - name: Extract cached Spack
+      #   if: steps.cache-restore.outputs.cache-hit == 'true'
+      #   shell: bash
+      #   run: |
+      #     tar xf spack.tar
           # tar xf -C ~ spack_cache.tar
-          rm spack.tar
+          # rm spack.tar
           # rm spack_cache.tar
 
       - name: Setup Spack from scratch
@@ -68,7 +68,7 @@ jobs:
           # CI/dependencies/setup_spack.sh
           # spack/bin/spack list > /dev/null
           # rm -rf spack/.git
-          tar cf spack.tar spack/
+          # tar cf spack.tar spack/
           # tar cf spack_cache.tar -C ~ .spack
 
       - name: Save cache
@@ -76,8 +76,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: |
-            spack.tar
-            spack_cache.tar
+            spack
           key: ${{ steps.cache-restore.outputs.cache-primary-key }}
 
       # - name: Install dependencies
