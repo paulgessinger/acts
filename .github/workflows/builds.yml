@@ -349,6 +349,7 @@ jobs:
         uses: ./.github/actions/dependencies
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          compiler: clang++
 
       - name: Restore ccache
         uses: actions/cache/restore@v4
