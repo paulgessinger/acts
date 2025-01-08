@@ -41,9 +41,12 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: spack.tar.zst
-          key: spack-r2-${{ runner.os }}-${{ github.job }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}
+          # key: spack-r2-${{ runner.os }}-${{ github.job }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}
+          # restore-keys: |
+          #   spack-r2-${{ runner.os }}-${{ github.job }}-
+          key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
           restore-keys: |
-            spack-r2-${{ runner.os }}-${{ github.job }}-
+            ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
 
       - name: Extract cached Spack
         if: steps.cache-restore.outputs.cache-hit == 'true'
@@ -83,14 +86,14 @@ jobs:
       #     compiler: g++
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Restore ccache
-        id: ccache-restore
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
-          restore-keys: |
-            ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
+      # - name: Restore ccache
+      #   id: ccache-restore
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     path: ${{ env.CCACHE_DIR }}
+      #     key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
+      #     restore-keys: |
+      #       ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
       #
       # # - uses: mxschmitt/action-tmate@v3
       #   # if: failure()
