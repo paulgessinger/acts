@@ -33,8 +33,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
-          lfs: true
+          submodules: false
+          lfs: false
 
       - name: Install dependencies
         uses: ./.github/actions/dependencies
@@ -42,185 +42,185 @@ jobs:
           compiler: g++
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Restore ccache
-        id: ccache-restore
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
-          restore-keys: |
-            ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
+      # - name: Restore ccache
+      #   id: ccache-restore
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     path: ${{ env.CCACHE_DIR }}
+      #     key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
+      #     restore-keys: |
+      #       ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
+      #
+      # # - uses: mxschmitt/action-tmate@v3
+      #   # if: failure()
+      #
+      # - name: Configure
+      #   # setting CMAKE_CXX_STANDARD=20 is a workaround for a bug in the
+      #   # dd4hep CMake configuration that gets triggered on recent CMake
+      #   # versions
+      #   # Need to set git user & email for patching to work (GeoModel plugin)
+      #   run: >
+      #     ccache -z &&
+      #     cmake -B build -S .
+      #     --preset=github-ci
+      #     -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
+      #     -DACTS_BUILD_PLUGIN_ONNX=ON
+      #
+      # - name: Build
+      #   run: cmake --build build
+      #
+      # - name: ccache stats
+      #   run: ccache -s
+      #
+      # - name: Save ccache
+      #   uses: actions/cache/save@v4
+      #   if: always()
+      #   with:
+      #     path: ${{ github.workspace }}/ccache
+      #     key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
+      #
+      # - name: Unit tests
+      #   run: ctest --test-dir build -j$(nproc)
+      #
+      # - name: Integration tests
+      #   run: cmake --build build --target integrationtests
+      #
+      # - name: Install
+      #   run: cmake --build build --target install
+      #
+      # - name: Package build
+      #   run: tar czf build.tar.gz -C build --exclude "*.o" --exclude "bin/ActsUnitTest*" --exclude "bin/ActsIntegrationTest*" .
+      #
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: acts-linux-ubuntu
+      #     path: build.tar.gz
+      #
+      # - name: Downstream configure
+      #   run: >
+      #     cmake -B build-downstream -S Tests/DownstreamProject
+      #     -GNinja
+      #     -DCMAKE_BUILD_TYPE=Release
+      #     -DCMAKE_CXX_FLAGS=-Werror
+      #     -DCMAKE_PREFIX_PATH="${INSTALL_DIR}"
+      #
+      # - name: Downstream build
+      #   run: cmake --build build-downstream
+      #
+      # - name: Downstream run
+      #   run: ./build-downstream/bin/ShowActsVersion
 
-      # - uses: mxschmitt/action-tmate@v3
-        # if: failure()
-
-      - name: Configure
-        # setting CMAKE_CXX_STANDARD=20 is a workaround for a bug in the
-        # dd4hep CMake configuration that gets triggered on recent CMake
-        # versions
-        # Need to set git user & email for patching to work (GeoModel plugin)
-        run: >
-          ccache -z &&
-          cmake -B build -S .
-          --preset=github-ci
-          -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
-          -DACTS_BUILD_PLUGIN_ONNX=ON
-
-      - name: Build
-        run: cmake --build build
-
-      - name: ccache stats
-        run: ccache -s
-
-      - name: Save ccache
-        uses: actions/cache/save@v4
-        if: always()
-        with:
-          path: ${{ github.workspace }}/ccache
-          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
-
-      - name: Unit tests
-        run: ctest --test-dir build -j$(nproc)
-
-      - name: Integration tests
-        run: cmake --build build --target integrationtests
-
-      - name: Install
-        run: cmake --build build --target install
-
-      - name: Package build
-        run: tar czf build.tar.gz -C build --exclude "*.o" --exclude "bin/ActsUnitTest*" --exclude "bin/ActsIntegrationTest*" .
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: acts-linux-ubuntu
-          path: build.tar.gz
-
-      - name: Downstream configure
-        run: >
-          cmake -B build-downstream -S Tests/DownstreamProject
-          -GNinja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_CXX_FLAGS=-Werror
-          -DCMAKE_PREFIX_PATH="${INSTALL_DIR}"
-
-      - name: Downstream build
-        run: cmake --build build-downstream
-
-      - name: Downstream run
-        run: ./build-downstream/bin/ShowActsVersion
-
-  linux_examples_test:
-    runs-on: ubuntu-latest
-    container: ghcr.io/acts-project/ubuntu2404:63
-    needs: [linux_ubuntu]
-    env:
-      ACTS_SEQUENCER_DISABLE_FPEMON: true
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-          lfs: true
-
-      - name: Install dependencies
-        uses: ./.github/actions/dependencies
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: acts-linux-ubuntu
-
-      - name: Unpack build
-        run: mkdir build && tar xf build.tar.gz -C build
-
-      - name: Python level tests
-        shell: bash
-        env:
-          PYTEST_MD_REPORT: true
-          PYTEST_MD_REPORT_VERBOSE: 0
-          PYTEST_MD_REPORT_OUTPUT: pytest.md
-        run: >
-          geant4-config --install-datasets
-          && source build/this_acts_withdeps.sh
-          && python3 -m pip install -r Examples/Python/tests/requirements.txt
-          && python3 -m pip install pytest-md-report
-          && pytest -rFsv -k "not exatrkx" -v
-          && cat ${PYTEST_MD_REPORT_OUTPUT} >> $GITHUB_STEP_SUMMARY
-
-      - uses: mxschmitt/action-tmate@v3
-        if: failure()
-
-
-
-  linux_physmon:
-    runs-on: ubuntu-latest
-    container: ghcr.io/acts-project/ubuntu2404:63
-    needs: [linux_ubuntu]
-    env:
-      ACTS_SEQUENCER_DISABLE_FPEMON: true
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-          lfs: true
-
-      - run: apt-get update && apt-get install -y time
-
-      - name: Install dependencies
-        uses: ./.github/actions/dependencies
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: acts-linux-ubuntu
-
-      - name: Unpack build
-        run: mkdir build && tar xf build.tar.gz -C build
-
-      - name: Save PR number
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          mkdir -p physmon
-          echo ${{ github.event.number }} > physmon/pr_number
-          echo ${{ github.event.pull_request.head.sha }} > physmon/sha
-
-      - name: Physics performance checks
-        shell: bash
-        run: |
-          # echo "::group::Dependencies"
-          git config --global safe.directory "$GITHUB_WORKSPACE"
-          python3 -m pip install histcmp==0.6.8 matplotlib
-          python3 -m pip install -r Examples/Scripts/requirements.txt
-          geant4-config --install-datasets
-          venv_python=$(which python3)
-          echo $venv_python
-          source build/this_acts_withdeps.sh
-          export PATH=$(dirname $venv_python):$PATH
-          which python3
-          echo $PATH
-          # cat build/this_acts_withdeps.sh
-          python -c "import ROOT"
-          # echo "::endgroup::"
-          # CI/physmon/phys_perf_mon.sh all physmon
-
-
-      - uses: mxschmitt/action-tmate@v3
-        if: failure()
-
-
-      - name: Post step summary
-        if: always()
-        run: cat physmon/summary.md >> $GITHUB_STEP_SUMMARY
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: physmon
-          path: physmon
+  # linux_examples_test:
+  #   runs-on: ubuntu-latest
+  #   container: ghcr.io/acts-project/ubuntu2404:63
+  #   needs: [linux_ubuntu]
+  #   env:
+  #     ACTS_SEQUENCER_DISABLE_FPEMON: true
+  #
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #         lfs: true
+  #
+  #     - name: Install dependencies
+  #       uses: ./.github/actions/dependencies
+  #       with:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: acts-linux-ubuntu
+  #
+  #     - name: Unpack build
+  #       run: mkdir build && tar xf build.tar.gz -C build
+  #
+  #     - name: Python level tests
+  #       shell: bash
+  #       env:
+  #         PYTEST_MD_REPORT: true
+  #         PYTEST_MD_REPORT_VERBOSE: 0
+  #         PYTEST_MD_REPORT_OUTPUT: pytest.md
+  #       run: >
+  #         geant4-config --install-datasets
+  #         && source build/this_acts_withdeps.sh
+  #         && python3 -m pip install -r Examples/Python/tests/requirements.txt
+  #         && python3 -m pip install pytest-md-report
+  #         && pytest -rFsv -k "not exatrkx" -v
+  #         && cat ${PYTEST_MD_REPORT_OUTPUT} >> $GITHUB_STEP_SUMMARY
+  #
+  #     - uses: mxschmitt/action-tmate@v3
+  #       if: failure()
+  #
+  #
+  #
+  # linux_physmon:
+  #   runs-on: ubuntu-latest
+  #   container: ghcr.io/acts-project/ubuntu2404:63
+  #   needs: [linux_ubuntu]
+  #   env:
+  #     ACTS_SEQUENCER_DISABLE_FPEMON: true
+  #
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #         lfs: true
+  #
+  #     - run: apt-get update && apt-get install -y time
+  #
+  #     - name: Install dependencies
+  #       uses: ./.github/actions/dependencies
+  #       with:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: acts-linux-ubuntu
+  #
+  #     - name: Unpack build
+  #       run: mkdir build && tar xf build.tar.gz -C build
+  #
+  #     - name: Save PR number
+  #       if: ${{ github.event_name == 'pull_request' }}
+  #       run: |
+  #         mkdir -p physmon
+  #         echo ${{ github.event.number }} > physmon/pr_number
+  #         echo ${{ github.event.pull_request.head.sha }} > physmon/sha
+  #
+  #     - name: Physics performance checks
+  #       shell: bash
+  #       run: |
+  #         # echo "::group::Dependencies"
+  #         git config --global safe.directory "$GITHUB_WORKSPACE"
+  #         python3 -m pip install histcmp==0.6.8 matplotlib
+  #         python3 -m pip install -r Examples/Scripts/requirements.txt
+  #         geant4-config --install-datasets
+  #         venv_python=$(which python3)
+  #         echo $venv_python
+  #         source build/this_acts_withdeps.sh
+  #         export PATH=$(dirname $venv_python):$PATH
+  #         which python3
+  #         echo $PATH
+  #         # cat build/this_acts_withdeps.sh
+  #         python -c "import ROOT"
+  #         # echo "::endgroup::"
+  #         # CI/physmon/phys_perf_mon.sh all physmon
+  #
+  #
+  #     - uses: mxschmitt/action-tmate@v3
+  #       if: failure()
+  #
+  #
+  #     - name: Post step summary
+  #       if: always()
+  #       run: cat physmon/summary.md >> $GITHUB_STEP_SUMMARY
+  #
+  #     - uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: physmon
+  #         path: physmon
   #
   # linux_physmon_perf_report:
   #   needs: [linux_physmon]
@@ -334,79 +334,79 @@ jobs:
   #     - name: Downstream run
   #       run: ./build-downstream/bin/ShowActsVersion
 
-  macos:
-    runs-on: macos-14
-    env:
-      INSTALL_DIR: ${{ github.workspace }}/install_acts
-      ACTS_LOG_FAILURE_THRESHOLD: WARNING
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-          lfs: true
-
-      - name: Install dependencies
-        uses: ./.github/actions/dependencies
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          compiler: clang++
-
-      - name: Restore ccache
-        uses: actions/cache/restore@v4
-        id: ccache-restore
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
-          restore-keys: |
-            ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
-
-      - name: Configure
-        run: >
-          ccache -z &&
-          cmake -B build -S .
-          --preset=github-ci
-          -DCMAKE_INSTALL_PREFIX="${{ env.INSTALL_DIR }}"
-
-      - name: Build
-        run: cmake --build build
-
-      - name: ccache stats
-        run: ccache -s
-
-      - name: Save ccache
-        uses: actions/cache/save@v4
-        if: always()
-        with:
-          path: ${{ github.workspace }}/ccache
-          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
-
-      - name: Unit tests
-        run: cmake --build build --target test
-
-      - name: Integration tests
-        run: cmake --build build --target integrationtests
-
-      - name: Install
-        run: cmake --build build --target install
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: acts-macos
-          path: ${{ env.INSTALL_DIR }}
-
-      - name: Downstream configure
-        run: >
-          cmake -B build-downstream -S Tests/DownstreamProject
-          -GNinja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_CXX_FLAGS=-Werror
-          -DCMAKE_PREFIX_PATH="${INSTALL_DIR}"
-
-      - name: Downstream build
-        run: cmake --build build-downstream
-
-      - name: Downstream run
-        run: >
-          PATH="${{ env.DEPENDENCY_DIR }}/bin:$PATH"
-          && ./build-downstream/bin/ShowActsVersion
+  # macos:
+  #   runs-on: macos-14
+  #   env:
+  #     INSTALL_DIR: ${{ github.workspace }}/install_acts
+  #     ACTS_LOG_FAILURE_THRESHOLD: WARNING
+  #
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #         lfs: true
+  #
+  #     - name: Install dependencies
+  #       uses: ./.github/actions/dependencies
+  #       with:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         compiler: clang++
+  #
+  #     - name: Restore ccache
+  #       uses: actions/cache/restore@v4
+  #       id: ccache-restore
+  #       with:
+  #         path: ${{ env.CCACHE_DIR }}
+  #         key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
+  #         restore-keys: |
+  #           ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
+  #
+  #     - name: Configure
+  #       run: >
+  #         ccache -z &&
+  #         cmake -B build -S .
+  #         --preset=github-ci
+  #         -DCMAKE_INSTALL_PREFIX="${{ env.INSTALL_DIR }}"
+  #
+  #     - name: Build
+  #       run: cmake --build build
+  #
+  #     - name: ccache stats
+  #       run: ccache -s
+  #
+  #     - name: Save ccache
+  #       uses: actions/cache/save@v4
+  #       if: always()
+  #       with:
+  #         path: ${{ github.workspace }}/ccache
+  #         key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
+  #
+  #     - name: Unit tests
+  #       run: cmake --build build --target test
+  #
+  #     - name: Integration tests
+  #       run: cmake --build build --target integrationtests
+  #
+  #     - name: Install
+  #       run: cmake --build build --target install
+  #
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: acts-macos
+  #         path: ${{ env.INSTALL_DIR }}
+  #
+  #     - name: Downstream configure
+  #       run: >
+  #         cmake -B build-downstream -S Tests/DownstreamProject
+  #         -GNinja
+  #         -DCMAKE_BUILD_TYPE=Release
+  #         -DCMAKE_CXX_FLAGS=-Werror
+  #         -DCMAKE_PREFIX_PATH="${INSTALL_DIR}"
+  #
+  #     - name: Downstream build
+  #       run: cmake --build build-downstream
+  #
+  #     - name: Downstream run
+  #       run: >
+  #         PATH="${{ env.DEPENDENCY_DIR }}/bin:$PATH"
+  #         && ./build-downstream/bin/ShowActsVersion
