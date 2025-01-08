@@ -44,9 +44,7 @@ jobs:
           # key: spack-r2-${{ runner.os }}-${{ github.job }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}
           # restore-keys: |
           #   spack-r2-${{ runner.os }}-${{ github.job }}-
-          key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-${{ github.sha }}
-          restore-keys: |
-            ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}-
+          key: ccache-${{ runner.os  }}-${{ github.job }}-${{ env.CCACHE_KEY_SUFFIX }}
 
       # - name: Extract cached Spack
       #   if: steps.cache-restore.outputs.cache-hit == 'true'
