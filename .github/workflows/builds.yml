@@ -116,6 +116,7 @@ jobs:
           echo "hallo" > "${{ env.CCACHE_DIR }}/hallo"
           ls -al "${{ env.CCACHE_DIR }}"
           ls -al .
+          pwd
 
       - name: Save ccache
         uses: actions/cache/save@v4
