@@ -29,9 +29,9 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: spack.tar.zst
-        key: spack-r1-${{ inputs.spack_version }}-${{ runner.os }}-${{ github.job }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}
+        key: spack-r2-${{ inputs.spack_version }}-${{ runner.os }}-${{ github.job }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}
         restore-keys: |
-          spack-r1-${{ inputs.spack_version }}-${{ runner.os }}-${{ github.job }}-
+          spack-r2-${{ inputs.spack_version }}-${{ runner.os }}-${{ github.job }}-
 
     - name: Extract cached Spack
       if: steps.cache-restore.outputs.cache-hit == 'true'
