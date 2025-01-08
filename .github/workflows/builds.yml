@@ -40,7 +40,7 @@ jobs:
         id: cache-restore
         uses: actions/cache/restore@v4
         with:
-          path: spack.tar.zst
+          path: spack.tar
           # key: spack-r2-${{ runner.os }}-${{ github.job }}-${{ hashFiles('CI/dependencies/setup_spack.sh') }}
           # restore-keys: |
           #   spack-r2-${{ runner.os }}-${{ github.job }}-
@@ -53,9 +53,9 @@ jobs:
         shell: bash
         run: |
           tar xf spack.tar
-          tar xf -C ~ spack_cache.tar
+          # tar xf -C ~ spack_cache.tar
           rm spack.tar
-          rm spack_cache.tar
+          # rm spack_cache.tar
 
       - name: Setup Spack from scratch
         if: steps.cache-restore.outputs.cache-hit != 'true'
