@@ -112,10 +112,10 @@ jobs:
       #   run: ccache -s
       #
       - run: |
-          mkdir -p "${{ github.workspace }}"
-          echo "hallo" > "${{ github.workspace }}/hallo"
+          mkdir -p "${{ github.workspace }}/ccache"
+          echo "hallo" > "${{ github.workspace }}/ccache/hallo"
+          ls -al "${{ github.workspace }}/ccache"
           ls -al "${{ github.workspace }}"
-          ls -al .
           pwd
 
       - name: Save ccache
