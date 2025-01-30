@@ -275,7 +275,7 @@ detail::RealQuadraticEquation ConeSurface::intersectionSolver(
     A += 1e-16;  // avoid division by zero
   }
 
-  return detail::RealQuadraticEquation(A, B, C);
+  return {A, B, C};
 }
 
 SurfaceMultiIntersection ConeSurface::intersect(

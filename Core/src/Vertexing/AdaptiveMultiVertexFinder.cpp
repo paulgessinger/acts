@@ -624,6 +624,6 @@ Result<std::vector<Vertex>> AdaptiveMultiVertexFinder::getVertexOutputList(
     outVtx.setTracksAtVertex(std::move(tracksAtVtx));
     outputVec.push_back(outVtx);
   }
-  return Result<std::vector<Vertex>>(outputVec);
+  return {outputVec};
 }
 }  // namespace Acts

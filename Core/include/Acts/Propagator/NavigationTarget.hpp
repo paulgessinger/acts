@@ -28,7 +28,7 @@ struct NavigationTarget {
   std::uint8_t surfaceIntersectionIndex = 0;
   BoundaryTolerance boundaryTolerance = BoundaryTolerance::None();
 
-  static NavigationTarget None() { return NavigationTarget(); }
+  static NavigationTarget None() { return {}; }
 
   NavigationTarget(const Surface& surface_,
                    std::uint8_t surfaceIntersectionIndex_,

@@ -400,7 +400,7 @@ class SurfaceArray {
     /// @brief Gets the bin center, but always returns (0, 0, 0)
     /// @return (0, 0, 0)
     Vector3 getBinCenter(std::size_t /*bin*/) const override {
-      return Vector3(0, 0, 0);
+      return {0, 0, 0};
     }
 
     /// @brief Returns an empty vector of @c AnyAxis

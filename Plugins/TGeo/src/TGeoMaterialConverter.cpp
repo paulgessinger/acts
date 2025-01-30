@@ -29,5 +29,5 @@ Acts::MaterialSlab Acts::TGeoMaterialConverter::materialSlab(
       matX0 * uScalor / cFactor, matL0 * uScalor / cFactor, tgMaterial.GetA(),
       tgMaterial.GetZ(), matRho * rScalar * cFactor);
 
-  return MaterialSlab(material, thicknessOut);
+  return {material, static_cast<float>(thicknessOut)};
 }

@@ -17,7 +17,7 @@ Checks: >
   modernize-loop-convert,
   # modernize-avoid-c-arrays,
   # modernize-pass-by-value,
-  # modernize-return-braced-init-list,
+  modernize-return-braced-init-list,
   # modernize-type-traits,
   # modernize-use-auto,
   # modernize-use-bool-literals,

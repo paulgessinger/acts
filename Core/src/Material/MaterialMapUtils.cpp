@@ -79,7 +79,7 @@ auto Acts::materialMapperRZ(
   };
 
   // [5] Create the mapper & BField Service create material mapping
-  return MaterialMapper(transformPos, std::move(grid));
+  return {transformPos, std::move(grid)};
 }
 
 auto Acts::materialMapperXYZ(
@@ -137,5 +137,5 @@ auto Acts::materialMapperXYZ(
   auto transformPos = [](const Vector3& pos) { return pos; };
 
   // [5] Create the mapper & BField Service create material mapping
-  return MaterialMapper(transformPos, std::move(grid));
+  return {transformPos, std::move(grid)};
 }

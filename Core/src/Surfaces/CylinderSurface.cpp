@@ -216,7 +216,7 @@ detail::RealQuadraticEquation CylinderSurface::intersectionSolver(
   double b = 2. * (ldXcd.dot(pcXcd));
   double c = pcXcd.dot(pcXcd) - (R * R);
   // And solve the qaudratic equation
-  return detail::RealQuadraticEquation(a, b, c);
+  return {a, b, c};
 }
 
 SurfaceMultiIntersection CylinderSurface::intersect(

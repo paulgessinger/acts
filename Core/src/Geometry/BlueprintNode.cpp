@@ -81,7 +81,8 @@ void BlueprintNode::setDepth(std::size_t depth) {
 }
 
 std::string BlueprintNode::indent() const {
-  return std::string(m_depth * 2, ' ');
+  std::string s(m_depth * 2, ' ');
+  return s;
 }
 
 std::string BlueprintNode::prefix() const {

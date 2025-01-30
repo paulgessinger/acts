@@ -151,7 +151,7 @@ inline MaterialSlab ISurfaceMaterial::materialSlab(
   if (plainMatProp.isValid()) {
     double scaleFactor = factor(pDir, mStage);
     if (scaleFactor == 0.) {
-      return MaterialSlab();
+      return {};
     }
     plainMatProp.scaleThickness(scaleFactor);
   }
@@ -166,7 +166,7 @@ inline MaterialSlab ISurfaceMaterial::materialSlab(
   if (plainMatProp.isValid()) {
     double scaleFactor = factor(pDir, mStage);
     if (scaleFactor == 0.) {
-      return MaterialSlab();
+      return {};
     }
     plainMatProp.scaleThickness(scaleFactor);
   }

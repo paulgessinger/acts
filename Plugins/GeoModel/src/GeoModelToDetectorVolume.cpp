@@ -131,7 +131,7 @@ Volume convertVolume(const Transform3& trf, const GeoShape& shape) {
     throw std::runtime_error("FATAL: Unsupported GeoModel shape: " +
                              shape.type());
   }
-  return Volume(newTrf, bounds);
+  return {newTrf, bounds};
 }
 
 std::shared_ptr<Experimental::DetectorVolume> convertDetectorVolume(

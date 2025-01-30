@@ -157,7 +157,7 @@ class VolumeBounds {
 /// Binning offset - overloaded for some R-binning types
 inline Vector3 VolumeBounds::referenceOffset(
     AxisDirection /*aDir*/) const {  // standard offset is 0.,0.,0.
-  return Vector3(0., 0., 0.);
+  return {0., 0., 0.};
 }
 
 inline double VolumeBounds::referenceBorder(AxisDirection /*aDir*/) const {

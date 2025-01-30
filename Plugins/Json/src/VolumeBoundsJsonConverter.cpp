@@ -26,7 +26,7 @@ void Acts::to_json(nlohmann::json& j, const VolumeBounds& bounds) {
 
 nlohmann::json Acts::VolumeBoundsJsonConverter::toJson(
     const VolumeBounds& bounds) {
-  return nlohmann::json(bounds);
+  return {bounds};
 }
 
 std::unique_ptr<Acts::VolumeBounds> Acts::VolumeBoundsJsonConverter::fromJson(

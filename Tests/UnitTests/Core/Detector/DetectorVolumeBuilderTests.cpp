@@ -86,7 +86,7 @@ class SurfaceGeoIdGenerator : public Acts::Experimental::IGeometryIdGenerator {
  public:
   Acts::Experimental::IGeometryIdGenerator::GeoIdCache generateCache()
       const final {
-    return std::any();
+    return {};
   }
 
   void assignGeometryId(

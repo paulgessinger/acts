@@ -514,12 +514,12 @@ TrackingVolume::compatibleBoundaries(const GeometryContext& gctx,
                    << boundary->surfaceRepresentation().geometryId());
       if (detail::checkPathLength(intersection.pathLength(), nearLimit,
                                   farLimit, logger)) {
-        return BoundaryIntersection(intersection, boundary);
+        return {intersection, boundary};
       }
     }
 
     ACTS_VERBOSE("No intersection accepted");
-    return BoundaryIntersection(SurfaceIntersection::invalid(), nullptr);
+    return {SurfaceIntersection::invalid(), nullptr};
   };
 
   /// Helper function to process boundary surfaces

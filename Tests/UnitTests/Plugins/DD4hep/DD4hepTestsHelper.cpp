@@ -98,7 +98,7 @@ dd4hep::Transform3D DD4hepTestsHelper::createTransform(
   double zz = zAxis.Z();
 
   // Create the transform
-  return Transform3D(xx, yx, zx, cx, xy, yy, zy, cy, xz, yz, zz, cz);
+  return {xx, yx, zx, cx, xy, yy, zy, cy, xz, yz, zz, cz};
 }
 
 std::string DD4hepTestsHelper::transformToXML(const Acts::Transform3& tf,

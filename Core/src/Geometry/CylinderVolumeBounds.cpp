@@ -236,7 +236,7 @@ Vector3 CylinderVolumeBounds::referenceOffset(AxisDirection aDir)
     const {  // the medium radius is taken for r-type binning
   if (aDir == Acts::AxisDirection::AxisR ||
       aDir == Acts::AxisDirection::AxisRPhi) {
-    return Vector3(0.5 * (get(eMinR) + get(eMaxR)), 0., 0.);
+    return {0.5 * (get(eMinR) + get(eMaxR)), 0., 0.};
   }
   return VolumeBounds::referenceOffset(aDir);
 }

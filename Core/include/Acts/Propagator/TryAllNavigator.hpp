@@ -732,7 +732,7 @@ class TryAllOverstepNavigator : public TryAllNavigatorBase {
     ACTS_VERBOSE(volInfo(state)
                  << "Next surface candidate will be " << surface.geometryId());
 
-    return NavigationTarget(surface, intersection.index(), boundaryTolerance);
+    return {surface, intersection.index(), boundaryTolerance};
   }
 
   /// @brief Check if the target is still valid

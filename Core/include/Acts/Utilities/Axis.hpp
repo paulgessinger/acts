@@ -72,7 +72,7 @@ class NeighborHoodIndices {
     bool m_wrapped = false;
   };
 
-  iterator begin() const { return iterator(m_begin1, m_end1, m_begin2); }
+  iterator begin() const { return {m_begin1, m_end1, m_begin2}; }
 
   iterator end() const { return iterator(m_end2); }
 
@@ -183,7 +183,8 @@ class Axis<AxisType::Equidistant, bdt> : public IAxis {
     const int itmin = std::clamp(static_cast<int>(idx + sizes.first), min, max);
     const int itmax =
         std::clamp(static_cast<int>(idx + sizes.second), min, max);
-    return NeighborHoodIndices(itmin, itmax + 1);
+    return {static_cast<std::size_t>(itmin),
+            static_cast<std::size_t>(itmax + 1)};
   }
 
   /// @brief Get #size bins which neighbor the one given
@@ -201,14 +202,15 @@ class Axis<AxisType::Equidistant, bdt> : public IAxis {
     requires(bdt == AxisBoundaryType::Bound)
   {
     if (idx <= 0 || idx >= (getNBins() + 1)) {
-      return NeighborHoodIndices();
+      return {};
     }
     constexpr int min = 1;
     const int max = getNBins();
     const int itmin = std::clamp(static_cast<int>(idx) + sizes.first, min, max);
     const int itmax =
         std::clamp(static_cast<int>(idx) + sizes.second, min, max);
-    return NeighborHoodIndices(itmin, itmax + 1);
+    return {static_cast<std::size_t>(itmin),
+            static_cast<std::size_t>(itmax + 1)};
   }
 
   /// @brief Get #size bins which neighbor the one given
@@ -227,7 +229,7 @@ class Axis<AxisType::Equidistant, bdt> : public IAxis {
   {
     // Handle invalid indices
     if (idx <= 0 || idx >= (getNBins() + 1)) {
-      return NeighborHoodIndices();
+      return {};
     }
 
     // Handle corner case where user requests more neighbours than the number
@@ -253,9 +255,9 @@ class Axis<AxisType::Equidistant, bdt> : public IAxis {
     const std::size_t itfirst = wrapBin(itmin);
     const std::size_t itlast = wrapBin(itmax);
     if (itfirst <= itlast) {
-      return NeighborHoodIndices(itfirst, itlast + 1);
+      return {itfirst, itlast + 1};
     } else {
-      return NeighborHoodIndices(itfirst, max + 1, 1, itlast + 1);
+      return {itfirst, static_cast<std::size_t>(max + 1), 1, itlast + 1};
     }
   }
 
@@ -496,7 +498,8 @@ class Axis<AxisType::Variable, bdt> : public IAxis {
     const int max = getNBins() + 1;
     const int itmin = std::max(min, static_cast<int>(idx) + sizes.first);
     const int itmax = std::min(max, static_cast<int>(idx) + sizes.second);
-    return NeighborHoodIndices(itmin, itmax + 1);
+    return {static_cast<std::size_t>(itmin),
+            static_cast<std::size_t>(itmax + 1)};
   }
 
   /// @brief Get #size bins which neighbor the one given
@@ -514,13 +517,14 @@ class Axis<AxisType::Variable, bdt> : public IAxis {
     requires(bdt == AxisBoundaryType::Bound)
   {
     if (idx <= 0 || idx >= (getNBins() + 1)) {
-      return NeighborHoodIndices();
+      return {};
     }
     constexpr int min = 1;
     const int max = getNBins();
     const int itmin = std::max(min, static_cast<int>(idx) + sizes.first);
     const int itmax = std::min(max, static_cast<int>(idx) + sizes.second);
-    return NeighborHoodIndices(itmin, itmax + 1);
+    return {static_cast<std::size_t>(itmin),
+            static_cast<std::size_t>(itmax + 1)};
   }
 
   /// @brief Get #size bins which neighbor the one given
@@ -539,7 +543,7 @@ class Axis<AxisType::Variable, bdt> : public IAxis {
   {
     // Handle invalid indices
     if (idx <= 0 || idx >= (getNBins() + 1)) {
-      return NeighborHoodIndices();
+      return {};
     }
 
     // Handle corner case where user requests more neighbours than the number
@@ -565,9 +569,9 @@ class Axis<AxisType::Variable, bdt> : public IAxis {
     const std::size_t itfirst = wrapBin(itmin);
     const std::size_t itlast = wrapBin(itmax);
     if (itfirst <= itlast) {
-      return NeighborHoodIndices(itfirst, itlast + 1);
+      return {itfirst, itlast + 1};
     } else {
-      return NeighborHoodIndices(itfirst, max + 1, 1, itlast + 1);
+      return {itfirst, static_cast<std::size_t>(max + 1), 1, itlast + 1};
     }
   }
 

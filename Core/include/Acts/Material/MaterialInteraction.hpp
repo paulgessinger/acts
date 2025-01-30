@@ -46,7 +46,7 @@ struct InteractionVolume {
     } else if (detectorVolume != nullptr) {
       return detectorVolume->geometryId();
     } else {
-      return GeometryIdentifier();
+      return {};
     }
   }
 

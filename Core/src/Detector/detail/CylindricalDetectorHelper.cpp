@@ -100,9 +100,8 @@ Acts::Experimental::PortalReplacement createDiscReplacement(
   // Make a portal and indicate the new link direction
   const auto& stitchBoundaries =
       (stitchValue == Acts::AxisDirection::AxisR) ? rBoundaries : phiBoundaries;
-  return Acts::Experimental::PortalReplacement(
-      std::make_shared<Acts::Experimental::Portal>(surface), index, dir,
-      stitchBoundaries, stitchValue);
+  return {std::make_shared<Acts::Experimental::Portal>(surface), index, dir,
+          stitchBoundaries, stitchValue};
 }
 
 /// @brief Helper function to create a cylinder portal replacement
@@ -137,9 +136,8 @@ Acts::Experimental::PortalReplacement createCylinderReplacement(
   // A make a portal and indicate the new link direction
   const auto& stitchBoundaries =
       (stitchValue == Acts::AxisDirection::AxisZ) ? zBoundaries : phiBoundaries;
-  return Acts::Experimental::PortalReplacement(
-      std::make_shared<Acts::Experimental::Portal>(surface), index, dir,
-      stitchBoundaries, stitchValue);
+  return {std::make_shared<Acts::Experimental::Portal>(surface), index, dir,
+          stitchBoundaries, stitchValue};
 }
 
 /// @brief Helper function to create a disc portal replacement

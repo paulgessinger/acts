@@ -45,8 +45,7 @@ using RandomGenerator = std::default_random_engine;
 struct SterileSmearer {
   Acts::Result<std::pair<double, double>> operator()(double value,
                                                      RandomGenerator& /*rng*/) {
-    return Acts::Result<std::pair<double, double>>(
-        std::make_pair<double, double>(value + 0., 0.));
+    return {std::make_pair<double, double>(value + 0., 0.)};
   }
 };
 
@@ -55,16 +54,14 @@ struct AddSmearer {
 
   Acts::Result<std::pair<double, double>> operator()(double value,
                                                      RandomGenerator& /*rng*/) {
-    return Acts::Result<std::pair<double, double>>(
-        std::make_pair<double, double>(value + offset, 3.));
+    return {std::make_pair<double, double>(value + offset, 3.)};
   }
 };
 
 struct InvalidSmearer {
   Acts::Result<std::pair<double, double>> operator()(double /*ignored*/,
                                                      RandomGenerator& /*rng*/) {
-    return Acts::Result<std::pair<double, double>>(
-        ActsFatras::DigitizationError::SmearingError);
+    return {ActsFatras::DigitizationError::SmearingError};
   }
 };
 
