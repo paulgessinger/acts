@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <memory>
 #include <ostream>
+#include <ranges>
 #include <string>
 #include <utility>
 
@@ -349,10 +350,9 @@ void TrackingVolume::interlinkLayers() {
     }
     // backward loop
     lastLayer = nullptr;
-    for (auto layerIter = layers.rbegin(); layerIter != layers.rend();
-         ++layerIter) {
+    for (const auto& layer : std::ranges::reverse_view(layers)) {
       // set the other next volume
-      Layer& mutableLayer = *(std::const_pointer_cast<Layer>(*layerIter));
+      Layer& mutableLayer = *(std::const_pointer_cast<Layer>(layer));
       mutableLayer.m_nextLayers.second = lastLayer;
       lastLayer = &mutableLayer;
     }

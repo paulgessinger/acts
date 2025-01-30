@@ -101,9 +101,9 @@ void createDetector(GeometryContext& tgContext,
   // Construct layer configs
   std::vector<CuboidVolumeBuilder::LayerConfig> lConfs;
   lConfs.reserve(nSurfaces);
-  for (unsigned int i = 0; i < translations.size(); i++) {
+  for (const auto& translation : translations) {
     CuboidVolumeBuilder::SurfaceConfig sConf;
-    sConf.position = translations[i];
+    sConf.position = translation;
     sConf.rotation = rotation;
     sConf.rBounds = rBounds;
     sConf.surMat = surfaceMaterial;

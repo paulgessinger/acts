@@ -9,6 +9,7 @@
 #include "Acts/TrackFinding/detail/AmbiguityTrackClustering.hpp"
 
 #include <iterator>
+#include <ranges>
 
 std::unordered_map<std::size_t, std::vector<std::size_t>>
 Acts::detail::clusterDuplicateTracks(
@@ -22,8 +23,8 @@ Acts::detail::clusterDuplicateTracks(
   std::unordered_map<std::size_t, std::size_t> hitToTrack;
 
   // Loop backward over all the tracks
-  for (auto track = trackMap.rbegin(); track != trackMap.rend(); ++track) {
-    const auto& trackValue = track->second;
+  for (const auto& track : std::ranges::reverse_view(trackMap)) {
+    const auto& trackValue = track.second;
     std::vector<std::size_t> hits = trackValue.second;
     auto matchedTrack = hitToTrack.end();
     // Loop over all the hits in the track

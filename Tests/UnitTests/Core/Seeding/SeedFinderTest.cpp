@@ -234,8 +234,8 @@ int main(int argc, char** argv) {
   std::cout << "Number of seeds generated: " << numSeeds << std::endl;
   if (!quiet) {
     for (auto& regionVec : seedVector) {
-      for (std::size_t i = 0; i < regionVec.size(); i++) {
-        const seed_type* seed = &regionVec[i];
+      for (auto& i : regionVec) {
+        const seed_type* seed = &i;
         const value_type* sp = seed->sp()[0];
         std::cout << " (" << sp->x() << ", " << sp->y() << ", " << sp->z()
                   << ") ";

@@ -14,7 +14,7 @@ Checks: >
   # modernize-use-using,
   modernize-make-shared,
   modernize-make-unique,
-  # modernize-loop-convert,
+  modernize-loop-convert,
   # modernize-avoid-c-arrays,
   # modernize-pass-by-value,
   # modernize-return-braced-init-list,

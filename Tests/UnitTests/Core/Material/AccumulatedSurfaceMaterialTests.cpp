@@ -48,8 +48,8 @@ BOOST_AUTO_TEST_CASE(AccumulatedSurfaceMaterial_construction_test) {
   AccumulatedSurfaceMaterial material2D{binUtility2D};
   auto accMat2D = material2D.accumulatedMaterial();
   BOOST_CHECK_EQUAL(accMat2D.size(), 20u);
-  for (std::size_t ib = 0; ib < accMat2D.size(); ++ib) {
-    BOOST_CHECK_EQUAL(accMat2D[ib].size(), 10u);
+  for (const auto& ib : accMat2D) {
+    BOOST_CHECK_EQUAL(ib.size(), 10u);
   }
 }
 
