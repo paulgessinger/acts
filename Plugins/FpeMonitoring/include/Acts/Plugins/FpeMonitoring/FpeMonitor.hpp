@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "Acts/Utilities/Helpers.hpp"
-
 #include <array>
 #include <atomic>
 #include <csignal>
@@ -18,6 +16,7 @@
 #include <memory>
 #include <mutex>
 #include <stack>
+#include <vector>
 
 #include <boost/container/static_vector.hpp>
 #include <boost/stacktrace/stacktrace_fwd.hpp>
@@ -39,39 +38,35 @@ std::ostream &operator<<(std::ostream &os, FpeType type);
 
 class FpeMonitor {
  public:
+  static constexpr std::size_t kBufferSize = 65536;
   struct Buffer {
-    explicit Buffer(std::size_t bufferSize)
-        : m_data{std::make_unique<std::byte[]>(bufferSize)},
-          m_size{bufferSize} {}
-
+    explicit Buffer()
+        : m_data{std::make_unique<std::array<std::byte, kBufferSize>>()} {}
     Buffer(const Buffer &) = delete;
     Buffer(Buffer &&other) noexcept {
       m_data = std::move(other.m_data);
-      m_size = other.m_size;
       m_offset = other.m_offset;
-      other.m_size = 0;
       other.m_offset = 0;
     }
 
     std::pair<void *, std::size_t> next() {
-      return {m_data.get() + m_offset, m_size - m_offset};
+      return {m_data.get() + m_offset, size() - m_offset};
     }
 
     void pushOffset(std::size_t offset) {
-      assert(m_offset + offset < m_size);
+      assert(m_offset + offset < size());
       m_offset = offset;
     }
 
     void reset() { m_offset = 0; }
 
-    std::size_t size() const { return m_size; }
+    std::size_t size() const { return m_data->size(); }
     std::size_t offset() const { return m_offset; }
 
-    std::byte *data() { return m_data.get(); }
+    std::byte *data() { return m_data->data(); }
 
    private:
-    std::unique_ptr<std::byte[]> m_data;
-    std::size_t m_size{};
+    std::unique_ptr<std::array<std::byte, kBufferSize>> m_data;
     std::size_t m_offset{};
   };
 
@@ -152,7 +147,7 @@ class FpeMonitor {
 
   Result m_result;
 
-  Buffer m_buffer{65536};
+  Buffer m_buffer{};
 
   boost::container::static_vector<std::tuple<FpeType, void *, std::size_t>, 128>
       m_recorded;

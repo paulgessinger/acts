@@ -182,7 +182,7 @@ inline double generateQoverP(generator_t& rng,
   // the upper limit of the distribution is inclusive
   UniformIndex particleTypeChoice(0u, options.randomizeCharge ? 1u : 0u);
   // (anti-)particle choice is one random draw but defines two properties
-  const double qChoices[] = {
+  const std::array<double, 2> qChoices = {
       options.charge,
       -options.charge,
   };

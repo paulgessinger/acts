@@ -82,9 +82,9 @@ nlohmann::json Acts::DetectorJsonConverter::toJson(
   nlohmann::json jHeader;
   jHeader["detector"] = detector.name();
   jHeader["type"] = "acts";
-  char buffer[100];
-  strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", ti);
-  jHeader["date"] = std::string(buffer);
+  std::array<char, 100> buffer;
+  strftime(buffer.data(), buffer.size(), "%Y-%m-%d %H:%M:%S", ti);
+  jHeader["date"] = std::string(buffer.data());
   jHeader["surface_count"] = nSurfaces;
   jHeader["portal_count"] = portals.size();
   jHeader["volume_count"] = detector.volumes().size();

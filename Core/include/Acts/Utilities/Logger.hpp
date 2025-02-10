@@ -477,13 +477,13 @@ class TimedOutputDecorator final : public OutputDecorator {
   ///
   /// @return current time stamp as string
   std::string now() const {
-    char buffer[20];
+    std::array<char, 20> buffer;
     time_t t{};
     std::time(&t);
     struct tm tbuf {};
-    std::strftime(buffer, sizeof(buffer), m_format.c_str(),
+    std::strftime(buffer.data(), buffer.size(), m_format.c_str(),
                   localtime_r(&t, &tbuf));
-    return buffer;
+    return {buffer.data()};
   }
 
   /// format of the time stamp (see std::strftime for details)
@@ -562,8 +562,8 @@ class LevelOutputDecorator final : public OutputDecorator {
   ///
   /// @return string representation of debug level
   std::string toString(const Level& lvl) const {
-    static const char* const buffer[] = {"VERBOSE", "DEBUG", "INFO",
-                                         "WARNING", "ERROR", "FATAL"};
+    static constexpr std::array<const char* const, 6> buffer = {
+        "VERBOSE", "DEBUG", "INFO", "WARNING", "ERROR", "FATAL"};
     return buffer[lvl];
   }
 };

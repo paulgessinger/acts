@@ -21,6 +21,11 @@
 
 namespace Acts::Experimental {
 
+namespace detail {
+template <typename T, std::size_t N>
+using array2d = std::array<std::array<T, N>, N>;
+}
+
 template <typename external_spacepoint_t>
 struct GbtsEdgeState {
  public:
@@ -103,7 +108,10 @@ struct GbtsEdgeState {
 
   std::vector<GbtsEdge<external_spacepoint_t>*> m_vs;
 
-  float m_X[3]{}, m_Y[2]{}, m_Cx[3][3]{}, m_Cy[2][2]{};
+  std::array<float, 3> m_X;
+  std::array<float, 2> m_Y;
+  detail::array2d<float, 3> m_Cx;
+  detail::array2d<float, 2> m_Cy;
   float m_refX{}, m_refY{}, m_c{}, m_s{};
 
   bool m_initialized{false};
@@ -267,8 +275,10 @@ class GbtsTrackingFilter {
 
     // extrapolation
 
-    float X[3], Y[2];
-    float Cx[3][3], Cy[2][2];
+    std::array<float, 3> X;
+    std::array<float, 2> Y;
+    detail::array2d<float, 3> Cx;
+    detail::array2d<float, 2> Cy;
 
     float refX{}, refY{}, mx{}, my{};
 
@@ -315,8 +325,8 @@ class GbtsTrackingFilter {
     float resid_x = mx - X[0];
     float resid_y = my - Y[0];
 
-    float CHx[3] = {Cx[0][0], Cx[0][1], Cx[0][2]};
-    float CHy[2] = {Cy[0][0], Cy[0][1]};
+    std::array<float, 3> CHx = {Cx[0][0], Cx[0][1], Cx[0][2]};
+    std::array<float, 2> CHy = {Cy[0][0], Cy[0][1]};
 
     float sigma_rz = 0.0;
 
@@ -343,8 +353,8 @@ class GbtsTrackingFilter {
     ts.m_J += add_hit - dchi2_x * weight_x - dchi2_y * weight_y;
 
     // state update
-    float Kx[3] = {Dx * Cx[0][0], Dx * Cx[0][1], Dx * Cx[0][2]};
-    float Ky[2] = {Dy * Cy[0][0], Dy * Cy[0][1]};
+    std::array<float, 3> Kx = {Dx * Cx[0][0], Dx * Cx[0][1], Dx * Cx[0][2]};
+    std::array<float, 2> Ky = {Dy * Cy[0][0], Dy * Cy[0][1]};
 
     for (int i = 0; i < 3; i++) {
       ts.m_X[i] = X[i] + Kx[i] * resid_x;
@@ -386,7 +396,7 @@ class GbtsTrackingFilter {
 
   std::vector<GbtsEdgeState<external_spacepoint_t>*> m_stateVec;
 
-  GbtsEdgeState<external_spacepoint_t> m_stateStore[MAX_EDGE_STATE];
+  std::array<GbtsEdgeState<external_spacepoint_t>, MAX_EDGE_STATE> m_stateStore;
 
   int m_globalStateCounter{0};
 
