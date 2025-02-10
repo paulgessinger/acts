@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <limits>
 
@@ -20,8 +21,8 @@
 // is sorted it can be used to quickly search for the index of a particle
 // within all column arrays.
 
-static constexpr std::uint32_t kParticlesCount = 6502u;
-static const std::int32_t kParticlesPdgNumber[kParticlesCount] = {
+static constexpr std::uint32_t kParticlesCount = 6505u;
+static const std::array<std::int32_t, kParticlesCount> kParticlesPdgNumber = {
     // Og294~
     -1001182940,
     // Ts294~
@@ -5906,6 +5907,8 @@ static const std::int32_t kParticlesPdgNumber[kParticlesCount] = {
     -9020325,
     // K(0)*(1950)-
     -9020321,
+    // K(0)*(1950)~0
+    -9020311,
     // a(1)(1640)-
     -9020213,
     // K(3)(2320)-
@@ -7110,6 +7113,8 @@ static const std::int32_t kParticlesPdgNumber[kParticlesCount] = {
     9010213,
     // f(0)(980)
     9010221,
+    // f(2)(1565)
+    9010225,
     // K(2)*(1980)0
     9010315,
     // K(1830)+
@@ -7128,6 +7133,8 @@ static const std::int32_t kParticlesPdgNumber[kParticlesCount] = {
     9020213,
     // eta(1405)
     9020221,
+    // K(0)*(1950)0
+    9020311,
     // K(0)*(1950)+
     9020321,
     // K(2)(2250)+
@@ -13027,7 +13034,7 @@ static const std::int32_t kParticlesPdgNumber[kParticlesCount] = {
     // Og294
     1001182940,
 };
-static const std::int16_t kParticlesThreeCharge[kParticlesCount] = {
+static const std::array<std::int16_t, kParticlesCount> kParticlesThreeCharge = {
     // Og294~
     -354,
     // Ts294~
@@ -18912,6 +18919,8 @@ static const std::int16_t kParticlesThreeCharge[kParticlesCount] = {
     -3,
     // K(0)*(1950)-
     -3,
+    // K(0)*(1950)~0
+    0,
     // a(1)(1640)-
     -3,
     // K(3)(2320)-
@@ -20116,6 +20125,8 @@ static const std::int16_t kParticlesThreeCharge[kParticlesCount] = {
     3,
     // f(0)(980)
     0,
+    // f(2)(1565)
+    0,
     // K(2)*(1980)0
     0,
     // K(1830)+
@@ -20133,6 +20144,8 @@ static const std::int16_t kParticlesThreeCharge[kParticlesCount] = {
     // a(1)(1640)+
     3,
     // eta(1405)
+    0,
+    // K(0)*(1950)0
     0,
     // K(0)*(1950)+
     3,
@@ -26033,7 +26046,7 @@ static const std::int16_t kParticlesThreeCharge[kParticlesCount] = {
     // Og294
     354,
 };
-static const float kParticlesMassMeV[kParticlesCount] = {
+static const std::array<float, kParticlesCount> kParticlesMassMeV = {
     // Og294~
     0.0f,
     // Ts294~
@@ -31917,7 +31930,9 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // K(2)(2250)-
     std::numeric_limits<float>::quiet_NaN(),
     // K(0)*(1950)-
-    std::numeric_limits<float>::quiet_NaN(),
+    1957.0f,
+    // K(0)*(1950)~0
+    1957.0f,
     // a(1)(1640)-
     1655.0f,
     // K(3)(2320)-
@@ -31929,7 +31944,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // K(2)*(1980)~0
     1990.0f,
     // pi(1)(1600)-
-    1661.0f,
+    1645.0f,
     // pi(1800)-
     1810.0f,
     // K(4)(2500)-
@@ -31947,7 +31962,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // a(2)(1700)-
     1706.0f,
     // pi(1)(1400)-
-    1354.0f,
+    std::numeric_limits<float>::quiet_NaN(),
     // a(0)(980)-
     980.0f,
     // Lambda(c)(2880)~-
@@ -31971,7 +31986,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // Xi(c)(2815)~0
     2819.79f,
     // Lambda(c)(2625)~-
-    2628.11f,
+    2628.0f,
     // Xi(1950)~0
     1950.0f,
     // Xi(1950)~+
@@ -32173,7 +32188,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // (bc)(0)~
     std::numeric_limits<float>::quiet_NaN(),
     // Omega(b)~+
-    6045.2f,
+    6045.8f,
     // (bs)(1)~
     std::numeric_limits<float>::quiet_NaN(),
     // (bs)(0)~
@@ -32355,23 +32370,23 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // B(c)-
     6274.47f,
     // B(s2)*(5840)~0
-    5839.86f,
+    5839.88f,
     // B(s)*~0
     5415.4f,
     // B(s)~0
-    5366.92f,
+    5366.93f,
     // B(2)*(5747)-
-    5737.2f,
+    5737.3f,
     // B*-
-    5324.71f,
+    5324.75f,
     // B-
-    5279.34f,
+    5279.41f,
     // B(2)*(5747)~0
-    5739.5f,
+    5739.6f,
     // B*~0
-    5324.71f,
+    5324.75f,
     // B~0
-    5279.66f,
+    5279.72f,
     // D(s2)*(2573)-
     2569.1f,
     // D(s)*-
@@ -32417,11 +32432,11 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // a(2)(1320)-
     1318.2f,
     // rho(770)-
-    775.26f,
+    775.11f,
     // pi-
     139.57039f,
     // W-
-    80377.0f,
+    80369.0f,
     // nu(tau')~
     std::numeric_limits<float>::quiet_NaN(),
     // tau'+
@@ -32429,7 +32444,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // nu(tau)~
     std::numeric_limits<float>::quiet_NaN(),
     // tau+
-    1776.86f,
+    1776.93f,
     // nu(mu)~
     std::numeric_limits<float>::quiet_NaN(),
     // mu+
@@ -32439,29 +32454,29 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // e+
     0.51099895f,
     // t~
-    172500.0f,
+    172570.0f,
     // b~
-    4180.0f,
+    4183.0f,
     // c~
-    1270.0f,
+    1273.0f,
     // s~
-    93.4f,
+    93.5f,
     // u~
     2.16f,
     // d~
-    4.67f,
+    4.7f,
     // d
-    4.67f,
+    4.7f,
     // u
     2.16f,
     // s
-    93.4f,
+    93.5f,
     // c
-    1270.0f,
+    1273.0f,
     // b
-    4180.0f,
+    4183.0f,
     // t
-    172500.0f,
+    172570.0f,
     // e-
     0.51099895f,
     // nu(e)
@@ -32471,7 +32486,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // nu(mu)
     std::numeric_limits<float>::quiet_NaN(),
     // tau-
-    1776.86f,
+    1776.93f,
     // nu(tau)
     std::numeric_limits<float>::quiet_NaN(),
     // tau'-
@@ -32483,11 +32498,11 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // gamma
     0.0f,
     // Z0
-    91187.6f,
+    91188.0f,
     // W+
-    80377.0f,
+    80369.0f,
     // H0
-    125250.0f,
+    125200.0f,
     // pi0
     134.9768f,
     // rho(770)0
@@ -32503,7 +32518,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // pi+
     139.57039f,
     // rho(770)+
-    775.26f,
+    775.11f,
     // a(2)(1320)+
     1318.2f,
     // rho(3)(1690)+
@@ -32547,7 +32562,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // phi(1020)
     1019.461f,
     // f(2)'(1525)
-    1517.4f,
+    1517.3f,
     // phi(3)(1850)
     1854.0f,
     // D+
@@ -32569,29 +32584,29 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // D(s2)*(2573)+
     2569.1f,
     // eta(c)(1S)
-    2983.9f,
+    2984.1f,
     // J/psi(1S)
     3096.9f,
     // chi(c2)(1P)
     3556.17f,
     // B0
-    5279.66f,
+    5279.72f,
     // B*0
-    5324.71f,
+    5324.75f,
     // B(2)*(5747)0
-    5739.5f,
+    5739.6f,
     // B+
-    5279.34f,
+    5279.41f,
     // B*+
-    5324.71f,
+    5324.75f,
     // B(2)*(5747)+
-    5737.2f,
+    5737.3f,
     // B(s)0
-    5366.92f,
+    5366.93f,
     // B(s)*0
     5415.4f,
     // B(s2)*(5840)0
-    5839.86f,
+    5839.88f,
     // B(c)+
     6274.47f,
     // eta(b)(1S)
@@ -32779,7 +32794,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // (bs)(1)
     std::numeric_limits<float>::quiet_NaN(),
     // Omega(b)-
-    6045.2f,
+    6045.8f,
     // (bc)(0)
     std::numeric_limits<float>::quiet_NaN(),
     // (bc)(1)
@@ -32909,7 +32924,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // a(1)(1260)+
     1230.0f,
     // f(1)(1285)
-    1281.9f,
+    1281.8f,
     // K(1)(1400)0
     1403.0f,
     // K(2)(1820)0
@@ -32919,7 +32934,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // K(2)(1820)+
     1819.0f,
     // f(1)(1420)
-    1426.3f,
+    1428.4f,
     // D(1)(2430)0
     2412.0f,
     // D(s1)(2460)+
@@ -33029,13 +33044,13 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // K*(1410)+
     1414.0f,
     // eta(1475)
-    1475.0f,
+    1476.0f,
     // phi(1680)
     1680.0f,
     // eta(c)(2S)
     3637.7f,
     // psi(2S)
-    3686.1f,
+    3686.097f,
     // chi(c2)(3930)
     3922.5f,
     // Upsilon(2S)
@@ -33047,7 +33062,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // Xi(1950)0
     1950.0f,
     // Lambda(c)(2625)+
-    2628.11f,
+    2628.0f,
     // Xi(c)(2815)0
     2819.79f,
     // Xi(c)(2790)0
@@ -33085,13 +33100,13 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // a(0)(980)0
     980.0f,
     // pi(1)(1400)0
-    1354.0f,
+    std::numeric_limits<float>::quiet_NaN(),
     // a(2)(1700)0
     1706.0f,
     // a(0)(980)+
     980.0f,
     // pi(1)(1400)+
-    1354.0f,
+    std::numeric_limits<float>::quiet_NaN(),
     // a(2)(1700)+
     1706.0f,
     // f(0)(500)
@@ -33109,19 +33124,21 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // K(4)(2500)+
     std::numeric_limits<float>::quiet_NaN(),
     // psi(4040)
-    4039.0f,
+    4040.0f,
     // Upsilon(10860)
     10885.2f,
     // pi(1800)0
     1810.0f,
     // pi(1)(1600)0
-    1661.0f,
+    1645.0f,
     // pi(1800)+
     1810.0f,
     // pi(1)(1600)+
-    1661.0f,
+    1645.0f,
     // f(0)(980)
     990.0f,
+    // f(2)(1565)
+    1571.0f,
     // K(2)*(1980)0
     1990.0f,
     // K(1830)+
@@ -33139,13 +33156,15 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // a(1)(1640)+
     1655.0f,
     // eta(1405)
-    1408.8f,
+    1408.7f,
+    // K(0)*(1950)0
+    1957.0f,
     // K(0)*(1950)+
-    std::numeric_limits<float>::quiet_NaN(),
+    1957.0f,
     // K(2)(2250)+
     std::numeric_limits<float>::quiet_NaN(),
     // psi(4415)
-    4421.0f,
+    4415.0f,
     // f(0)(1500)
     1522.0f,
     // f(0)(2020)
@@ -39039,7 +39058,7 @@ static const float kParticlesMassMeV[kParticlesCount] = {
     // Og294
     0.0f,
 };
-static const char* const kParticlesName[kParticlesCount] = {
+static const std::array<const char* const, kParticlesCount> kParticlesName = {
     "Og294~",
     "Ts294~",
     "Lv293~",
@@ -41982,6 +42001,7 @@ static const char* const kParticlesName[kParticlesCount] = {
     "n~",
     "K(2)(2250)-",
     "K(0)*(1950)-",
+    "K(0)*(1950)~0",
     "a(1)(1640)-",
     "K(3)(2320)-",
     "K(2)*(1980)-",
@@ -42584,6 +42604,7 @@ static const char* const kParticlesName[kParticlesCount] = {
     "pi(1800)+",
     "pi(1)(1600)+",
     "f(0)(980)",
+    "f(2)(1565)",
     "K(2)*(1980)0",
     "K(1830)+",
     "K(2)*(1980)+",
@@ -42593,6 +42614,7 @@ static const char* const kParticlesName[kParticlesCount] = {
     "a(1)(1640)0",
     "a(1)(1640)+",
     "eta(1405)",
+    "K(0)*(1950)0",
     "K(0)*(1950)+",
     "K(2)(2250)+",
     "psi(4415)",

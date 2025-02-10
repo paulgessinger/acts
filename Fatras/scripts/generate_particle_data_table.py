@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+# /// script
+# dependencies = [
+#   "particle",
+# ]
+# ///
+
 #
 # use scikit-hep/particle to generate c++ code for the particle data table.
 #
@@ -40,6 +47,7 @@ CODE_HEADER = """\
 #pragma once
 
 #include <cstdint>
+#include <array>
 #include <limits>
 
 // Rows within the particle data table are sorted by their signed PDG particle
@@ -62,7 +70,7 @@ def generate_code(table):
         ("PdgNumber", "int32_t", "{}"),
         ("ThreeCharge", "int16_t", "{}"),
         ("MassMeV", "float", "{}f"),
-        ("Name", "char* const   ", '"{}"'),
+        ("Name", " const  char* const", '"{}"'),
     ]
     lines = [
         CODE_HEADER,
@@ -71,7 +79,7 @@ def generate_code(table):
     # build a separate array for each column
     for i, (variable_name, type_name, value_format) in enumerate(columns):
         lines.append(
-            f"static const {type_name} kParticles{variable_name}[kParticlesCount] = {{"
+            f"static const std::array<{type_name}, kParticlesCount> kParticles{variable_name} = {{"
         )
 
         for row in table:
