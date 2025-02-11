@@ -17,9 +17,7 @@
 
 namespace po = boost::program_options;
 
-namespace ActsExamples {
-
-namespace Options {
+namespace ActsExamples::Options {
 
 /// @brief Material mapping options, specially added
 ///
@@ -49,5 +47,4 @@ void addMaterialMappingOptions(aopt_t& opt) {
       "information to be there.");
 }
 
-}  // namespace Options
-}  // namespace ActsExamples
+}  // namespace ActsExamples::Options
