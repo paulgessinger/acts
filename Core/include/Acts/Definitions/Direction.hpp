@@ -73,7 +73,7 @@ class Direction final {
   /// objects in std::array<T, 2u>
   ///
   /// @return either 0 or 1
-  constexpr std::size_t index() const {
+  [[nodiscard]] constexpr std::size_t index() const {
     if (m_value == Value::Negative) {
       return 0u;
     }
@@ -83,16 +83,16 @@ class Direction final {
   /// Turns the direction into a signed value
   ///
   /// @return a signed value
-  constexpr int sign() const { return static_cast<int>(m_value); }
+  [[nodiscard]] constexpr int sign() const { return static_cast<int>(m_value); }
 
   /// Reverse the direction
   ///
   /// @return an opposite direction
-  constexpr Direction invert() const {
+  [[nodiscard]] constexpr Direction invert() const {
     return *this == Positive() ? Negative() : Positive();
   }
 
-  std::string toString() const;
+  [[nodiscard]] std::string toString() const;
 
   friend constexpr bool operator==(Direction lhs, Direction rhs) {
     return lhs.m_value == rhs.m_value;

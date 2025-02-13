@@ -29,8 +29,8 @@ struct CenterReferenceGenerator {
   /// @param surface the surface for which the reference point is to be accessed
   ///
   /// @return a vector of reference points for filling
-  const std::vector<Vector3> references(const GeometryContext& gctx,
-                                        const Surface& surface) const {
+  [[nodiscard]] const std::vector<Vector3> references(
+      const GeometryContext& gctx, const Surface& surface) const {
     return {surface.center(gctx)};
   }
 };
@@ -49,8 +49,8 @@ struct AxisDirectionReferenceGenerator {
   /// @param surface the surface for which the reference point is to be accessed
   ///
   /// @return a vector of reference points for filling
-  const std::vector<Vector3> references(const GeometryContext& gctx,
-                                        const Surface& surface) const {
+  [[nodiscard]] const std::vector<Vector3> references(
+      const GeometryContext& gctx, const Surface& surface) const {
     return {surface.referencePosition(gctx, bVAL)};
   }
 };
@@ -73,8 +73,8 @@ struct PolyhedronReferenceGenerator {
   /// @param surface the surface for which the reference point is to be accessed
   ///
   /// @return a vector of reference points for filling
-  const std::vector<Vector3> references(const GeometryContext& gctx,
-                                        const Surface& surface) const {
+  [[nodiscard]] const std::vector<Vector3> references(
+      const GeometryContext& gctx, const Surface& surface) const {
     // Create the return  vector
     std::vector<Vector3> rPositions;
     auto pHedron = surface.polyhedronRepresentation(gctx, nSEGS);

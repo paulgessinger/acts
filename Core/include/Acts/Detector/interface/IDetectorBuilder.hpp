@@ -32,7 +32,7 @@ class IDetectorBuilder {
   /// @param gctx the geometry context at the creation of the internal structure
   ///
   /// @return a shared detector object
-  virtual std::shared_ptr<const Detector> construct(
+  [[nodiscard]] virtual std::shared_ptr<const Detector> construct(
       const GeometryContext& gctx) const = 0;
 };
 

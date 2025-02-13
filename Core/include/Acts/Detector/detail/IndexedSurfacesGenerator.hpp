@@ -99,7 +99,7 @@ struct IndexedSurfacesGenerator {
   /// Access to the logger
   ///
   /// @return a const reference to the logger
-  const Logger& logger() const { return *oLogger; }
+  [[nodiscard]] const Logger& logger() const { return *oLogger; }
 };
 
 }  // namespace Acts::Experimental::detail

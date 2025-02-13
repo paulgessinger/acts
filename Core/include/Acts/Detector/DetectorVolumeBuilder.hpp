@@ -65,14 +65,15 @@ class DetectorVolumeBuilder : public IDetectorComponentBuilder {
   /// @param gctx The geometry context for this call
   ///
   /// @return an outgoing detector component
-  DetectorComponent construct(const GeometryContext& gctx) const final;
+  [[nodiscard]] DetectorComponent construct(
+      const GeometryContext& gctx) const final;
 
  private:
   /// configuration object
   Config m_cfg;
 
   /// Private access method to the logger
-  const Logger& logger() const { return *m_logger; }
+  [[nodiscard]] const Logger& logger() const { return *m_logger; }
 
   /// logging instance
   std::unique_ptr<const Logger> m_logger;

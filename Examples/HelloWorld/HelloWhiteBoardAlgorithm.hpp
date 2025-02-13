@@ -32,7 +32,9 @@ class HelloWhiteBoardAlgorithm : public ActsExamples::IAlgorithm {
                            Acts::Logging::Level level = Acts::Logging::INFO);
 
   /// Read input and copy to the output
-  ActsExamples::ProcessCode execute(const AlgorithmContext& ctx) const override;
+  [[nodiscard]] [[nodiscard]] [[nodiscard]] [[nodiscard]] [[nodiscard]] [[nodiscard]] [[nodiscard]] [[nodiscard]] ActsExamples::
+      ProcessCode
+      execute(const AlgorithmContext& ctx) const override;
 
   ReadDataHandle<HelloDataCollection> m_readHandle{this, "Input"};
   WriteDataHandle<HelloDataCollection> m_writeHandle{this, "Output"};

@@ -27,7 +27,8 @@ class IDetectorComponentBuilder {
   /// @param gctx The geometry context for this call
   ///
   /// @return an outgoing detector component
-  virtual DetectorComponent construct(const GeometryContext& gctx) const = 0;
+  [[nodiscard]] virtual DetectorComponent construct(
+      const GeometryContext& gctx) const = 0;
 };
 
 }  // namespace Acts::Experimental

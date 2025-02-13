@@ -24,7 +24,8 @@ class IExternalStructureBuilder {
   /// @param gctx the geometry context at the creation of the internal structure
   ///
   /// @return a consistent set of detector volume externals
-  virtual ExternalStructure construct(const GeometryContext& gctx) const = 0;
+  [[nodiscard]] virtual ExternalStructure construct(
+      const GeometryContext& gctx) const = 0;
 };
 
 }  // namespace Acts::Experimental

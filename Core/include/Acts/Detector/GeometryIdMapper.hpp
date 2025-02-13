@@ -62,7 +62,7 @@ class GeometryIdMapper final : public IGeometryIdGenerator {
 
   /// @brief Interface method to generate a geometry id cache
   /// @return a geometry id cache wrapped in a std::any object
-  IGeometryIdGenerator::GeoIdCache generateCache() const final {
+  [[nodiscard]] IGeometryIdGenerator::GeoIdCache generateCache() const final {
     return Cache{0u, 0u, 0u};
   }
 
@@ -138,7 +138,7 @@ class GeometryIdMapper final : public IGeometryIdGenerator {
   Config m_cfg;
 
   /// Private access method to the logger
-  const Logger& logger() const { return *m_logger; }
+  [[nodiscard]] const Logger& logger() const { return *m_logger; }
 
   /// logging instance
   std::unique_ptr<const Logger> m_logger;

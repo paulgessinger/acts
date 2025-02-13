@@ -60,7 +60,7 @@ class Portal {
   Portal() = delete;
 
   /// Const access to the surface representation
-  const RegularSurface& surface() const;
+  [[nodiscard]] const RegularSurface& surface() const;
 
   /// Non-const access to the surface reference
   RegularSurface& surface();
@@ -140,7 +140,8 @@ class Portal {
                                   attachedVolumes) noexcept(false);
 
   // Access to the portal targets: opposite/along normal vector
-  const std::array<ExternalNavigationDelegate, 2u>& portalNavigation() const;
+  [[nodiscard]] const std::array<ExternalNavigationDelegate, 2u>&
+  portalNavigation() const;
 
   // Access to the attached volumes - non-const access
   AttachedDetectorVolumes& attachedDetectorVolumes();
