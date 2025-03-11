@@ -509,6 +509,10 @@ class AnyBase : public AnyBaseAll {
   const Handler* m_handler{nullptr};
 };
 
+/// @brief A type-safe container for single values of any type
+/// @details This is a custom implementation similar to std::any but optimized for small types
+///          that can fit into a pointer-sized buffer. Values larger than a
+///          pointer are stored on the heap.
 using Any = AnyBase<sizeof(void*)>;
 
 #undef _ACTS_ANY_VERBOSE

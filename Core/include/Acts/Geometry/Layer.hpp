@@ -37,14 +37,18 @@ class IMaterialDecorator;
 template <typename object_t>
 struct NavigationOptions;
 
-// Simple surface intersection
+/// Simple surface intersection
 using SurfaceIntersection = ObjectIntersection<Surface>;
 
-// master typedef
 class Layer;
 
+/// @brief Type alias for a shared pointer to a layer
 using LayerPtr = std::shared_ptr<const Layer>;
+/// @brief Type alias for a mutable pointer to a layer
+/// @details Used for non-const access to layer objects in the geometry
 using MutableLayerPtr = std::shared_ptr<Layer>;
+/// @brief Type alias for adjacent layer pointers
+/// @details Stores pointers to the next inner and outer layers in the detector
 using NextLayers = std::pair<const Layer*, const Layer*>;
 
 /// @enum LayerType

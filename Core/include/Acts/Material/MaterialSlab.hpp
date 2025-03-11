@@ -113,8 +113,12 @@ class MaterialSlab {
 
 std::ostream& operator<<(std::ostream& os, const MaterialSlab& materialSlab);
 
-// Useful typedefs
+/// @brief Type alias for a vector of material slabs
+/// @details Used to store a collection of material slabs in sequence
 using MaterialSlabVector = std::vector<MaterialSlab>;
+
+/// @brief Type alias for a matrix of material slabs
+/// @details Used to store a 2D collection of material slabs
 using MaterialSlabMatrix = std::vector<MaterialSlabVector>;
 
 /// list of point used in the mapping of a volume

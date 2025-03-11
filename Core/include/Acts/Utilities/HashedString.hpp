@@ -16,6 +16,8 @@
 #include <utility>
 
 namespace Acts {
+/// @brief Type alias for hashed string representation
+/// @details Represents a string as a compile-time hash value for efficient comparison
 using HashedString = std::uint32_t;
 
 // Adapted from https://gist.github.com/Lee-R/3839813

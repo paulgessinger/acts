@@ -1,0 +1,2403 @@
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/ExtentJsonConverter.hpp:20: warning: Member to_json(nlohmann::json &j, const Extent &e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:31: warning: Member to_json(nlohmann::json &j, const Material &t) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:35: warning: Member to_json(nlohmann::json &j, const MaterialSlab &t) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/ProtoDetectorJsonConverter.hpp:27: warning: Member to_json(nlohmann::json &j, const ProtoDetector &pd) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/ProtoDetectorJsonConverter.hpp:23: warning: Member to_json(nlohmann::json &j, const ProtoVolume &pv) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/UtilitiesJsonConverter.hpp:34: warning: Member to_json(nlohmann::json &j, const Range1D< Type > &r) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/VolumeJsonConverter.hpp:28: warning: parameters of member Acts::to_json are not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/SurfaceJsonConverter.hpp:36: warning: parameters of member Acts::to_json are not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/SurfaceBoundsJsonConverter.hpp:27: warning: Member to_json(nlohmann::json &j, const SurfaceBounds &bounds) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:45: warning: Member to_json(nlohmann::json &j, const surfaceMaterialPointer &material) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/AlgebraJsonConverter.hpp:20: warning: Member to_json(nlohmann::json &j, const Transform3 &t) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/VolumeBoundsJsonConverter.hpp:28: warning: Member to_json(nlohmann::json &j, const VolumeBounds &bounds) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:41: warning: Member to_json(nlohmann::json &j, const volumeMaterialPointer &material) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Helpers.hpp:184: warning: Member toUnderlying(enum_t value) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:433: warning: Member TrackContainer(const track_container_t &container, const traj_t &traj) -> TrackContainer< track_container_t, traj_t, detail::ConstRefHolder > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:437: warning: Member TrackContainer(track_container_t &&container, traj_t &&traj) -> TrackContainer< track_container_t, traj_t, detail::ValueHolder > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:429: warning: Member TrackContainer(track_container_t &container, traj_t &traj) -> TrackContainer< track_container_t, traj_t, detail::RefHolder > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:31: warning: Member transformCoordinates(Acts::SpacePointMutableData &mutableData, const external_spacepoint_t &sp, const external_spacepoint_t &spM, bool bottom, callable_t &&extractFunction) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:85: warning: Member AxisBound (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:86: warning: Member AxisClosed (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/ViewConfig.hpp:116: warning: Member s_defaultPortalColor (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/ViewConfig.hpp:115: warning: Member s_defaultSurfaceColor (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/ViewConfig.hpp:117: warning: Member s_defaultVolumColor (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Algebra.hpp:114: warning: Member s_transformEquivalentTolerance (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorTraits.hpp:19: warning: Member SupportsBoundParameters_v (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TypeTag.hpp:16: warning: Member Type (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:30: warning: Member zeroEnvelope (variable) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnyGridView.hpp:197: warning: parameters of member Acts::AnyGridConstView are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnyGridView.hpp:171: warning: parameters of member Acts::AnyGridView are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:21: warning: return type of member Acts::computeEnergyLossBethe is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:43: warning: return type of member Acts::computeEnergyLossLandau is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:69: warning: parameters of member Acts::computeEnergyLossLandauFwhm are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:69: warning: return type of member Acts::computeEnergyLossLandauFwhm is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:59: warning: parameters of member Acts::computeEnergyLossLandauSigma are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:59: warning: return type of member Acts::computeEnergyLossLandauSigma is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:75: warning: return type of member Acts::computeEnergyLossLandauSigmaQOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:101: warning: return type of member Acts::computeEnergyLossMean is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:120: warning: return type of member Acts::computeEnergyLossMode is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:81: warning: return type of member Acts::computeEnergyLossRadiative is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:131: warning: return type of member Acts::computeMultipleScatteringTheta0 is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepMaterialHelpers.hpp:69: warning: return type of member Acts::createProtoMaterial is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:37: warning: return type of member Acts::deriveEnergyLossBetheQOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:53: warning: return type of member Acts::deriveEnergyLossLandauQOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:114: warning: return type of member Acts::deriveEnergyLossMeanQOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:125: warning: return type of member Acts::deriveEnergyLossModeQOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Interactions.hpp:94: warning: return type of member Acts::deriveEnergyLossRadiativeQOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Enumerate.hpp:17: warning: parameters of member Acts::enumerate are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Enumerate.hpp:17: warning: return type of member Acts::enumerate is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/ParticleData.hpp:27: warning: parameters of member Acts::findCharge are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/ParticleData.hpp:32: warning: parameters of member Acts::findMass are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/ParticleData.hpp:37: warning: parameters of member Acts::findName are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/ParticleData.hpp:42: warning: parameters of member Acts::findParticleData are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:312: warning: parameters of member Acts::makeDefaultBetheHeitlerApprox are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:312: warning: return type of member Acts::makeDefaultBetheHeitlerApprox is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/UnitVectors.hpp:21: warning: return type of member Acts::makeDirectionFromPhiEta is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/UnitVectors.hpp:40: warning: return type of member Acts::makeDirectionFromPhiTheta is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/UnitVectors.hpp:60: warning: return type of member Acts::makePhiThetaFromDirection is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapUtils.hpp:32: warning: return type of member Acts::materialMapperRZ is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapUtils.hpp:74: warning: return type of member Acts::materialMapperXYZ is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/IVisualization3D.hpp:84: warning: return type of member Acts::operator<< is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Helpers.hpp:96: warning: return type of member Acts::template_switch is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Helpers.hpp:132: warning: return type of member Acts::template_switch_lambda is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/SurfaceJsonConverter.hpp:46: warning: parameters of member Acts::to_json are not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/SurfaceJsonConverter.hpp:41: warning: parameters of member Acts::to_json are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/StringHelpers.hpp:108: warning: return type of member Acts::toString is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MeasurementHelpers.hpp:42: warning: return type of member Acts::visit_measurement is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Zip.hpp:16: warning: return type of member Acts::zip is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedSurfaceMaterial.hpp:35: warning: Member AccumulatedMatrix (typedef) of class Acts::AccumulatedSurfaceMaterial is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedSurfaceMaterial.hpp:34: warning: Member AccumulatedVector (typedef) of class Acts::AccumulatedSurfaceMaterial is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedSurfaceMaterial.hpp:140: warning: return type of member Acts::AccumulatedSurfaceMaterial::accumulatedMaterial is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedSurfaceMaterial.hpp:80: warning: return type of member Acts::AccumulatedSurfaceMaterial::binUtility is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedSurfaceMaterial.hpp:143: warning: return type of member Acts::AccumulatedSurfaceMaterial::splitFactor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedSurfaceMaterial.hpp:137: warning: return type of member Acts::AccumulatedSurfaceMaterial::totalAverage is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedSurfaceMaterial.hpp:67: warning: return type of member Acts::AccumulatedSurfaceMaterial::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedSurfaceMaterial.hpp:73: warning: return type of member Acts::AccumulatedSurfaceMaterial::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/AccumulatedVolumeMaterial.hpp:22: warning: parameters of member Acts::AccumulatedVolumeMaterial::accumulate are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ActorList.hpp:129: warning: return type of member Acts::ActorList::checkAbort is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ActorList.hpp:89: warning: return type of member Acts::ActorList::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ActorList.hpp:81: warning: return type of member Acts::ActorList::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ActorList.hpp:64: warning: return type of member Acts::ActorList::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ActorList.hpp:58: warning: return type of member Acts::ActorList::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ActorList.hpp:18: warning: Member type (typedef) of struct Acts::ActorResultTypeExtractor is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:35: warning: Member DensityMap (typedef) of class Acts::AdaptiveGridDensityVertexFinder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:52: warning: Member cacheGridStateForTrackRemoval (variable) of struct Acts::AdaptiveGridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:59: warning: Member d0SignificanceCut (variable) of struct Acts::AdaptiveGridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:61: warning: Member estimateSeedWidth (variable) of struct Acts::AdaptiveGridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:64: warning: Member extractParameters (variable) of struct Acts::AdaptiveGridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:44: warning: Member gridDensity (variable) of struct Acts::AdaptiveGridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:55: warning: Member maxD0TrackSignificance (variable) of struct Acts::AdaptiveGridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:57: warning: Member maxZ0TrackSignificance (variable) of struct Acts::AdaptiveGridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:60: warning: Member z0SignificanceCut (variable) of struct Acts::AdaptiveGridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:81: warning: Member isInitialized (variable) of struct Acts::AdaptiveGridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:72: warning: Member mainDensityMap (variable) of struct Acts::AdaptiveGridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:75: warning: Member trackDensities (variable) of struct Acts::AdaptiveGridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridDensityVertexFinder.hpp:79: warning: Member tracksToRemove (variable) of struct Acts::AdaptiveGridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridTrackDensity.hpp:90: warning: parameters of member Acts::AdaptiveGridTrackDensity::AdaptiveGridTrackDensity are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveGridTrackDensity.hpp:74: warning: Member useTime (variable) of struct Acts::AdaptiveGridTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFinder.hpp:190: warning: Member AdaptiveMultiVertexFinder(AdaptiveMultiVertexFinder &&)=default (function) of class Acts::AdaptiveMultiVertexFinder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFinder.hpp:60: warning: Member bField (variable) of struct Acts::AdaptiveMultiVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFinder.hpp:162: warning: Member magContext (variable) of struct Acts::AdaptiveMultiVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFinder.hpp:164: warning: Member seedFinderState (variable) of struct Acts::AdaptiveMultiVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:41: warning: Member State(const MagneticFieldProvider &field, const Acts::MagneticFieldContext &magContext) (function) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:65: warning: Member addVertexToMultiMap(Vertex &vtx) (function) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:83: warning: Member removeVertexFromCollection(Vertex &vtxToRemove, const Logger &logger) (function) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:72: warning: Member removeVertexFromMultiMap(Vertex &vtx) (function) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:50: warning: Member annealingState (variable) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:54: warning: Member fieldCache (variable) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:52: warning: Member ipState (variable) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:62: warning: Member tracksAtVerticesMap (variable) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:60: warning: Member trackToVerticesMultiMap (variable) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:47: warning: Member vertexCollection (variable) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AdaptiveMultiVertexFitter.hpp:58: warning: Member vtxInfoMap (variable) of struct Acts::AdaptiveMultiVertexFitter::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnnealingUtility.hpp:46: warning: parameters of member Acts::AnnealingUtility::AnnealingUtility are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnnealingUtility.hpp:54: warning: parameters of member Acts::AnnealingUtility::anneal are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnnealingUtility.hpp:35: warning: Member Config(double cutOff_, std::vector< double > setOfTemperatures_) (function) of struct Acts::AnnealingUtility::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnnealingUtility.hpp:39: warning: Member cutOff (variable) of struct Acts::AnnealingUtility::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnnealingUtility.hpp:43: warning: Member setOfTemperatures (variable) of struct Acts::AnnealingUtility::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnnealingUtility.hpp:25: warning: Member currentTemperatureIndex (variable) of struct Acts::AnnealingUtility::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AnnealingUtility.hpp:28: warning: Member equilibriumReached (variable) of struct Acts::AnnealingUtility::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:37: warning: Member BoundValues (enumeration) of class Acts::AnnulusBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:69: warning: Member AnnulusBounds(const AnnulusBounds &source)=default (function) of class Acts::AnnulusBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:120: warning: return type of member Acts::AnnulusBounds::binningValuePhi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:117: warning: return type of member Acts::AnnulusBounds::binningValueR is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:131: warning: return type of member Acts::AnnulusBounds::corners is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:105: warning: return type of member Acts::AnnulusBounds::coversFullAzimuth is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:94: warning: return type of member Acts::AnnulusBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:111: warning: parameters of member Acts::AnnulusBounds::insideRadialBounds are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:111: warning: return type of member Acts::AnnulusBounds::insideRadialBounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:154: warning: return type of member Acts::AnnulusBounds::rMax is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:151: warning: return type of member Acts::AnnulusBounds::rMin is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/AnnulusBounds.hpp:90: warning: return type of member Acts::AnnulusBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:216: warning: Member AnyBase(AnyBase &&other) noexcept (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:179: warning: Member AnyBase(const AnyBase &other) (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:114: warning: Member AnyBase(std::in_place_type_t< T >, Args &&... args) (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:146: warning: Member AnyBase(T &&value) (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:151: warning: Member as() (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:165: warning: Member as() const (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:252: warning: Member operator bool() const (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:228: warning: Member operator=(AnyBase &&other) (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Any.hpp:192: warning: Member operator=(const AnyBase &other) (function) of class Acts::AnyBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:184: warning: parameters of member Acts::AnyCharge::AnyCharge are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:190: warning: Member AnyCharge(Neutral) noexcept (function) of class Acts::AnyCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:188: warning: Member AnyCharge(SinglyCharged) noexcept (function) of class Acts::AnyCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:192: warning: Member absQ() const noexcept (function) of class Acts::AnyCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:194: warning: Member extractCharge(double qOverP) const noexcept (function) of class Acts::AnyCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:197: warning: Member extractMomentum(double qOverP) const noexcept (function) of class Acts::AnyCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:201: warning: Member qOverP(double momentum, float signedQ) const noexcept (function) of class Acts::AnyCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:237: warning: Member checkAbort(propagator_state_t &state, const stepper_t &stepper, const navigator_t &navigator, const Logger &logger) const (function) of struct Acts::AnySurfaceReached is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ApproachDescriptor.hpp:58: warning: return type of member Acts::ApproachDescriptor::containedSurfaces is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/ThrowAssert.hpp:61: warning: return type of member Acts::AssertionFailureException::what is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/ThrowAssert.hpp:32: warning: return type of member Acts::AssertionFailureException::StreamFormatter::operator<< is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:117: warning: Member Data (typedef) of class Acts::AtlasBetheHeitlerApprox is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:157: warning: return type of member Acts::AtlasBetheHeitlerApprox::numComponents is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:251: warning: return type of member Acts::AtlasBetheHeitlerApprox::loadFromFiles is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:174: warning: return type of member Acts::AtlasBetheHeitlerApprox::mixture is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:162: warning: return type of member Acts::AtlasBetheHeitlerApprox::validXOverX0 is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:44: warning: Member BoundState (typedef) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:43: warning: Member Covariance (typedef) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:45: warning: Member CurvilinearState (typedef) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:42: warning: Member Jacobian (typedef) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:142: warning: Member AtlasStepper(const Config &config) (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:139: warning: Member AtlasStepper(std::shared_ptr< const MagneticFieldProvider > bField) (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:357: warning: Member direction(const State &state) const (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:149: warning: Member initialize(State &state, const BoundTrackParameters &par) const (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:154: warning: Member initialize(State &state, const BoundVector &boundParams, const std::optional< BoundMatrix > &cov, ParticleHypothesis particleHypothesis, const Surface &surface) const (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:144: warning: Member makeState(const Options &options) const (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:370: warning: Member momentum(const State &state) const (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:388: warning: return type of member Acts::AtlasStepper::overstepLimit is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:353: warning: Member position(const State &state) const (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:361: warning: Member qOverP(const State &state) const (function) of class Acts::AtlasStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:393: warning: parameters of member Acts::AtlasStepper::time are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:393: warning: return type of member Acts::AtlasStepper::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:365: warning: return type of member Acts::AtlasStepper::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:376: warning: return type of member Acts::AtlasStepper::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:341: warning: return type of member Acts::AtlasStepper::getField is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:459: warning: return type of member Acts::AtlasStepper::getStepSize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:467: warning: return type of member Acts::AtlasStepper::outputStepSize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:383: warning: return type of member Acts::AtlasStepper::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:398: warning: return type of member Acts::AtlasStepper::updateSurfaceStatus is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:104: warning: Member cov (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:103: warning: Member covariance (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:105: warning: Member covTransport (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:133: warning: Member debugMsgWidth (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:130: warning: Member debugString (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:86: warning: Member field (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:106: warning: Member jacobian[eBoundSize *eBoundSize] (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:81: warning: Member maxPathLength (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:82: warning: Member mcondition (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:83: warning: Member needgradient (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:84: warning: Member newfield (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:72: warning: Member options (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:74: warning: Member particleHypothesis (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:109: warning: Member pathAccumulated (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:121: warning: Member previousStepSize (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:87: warning: Member pVector (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:77: warning: Member state_ready (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:80: warning: Member step (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:118: warning: Member stepSize (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/AtlasStepper.hpp:79: warning: Member useJacobian (variable) of struct Acts::AtlasStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Axis.hpp:103: warning: Member type (variable) of class Acts::Axis< AxisType::Equidistant, bdt > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Axis.hpp:376: warning: parameters of member Acts::Axis< AxisType::Equidistant, bdt >::isInside are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Axis.hpp:423: warning: Member type (variable) of class Acts::Axis< AxisType::Variable, bdt > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Axis.hpp:693: warning: parameters of member Acts::Axis< AxisType::Variable, bdt >::isInside are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BoundingBox.hpp:70: warning: parameters of member Acts::AxisAlignedBoundingBox::AxisAlignedBoundingBox are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BoundingBox.hpp:74: warning: return type of member Acts::AxisAlignedBoundingBox::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:71: warning: return type of member Acts::BetheHeitlerApproxSingleCmp::numComponents is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:84: warning: return type of member Acts::BetheHeitlerApproxSingleCmp::mixture is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:74: warning: parameters of member Acts::BetheHeitlerApproxSingleCmp::validXOverX0 are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/BetheHeitlerApprox.hpp:74: warning: return type of member Acts::BetheHeitlerApproxSingleCmp::validXOverX0 is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinnedArrayXD.hpp:43: warning: parameters of member Acts::BinnedArrayXD::BinnedArrayXD are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/BinnedGroup.hpp:37: warning: parameters of member Acts::BinnedGroup::BinnedGroup are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/BinnedGroup.hpp:43: warning: Member BinnedGroup(grid_t &&grid, std::vector< bool > mask, const Acts::GridBinFinder< DIM > &bottomFinder, const Acts::GridBinFinder< DIM > &topFinder, std::array< std::vector< std::size_t >, DIM > navigation=std::array< std::vector< std::size_t >, DIM >()) (function) of class Acts::BinnedGroup is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/BinnedGroup.hpp:30: warning: Member BinnedGroupIterator< grid_t > (variable) of class Acts::BinnedGroup is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/BinnedGroup.hpp:32: warning: Member DIM (variable) of class Acts::BinnedGroup is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:89: warning: return type of member Acts::BinnedSurfaceMaterial::binUtility is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:92: warning: return type of member Acts::BinnedSurfaceMaterial::fullMaterial is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:75: warning: parameters of member Acts::BinnedSurfaceMaterial::operator= are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:75: warning: return type of member Acts::BinnedSurfaceMaterial::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:78: warning: parameters of member Acts::BinnedSurfaceMaterial::operator= are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:78: warning: return type of member Acts::BinnedSurfaceMaterial::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ISurfaceMaterial.hpp:77: warning: return type of member Acts::ISurfaceMaterial::mappingType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:86: warning: return type of member Acts::BinnedSurfaceMaterial::scale is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:101: warning: parameters of member Acts::BinnedSurfaceMaterial::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterial.hpp:101: warning: return type of member Acts::BinnedSurfaceMaterial::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterialAccumulater.hpp:53: warning: return type of member Acts::BinnedSurfaceMaterialAccumulater::createState is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterialAccumulater.hpp:71: warning: return type of member Acts::BinnedSurfaceMaterialAccumulater::finalizeMaterial is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/BinnedSurfaceMaterialAccumulater.hpp:28: warning: Member geoContext (variable) of struct Acts::BinnedSurfaceMaterialAccumulater::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinningData.hpp:252: warning: return type of member Acts::BinningData::bins is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinningData.hpp:205: warning: return type of member Acts::BinningData::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:103: warning: Member BinUtility(BinUtility &&sbu)=default (function) of class Acts::BinUtility is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:167: warning: return type of member Acts::BinUtility::binningData is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:170: warning: return type of member Acts::BinUtility::bins is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:141: warning: Member operator=(BinUtility &&)=default (function) of class Acts::BinUtility is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:161: warning: parameters of member Acts::BinUtility::operator== are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:161: warning: return type of member Acts::BinUtility::operator== is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:145: warning: return type of member Acts::BinUtility::operator+= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:131: warning: return type of member Acts::BinUtility::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/BinUtility.hpp:304: warning: return type of member Acts::BinUtility::serialize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BoundarySurfaceT.hpp:124: warning: return type of member Acts::BoundarySurfaceT::surfaceRepresentation is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BoundarySurfaceT.hpp:115: warning: return type of member Acts::BoundarySurfaceT::onBoundary is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:146: warning: Member ToleranceMode (enumeration) of class Acts::BoundaryTolerance is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:168: warning: parameters of member Acts::BoundaryTolerance::asAbsoluteBound are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:168: warning: return type of member Acts::BoundaryTolerance::asAbsoluteBound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:177: warning: parameters of member Acts::BoundaryTolerance::asAbsoluteBoundOpt are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:177: warning: return type of member Acts::BoundaryTolerance::asAbsoluteBoundOpt is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:170: warning: return type of member Acts::BoundaryTolerance::asAbsoluteCartesian is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:172: warning: return type of member Acts::BoundaryTolerance::asAbsoluteEuclidean is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:174: warning: return type of member Acts::BoundaryTolerance::asChi2Bound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:188: warning: parameters of member Acts::BoundaryTolerance::getMetric are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:188: warning: return type of member Acts::BoundaryTolerance::getMetric is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:156: warning: parameters of member Acts::BoundaryTolerance::hasAbsoluteBound are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:156: warning: return type of member Acts::BoundaryTolerance::hasAbsoluteBound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:158: warning: return type of member Acts::BoundaryTolerance::hasAbsoluteCartesian is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:160: warning: return type of member Acts::BoundaryTolerance::hasAbsoluteEuclidean is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:162: warning: return type of member Acts::BoundaryTolerance::hasChi2Bound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:185: warning: parameters of member Acts::BoundaryTolerance::hasMetric are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:185: warning: return type of member Acts::BoundaryTolerance::hasMetric is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:152: warning: return type of member Acts::BoundaryTolerance::isInfinite is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:154: warning: return type of member Acts::BoundaryTolerance::isNone is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:181: warning: parameters of member Acts::BoundaryTolerance::isTolerated are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:181: warning: return type of member Acts::BoundaryTolerance::isTolerated is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:165: warning: return type of member Acts::BoundaryTolerance::toleranceMode is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:126: warning: parameters of member Acts::BoundaryTolerance::AbsoluteBound are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:126: warning: return type of member Acts::BoundaryTolerance::AbsoluteBound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:131: warning: parameters of member Acts::BoundaryTolerance::AbsoluteCartesian are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:131: warning: return type of member Acts::BoundaryTolerance::AbsoluteCartesian is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:136: warning: parameters of member Acts::BoundaryTolerance::AbsoluteEuclidean are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:136: warning: return type of member Acts::BoundaryTolerance::AbsoluteEuclidean is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:141: warning: parameters of member Acts::BoundaryTolerance::Chi2Bound are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:141: warning: return type of member Acts::BoundaryTolerance::Chi2Bound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:120: warning: return type of member Acts::BoundaryTolerance::Infinite is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/BoundaryTolerance.hpp:123: warning: return type of member Acts::BoundaryTolerance::None is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:90: warning: Member value_type (typedef) of class Acts::CandidatesForMiddleSp is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/ViewConfig.hpp:23: warning: Member Color(Color &&)=default (function) of struct Acts::Color is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/ViewConfig.hpp:22: warning: Member Color(const Color &)=default (function) of struct Acts::Color is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/ViewConfig.hpp:25: warning: Member operator=(Color &&)=default (function) of struct Acts::Color is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/ViewConfig.hpp:24: warning: Member operator=(const Color &)=default (function) of struct Acts::Color is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/ViewConfig.hpp:112: warning: Member rgb (variable) of struct Acts::Color is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterExtensions.hpp:51: warning: Member BranchStopper (typedef) of struct Acts::CombinatorialKalmanFilterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterExtensions.hpp:48: warning: Member BranchStopperResult (typedef) of struct Acts::CombinatorialKalmanFilterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterExtensions.hpp:45: warning: Member TrackProxy (typedef) of struct Acts::CombinatorialKalmanFilterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterExtensions.hpp:46: warning: Member TrackStateProxy (typedef) of struct Acts::CombinatorialKalmanFilterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterExtensions.hpp:44: warning: Member traj_t (typedef) of struct Acts::CombinatorialKalmanFilterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterExtensions.hpp:50: warning: Member Updater (typedef) of struct Acts::CombinatorialKalmanFilterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilter.hpp:47: warning: Member TrackStateContainerBackend (typedef) of struct Acts::CombinatorialKalmanFilterOptions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilter.hpp:49: warning: Member TrackStateProxy (typedef) of struct Acts::CombinatorialKalmanFilterOptions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:110: warning: parameters of member Acts::PortalLinkBase::checkMergePreconditions are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:116: warning: Member m_surface (variable) of class Acts::PortalLinkBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CompositePortalLink.hpp:71: warning: return type of member Acts::CompositePortalLink::resolveVolume is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CompositePortalLink.hpp:82: warning: return type of member Acts::CompositePortalLink::resolveVolume is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConeBounds.hpp:36: warning: Member BoundValues (enumeration) of class Acts::ConeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConeBounds.hpp:102: warning: return type of member Acts::ConeBounds::tanAlpha is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConeBounds.hpp:106: warning: return type of member Acts::ConeBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeLayer.hpp:62: warning: Member surfaceRepresentation() override (function) of class Acts::ConeLayer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:141: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:138: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:212: warning: return type of member Acts::Layer::layerType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:110: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:107: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:121: warning: return type of member Acts::Layer::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:275: warning: Member m_ssApproachSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:274: warning: Member m_ssSensitiveSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeLayer.hpp:58: warning: return type of member Acts::ConeLayer::surfaceRepresentation is not documented
+- [ ] <surfaceRepresentation>:1: warning: parameters of member Acts::ConeLayer::surfaceRepresentation are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConeSurface.hpp:139: warning: return type of member Acts::ConeSurface::bounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConeSurface.hpp:209: warning: return type of member Acts::ConeSurface::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RegularSurface.hpp:47: warning: return type of member Acts::ConeSurface::normal is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConeSurface.hpp:87: warning: return type of member Acts::ConeSurface::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConeSurface.hpp:134: warning: return type of member Acts::ConeSurface::rotSymmetryAxis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConeSurface.hpp:99: warning: return type of member Acts::ConeSurface::type is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:88: warning: Member ConeVolumeBounds(const ConeVolumeBounds &cobo)=default (function) of class Acts::ConeVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:136: warning: Member innerRmax() const (function) of class Acts::ConeVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:133: warning: Member innerRmin() const (function) of class Acts::ConeVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:139: warning: Member innerTanAlpha() const (function) of class Acts::ConeVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:90: warning: Member operator=(const ConeVolumeBounds &cobo)=default (function) of class Acts::ConeVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:145: warning: Member outerRmax() const (function) of class Acts::ConeVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:142: warning: Member outerRmin() const (function) of class Acts::ConeVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:148: warning: Member outerTanAlpha() const (function) of class Acts::ConeVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:129: warning: return type of member Acts::ConeVolumeBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:102: warning: return type of member Acts::ConeVolumeBounds::inside is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ConeVolumeBounds.hpp:152: warning: return type of member Acts::ConeVolumeBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/ConstantBField.hpp:34: warning: return type of member Acts::ConstantBField::getField is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ConstrainedStep.hpp:95: warning: return type of member Acts::ConstrainedStep::accuracy is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ConstrainedStep.hpp:124: warning: Member toStream(std::ostream &os) const (function) of class Acts::ConstrainedStep is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ConstrainedStep.hpp:148: warning: Member toString() const (function) of class Acts::ConstrainedStep is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ConstrainedStep.hpp:80: warning: return type of member Acts::ConstrainedStep::value is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ConstrainedStep.hpp:90: warning: return type of member Acts::ConstrainedStep::value is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateType.hpp:110: warning: Member raw_type (typedef) of class Acts::ConstTrackStateType is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateType.hpp:111: warning: Member kRawBits (variable) of class Acts::ConstTrackStateType is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConvexPolygonBounds.hpp:141: warning: Member eSize (variable) of class Acts::ConvexPolygonBounds< PolygonDynamic > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/ConvexPolygonBounds.hpp:34: warning: return type of member Acts::ConvexPolygonBoundsBase::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidPortalShell.hpp:29: warning: Member Face (typedef) of class Acts::CuboidPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidPortalShell.hpp:50: warning: Member transform() const =0 (function) of class Acts::CuboidPortalShell is not documented.
+- [ ] <transform>:1: warning: parameters of member Acts::CuboidPortalShell::transform are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidPortalShell.hpp:29: warning: Member Face (typedef) of class Acts::CuboidPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidPortalShell.hpp:135: warning: return type of member Acts::CuboidStackPortalShell::transform is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBounds.hpp:88: warning: Member CuboidVolumeBounds(std::initializer_list< std::pair< BoundValues, double > > keyValues) (function) of class Acts::CuboidVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBounds.hpp:171: warning: return type of member Acts::CuboidVolumeBounds::boundsFromAxisDirection is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBounds.hpp:157: warning: return type of member Acts::CuboidVolumeBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBounds.hpp:113: warning: return type of member Acts::CuboidVolumeBounds::inside is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBounds.hpp:98: warning: return type of member Acts::CuboidVolumeBounds::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBounds.hpp:186: warning: return type of member Acts::CuboidVolumeBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:178: warning: Member sortVolumes(std::vector< std::pair< TrackingVolumePtr, Vector3 > > &tapVec, AxisDirection bValue) const (function) of class Acts::CuboidVolumeBuilder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:116: warning: Member length (variable) of struct Acts::CuboidVolumeBuilder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:114: warning: Member position (variable) of struct Acts::CuboidVolumeBuilder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:118: warning: Member volumeCfg (variable) of struct Acts::CuboidVolumeBuilder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:71: warning: Member active (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:85: warning: Member binningDimension (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:73: warning: Member binsY (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:75: warning: Member binsZ (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:77: warning: Member envelopeX (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:79: warning: Member envelopeY (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:81: warning: Member envelopeZ (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:83: warning: Member rotation (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:67: warning: Member surfaceCfg (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:69: warning: Member surfaces (variable) of struct Acts::CuboidVolumeBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:61: warning: Member detElementConstructor (variable) of struct Acts::CuboidVolumeBuilder::SurfaceConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:48: warning: Member position (variable) of struct Acts::CuboidVolumeBuilder::SurfaceConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:52: warning: Member rBounds (variable) of struct Acts::CuboidVolumeBuilder::SurfaceConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:50: warning: Member rotation (variable) of struct Acts::CuboidVolumeBuilder::SurfaceConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:54: warning: Member surMat (variable) of struct Acts::CuboidVolumeBuilder::SurfaceConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:56: warning: Member thickness (variable) of struct Acts::CuboidVolumeBuilder::SurfaceConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:108: warning: Member binningDimension (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:96: warning: Member layerCfg (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:98: warning: Member layers (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:94: warning: Member length (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:104: warning: Member name (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:92: warning: Member position (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:102: warning: Member trackingVolumes (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:100: warning: Member volumeCfg (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeBuilder.hpp:106: warning: Member volumeMaterial (variable) of struct Acts::CuboidVolumeBuilder::VolumeConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:54: warning: Member m_direction (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:57: warning: Member m_gaps (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:55: warning: Member m_resizeStrategy (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:58: warning: Member m_volumes (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeStack.hpp:74: warning: return type of member Acts::CuboidVolumeStack::axisToIndex is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidVolumeStack.hpp:79: warning: return type of member Acts::CuboidVolumeStack::getOrthogonalAxes is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CurvilinearSurface.hpp:27: warning: Member CurvilinearSurface(const Vector3 &direction) (function) of class Acts::CurvilinearSurface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CurvilinearSurface.hpp:30: warning: parameters of member Acts::CurvilinearSurface::CurvilinearSurface are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CurvilinearSurface.hpp:46: warning: Member isStandardRepresentation() const (function) of class Acts::CurvilinearSurface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CurvilinearSurface.hpp:86: warning: return type of member Acts::CurvilinearSurface::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CutoutCylinderVolumeBounds.hpp:129: warning: return type of member Acts::CutoutCylinderVolumeBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderBounds.hpp:50: warning: Member BoundValues (enumeration) of class Acts::CylinderBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderBounds.hpp:107: warning: return type of member Acts::CylinderBounds::coversFullAzimuth is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderBounds.hpp:104: warning: return type of member Acts::CylinderBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderBounds.hpp:123: warning: parameters of member Acts::CylinderBounds::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderBounds.hpp:123: warning: return type of member Acts::CylinderBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderLayer.hpp:66: warning: Member surfaceRepresentation() override (function) of class Acts::CylinderLayer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:141: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:138: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:212: warning: return type of member Acts::Layer::layerType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:110: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:107: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:121: warning: return type of member Acts::Layer::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:275: warning: Member m_ssApproachSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:274: warning: Member m_ssSensitiveSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderLayer.hpp:61: warning: return type of member Acts::CylinderLayer::surfaceRepresentation is not documented
+- [ ] <surfaceRepresentation>:1: warning: parameters of member Acts::CylinderLayer::surfaceRepresentation are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderPortalShell.hpp:26: warning: Member Face (typedef) of class Acts::CylinderPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderPortalShell.hpp:133: warning: Member SingleShell (typedef) of class Acts::CylinderStackPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderPortalShell.hpp:26: warning: Member Face (typedef) of class Acts::CylinderPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderSurface.hpp:155: warning: return type of member Acts::CylinderSurface::bounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderSurface.hpp:207: warning: return type of member Acts::CylinderSurface::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RegularSurface.hpp:47: warning: return type of member Acts::CylinderSurface::normal is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderSurface.hpp:92: warning: return type of member Acts::CylinderSurface::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/CylinderSurface.hpp:116: warning: return type of member Acts::CylinderSurface::type is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBounds.hpp:135: warning: Member operator=(const CylinderVolumeBounds &cylbo)=default (function) of class Acts::CylinderVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBounds.hpp:199: warning: return type of member Acts::CylinderVolumeBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBounds.hpp:149: warning: return type of member Acts::CylinderVolumeBounds::inside is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBounds.hpp:191: warning: return type of member Acts::CylinderVolumeBounds::referenceBorder is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBounds.hpp:186: warning: return type of member Acts::CylinderVolumeBounds::referenceOffset is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBounds.hpp:195: warning: return type of member Acts::CylinderVolumeBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeHelper.hpp:173: warning: return type of member Acts::CylinderVolumeHelper::getConfiguration is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:54: warning: Member m_direction (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:57: warning: Member m_gaps (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:55: warning: Member m_resizeStrategy (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:58: warning: Member m_volumes (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/DBScan.hpp:56: warning: Member Pair (typedef) of class Acts::DBScan is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/DBScan.hpp:50: warning: Member Point (typedef) of class Acts::DBScan is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/DBScan.hpp:62: warning: Member Tree (typedef) of class Acts::DBScan is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/DBScan.hpp:59: warning: Member VectorPairs (typedef) of class Acts::DBScan is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/DBScan.hpp:53: warning: Member VectorPoints (typedef) of class Acts::DBScan is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepDetectorElement.hpp:42: warning: Member DD4hepVolumeID (typedef) of class Acts::DD4hepDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:43: warning: Member Identifier (typedef) of class Acts::TGeoDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:42: warning: Member identifier_diff (typedef) of class Acts::TGeoDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:41: warning: Member identifier_type (typedef) of class Acts::TGeoDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepDetectorElement.hpp:88: warning: Member sourceElement() const (function) of class Acts::DD4hepDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:115: warning: Member identifier() const (function) of class Acts::TGeoDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:122: warning: return type of member Acts::TGeoDetectorElement::surface is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:133: warning: return type of member Acts::TGeoDetectorElement::tgeoNode is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:130: warning: return type of member Acts::TGeoDetectorElement::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepDetectorElement.hpp:100: warning: Member DD4hepDetectorElementExtension(std::shared_ptr< DD4hepDetectorElement > de) (function) of struct Acts::DD4hepDetectorElementExtension is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepLayerBuilder.hpp:122: warning: return type of member Acts::DD4hepLayerBuilder::getConfiguration is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepLayerBuilder.hpp:125: warning: parameters of member Acts::DD4hepLayerBuilder::setLogger are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:57: warning: Member deleter_type (typedef) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:54: warning: Member function_ptr_type (typedef) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:53: warning: Member function_type (typedef) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:52: warning: Member holder_type (typedef) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:55: warning: Member signature_type (typedef) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:80: warning: Member Delegate(const Delegate &) noexcept=default (function) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:78: warning: Member Delegate(Delegate &&) noexcept=default (function) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:218: warning: Member connect(function_type callable, const Type *instance) (function) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:298: warning: Member instance() const (function) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:81: warning: Member operator=(const Delegate &) noexcept=default (function) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:79: warning: Member operator=(Delegate &&) noexcept=default (function) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:48: warning: Member kOwnership (variable) of class Acts::Delegate< R(Args...), H, O > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiamondBounds.hpp:30: warning: Member BoundValues (enumeration) of class Acts::DiamondBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiamondBounds.hpp:104: warning: return type of member Acts::DiamondBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiamondBounds.hpp:100: warning: return type of member Acts::DiamondBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:95: warning: Member toString() const (function) of class Acts::Direction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:39: warning: Member AlongNormal() (function) of class Acts::Direction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:33: warning: Member Backward() (function) of class Acts::Direction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:34: warning: Member Forward() (function) of class Acts::Direction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:30: warning: Member Negative() (function) of class Acts::Direction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:36: warning: Member OppositeNormal() (function) of class Acts::Direction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:31: warning: Member Positive() (function) of class Acts::Direction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:64: warning: return type of member Acts::Direction::fromIndex is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:131: warning: Member DirectNavigator(std::unique_ptr< const Logger >_logger=getDefaultLogger("DirectNavigator", Logging::INFO)) (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:141: warning: Member currentSurface(const State &state) const (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:145: warning: Member currentVolume(const State &) const (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:149: warning: Member currentVolumeMaterial(const State &) const (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:161: warning: Member endOfWorldReached(State &) const (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:136: warning: Member makeState(const Options &options) const (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:163: warning: Member navigationBreak(const State &state) const (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:153: warning: Member startSurface(const State &state) const (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:157: warning: Member targetSurface(const State &state) const (function) of class Acts::DirectNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:169: warning: return type of member Acts::DirectNavigator::initialize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:49: warning: Member Options(const GeometryContext &gctx) (function) of struct Acts::DirectNavigator::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:67: warning: Member setPlainOptions(const NavigatorPlainOptions &options) (function) of struct Acts::DirectNavigator::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:78: warning: Member State(const Options &options_) (function) of struct Acts::DirectNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:110: warning: Member endOfSurfaces() const (function) of struct Acts::DirectNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:98: warning: Member navSurface() const (function) of struct Acts::DirectNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:102: warning: Member nextSurface() (function) of struct Acts::DirectNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:117: warning: Member remainingSurfaces() const (function) of struct Acts::DirectNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:124: warning: Member resetSurfaceIndex() (function) of struct Acts::DirectNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:82: warning: Member direction (variable) of struct Acts::DirectNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/DirectNavigator.hpp:80: warning: Member options (variable) of struct Acts::DirectNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscBounds.hpp:43: warning: return type of member Acts::DiscBounds::binningValuePhi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscBounds.hpp:40: warning: return type of member Acts::DiscBounds::binningValueR is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscBounds.hpp:46: warning: return type of member Acts::DiscBounds::coversFullAzimuth is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscBounds.hpp:49: warning: parameters of member Acts::DiscBounds::insideRadialBounds are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscBounds.hpp:49: warning: return type of member Acts::DiscBounds::insideRadialBounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscBounds.hpp:27: warning: return type of member Acts::DiscBounds::rMax is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscBounds.hpp:24: warning: return type of member Acts::DiscBounds::rMin is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/DiscLayer.hpp:65: warning: Member surfaceRepresentation() override (function) of class Acts::DiscLayer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:141: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:138: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:212: warning: return type of member Acts::Layer::layerType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:110: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:107: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:121: warning: return type of member Acts::Layer::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/DiscLayer.hpp:87: warning: parameters of member Acts::DiscLayer::DiscLayer are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:275: warning: Member m_ssApproachSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:274: warning: Member m_ssSensitiveSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] <surfaceRepresentation>:1: warning: parameters of member Acts::DiscLayer::surfaceRepresentation are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscSurface.hpp:164: warning: return type of member Acts::DiscSurface::bounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscSurface.hpp:303: warning: return type of member Acts::DiscSurface::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RegularSurface.hpp:47: warning: return type of member Acts::DiscSurface::normal is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscSurface.hpp:112: warning: return type of member Acts::DiscSurface::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscSurface.hpp:115: warning: return type of member Acts::DiscSurface::type is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:33: warning: Member BoundValues (enumeration) of class Acts::DiscTrapezoidBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:116: warning: return type of member Acts::DiscTrapezoidBounds::halfLengthY is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:109: warning: return type of member Acts::DiscTrapezoidBounds::halfPhiSector is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:95: warning: return type of member Acts::DiscTrapezoidBounds::rCenter is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:106: warning: return type of member Acts::DiscTrapezoidBounds::stereo is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:139: warning: return type of member Acts::DiscTrapezoidBounds::binningValuePhi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:136: warning: return type of member Acts::DiscTrapezoidBounds::binningValueR is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:127: warning: return type of member Acts::DiscTrapezoidBounds::coversFullAzimuth is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:86: warning: return type of member Acts::DiscTrapezoidBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:75: warning: return type of member Acts::DiscTrapezoidBounds::inside is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:130: warning: parameters of member Acts::DiscTrapezoidBounds::insideRadialBounds are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:130: warning: return type of member Acts::DiscTrapezoidBounds::insideRadialBounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:92: warning: return type of member Acts::DiscTrapezoidBounds::rMax is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:89: warning: return type of member Acts::DiscTrapezoidBounds::rMin is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:82: warning: parameters of member Acts::DiscTrapezoidBounds::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/DiscTrapezoidBounds.hpp:82: warning: return type of member Acts::DiscTrapezoidBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObjectSorter.hpp:100: warning: parameters of member Acts::DistanceSorterT::operator() are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/DummyVertexFitter.hpp:28: warning: Member Linearizer_t (typedef) of class Acts::DummyVertexFitter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/DummyVertexFitter.hpp:29: warning: Member Propagator_t (typedef) of class Acts::DummyVertexFitter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/DummyVertexFitter.hpp:34: warning: return type of member Acts::DummyVertexFitter::fit is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:52: warning: Member BoundState (typedef) of class Acts::EigenStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:51: warning: Member Covariance (typedef) of class Acts::EigenStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:53: warning: Member CurvilinearState (typedef) of class Acts::EigenStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:156: warning: Member initialize(State &state, const BoundTrackParameters &par) const (function) of class Acts::EigenStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:158: warning: Member initialize(State &state, const BoundVector &boundParams, const std::optional< BoundMatrix > &cov, ParticleHypothesis particleHypothesis, const Surface &surface) const (function) of class Acts::EigenStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:154: warning: Member makeState(const Options &options) const (function) of class Acts::EigenStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:195: warning: return type of member Acts::EigenStepper::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:209: warning: return type of member Acts::EigenStepper::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:183: warning: return type of member Acts::EigenStepper::direction is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:166: warning: return type of member Acts::EigenStepper::getField is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:281: warning: return type of member Acts::EigenStepper::getStepSize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:202: warning: return type of member Acts::EigenStepper::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:297: warning: return type of member Acts::EigenStepper::outputStepSize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:216: warning: return type of member Acts::EigenStepper::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:176: warning: return type of member Acts::EigenStepper::position is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:190: warning: return type of member Acts::EigenStepper::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:223: warning: return type of member Acts::EigenStepper::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:228: warning: return type of member Acts::EigenStepper::updateSurfaceStatus is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:94: warning: Member cov (variable) of struct Acts::EigenStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:83: warning: Member options (variable) of struct Acts::EigenStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:62: warning: Member ElementFraction(const ElementFraction &)=default (function) of class Acts::ElementFraction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:61: warning: Member ElementFraction(ElementFraction &&)=default (function) of class Acts::ElementFraction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:67: warning: return type of member Acts::ElementFraction::element is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:69: warning: return type of member Acts::ElementFraction::fraction is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:65: warning: Member operator=(const ElementFraction &)=default (function) of class Acts::ElementFraction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:64: warning: Member operator=(ElementFraction &&)=default (function) of class Acts::ElementFraction is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/EllipseBounds.hpp:35: warning: Member BoundValues (enumeration) of class Acts::EllipseBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/EllipseBounds.hpp:106: warning: return type of member Acts::EllipseBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/EllipseBounds.hpp:102: warning: parameters of member Acts::EllipseBounds::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/EllipseBounds.hpp:102: warning: return type of member Acts::EllipseBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:164: warning: return type of member Acts::EndOfWorldReached::checkAbort is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/ExaTrkX/include/Acts/Plugins/ExaTrkX/Stages.hpp:26: warning: Member device (variable) of struct Acts::ExecutionContext is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/ExaTrkX/include/Acts/Plugins/ExaTrkX/Stages.hpp:27: warning: Member stream (variable) of struct Acts::ExecutionContext is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:310: warning: return type of member Acts::Extent::constrains is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:237: warning: return type of member Acts::Extent::envelope is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:240: warning: return type of member Acts::Extent::envelope is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:122: warning: parameters of member Acts::Extent::operator== are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:122: warning: return type of member Acts::Extent::operator== is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:219: warning: return type of member Acts::Extent::range is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:307: warning: return type of member Acts::Extent::constrains is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:271: warning: return type of member Acts::Extent::interval is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:258: warning: return type of member Acts::Extent::max is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:265: warning: return type of member Acts::Extent::medium is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:251: warning: return type of member Acts::Extent::min is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:315: warning: return type of member Acts::Extent::toString is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:245: warning: return type of member Acts::Extent::valueHistograms is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:81: warning: Member eta (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:82: warning: Member mag (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:78: warning: Member phi (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:77: warning: Member r (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:79: warning: Member rPhi (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:80: warning: Member theta (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:74: warning: Member x (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:75: warning: Member y (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:76: warning: Member z (variable) of struct Acts::ExtentEnvelope::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/FiniteStateMachine.hpp:116: warning: Member event_return (typedef) of class Acts::FiniteStateMachine is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/FiniteStateMachine.hpp:114: warning: Member fsm_base (typedef) of class Acts::FiniteStateMachine is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:232: warning: Member ApplyLeftResult (typedef) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:234: warning: Member ApplyRightResult (typedef) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:237: warning: Member Container (typedef) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:228: warning: Member Expander (typedef) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:236: warning: Member IndexType (typedef) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:227: warning: Member Projector (typedef) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:230: warning: Member SquareMatrix (typedef) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:229: warning: Member Vector (typedef) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:240: warning: Member FixedSubspaceHelper(const other_index_range_t &indices) (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:273: warning: Member applyLeftOf(const Eigen::DenseBase< Derived > &matrix) const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:286: warning: Member applyRightOf(const Eigen::DenseBase< Derived > &matrix) const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:253: warning: Member begin() const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:247: warning: Member empty() const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:254: warning: Member end() const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:264: warning: Member expander() const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:249: warning: Member indices() const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:251: warning: Member operator[](std::uint32_t i) const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:309: warning: Member projectMatrix(const Eigen::DenseBase< Derived > &fullMatrix) const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:256: warning: Member projector() const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:299: warning: Member projectVector(const Eigen::DenseBase< Derived > &fullVector) const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:248: warning: Member size() const (function) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:223: warning: Member kFullSize (variable) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:224: warning: Member kSubspaceSize (variable) of class Acts::FixedSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:75: warning: Member SurfaceReached(double nLimit) (function) of struct Acts::SurfaceReached is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:66: warning: Member boundaryTolerance (variable) of struct Acts::SurfaceReached is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:65: warning: Member surface (variable) of struct Acts::SurfaceReached is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Frustum.hpp:77: warning: return type of member Acts::Frustum::svg is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GainMatrixSmoother.hpp:137: warning: Member GetCovariance (typedef) of class Acts::GainMatrixSmoother is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GainMatrixSmoother.hpp:134: warning: Member GetParameters (typedef) of class Acts::GainMatrixSmoother is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GainMatrixSmoother.hpp:141: warning: Member calculate(void *ts, void*prev_ts, const GetParameters &filtered, const GetCovariance &filteredCovariance, const GetParameters &smoothed, const GetParameters &predicted, const GetCovariance &predictedCovariance, const GetCovariance &smoothedCovariance, const GetCovariance &jacobian, const Logger &logger) const (function) of class Acts::GainMatrixSmoother is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GainMatrixSmoother.hpp:36: warning: return type of member Acts::GainMatrixSmoother::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GainMatrixUpdater.hpp:47: warning: return type of member Acts::GainMatrixUpdater::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:27: warning: Member MainGridVector (typedef) of class Acts::GaussianGridTrackDensity is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:28: warning: Member TrackGridVector (typedef) of class Acts::GaussianGridTrackDensity is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:82: warning: Member GaussianGridTrackDensity(const Config &cfg) (function) of class Acts::GaussianGridTrackDensity is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:120: warning: Member config() const (function) of class Acts::GaussianGridTrackDensity is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:66: warning: Member binSize (variable) of struct Acts::GaussianGridTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:59: warning: Member mainGridSize (variable) of struct Acts::GaussianGridTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:79: warning: Member maxRelativeDensityDev (variable) of struct Acts::GaussianGridTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:60: warning: Member trkGridSize (variable) of struct Acts::GaussianGridTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:74: warning: Member useHighestSumZPosition (variable) of struct Acts::GaussianGridTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianGridTrackDensity.hpp:63: warning: Member zMinMax (variable) of struct Acts::GaussianGridTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:54: warning: Member GaussianSumFitter(propagator_t &&propagator, bethe_heitler_approx_t &&bha, std::unique_ptr< const Logger >_logger=getDefaultLogger("GSF", Logging::INFO)) (function) of struct Acts::GaussianSumFitter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:80: warning: parameters of member Acts::GaussianSumFitter::fit are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:80: warning: return type of member Acts::GaussianSumFitter::fit is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:128: warning: parameters of member Acts::GaussianSumFitter::fit are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:128: warning: return type of member Acts::GaussianSumFitter::fit is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:72: warning: Member logger() const (function) of struct Acts::GaussianSumFitter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:70: warning: Member m_actorLogger (variable) of struct Acts::GaussianSumFitter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:173: warning: parameters of member Acts::GaussianSumFitter::fit_impl are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GaussianSumFitter.hpp:173: warning: return type of member Acts::GaussianSumFitter::fit_impl is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:92: warning: parameters of member Acts::GaussianTrackDensity::GaussianTrackDensity are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:62: warning: Member Config(double d0Sig=3.5, double z0Sig=12.) (function) of struct Acts::GaussianTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:73: warning: Member d0MaxSignificance (variable) of struct Acts::GaussianTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:77: warning: Member d0SignificanceCut (variable) of struct Acts::GaussianTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:81: warning: Member extractParameters (variable) of struct Acts::GaussianTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:70: warning: Member isGaussianShaped (variable) of struct Acts::GaussianTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:75: warning: Member z0MaxSignificance (variable) of struct Acts::GaussianTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:78: warning: Member z0SignificanceCut (variable) of struct Acts::GaussianTrackDensity::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:87: warning: Member State(unsigned int nTracks) (function) of struct Acts::GaussianTrackDensity::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:89: warning: Member trackEntries (variable) of struct Acts::GaussianTrackDensity::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:49: warning: Member c0 (variable) of struct Acts::GaussianTrackDensity::TrackEntry is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:51: warning: Member c1 (variable) of struct Acts::GaussianTrackDensity::TrackEntry is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:53: warning: Member c2 (variable) of struct Acts::GaussianTrackDensity::TrackEntry is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:55: warning: Member lowerBound (variable) of struct Acts::GaussianTrackDensity::TrackEntry is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:57: warning: Member upperBound (variable) of struct Acts::GaussianTrackDensity::TrackEntry is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GaussianTrackDensity.hpp:46: warning: Member z (variable) of struct Acts::GaussianTrackDensity::TrackEntry is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4DetectorElement.hpp:48: warning: return type of member Acts::Geant4DetectorElement::surface is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4DetectorElement.hpp:51: warning: return type of member Acts::Geant4DetectorElement::surface is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4DetectorElement.hpp:54: warning: return type of member Acts::Geant4DetectorElement::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4DetectorElement.hpp:45: warning: return type of member Acts::Geant4DetectorElement::transform is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4DetectorSurfaceFactory.hpp:48: warning: Member Geant4PassiveSurface (typedef) of class Acts::Geant4DetectorSurfaceFactory is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4DetectorSurfaceFactory.hpp:43: warning: Member Geant4SensitiveSurface (typedef) of class Acts::Geant4DetectorSurfaceFactory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GenericApproachDescriptor.hpp:69: warning: return type of member Acts::GenericApproachDescriptor::containedSurfaces is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GenericApproachDescriptor.hpp:72: warning: return type of member Acts::GenericApproachDescriptor::containedSurfaces is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:41: warning: Member CovarianceMatrix (typedef) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:40: warning: Member ParametersVector (typedef) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:42: warning: Member ParticleHypothesis (typedef) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:120: warning: Member GenericBoundTrackParameters(const GenericBoundTrackParameters &)=default (function) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:71: warning: parameters of member Acts::GenericBoundTrackParameters::GenericBoundTrackParameters are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:121: warning: Member GenericBoundTrackParameters(GenericBoundTrackParameters &&)=default (function) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:227: warning: return type of member Acts::GenericBoundTrackParameters::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:238: warning: return type of member Acts::GenericBoundTrackParameters::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:142: warning: return type of member Acts::GenericBoundTrackParameters::covariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:144: warning: return type of member Acts::GenericBoundTrackParameters::covariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:155: warning: return type of member Acts::GenericBoundTrackParameters::impactParameterCovariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:134: warning: return type of member Acts::GenericBoundTrackParameters::impactParameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:181: warning: return type of member Acts::GenericBoundTrackParameters::localPosition is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:235: warning: return type of member Acts::GenericBoundTrackParameters::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:123: warning: Member operator=(const GenericBoundTrackParameters &)=default (function) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:125: warning: Member operator=(GenericBoundTrackParameters &&)=default (function) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:128: warning: return type of member Acts::GenericBoundTrackParameters::parameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:130: warning: return type of member Acts::GenericBoundTrackParameters::parameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:243: warning: return type of member Acts::GenericBoundTrackParameters::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:214: warning: return type of member Acts::GenericBoundTrackParameters::phi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:218: warning: return type of member Acts::GenericBoundTrackParameters::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:248: warning: return type of member Acts::GenericBoundTrackParameters::referenceSurface is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:146: warning: return type of member Acts::GenericBoundTrackParameters::spatialImpactParameterCovariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:132: warning: return type of member Acts::GenericBoundTrackParameters::spatialImpactParameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:216: warning: return type of member Acts::GenericBoundTrackParameters::theta is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:211: warning: return type of member Acts::GenericBoundTrackParameters::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:80: warning: return type of member Acts::GenericBoundTrackParameters::toBound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:231: warning: return type of member Acts::GenericBoundTrackParameters::transverseMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:88: warning: return type of member Acts::GenericBoundTrackParameters::create is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:221: warning: return type of member Acts::GenericBoundTrackParameters::direction is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:185: warning: return type of member Acts::GenericBoundTrackParameters::fourPosition is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:175: warning: return type of member Acts::GenericBoundTrackParameters::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:201: warning: return type of member Acts::GenericBoundTrackParameters::position is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:252: warning: return type of member Acts::GenericBoundTrackParameters::referenceFrame is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GenericCuboidVolumeBounds.hpp:29: warning: Member eSize (variable) of struct Acts::GenericCuboidVolumeBounds::BoundValues is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:34: warning: Member CovarianceMatrix (typedef) of class Acts::GenericCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:33: warning: Member ParametersVector (typedef) of class Acts::GenericCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:35: warning: Member ParticleHypothesis (typedef) of class Acts::GenericCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:41: warning: Member CovarianceMatrix (typedef) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:40: warning: Member ParametersVector (typedef) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:42: warning: Member ParticleHypothesis (typedef) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:92: warning: Member GenericCurvilinearTrackParameters(const GenericCurvilinearTrackParameters &)=default (function) of class Acts::GenericCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:71: warning: parameters of member Acts::GenericCurvilinearTrackParameters::GenericCurvilinearTrackParameters are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:94: warning: Member GenericCurvilinearTrackParameters(GenericCurvilinearTrackParameters &&)=default (function) of class Acts::GenericCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:105: warning: return type of member Acts::GenericCurvilinearTrackParameters::fourPosition is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:97: warning: Member operator=(const GenericCurvilinearTrackParameters &)=default (function) of class Acts::GenericCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:99: warning: Member operator=(GenericCurvilinearTrackParameters &&)=default (function) of class Acts::GenericCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:109: warning: return type of member Acts::GenericCurvilinearTrackParameters::position is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:120: warning: Member GenericBoundTrackParameters(const GenericBoundTrackParameters &)=default (function) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:71: warning: parameters of member Acts::GenericBoundTrackParameters::GenericBoundTrackParameters are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:121: warning: Member GenericBoundTrackParameters(GenericBoundTrackParameters &&)=default (function) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:227: warning: return type of member Acts::GenericBoundTrackParameters::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:238: warning: return type of member Acts::GenericBoundTrackParameters::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:142: warning: return type of member Acts::GenericBoundTrackParameters::covariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:144: warning: return type of member Acts::GenericBoundTrackParameters::covariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:155: warning: return type of member Acts::GenericBoundTrackParameters::impactParameterCovariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:134: warning: return type of member Acts::GenericBoundTrackParameters::impactParameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:181: warning: return type of member Acts::GenericBoundTrackParameters::localPosition is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:235: warning: return type of member Acts::GenericBoundTrackParameters::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:123: warning: Member operator=(const GenericBoundTrackParameters &)=default (function) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:125: warning: Member operator=(GenericBoundTrackParameters &&)=default (function) of class Acts::GenericBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:128: warning: return type of member Acts::GenericBoundTrackParameters::parameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:130: warning: return type of member Acts::GenericBoundTrackParameters::parameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:243: warning: return type of member Acts::GenericBoundTrackParameters::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:214: warning: return type of member Acts::GenericBoundTrackParameters::phi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:218: warning: return type of member Acts::GenericBoundTrackParameters::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:248: warning: return type of member Acts::GenericBoundTrackParameters::referenceSurface is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:146: warning: return type of member Acts::GenericBoundTrackParameters::spatialImpactParameterCovariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:132: warning: return type of member Acts::GenericBoundTrackParameters::spatialImpactParameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:216: warning: return type of member Acts::GenericBoundTrackParameters::theta is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:211: warning: return type of member Acts::GenericBoundTrackParameters::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:80: warning: return type of member Acts::GenericBoundTrackParameters::toBound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericBoundTrackParameters.hpp:231: warning: return type of member Acts::GenericBoundTrackParameters::transverseMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:80: warning: parameters of member Acts::GenericCurvilinearTrackParameters::create are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericCurvilinearTrackParameters.hpp:80: warning: return type of member Acts::GenericCurvilinearTrackParameters::create is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:37: warning: Member CovarianceMatrix (typedef) of class Acts::GenericFreeTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:36: warning: Member ParametersVector (typedef) of class Acts::GenericFreeTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:38: warning: Member ParticleHypothesis (typedef) of class Acts::GenericFreeTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:132: warning: Member GenericFreeTrackParameters(const GenericFreeTrackParameters &)=default (function) of class Acts::GenericFreeTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:112: warning: parameters of member Acts::GenericFreeTrackParameters::GenericFreeTrackParameters are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:133: warning: Member GenericFreeTrackParameters(GenericFreeTrackParameters &&)=default (function) of class Acts::GenericFreeTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:177: warning: return type of member Acts::GenericFreeTrackParameters::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:197: warning: return type of member Acts::GenericFreeTrackParameters::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:141: warning: return type of member Acts::GenericFreeTrackParameters::covariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:173: warning: return type of member Acts::GenericFreeTrackParameters::direction is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:152: warning: return type of member Acts::GenericFreeTrackParameters::fourPosition is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:194: warning: return type of member Acts::GenericFreeTrackParameters::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:135: warning: Member operator=(const GenericFreeTrackParameters &)=default (function) of class Acts::GenericFreeTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:137: warning: Member operator=(GenericFreeTrackParameters &&)=default (function) of class Acts::GenericFreeTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:139: warning: return type of member Acts::GenericFreeTrackParameters::parameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:202: warning: return type of member Acts::GenericFreeTrackParameters::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:166: warning: return type of member Acts::GenericFreeTrackParameters::phi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:161: warning: return type of member Acts::GenericFreeTrackParameters::position is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:170: warning: return type of member Acts::GenericFreeTrackParameters::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:168: warning: return type of member Acts::GenericFreeTrackParameters::theta is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:163: warning: return type of member Acts::GenericFreeTrackParameters::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:181: warning: return type of member Acts::GenericFreeTrackParameters::transverseMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:120: warning: parameters of member Acts::GenericFreeTrackParameters::create are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:120: warning: return type of member Acts::GenericFreeTrackParameters::create is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericFreeTrackParameters.hpp:146: warning: return type of member Acts::GenericFreeTrackParameters::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:28: warning: Member ChargeType (typedef) of class Acts::GenericParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:72: warning: return type of member Acts::GenericParticleHypothesis::absoluteCharge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:66: warning: return type of member Acts::GenericParticleHypothesis::absolutePdg is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:105: warning: return type of member Acts::GenericParticleHypothesis::chargeType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:69: warning: return type of member Acts::GenericParticleHypothesis::mass is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:110: warning: Member toStream(std::ostream &os) const (function) of class Acts::GenericParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:58: warning: parameters of member Acts::GenericParticleHypothesis::GenericParticleHypothesis are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:80: warning: return type of member Acts::GenericParticleHypothesis::extractCharge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:89: warning: return type of member Acts::GenericParticleHypothesis::extractMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:98: warning: return type of member Acts::GenericParticleHypothesis::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryContext.hpp:43: warning: Member GeometryContextOstreamWrapper(const T &object, const GeometryContext &gctx) (function) of struct Acts::GeometryContextOstreamWrapper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:66: warning: Member Iterator (typedef) of class Acts::GeometryHierarchyMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:67: warning: Member Value (typedef) of class Acts::GeometryHierarchyMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:81: warning: Member GeometryHierarchyMap(const GeometryHierarchyMap &)=default (function) of class Acts::GeometryHierarchyMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:82: warning: Member GeometryHierarchyMap(GeometryHierarchyMap &&) noexcept=default (function) of class Acts::GeometryHierarchyMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:87: warning: return type of member Acts::GeometryHierarchyMap::begin is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:93: warning: return type of member Acts::GeometryHierarchyMap::empty is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:90: warning: return type of member Acts::GeometryHierarchyMap::end is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:84: warning: Member operator=(const GeometryHierarchyMap &)=default (function) of class Acts::GeometryHierarchyMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:85: warning: Member operator=(GeometryHierarchyMap &&) noexcept=default (function) of class Acts::GeometryHierarchyMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:96: warning: return type of member Acts::GeometryHierarchyMap::size is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:101: warning: parameters of member Acts::GeometryHierarchyMap::idAt are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:101: warning: return type of member Acts::GeometryHierarchyMap::idAt is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:108: warning: parameters of member Acts::GeometryHierarchyMap::valueAt are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryHierarchyMap.hpp:108: warning: return type of member Acts::GeometryHierarchyMap::valueAt is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/GeometryHierarchyMapJsonConverter.hpp:40: warning: Member Container (typedef) of class Acts::GeometryHierarchyMapJsonConverter is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/GeometryHierarchyMapJsonConverter.hpp:39: warning: Member Value (typedef) of class Acts::GeometryHierarchyMapJsonConverter is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/GeometryHierarchyMapJsonConverter.hpp:69: warning: return type of member Acts::GeometryHierarchyMapJsonConverter::encodeIdentifier is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:33: warning: Member Value (typedef) of class Acts::GeometryIdentifier is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:40: warning: Member GeometryIdentifier(const GeometryIdentifier &)=default (function) of class Acts::GeometryIdentifier is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:39: warning: Member GeometryIdentifier(GeometryIdentifier &&)=default (function) of class Acts::GeometryIdentifier is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:35: warning: parameters of member Acts::GeometryIdentifier::GeometryIdentifier are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:57: warning: return type of member Acts::GeometryIdentifier::approach is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:51: warning: return type of member Acts::GeometryIdentifier::boundary is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:66: warning: return type of member Acts::GeometryIdentifier::extra is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:54: warning: return type of member Acts::GeometryIdentifier::layer is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:43: warning: Member operator=(const GeometryIdentifier &)=default (function) of class Acts::GeometryIdentifier is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:42: warning: Member operator=(GeometryIdentifier &&)=default (function) of class Acts::GeometryIdentifier is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:60: warning: return type of member Acts::GeometryIdentifier::passive is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:63: warning: return type of member Acts::GeometryIdentifier::sensitive is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:92: warning: parameters of member Acts::GeometryIdentifier::setApproach are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:92: warning: return type of member Acts::GeometryIdentifier::setApproach is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:78: warning: parameters of member Acts::GeometryIdentifier::setBoundary are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:78: warning: return type of member Acts::GeometryIdentifier::setBoundary is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:113: warning: parameters of member Acts::GeometryIdentifier::setExtra are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:113: warning: return type of member Acts::GeometryIdentifier::setExtra is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:85: warning: parameters of member Acts::GeometryIdentifier::setLayer are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:85: warning: return type of member Acts::GeometryIdentifier::setLayer is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:99: warning: parameters of member Acts::GeometryIdentifier::setPassive are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:99: warning: return type of member Acts::GeometryIdentifier::setPassive is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:106: warning: parameters of member Acts::GeometryIdentifier::setSensitive are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:106: warning: return type of member Acts::GeometryIdentifier::setSensitive is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:71: warning: parameters of member Acts::GeometryIdentifier::setVolume are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:71: warning: return type of member Acts::GeometryIdentifier::setVolume is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:45: warning: return type of member Acts::GeometryIdentifier::value is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:48: warning: return type of member Acts::GeometryIdentifier::volume is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:283: warning: Member decorateIdentifier(Acts::GeometryIdentifier identifier, const Acts::Surface &surface) const (function) of struct Acts::GeometryIdentifierHook is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:42: warning: return type of member Acts::GeometryObject::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GlueVolumesDescriptor.hpp:67: warning: return type of member Acts::GlueVolumesDescriptor::screenOutput is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/GreedyAmbiguityResolution.hpp:67: warning: Member GreedyAmbiguityResolution(const Config &cfg, std::unique_ptr< const Logger > logger=getDefaultLogger("GreedyAmbiguityResolution", Logging::INFO)) (function) of class Acts::GreedyAmbiguityResolution is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:66: warning: Member AnyPointType (typedef) of class Acts::IGrid is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:667: warning: return type of member Acts::Grid::axesTuple is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:678: warning: return type of member Acts::Grid::begin is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:681: warning: return type of member Acts::Grid::end is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:706: warning: Member toStream(std::ostream &os) const override (function) of class Acts::Grid is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:670: warning: return type of member Acts::Grid::axes is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:686: warning: return type of member Acts::Grid::begin is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:695: warning: return type of member Acts::Grid::end is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:552: warning: parameters of member Acts::Grid::isInside are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:611: warning: parameters of member Acts::Grid::size are not documented
+- [ ] <toStream>:1: warning: parameters of member Acts::Grid::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:34: warning: Member MainGridVector (typedef) of class Acts::GridDensityVertexFinder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:35: warning: Member TrackGridVector (typedef) of class Acts::GridDensityVertexFinder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:52: warning: Member cacheGridStateForTrackRemoval (variable) of struct Acts::GridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:59: warning: Member d0SignificanceCut (variable) of struct Acts::GridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:61: warning: Member estimateSeedWidth (variable) of struct Acts::GridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:64: warning: Member extractParameters (variable) of struct Acts::GridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:44: warning: Member gridDensity (variable) of struct Acts::GridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:55: warning: Member maxD0TrackSignificance (variable) of struct Acts::GridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:57: warning: Member maxZ0TrackSignificance (variable) of struct Acts::GridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:60: warning: Member z0SignificanceCut (variable) of struct Acts::GridDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:71: warning: Member State(MainGridVector mainGrid_) (function) of struct Acts::GridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:77: warning: Member binAndTrackGridMap (variable) of struct Acts::GridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:86: warning: Member isInitialized (variable) of struct Acts::GridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:74: warning: Member mainGrid (variable) of struct Acts::GridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:80: warning: Member trackSelectionMap (variable) of struct Acts::GridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/GridDensityVertexFinder.hpp:84: warning: Member tracksToRemove (variable) of struct Acts::GridDensityVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:30: warning: Member difference_type (typedef) of class Acts::GridGlobalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:28: warning: Member iterator_category (typedef) of class Acts::GridGlobalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:31: warning: Member pointer (typedef) of class Acts::GridGlobalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:32: warning: Member reference (typedef) of class Acts::GridGlobalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:29: warning: Member value_type (typedef) of class Acts::GridGlobalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:26: warning: Member DIM (variable) of class Acts::GridGlobalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:154: warning: Member difference_type (typedef) of class Acts::GridLocalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:152: warning: Member iterator_category (typedef) of class Acts::GridLocalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:155: warning: Member pointer (typedef) of class Acts::GridLocalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:156: warning: Member reference (typedef) of class Acts::GridLocalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:153: warning: Member value_type (typedef) of class Acts::GridLocalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:150: warning: Member DIM (variable) of class Acts::GridLocalIterator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:110: warning: parameters of member Acts::PortalLinkBase::checkMergePreconditions are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:116: warning: Member m_surface (variable) of class Acts::PortalLinkBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:110: warning: parameters of member Acts::PortalLinkBase::checkMergePreconditions are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:116: warning: Member m_surface (variable) of class Acts::PortalLinkBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:147: warning: Member BoundToGridLocalDelegate (typedef) of class Acts::GridSurfaceMaterialT is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:152: warning: Member GlobalToGridLocalDelegate (typedef) of class Acts::GridSurfaceMaterialT is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:218: warning: return type of member Acts::GridSurfaceMaterialT::boundToGridLocal is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:223: warning: return type of member Acts::GridSurfaceMaterialT::globalToGridLocal is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:210: warning: return type of member Acts::GridSurfaceMaterialT::grid is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:213: warning: return type of member Acts::GridSurfaceMaterialT::materialAccessor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ISurfaceMaterial.hpp:77: warning: return type of member Acts::ISurfaceMaterial::mappingType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:198: warning: return type of member Acts::GridSurfaceMaterialT::scale is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:204: warning: parameters of member Acts::GridSurfaceMaterialT::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:204: warning: return type of member Acts::GridSurfaceMaterialT::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:34: warning: Member boundCov (variable) of struct Acts::GsfComponent is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:33: warning: Member boundPars (variable) of struct Acts::GsfComponent is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:32: warning: Member weight (variable) of struct Acts::GsfComponent is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:54: warning: Member Calibrator (typedef) of struct Acts::GsfExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:63: warning: Member ComponentReducer (typedef) of struct Acts::GsfExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:52: warning: Member ConstTrackStateProxy (typedef) of struct Acts::GsfExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:61: warning: Member OutlierFinder (typedef) of struct Acts::GsfExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:51: warning: Member TrackStateProxy (typedef) of struct Acts::GsfExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfOptions.hpp:58: warning: Member Updater (typedef) of struct Acts::GsfExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/HelicalTrackLinearizer.hpp:49: warning: Member bField (variable) of struct Acts::HelicalTrackLinearizer::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/HelicalTrackLinearizer.hpp:52: warning: Member propagator (variable) of struct Acts::HelicalTrackLinearizer::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:82: warning: parameters of member Acts::HomogeneousSurfaceMaterial::factor are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:82: warning: return type of member Acts::HomogeneousSurfaceMaterial::factor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:79: warning: parameters of member Acts::HomogeneousSurfaceMaterial::materialSlab are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:79: warning: return type of member Acts::HomogeneousSurfaceMaterial::materialSlab is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:79: warning: parameters of member Acts::HomogeneousSurfaceMaterial::materialSlab are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:79: warning: return type of member Acts::HomogeneousSurfaceMaterial::materialSlab is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ISurfaceMaterial.hpp:77: warning: return type of member Acts::ISurfaceMaterial::mappingType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:52: warning: return type of member Acts::HomogeneousSurfaceMaterial::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:58: warning: return type of member Acts::HomogeneousSurfaceMaterial::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:63: warning: return type of member Acts::HomogeneousSurfaceMaterial::scale is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousSurfaceMaterial.hpp:87: warning: return type of member Acts::HomogeneousSurfaceMaterial::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousVolumeMaterial.hpp:51: warning: return type of member Acts::HomogeneousVolumeMaterial::material is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousVolumeMaterial.hpp:45: warning: return type of member Acts::HomogeneousVolumeMaterial::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/HomogeneousVolumeMaterial.hpp:58: warning: return type of member Acts::HomogeneousVolumeMaterial::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/interface/IAssignmentFinder.hpp:35: warning: Member direction (variable) of struct Acts::IAssignmentFinder::SurfaceAssignment is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/IConfinedTrackingVolumeBuilder.hpp:27: warning: return type of member Acts::IConfinedTrackingVolumeBuilder::centralVolumes is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/IConfinedTrackingVolumeBuilder.hpp:30: warning: return type of member Acts::IConfinedTrackingVolumeBuilder::identification is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:107: warning: Member toStream(std::ostream &os) const =0 (function) of class Acts::IGrid is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:66: warning: Member AnyPointType (typedef) of class Acts::IGrid is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ImpactPointEstimator.hpp:157: warning: return type of member Acts::ImpactPointEstimator::getDistanceAndMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ImpactPointEstimator.hpp:186: warning: return type of member Acts::ImpactPointEstimator::getImpactParameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/InfiniteBounds.hpp:37: warning: parameters of member Acts::InfiniteBounds::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/InfiniteBounds.hpp:37: warning: return type of member Acts::InfiniteBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialInteraction.hpp:53: warning: return type of member Acts::InteractionVolume::empty is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialInteraction.hpp:42: warning: return type of member Acts::InteractionVolume::geometryId is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/PropagatorMaterialAssigner.hpp:47: warning: Member result_type (typedef) of struct Acts::InteractionVolumeCollector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/PropagatorMaterialAssigner.hpp:44: warning: Member collected (variable) of struct Acts::InteractionVolumeCollector::this_result is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/InterpolatedBFieldMap.hpp:78: warning: Member FieldType (typedef) of class Acts::InterpolatedBFieldMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/InterpolatedBFieldMap.hpp:77: warning: Member Grid (typedef) of class Acts::InterpolatedBFieldMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/InterpolatedBFieldMap.hpp:175: warning: parameters of member Acts::InterpolatedBFieldMap::InterpolatedBFieldMap are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/InterpolatedBFieldMap.hpp:290: warning: Member getFieldUnchecked(const Vector3 &position) const final (function) of class Acts::InterpolatedBFieldMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/InterpolatedBFieldMap.hpp:79: warning: Member DIM_POS (variable) of class Acts::InterpolatedBFieldMap is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/InterpolatedMaterialMap.hpp:332: warning: return type of member Acts::InterpolatedMaterialMap::binUtility is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/InterpolatedMaterialMap.hpp:337: warning: return type of member Acts::InterpolatedMaterialMap::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:58: warning: return type of member Acts::Intersection::isValid is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:66: warning: return type of member Acts::Intersection::pathLength is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:63: warning: return type of member Acts::Intersection::position is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:69: warning: return type of member Acts::Intersection::status is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:72: warning: return type of member Acts::Intersection::invalid is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:102: warning: parameters of member Acts::Intersection::closestForwardOrder are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:102: warning: return type of member Acts::Intersection::closestForwardOrder is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:84: warning: parameters of member Acts::Intersection::closestOrder are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:84: warning: return type of member Acts::Intersection::closestOrder is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:75: warning: parameters of member Acts::Intersection::pathLengthOrder are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:75: warning: return type of member Acts::Intersection::pathLengthOrder is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ISurfaceMaterial.hpp:77: warning: return type of member Acts::ISurfaceMaterial::mappingType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ISurfaceMaterial.hpp:73: warning: return type of member Acts::ISurfaceMaterial::factor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ISurfaceMaterial.hpp:52: warning: return type of member Acts::ISurfaceMaterial::scale is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ISurfaceMaterial.hpp:115: warning: parameters of member Acts::ISurfaceMaterial::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ISurfaceMaterial.hpp:115: warning: return type of member Acts::ISurfaceMaterial::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/interface/ISurfaceMaterialAccumulater.hpp:38: warning: return type of member Acts::ISurfaceMaterialAccumulater::createState is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/interface/ISurfaceMaterialAccumulater.hpp:55: warning: return type of member Acts::ISurfaceMaterialAccumulater::finalizeMaterial is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:106: warning: Member cutOffTrackWeight (variable) of struct Acts::IterativeVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:104: warning: Member doMaxTracksCut (variable) of struct Acts::IterativeVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:93: warning: Member maximumChi2cutForSeeding (variable) of struct Acts::IterativeVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:105: warning: Member maxTracks (variable) of struct Acts::IterativeVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:94: warning: Member maxVertices (variable) of struct Acts::IterativeVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:103: warning: Member reassignTracksAfterFirstFit (variable) of struct Acts::IterativeVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:120: warning: Member State(const MagneticFieldProvider &field, const Acts::MagneticFieldContext &_magContext) (function) of struct Acts::IterativeVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:131: warning: Member fieldCache (variable) of struct Acts::IterativeVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/IterativeVertexFinder.hpp:126: warning: Member magContext (variable) of struct Acts::IterativeVertexFinder::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/ITGeoIdentifierProvider.hpp:25: warning: return type of member Acts::ITGeoIdentifierProvider::identify is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/IVisualization3D.hpp:25: warning: Member FaceType (typedef) of class Acts::IVisualization3D is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/IVisualization3D.hpp:27: warning: Member s_defaultColor (variable) of class Acts::IVisualization3D is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/IVolumeMaterial.hpp:30: warning: return type of member Acts::IVolumeMaterial::material is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/IVolumeMaterial.hpp:46: warning: parameters of member Acts::IVolumeMaterial::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/IVolumeMaterial.hpp:46: warning: return type of member Acts::IVolumeMaterial::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/JsonDetectorElement.hpp:23: warning: Member JsonDetectorElement(const nlohmann::json &jSurface, double thickness) (function) of class Acts::JsonDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/JsonDetectorElement.hpp:26: warning: Member surface() const override (function) of class Acts::JsonDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/JsonDetectorElement.hpp:25: warning: Member surface() override (function) of class Acts::JsonDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/JsonDetectorElement.hpp:28: warning: Member thickness() const override (function) of class Acts::JsonDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/JsonDetectorElement.hpp:30: warning: Member transform(const GeometryContext &gctx) const override (function) of class Acts::JsonDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/JsonMaterialDecorator.hpp:32: warning: Member SurfaceMaterialMap (typedef) of class Acts::JsonMaterialDecorator is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/JsonMaterialDecorator.hpp:35: warning: Member VolumeMaterialMap (typedef) of class Acts::JsonMaterialDecorator is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/JsonMaterialDecorator.hpp:38: warning: Member JsonMaterialDecorator(const MaterialMapJsonConverter::Config &rConfig, const std::string &jFileName, Acts::Logging::Level level, bool clearSurfaceMaterial=true, bool clearVolumeMaterial=true) (function) of class Acts::JsonMaterialDecorator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:271: warning: Member KalmanFitter(propagator_t pPropagator, std::unique_ptr< const Logger > _logger=getDefaultLogger("KalmanFitter", Logging::INFO)) (function) of class Acts::KalmanFitter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:61: warning: Member Calibrator (typedef) of struct Acts::KalmanFitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:58: warning: Member ConstTrackStateProxy (typedef) of struct Acts::KalmanFitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:71: warning: Member OutlierFinder (typedef) of struct Acts::KalmanFitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:59: warning: Member Parameters (typedef) of struct Acts::KalmanFitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:73: warning: Member ReverseFilteringLogic (typedef) of struct Acts::KalmanFitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:65: warning: Member Smoother (typedef) of struct Acts::KalmanFitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:57: warning: Member TrackStateProxy (typedef) of struct Acts::KalmanFitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:68: warning: Member Updater (typedef) of struct Acts::KalmanFitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:158: warning: Member extensions (variable) of struct Acts::KalmanFitterOptions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/KDTree.hpp:66: warning: Member const_iterator_t (typedef) of class Acts::KDTree is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/KDTree.hpp:264: warning: Member begin(void) const (function) of class Acts::KDTree is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/KDTree.hpp:266: warning: Member end(void) const (function) of class Acts::KDTree is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/KDTreeTrackingGeometryBuilder.hpp:60: warning: Member SurfaceKDT (typedef) of class Acts::KDTreeTrackingGeometryBuilder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:141: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:138: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:212: warning: return type of member Acts::Layer::layerType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:110: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:107: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:119: warning: Member surfaceRepresentation()=0 (function) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:121: warning: return type of member Acts::Layer::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:275: warning: Member m_ssApproachSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:274: warning: Member m_ssSensitiveSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:146: warning: parameters of member Acts::Layer::resolve are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:114: warning: return type of member Acts::Layer::surfaceRepresentation is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/LayerArrayCreator.hpp:66: warning: parameters of member Acts::LayerArrayCreator::setLogger are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/LayerCreator.hpp:209: warning: parameters of member Acts::LayerCreator::associateSurfacesToLayer are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/LayerCreator.hpp:202: warning: return type of member Acts::LayerCreator::getConfiguration is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:18: warning: Member LinCircle(float ct, float idr, float er, float u, float v, float X, float Y) (function) of struct Acts::LinCircle is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:21: warning: Member cotTheta (variable) of struct Acts::LinCircle is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:23: warning: Member Er (variable) of struct Acts::LinCircle is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:22: warning: Member iDeltaR (variable) of struct Acts::LinCircle is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:24: warning: Member U (variable) of struct Acts::LinCircle is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:25: warning: Member V (variable) of struct Acts::LinCircle is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:26: warning: Member x (variable) of struct Acts::LinCircle is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderUtils.hpp:27: warning: Member y (variable) of struct Acts::LinCircle is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:74: warning: Member constantTerm (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:67: warning: Member covarianceAtPCA (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:69: warning: Member linearizationPoint (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:73: warning: Member momentumAtPCA (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:71: warning: Member momentumJacobian (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:66: warning: Member parametersAtPCA (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:72: warning: Member positionAtPCA (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:70: warning: Member positionJacobian (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/LinearizedTrack.hpp:68: warning: Member weightAtPCA (variable) of class Acts::LinearizedTrack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineBounds.hpp:26: warning: Member BoundValues (enumeration) of class Acts::LineBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineBounds.hpp:69: warning: return type of member Acts::LineBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineBounds.hpp:65: warning: return type of member Acts::LineBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineSurface.hpp:287: warning: Member lineDirection(const GeometryContext &gctx) const (function) of class Acts::LineSurface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineSurface.hpp:256: warning: return type of member Acts::LineSurface::bounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineSurface.hpp:259: warning: return type of member Acts::LineSurface::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineSurface.hpp:83: warning: return type of member Acts::LineSurface::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineSurface.hpp:251: warning: parameters of member Acts::LineSurface::pathCorrection are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineSurface.hpp:251: warning: return type of member Acts::LineSurface::pathCorrection is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Logger.hpp:710: warning: return type of member Acts::Logger::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Logger.hpp:682: warning: return type of member Acts::Logger::clone is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Logger.hpp:701: warning: return type of member Acts::Logger::cloneWithSuffix is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:126: warning: Member MaterialComposition(const MaterialComposition &)=default (function) of class Acts::MaterialComposition is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:125: warning: Member MaterialComposition(MaterialComposition &&)=default (function) of class Acts::MaterialComposition is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:132: warning: Member begin() const (function) of class Acts::MaterialComposition is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:133: warning: Member end() const (function) of class Acts::MaterialComposition is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:129: warning: Member operator=(const MaterialComposition &)=default (function) of class Acts::MaterialComposition is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:128: warning: Member operator=(MaterialComposition &&)=default (function) of class Acts::MaterialComposition is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:137: warning: return type of member Acts::MaterialComposition::size is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialComposition.hpp:108: warning: parameters of member Acts::MaterialComposition::MaterialComposition are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MaterialInteractor.hpp:38: warning: Member result_type (typedef) of struct Acts::MaterialInteractor is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:59: warning: Member DetectorMaterialMaps (typedef) of class Acts::MaterialMapJsonConverter is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:55: warning: Member SurfaceMaterialMap (typedef) of class Acts::MaterialMapJsonConverter is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:57: warning: Member VolumeMaterialMap (typedef) of class Acts::MaterialMapJsonConverter is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:95: warning: return type of member Acts::MaterialMapJsonConverter::jsonToMaterialMaps is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:100: warning: return type of member Acts::MaterialMapJsonConverter::materialMapsToJson is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:107: warning: return type of member Acts::MaterialMapJsonConverter::trackingGeometryToJson is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:32: warning: Member DetectorMaterialMaps (typedef) of class Acts::MaterialMapper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/InterpolatedMaterialMap.hpp:30: warning: Member Grid_t (typedef) of class Acts::MaterialMapper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:30: warning: Member VolumeMaterialMaps (typedef) of class Acts::MaterialMapper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:68: warning: return type of member Acts::MaterialMapper::createState is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:85: warning: parameters of member Acts::MaterialMapper::finalizeMaps are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:85: warning: return type of member Acts::MaterialMapper::finalizeMaps is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/InterpolatedMaterialMap.hpp:31: warning: Member DIM_POS (variable) of class Acts::MaterialMapper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:38: warning: Member assignmentFinder (variable) of struct Acts::MaterialMapper::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:41: warning: Member surfaceMaterialAccumulater (variable) of struct Acts::MaterialMapper::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:56: warning: Member assignmentOptions (variable) of struct Acts::MaterialMapper::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialMapper.hpp:49: warning: Member surfaceMaterialAccumulaterState (variable) of struct Acts::MaterialMapper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:68: warning: return type of member Acts::MaterialSlab::isVacuum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:71: warning: return type of member Acts::MaterialSlab::material is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:65: warning: parameters of member Acts::MaterialSlab::scaleThickness are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:73: warning: return type of member Acts::MaterialSlab::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:77: warning: return type of member Acts::MaterialSlab::thicknessInL0 is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:75: warning: return type of member Acts::MaterialSlab::thicknessInX0 is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:28: warning: Member Nothing() (function) of class Acts::MaterialSlab is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:32: warning: Member Vacuum(float thickness) (function) of class Acts::MaterialSlab is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/SurfaceMaterialMapper.hpp:42: warning: Member operator()(const Surface &sf) const (function) of struct Acts::MaterialSurface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/PropagatorMaterialAssigner.hpp:31: warning: parameters of member Acts::MaterialSurfaceIdentifier::operator() are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/PropagatorMaterialAssigner.hpp:31: warning: return type of member Acts::MaterialSurfaceIdentifier::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialValidater.hpp:32: warning: Member materialAssigner (variable) of struct Acts::MaterialValidater::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/SurfaceMaterialMapper.hpp:49: warning: Member operator()(const TrackingVolume &vf) const (function) of struct Acts::MaterialVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/MbfSmoother.hpp:41: warning: return type of member Acts::MbfSmoother::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:38: warning: Member CovarianceMatrix (typedef) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:35: warning: Member Parameters (typedef) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:37: warning: Member ParametersVector (typedef) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:36: warning: Member ParticleHypothesis (typedef) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:114: warning: Member MultiComponentBoundTrackParameters(const MultiComponentBoundTrackParameters &)=default (function) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:116: warning: Member MultiComponentBoundTrackParameters(MultiComponentBoundTrackParameters &&)=default (function) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:70: warning: parameters of member Acts::MultiComponentBoundTrackParameters::MultiComponentBoundTrackParameters are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:205: warning: return type of member Acts::MultiComponentBoundTrackParameters::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:220: warning: return type of member Acts::MultiComponentBoundTrackParameters::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:127: warning: return type of member Acts::MultiComponentBoundTrackParameters::components is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:147: warning: return type of member Acts::MultiComponentBoundTrackParameters::covariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:215: warning: return type of member Acts::MultiComponentBoundTrackParameters::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:119: warning: Member operator=(const MultiComponentBoundTrackParameters &)=default (function) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:121: warning: Member operator=(MultiComponentBoundTrackParameters &&)=default (function) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:133: warning: parameters of member Acts::MultiComponentBoundTrackParameters::operator[] are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:133: warning: return type of member Acts::MultiComponentBoundTrackParameters::operator[] is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:142: warning: return type of member Acts::MultiComponentBoundTrackParameters::parameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:225: warning: return type of member Acts::MultiComponentBoundTrackParameters::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:196: warning: return type of member Acts::MultiComponentBoundTrackParameters::phi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:202: warning: return type of member Acts::MultiComponentBoundTrackParameters::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:130: warning: return type of member Acts::MultiComponentBoundTrackParameters::referenceSurface is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:199: warning: return type of member Acts::MultiComponentBoundTrackParameters::theta is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:184: warning: return type of member Acts::MultiComponentBoundTrackParameters::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:124: warning: return type of member Acts::MultiComponentBoundTrackParameters::toBound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:210: warning: return type of member Acts::MultiComponentBoundTrackParameters::transverseMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:189: warning: return type of member Acts::MultiComponentBoundTrackParameters::direction is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:170: warning: return type of member Acts::MultiComponentBoundTrackParameters::fourPosition is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:162: warning: return type of member Acts::MultiComponentBoundTrackParameters::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:178: warning: return type of member Acts::MultiComponentBoundTrackParameters::position is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:243: warning: Member ConstructionTuple (typedef) of class Acts::MultiComponentCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:38: warning: Member CovarianceMatrix (typedef) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:35: warning: Member Parameters (typedef) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:37: warning: Member ParametersVector (typedef) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:36: warning: Member ParticleHypothesis (typedef) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:298: warning: Member MultiComponentCurvilinearTrackParameters(const std::vector< ConstructionTuple > &cmps, ParticleHypothesis particleHypothesis) (function) of class Acts::MultiComponentCurvilinearTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:114: warning: Member MultiComponentBoundTrackParameters(const MultiComponentBoundTrackParameters &)=default (function) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:116: warning: Member MultiComponentBoundTrackParameters(MultiComponentBoundTrackParameters &&)=default (function) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:70: warning: parameters of member Acts::MultiComponentBoundTrackParameters::MultiComponentBoundTrackParameters are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:205: warning: return type of member Acts::MultiComponentBoundTrackParameters::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:220: warning: return type of member Acts::MultiComponentBoundTrackParameters::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:127: warning: return type of member Acts::MultiComponentBoundTrackParameters::components is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:147: warning: return type of member Acts::MultiComponentBoundTrackParameters::covariance is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:215: warning: return type of member Acts::MultiComponentBoundTrackParameters::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:119: warning: Member operator=(const MultiComponentBoundTrackParameters &)=default (function) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:121: warning: Member operator=(MultiComponentBoundTrackParameters &&)=default (function) of class Acts::MultiComponentBoundTrackParameters is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:133: warning: parameters of member Acts::MultiComponentBoundTrackParameters::operator[] are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:133: warning: return type of member Acts::MultiComponentBoundTrackParameters::operator[] is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:142: warning: return type of member Acts::MultiComponentBoundTrackParameters::parameters is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:225: warning: return type of member Acts::MultiComponentBoundTrackParameters::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:196: warning: return type of member Acts::MultiComponentBoundTrackParameters::phi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:202: warning: return type of member Acts::MultiComponentBoundTrackParameters::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:130: warning: return type of member Acts::MultiComponentBoundTrackParameters::referenceSurface is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:199: warning: return type of member Acts::MultiComponentBoundTrackParameters::theta is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:184: warning: return type of member Acts::MultiComponentBoundTrackParameters::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:124: warning: return type of member Acts::MultiComponentBoundTrackParameters::toBound is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiComponentTrackParameters.hpp:210: warning: return type of member Acts::MultiComponentBoundTrackParameters::transverseMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:52: warning: Member BoundState (typedef) of class Acts::EigenStepper< EigenStepperDefaultExtension > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:51: warning: Member Covariance (typedef) of class Acts::EigenStepper< EigenStepperDefaultExtension > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:53: warning: Member CurvilinearState (typedef) of class Acts::EigenStepper< EigenStepperDefaultExtension > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:241: warning: parameters of member Acts::MultiEigenStepperLoop::MultiEigenStepperLoop are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:233: warning: parameters of member Acts::MultiEigenStepperLoop::MultiEigenStepperLoop are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:252: warning: Member initialize(State &state, const MultiComponentBoundTrackParameters &par) const (function) of class Acts::MultiEigenStepperLoop is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:247: warning: Member makeState(const Options &options) const (function) of class Acts::MultiEigenStepperLoop is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:156: warning: Member initialize(State &state, const BoundTrackParameters &par) const (function) of class Acts::EigenStepper< EigenStepperDefaultExtension > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:158: warning: Member initialize(State &state, const BoundVector &boundParams, const std::optional< BoundMatrix > &cov, ParticleHypothesis particleHypothesis, const Surface &surface) const (function) of class Acts::EigenStepper< EigenStepperDefaultExtension > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepper.hpp:154: warning: Member makeState(const Options &options) const (function) of class Acts::EigenStepper< EigenStepperDefaultExtension > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:453: warning: return type of member Acts::MultiEigenStepperLoop::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:399: warning: return type of member Acts::MultiEigenStepperLoop::addComponent is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:467: warning: return type of member Acts::MultiEigenStepperLoop::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:294: warning: parameters of member Acts::MultiEigenStepperLoop::componentIterable are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:294: warning: return type of member Acts::MultiEigenStepperLoop::componentIterable is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:328: warning: parameters of member Acts::MultiEigenStepperLoop::constComponentIterable are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:328: warning: return type of member Acts::MultiEigenStepperLoop::constComponentIterable is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:441: warning: return type of member Acts::MultiEigenStepperLoop::direction is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:423: warning: return type of member Acts::MultiEigenStepperLoop::getField is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:603: warning: return type of member Acts::MultiEigenStepperLoop::getStepSize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:460: warning: return type of member Acts::MultiEigenStepperLoop::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:362: warning: return type of member Acts::MultiEigenStepperLoop::numberComponents is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:629: warning: return type of member Acts::MultiEigenStepperLoop::outputStepSize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:472: warning: return type of member Acts::MultiEigenStepperLoop::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:434: warning: return type of member Acts::MultiEigenStepperLoop::position is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:448: warning: return type of member Acts::MultiEigenStepperLoop::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:479: warning: return type of member Acts::MultiEigenStepperLoop::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:484: warning: return type of member Acts::MultiEigenStepperLoop::updateSurfaceStatus is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:202: warning: Member Component(SingleState state_, double weight_, IntersectionStatus status_) (function) of struct Acts::MultiEigenStepperLoop::State::Component is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:198: warning: Member state (variable) of struct Acts::MultiEigenStepperLoop::State::Component is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:200: warning: Member status (variable) of struct Acts::MultiEigenStepperLoop::State::Component is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:199: warning: Member weight (variable) of struct Acts::MultiEigenStepperLoop::State::Component is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:68: warning: Member MultiIndex(const MultiIndex &)=default (function) of class Acts::MultiIndex is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:69: warning: Member MultiIndex(MultiIndex &)=default (function) of class Acts::MultiIndex is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:64: warning: parameters of member Acts::MultiIndex::MultiIndex are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:80: warning: parameters of member Acts::MultiIndex::level are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:80: warning: return type of member Acts::MultiIndex::level is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:105: warning: parameters of member Acts::MultiIndex::makeLastDescendant are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:105: warning: return type of member Acts::MultiIndex::makeLastDescendant is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:97: warning: parameters of member Acts::MultiIndex::makeNextSibling are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:97: warning: return type of member Acts::MultiIndex::makeNextSibling is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:70: warning: Member operator=(const MultiIndex &)=default (function) of class Acts::MultiIndex is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:71: warning: Member operator=(MultiIndex &&) noexcept=default (function) of class Acts::MultiIndex is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:72: warning: parameters of member Acts::MultiIndex::operator= are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:72: warning: return type of member Acts::MultiIndex::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:85: warning: parameters of member Acts::MultiIndex::set are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:85: warning: return type of member Acts::MultiIndex::set is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:78: warning: return type of member Acts::MultiIndex::value is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:114: warning: parameters of member Acts::MultiIndex::bits are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:114: warning: return type of member Acts::MultiIndex::bits is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:42: warning: return type of member Acts::MultiIndex::Zeros is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:40: warning: Member kNumLevels (variable) of class Acts::MultiIndex is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:46: warning: parameters of member Acts::MultiIndex::Encode are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MultiIndex.hpp:46: warning: return type of member Acts::MultiIndex::Encode is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/MultiRangeBField.hpp:44: warning: Member MultiRangeBField(std::vector< BFieldRange > &&ranges) (function) of class Acts::MultiRangeBField is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/MultiRangeBField.hpp:40: warning: parameters of member Acts::MultiRangeBField::MultiRangeBField are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/MultiRangeBField.hpp:46: warning: parameters of member Acts::MultiRangeBField::makeCache are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/MultiRangeBField.hpp:46: warning: return type of member Acts::MultiRangeBField::makeCache is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:155: warning: Member Derived (typedef) of class Acts::MultiTrajectory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:160: warning: Member MeasurementSizeMax (variable) of class Acts::MultiTrajectory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:157: warning: Member ReadOnly (variable) of class Acts::MultiTrajectory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:706: warning: Member allocateCalibrated(IndexType istate, const Eigen::DenseBase< val_t > &val, const Eigen::DenseBase< cov_t > &cov) (function) of class Acts::MultiTrajectory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:717: warning: Member getUncalibratedSourceLink(IndexType istate) const (function) of class Acts::MultiTrajectory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:721: warning: Member referenceSurface(IndexType istate) const (function) of class Acts::MultiTrajectory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:725: warning: Member setReferenceSurface(IndexType istate, std::shared_ptr< const Surface > surface) (function) of class Acts::MultiTrajectory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:711: warning: Member setUncalibratedSourceLink(IndexType istate, SourceLink &&sourceLink) (function) of class Acts::MultiTrajectory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:255: warning: parameters of member Acts::MultiTrajectory::makeTrackState are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationDelegate.hpp:25: warning: Member direction (variable) of struct Acts::NavigationArguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationDelegate.hpp:24: warning: Member position (variable) of struct Acts::NavigationArguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationDelegate.hpp:27: warning: Member tolerance (variable) of struct Acts::NavigationArguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/NavigationLayer.hpp:68: warning: Member surfaceRepresentation() final (function) of class Acts::NavigationLayer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:141: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:138: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:212: warning: return type of member Acts::Layer::layerType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:110: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:107: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:121: warning: return type of member Acts::Layer::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:275: warning: Member m_ssApproachSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:274: warning: Member m_ssSensitiveSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/NavigationLayer.hpp:34: warning: return type of member Acts::NavigationLayer::create is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/NavigationLayer.hpp:63: warning: return type of member Acts::NavigationLayer::surfaceRepresentation is not documented
+- [ ] <surfaceRepresentation>:1: warning: parameters of member Acts::NavigationLayer::surfaceRepresentation are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/NavigationPolicyFactory.hpp:49: warning: Member build(const GeometryContext &gctx, const TrackingVolume &volume, const Logger &logger) const =0 (function) of class Acts::NavigationPolicyFactory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/NavigationPolicyFactory.hpp:44: warning: Member make() (function) of class Acts::NavigationPolicyFactory is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:131: warning: parameters of member Acts::NavigationStream::addPortalCandidate are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:100: warning: return type of member Acts::NavigationStream::candidates is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:103: warning: return type of member Acts::NavigationStream::candidates is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:92: warning: return type of member Acts::NavigationStream::currentCandidate is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:97: warning: return type of member Acts::NavigationStream::currentIndex is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:112: warning: return type of member Acts::NavigationStream::remainingCandidates is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:108: warning: return type of member Acts::NavigationStream::currentCandidate is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:65: warning: return type of member Acts::NavigationStream::Candidate::pathLength is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:63: warning: return type of member Acts::NavigationStream::Candidate::surface is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStream.hpp:60: warning: Member portal (variable) of struct Acts::NavigationStream::Candidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigationTarget.hpp:33: warning: Member NavigationTarget(const Surface &surface_, std::uint8_t surfaceIntersectionIndex_, BoundaryTolerance boundaryTolerance_) (function) of struct Acts::NavigationTarget is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigationTarget.hpp:40: warning: Member isNone() const (function) of struct Acts::NavigationTarget is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigationTarget.hpp:31: warning: Member None() (function) of struct Acts::NavigationTarget is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigationTarget.hpp:29: warning: Member boundaryTolerance (variable) of struct Acts::NavigationTarget is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigationTarget.hpp:27: warning: Member surface (variable) of struct Acts::NavigationTarget is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigationTarget.hpp:28: warning: Member surfaceIntersectionIndex (variable) of struct Acts::NavigationTarget is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:92: warning: Member ExternalSurfaces (typedef) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:89: warning: Member NavigationBoundaries (typedef) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:86: warning: Member NavigationLayers (typedef) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:83: warning: Member NavigationSurfaces (typedef) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:233: warning: Member currentSurface(const State &state) const (function) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:237: warning: Member currentVolume(const State &state) const (function) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:241: warning: Member currentVolumeMaterial(const State &state) const (function) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:256: warning: Member endOfWorldReached(const State &state) const (function) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:228: warning: Member makeState(const Options &options) const (function) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:260: warning: Member navigationBreak(const State &state) const (function) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:248: warning: Member startSurface(const State &state) const (function) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:252: warning: Member targetSurface(const State &state) const (function) of class Acts::Navigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:117: warning: Member Options(const GeometryContext &gctx) (function) of struct Acts::Navigator::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:132: warning: Member insertExternalSurface(GeometryIdentifier geoid) (function) of struct Acts::Navigator::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:137: warning: Member setPlainOptions(const NavigatorPlainOptions &options) (function) of struct Acts::Navigator::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:147: warning: Member State(const Options &options_) (function) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:175: warning: Member navBoundary() (function) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:172: warning: Member navLayer() (function) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:169: warning: Member navSurface() (function) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:208: warning: Member reset() (function) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:192: warning: Member resetAfterLayerSwitch() (function) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:197: warning: Member resetAfterVolumeSwitch() (function) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:183: warning: Member currentLayer (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:184: warning: Member currentSurface (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:182: warning: Member currentVolume (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:187: warning: Member navigationBreak (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:188: warning: Member navigationStage (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:149: warning: Member options (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:180: warning: Member startLayer (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:181: warning: Member startSurface (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:179: warning: Member startVolume (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:190: warning: Member statistics (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Navigator.hpp:185: warning: Member targetSurface (variable) of struct Acts::Navigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:68: warning: Member absQ() const noexcept (function) of struct Acts::Neutral is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:70: warning: Member extractCharge(double) const noexcept (function) of struct Acts::Neutral is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:74: warning: Member extractMomentum(double qOverP) const noexcept (function) of struct Acts::Neutral is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:79: warning: Member qOverP(double momentum, float signedQ) const noexcept (function) of struct Acts::Neutral is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:62: warning: parameters of member Acts::Neutral::Neutral are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:78: warning: Member NeutralParticleHypothesis(const GenericParticleHypothesis< other_charge_t > &other) (function) of class Acts::NeutralParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:74: warning: Member NeutralParticleHypothesis(PdgParticle absPdg) (function) of class Acts::NeutralParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:72: warning: Member NeutralParticleHypothesis(PdgParticle absPdg, float mass) (function) of class Acts::NeutralParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:72: warning: return type of member Acts::GenericParticleHypothesis< Neutral >::absoluteCharge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:66: warning: return type of member Acts::GenericParticleHypothesis< Neutral >::absolutePdg is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:105: warning: return type of member Acts::GenericParticleHypothesis< Neutral >::chargeType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:69: warning: return type of member Acts::GenericParticleHypothesis< Neutral >::mass is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:110: warning: Member toStream(std::ostream &os) const (function) of class Acts::GenericParticleHypothesis< Neutral > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:91: warning: Member geantino() (function) of class Acts::NeutralParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:82: warning: Member photon() (function) of class Acts::NeutralParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:86: warning: Member pion0() (function) of class Acts::NeutralParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:28: warning: Member ChargeType (typedef) of class Acts::GenericParticleHypothesis< Neutral > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:143: warning: parameters of member Acts::NonNeutralCharge::NonNeutralCharge are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:147: warning: Member NonNeutralCharge(SinglyCharged) noexcept (function) of class Acts::NonNeutralCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:150: warning: Member absQ() const noexcept (function) of class Acts::NonNeutralCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:152: warning: Member extractCharge(double qOverP) const noexcept (function) of class Acts::NonNeutralCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:155: warning: Member extractMomentum(double qOverP) const noexcept (function) of class Acts::NonNeutralCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:159: warning: Member qOverP(double momentum, float signedQ) const noexcept (function) of class Acts::NonNeutralCharge is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:110: warning: Member NonNeutralChargedParticleHypothesis(const GenericParticleHypothesis< other_charge_t > &other) (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:106: warning: Member NonNeutralChargedParticleHypothesis(PdgParticle absPdg) (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:103: warning: Member NonNeutralChargedParticleHypothesis(PdgParticle absPdg, float mass, NonNeutralCharge chargeType) (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:72: warning: return type of member Acts::GenericParticleHypothesis< NonNeutralCharge >::absoluteCharge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:66: warning: return type of member Acts::GenericParticleHypothesis< NonNeutralCharge >::absolutePdg is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:105: warning: return type of member Acts::GenericParticleHypothesis< NonNeutralCharge >::chargeType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:69: warning: return type of member Acts::GenericParticleHypothesis< NonNeutralCharge >::mass is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:110: warning: Member toStream(std::ostream &os) const (function) of class Acts::GenericParticleHypothesis< NonNeutralCharge > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:140: warning: Member chargedGeantino() (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:144: warning: Member chargedGeantino(float absQ) (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:122: warning: Member electron() (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:126: warning: Member kaon() (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:114: warning: Member muon() (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:118: warning: Member pion() (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:135: warning: Member pionLike(float absQ) (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:130: warning: Member proton() (function) of class Acts::NonNeutralChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:28: warning: Member ChargeType (typedef) of class Acts::GenericParticleHypothesis< NonNeutralCharge > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/NumericalTrackLinearizer.hpp:76: warning: Member bField (variable) of struct Acts::NumericalTrackLinearizer::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/NumericalTrackLinearizer.hpp:78: warning: Member propagator (variable) of struct Acts::NumericalTrackLinearizer::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/IVisualization3D.hpp:25: warning: Member FaceType (typedef) of class Acts::IVisualization3D is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/IVisualization3D.hpp:27: warning: Member s_defaultColor (variable) of class Acts::IVisualization3D is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:351: warning: Member OwningDelegate(Delegate< R(Args...), H, DelegateType::Owning > &&delegate) (function) of class Acts::OwningDelegate< R(Args...), H > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Delegate.hpp:355: warning: Member operator=(Delegate< R(Args...), H, DelegateType::Owning > &&delegate) (function) of class Acts::OwningDelegate< R(Args...), H > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:162: warning: Member ParticleHypothesis(const GenericParticleHypothesis< other_charge_t > &other) (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:158: warning: Member ParticleHypothesis(PdgParticle absPdg) (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:155: warning: Member ParticleHypothesis(PdgParticle absPdg, float mass, AnyCharge chargeType) (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:72: warning: return type of member Acts::GenericParticleHypothesis< AnyCharge >::absoluteCharge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:66: warning: return type of member Acts::GenericParticleHypothesis< AnyCharge >::absolutePdg is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:105: warning: return type of member Acts::GenericParticleHypothesis< AnyCharge >::chargeType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:69: warning: return type of member Acts::GenericParticleHypothesis< AnyCharge >::mass is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:110: warning: Member toStream(std::ostream &os) const (function) of class Acts::GenericParticleHypothesis< AnyCharge > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:197: warning: Member chargedGeantino() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:201: warning: Member chargedGeantino(float absQ) (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:172: warning: Member electron() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:194: warning: Member geantino() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:175: warning: Member kaon() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:166: warning: Member muon() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:182: warning: Member photon() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:169: warning: Member pion() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:185: warning: Member pion0() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:189: warning: Member pionLike(float absQ) (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:178: warning: Member proton() (function) of class Acts::ParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:28: warning: Member ChargeType (typedef) of class Acts::GenericParticleHypothesis< AnyCharge > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PassiveLayerBuilder.hpp:101: warning: return type of member Acts::PassiveLayerBuilder::getConfiguration is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:29: warning: return type of member Acts::PathLimitReached::checkAbort is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/PathSeeder.hpp:47: warning: Member PathSeed (typedef) of class Acts::PathSeeder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/PathSeeder.hpp:99: warning: parameters of member Acts::PathSeeder::PathSeeder are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineSurface.hpp:287: warning: Member lineDirection(const GeometryContext &gctx) const (function) of class Acts::LineSurface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/PerigeeSurface.hpp:66: warning: return type of member Acts::PerigeeSurface::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/PerigeeSurface.hpp:60: warning: return type of member Acts::PerigeeSurface::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/PerigeeSurface.hpp:63: warning: return type of member Acts::PerigeeSurface::type is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PlaneLayer.hpp:61: warning: Member surfaceRepresentation() override (function) of class Acts::PlaneLayer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:141: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:138: warning: return type of member Acts::Layer::approachDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:212: warning: return type of member Acts::Layer::layerType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:110: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:107: warning: return type of member Acts::Layer::surfaceArray is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:121: warning: return type of member Acts::Layer::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:275: warning: Member m_ssApproachSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:274: warning: Member m_ssSensitiveSurfaces (variable) of class Acts::Layer is not documented.
+- [ ] <surfaceRepresentation>:1: warning: parameters of member Acts::PlaneLayer::surfaceRepresentation are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/PlaneSurface.hpp:118: warning: return type of member Acts::PlaneSurface::bounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/PlaneSurface.hpp:205: warning: return type of member Acts::PlaneSurface::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/PlaneSurface.hpp:85: warning: return type of member Acts::PlaneSurface::normal is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RegularSurface.hpp:47: warning: return type of member Acts::PlaneSurface::normal is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/PlaneSurface.hpp:75: warning: return type of member Acts::PlaneSurface::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/PlaneSurface.hpp:115: warning: return type of member Acts::PlaneSurface::type is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/IVisualization3D.hpp:25: warning: Member FaceType (typedef) of class Acts::IVisualization3D is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Visualization/IVisualization3D.hpp:27: warning: Member s_defaultColor (variable) of class Acts::IVisualization3D is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Polyhedron.hpp:32: warning: Member FaceType (typedef) of class Acts::Polyhedron is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Polyhedron.hpp:87: warning: Member visualize(IVisualization3D &helper, const ViewConfig &viewConfig={}) const (function) of class Acts::Polyhedron is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Portal.hpp:107: warning: return type of member Acts::Portal::fuse is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Portal.hpp:137: warning: return type of member Acts::Portal::merge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Portal.hpp:93: warning: Member oppositeNormal (variable) of struct Acts::Portal::Arguments is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Portal.hpp:80: warning: parameters of member Acts::Portal::Arguments::Link::Link are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:110: warning: parameters of member Acts::PortalLinkBase::checkMergePreconditions are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:116: warning: Member m_surface (variable) of class Acts::PortalLinkBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Propagator.hpp:141: warning: Member NavigatorOptions (typedef) of class Acts::Propagator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Propagator.hpp:144: warning: Member Options (typedef) of class Acts::Propagator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Propagator.hpp:136: warning: Member State (typedef) of class Acts::Propagator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Propagator.hpp:139: warning: Member StepperOptions (typedef) of class Acts::Propagator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Propagator.hpp:391: warning: Member navigator() const (function) of class Acts::Propagator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/Propagator.hpp:389: warning: Member stepper() const (function) of class Acts::Propagator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorOptions.hpp:98: warning: Member actor_list_type (typedef) of struct Acts::PropagatorOptions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorOptions.hpp:97: warning: Member navigator_options_type (typedef) of struct Acts::PropagatorOptions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorOptions.hpp:96: warning: Member stepper_options_type (typedef) of struct Acts::PropagatorOptions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorOptions.hpp:100: warning: parameters of member Acts::PropagatorOptions::PropagatorOptions are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorOptions.hpp:108: warning: parameters of member Acts::PropagatorOptions::PropagatorOptions are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorOptions.hpp:129: warning: return type of member Acts::PropagatorOptions::extend is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorOptions.hpp:67: warning: parameters of member Acts::PropagatorPlainOptions::PropagatorPlainOptions are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorState.hpp:40: warning: Member navigator_state_type (typedef) of struct Acts::PropagatorState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorState.hpp:38: warning: Member options_type (typedef) of struct Acts::PropagatorState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorState.hpp:39: warning: Member stepper_state_type (typedef) of struct Acts::PropagatorState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/ProtoAxis.hpp:64: warning: Member ProtoAxis(ProtoAxis &&)=default (function) of class Acts::ProtoAxis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/ProtoAxis.hpp:93: warning: return type of member Acts::ProtoAxis::isAutorange is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/ProtoAxis.hpp:65: warning: Member operator=(ProtoAxis &&)=default (function) of class Acts::ProtoAxis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/ProtoAxis.hpp:61: warning: return type of member Acts::ProtoAxis::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/ProtoDetector.hpp:122: warning: Member name (variable) of struct Acts::ProtoDetector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/ProtoDetector.hpp:123: warning: Member worldVolume (variable) of struct Acts::ProtoDetector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/ProtoDetector.hpp:138: warning: return type of member Acts::ProtoDetector::toString is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ProtoLayerHelper.hpp:33: warning: Member SortingConfig (typedef) of class Acts::ProtoLayerHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/ProtoDetector.hpp:84: warning: return type of member Acts::ProtoVolume::operator== is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/ProtoDetector.hpp:115: warning: return type of member Acts::ProtoVolume::toString is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ProtoVolumeMaterial.hpp:54: warning: return type of member Acts::ProtoVolumeMaterial::binUtility is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ProtoVolumeMaterial.hpp:62: warning: return type of member Acts::ProtoVolumeMaterial::material is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ProtoVolumeMaterial.hpp:59: warning: return type of member Acts::ProtoVolumeMaterial::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/ProtoVolumeMaterial.hpp:67: warning: return type of member Acts::ProtoVolumeMaterial::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ProxyAccessor.hpp:69: warning: Member key (variable) of struct Acts::ProxyAccessorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:31: warning: Member BoundValues (enumeration) of class Acts::RadialBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:105: warning: return type of member Acts::RadialBounds::binningValuePhi is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:102: warning: return type of member Acts::RadialBounds::binningValueR is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:91: warning: return type of member Acts::RadialBounds::coversFullAzimuth is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:88: warning: return type of member Acts::RadialBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:96: warning: parameters of member Acts::RadialBounds::insideRadialBounds are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:96: warning: return type of member Acts::RadialBounds::insideRadialBounds is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:84: warning: return type of member Acts::RadialBounds::rMax is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:81: warning: return type of member Acts::RadialBounds::rMin is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RadialBounds.hpp:78: warning: return type of member Acts::RadialBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:566: warning: return type of member Acts::RangeXD::min is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:573: warning: return type of member Acts::RangeXD::min is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:580: warning: return type of member Acts::RangeXD::max is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:587: warning: return type of member Acts::RangeXD::max is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:412: warning: return type of member Acts::RangeXD::max is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:420: warning: return type of member Acts::RangeXD::max is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:408: warning: return type of member Acts::RangeXD::min is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:416: warning: return type of member Acts::RangeXD::min is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialInteraction.hpp:98: warning: Member materialInX0 (variable) of struct Acts::RecordedMaterial is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RectangleBounds.hpp:31: warning: Member BoundValues (enumeration) of class Acts::RectangleBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RectangleBounds.hpp:104: warning: return type of member Acts::RectangleBounds::halfLengthX is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RectangleBounds.hpp:107: warning: return type of member Acts::RectangleBounds::halfLengthY is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RectangleBounds.hpp:101: warning: return type of member Acts::RectangleBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RectangleBounds.hpp:97: warning: return type of member Acts::RectangleBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/RegularSurface.hpp:47: warning: return type of member Acts::RegularSurface::normal is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:34: warning: Member ErrorType (typedef) of class Acts::Result is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:33: warning: Member ValueType (typedef) of class Acts::Result is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:45: warning: parameters of member Acts::Result::Result are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:34: warning: Member ErrorType (typedef) of class Acts::Result< void, E > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:33: warning: Member ValueType (typedef) of class Acts::Result< void, E > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:353: warning: parameters of member Acts::Result< void, E >::Result are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:45: warning: parameters of member Acts::Result< void, E >::Result are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:356: warning: parameters of member Acts::Result< void, E >::operator= are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:356: warning: return type of member Acts::Result< void, E >::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:419: warning: Member value() const (function) of class Acts::Result< void, E > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:364: warning: return type of member Acts::Result< void, E >::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:171: warning: found documented return type for Acts::Result< void, E >::value that does not return anything
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Result.hpp:200: warning: found documented return type for Acts::Result< void, E >::value_or that does not return anything
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/RiddersPropagator.hpp:85: warning: Member Options (typedef) of class Acts::RiddersPropagator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:98: warning: Member TrackStateTypes (enumeration) of class Acts::ScoreBasedAmbiguityResolution is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:154: warning: Member ScoreBasedAmbiguityResolution(const Config &cfg, std::unique_ptr< const Logger > logger=getDefaultLogger("ScoreBasedAmbiguityResolution", Logging::INFO)) (function) of class Acts::ScoreBasedAmbiguityResolution is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:114: warning: Member detectorConfigs (variable) of struct Acts::ScoreBasedAmbiguityResolution::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:127: warning: Member useAmbiguityScoring (variable) of struct Acts::ScoreBasedAmbiguityResolution::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:113: warning: Member volumeMap (variable) of struct Acts::ScoreBasedAmbiguityResolution::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:75: warning: Member detectorId (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:55: warning: Member etaBins (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:49: warning: Member hitsScoreWeight (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:50: warning: Member holesScoreWeight (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:69: warning: Member maxHits (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:70: warning: Member maxHoles (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:61: warning: Member maxHolesPerEta (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:64: warning: Member maxOutliersPerEta (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:67: warning: Member maxSharedHitsPerEta (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:58: warning: Member minHitsPerEta (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:52: warning: Member otherScoreWeight (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:51: warning: Member outliersScoreWeight (variable) of struct Acts::ScoreBasedAmbiguityResolution::DetectorConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:137: warning: Member OptionalCuts (typedef) of struct Acts::ScoreBasedAmbiguityResolution::Optionals is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:142: warning: Member OptionalHitSelection (typedef) of struct Acts::ScoreBasedAmbiguityResolution::Optionals is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:139: warning: Member OptionalScoreModifier (typedef) of struct Acts::ScoreBasedAmbiguityResolution::Optionals is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:146: warning: Member cuts (variable) of struct Acts::ScoreBasedAmbiguityResolution::Optionals is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:151: warning: Member hitSelections (variable) of struct Acts::ScoreBasedAmbiguityResolution::Optionals is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:147: warning: Member weights (variable) of struct Acts::ScoreBasedAmbiguityResolution::Optionals is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:92: warning: Member nHits (variable) of struct Acts::ScoreBasedAmbiguityResolution::TrackFeatures is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:93: warning: Member nHoles (variable) of struct Acts::ScoreBasedAmbiguityResolution::TrackFeatures is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:94: warning: Member nOutliers (variable) of struct Acts::ScoreBasedAmbiguityResolution::TrackFeatures is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/AmbiguityResolution/ScoreBasedAmbiguityResolution.hpp:95: warning: Member nSharedHits (variable) of struct Acts::ScoreBasedAmbiguityResolution::TrackFeatures is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilter.hpp:41: warning: Member SeedFilter(const SeedFilterConfig &config, IExperimentCuts< external_spacepoint_t > *expCuts=nullptr) (function) of class Acts::SeedFilter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilter.hpp:44: warning: Member SeedFilter(const SeedFilterConfig &config, std::unique_ptr< const Acts::Logger > logger, IExperimentCuts< external_spacepoint_t > *expCuts=nullptr) (function) of class Acts::SeedFilter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilter.hpp:50: warning: Member SeedFilter(SeedFilter< external_spacepoint_t > &&) noexcept=default (function) of class Acts::SeedFilter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilter.hpp:103: warning: Member getExperimentCuts() const (function) of class Acts::SeedFilter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilter.hpp:102: warning: Member getSeedFilterConfig() const (function) of class Acts::SeedFilter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilter.hpp:51: warning: Member operator=(SeedFilter< external_spacepoint_t > &&) noexcept=default (function) of class Acts::SeedFilter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilterConfig.hpp:89: warning: Member toInternalUnits() const (function) of struct Acts::SeedFilterConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilterConfig.hpp:88: warning: Member isInInternalUnits (variable) of struct Acts::SeedFilterConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFilterConfig.hpp:54: warning: Member numSeedIncrement (variable) of struct Acts::SeedFilterConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:245: warning: Member calculateDerivedQuantities() const (function) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:197: warning: Member toInternalUnits() const (function) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:184: warning: Member voidSpacePointSelector(const SpacePoint &) (function) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:105: warning: Member collisionRegionMax (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:73: warning: Member deltaRMiddleMaxSPRange (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:192: warning: Member experimentCuts (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:195: warning: Member isInInternalUnits (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:167: warning: Member maxScatteringAngle2 (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:172: warning: Member nAvgTrplPerSpBLimit (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:171: warning: Member nTrplPerSpBLimit (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:38: warning: Member phiMax (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:160: warning: Member rAlign (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:41: warning: Member rMax (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:63: warning: Member rMaxMiddle (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:30: warning: Member seedFilter (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:181: warning: Member spacePointSelector (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:40: warning: Member zMax (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderConfig.hpp:39: warning: Member zMin (variable) of struct Acts::SeedFinderConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:151: warning: Member calculateDerivedQuantities() const (function) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:166: warning: Member toInternalUnits() const (function) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:93: warning: Member collisionRegionMax (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:60: warning: Member deltaRMiddleMaxSPRange (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:146: warning: Member experimentCuts (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:149: warning: Member isInInternalUnits (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:143: warning: Member maxScatteringAngle2 (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:33: warning: Member phiMax (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:37: warning: Member rMax (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:50: warning: Member rMaxMiddle (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:27: warning: Member seedFilter (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinderOrthogonalConfig.hpp:36: warning: Member zMax (variable) of struct Acts::SeedFinderOrthogonalConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidPortalShell.hpp:88: warning: Member transform() const override (function) of class Acts::SingleCuboidPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CuboidPortalShell.hpp:29: warning: Member Face (typedef) of class Acts::CuboidPortalShell is not documented.
+- [ ] <transform>:1: warning: parameters of member Acts::SingleCuboidPortalShell::transform are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderPortalShell.hpp:64: warning: Member Base (typedef) of class Acts::SingleCylinderPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderPortalShell.hpp:26: warning: Member Face (typedef) of class Acts::CylinderPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/SingleSeedVertexFinder.hpp:96: warning: return type of member Acts::SingleSeedVertexFinder::config is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/SingleSeedVertexFinder.hpp:60: warning: Member rMaxFar (variable) of struct Acts::SingleSeedVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/SingleSeedVertexFinder.hpp:58: warning: Member rMaxMiddle (variable) of struct Acts::SingleSeedVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/SingleSeedVertexFinder.hpp:56: warning: Member rMaxNear (variable) of struct Acts::SingleSeedVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/SingleSeedVertexFinder.hpp:59: warning: Member rMinFar (variable) of struct Acts::SingleSeedVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/SingleSeedVertexFinder.hpp:57: warning: Member rMinMiddle (variable) of struct Acts::SingleSeedVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidPortalShell.hpp:63: warning: Member SingleTrapezoidPortalShell(TrackingVolume &volume) (function) of class Acts::SingleTrapezoidPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidPortalShell.hpp:86: warning: Member transform() const override (function) of class Acts::SingleTrapezoidPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidPortalShell.hpp:25: warning: Member Face (typedef) of class Acts::TrapezoidPortalShell is not documented.
+- [ ] <transform>:1: warning: parameters of member Acts::SingleTrapezoidPortalShell::transform are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:110: warning: Member absQ() const noexcept (function) of struct Acts::SinglyCharged is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:112: warning: Member extractCharge(double qOverP) const noexcept (function) of struct Acts::SinglyCharged is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:116: warning: Member extractMomentum(double qOverP) const noexcept (function) of struct Acts::SinglyCharged is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:120: warning: Member qOverP(double momentum, float signedQ) const noexcept (function) of struct Acts::SinglyCharged is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Charge.hpp:104: warning: parameters of member Acts::SinglyCharged::SinglyCharged are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:35: warning: Member SinglyChargedParticleHypothesis(const GenericParticleHypothesis< other_charge_t > &other) (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:31: warning: Member SinglyChargedParticleHypothesis(PdgParticle absPdg) (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:28: warning: Member SinglyChargedParticleHypothesis(PdgParticle absPdg, float mass) (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:72: warning: return type of member Acts::GenericParticleHypothesis< SinglyCharged >::absoluteCharge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:66: warning: return type of member Acts::GenericParticleHypothesis< SinglyCharged >::absolutePdg is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:105: warning: return type of member Acts::GenericParticleHypothesis< SinglyCharged >::chargeType is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:69: warning: return type of member Acts::GenericParticleHypothesis< SinglyCharged >::mass is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:110: warning: Member toStream(std::ostream &os) const (function) of class Acts::GenericParticleHypothesis< SinglyCharged > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:60: warning: Member chargedGeantino() (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:47: warning: Member electron() (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:51: warning: Member kaon() (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:39: warning: Member muon() (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:43: warning: Member pion() (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ParticleHypothesis.hpp:55: warning: Member proton() (function) of class Acts::SinglyChargedParticleHypothesis is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/GenericParticleHypothesis.hpp:28: warning: Member ChargeType (typedef) of class Acts::GenericParticleHypothesis< SinglyCharged > is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/SolenoidBField.hpp:93: warning: parameters of member Acts::SolenoidBField::SolenoidBField are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/SolenoidBField.hpp:99: warning: return type of member Acts::SolenoidBField::getField is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/SolenoidBField.hpp:108: warning: return type of member Acts::SolenoidBField::getField is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/SpacePointFormation/SpacePointBuilder.hpp:34: warning: Member BuilderFunction (typedef) of class Acts::SpacePointBuilder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/SpacePointFormation/SpacePointBuilder.hpp:90: warning: Member logger() const (function) of class Acts::SpacePointBuilder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/SpacePointFormation/SpacePointBuilder.hpp:78: warning: Member m_config (variable) of class Acts::SpacePointBuilder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/SpacePointFormation/SpacePointBuilder.hpp:88: warning: Member m_spUtility (variable) of class Acts::SpacePointBuilder is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:36: warning: parameters of member Acts::SpacePointData::SpacePointData are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:71: warning: Member bottomStripVector(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:68: warning: Member hasDynamicVariable() const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:38: warning: Member operator=(SpacePointData &&other) noexcept=default (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:48: warning: Member phi(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:47: warning: Member radius(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:61: warning: parameters of member Acts::SpacePointData::resize are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:76: warning: Member setBottomStripVector(const std::size_t idx, const Acts::Vector3 &value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:57: warning: Member setPhi(const std::size_t idx, const float value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:56: warning: Member setRadius(const std::size_t idx, const float value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:77: warning: Member setStripCenterDistance(const std::size_t idx, const Acts::Vector3 &value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:79: warning: Member setTopStripCenterPosition(const std::size_t idx, const Acts::Vector3 &value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:75: warning: Member setTopStripVector(const std::size_t idx, const Acts::Vector3 &value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:59: warning: Member setVarianceR(const std::size_t idx, const float value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:58: warning: Member setVarianceZ(const std::size_t idx, const float value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:52: warning: parameters of member Acts::SpacePointData::setX are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:54: warning: Member setY(const std::size_t idx, const float value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:55: warning: Member setZ(const std::size_t idx, const float value) (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:72: warning: Member stripCenterDistance(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:73: warning: Member topStripCenterPosition(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:70: warning: Member topStripVector(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:50: warning: Member varianceR(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:49: warning: Member varianceZ(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:43: warning: parameters of member Acts::SpacePointData::x are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:43: warning: return type of member Acts::SpacePointData::x is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:45: warning: Member y(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointData.hpp:46: warning: Member z(const std::size_t idx) const (function) of class Acts::SpacePointData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointMutableData.hpp:36: warning: parameters of member Acts::SpacePointMutableData::SpacePointMutableData are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointMutableData.hpp:46: warning: Member deltaR(const std::size_t idx) const (function) of class Acts::SpacePointMutableData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointMutableData.hpp:38: warning: Member operator=(SpacePointMutableData &&other) noexcept=default (function) of class Acts::SpacePointMutableData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointMutableData.hpp:44: warning: parameters of member Acts::SpacePointMutableData::quality are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointMutableData.hpp:44: warning: return type of member Acts::SpacePointMutableData::quality is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointMutableData.hpp:52: warning: parameters of member Acts::SpacePointMutableData::resize are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointMutableData.hpp:50: warning: Member setDeltaR(const std::size_t idx, const float value) (function) of class Acts::SpacePointMutableData is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SpacePointMutableData.hpp:48: warning: parameters of member Acts::SpacePointMutableData::setQuality are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:52: warning: Member BField (typedef) of class Acts::StraightLineStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:49: warning: Member BoundState (typedef) of class Acts::StraightLineStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:48: warning: Member Covariance (typedef) of class Acts::StraightLineStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:50: warning: Member CurvilinearState (typedef) of class Acts::StraightLineStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:47: warning: Member Jacobian (typedef) of class Acts::StraightLineStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:127: warning: return type of member Acts::StraightLineStepper::getField is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:120: warning: Member initialize(State &state, const BoundTrackParameters &par) const (function) of class Acts::StraightLineStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:122: warning: Member initialize(State &state, const BoundVector &boundParams, const std::optional< BoundMatrix > &cov, ParticleHypothesis particleHypothesis, const Surface &surface) const (function) of class Acts::StraightLineStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:118: warning: Member makeState(const Options &options) const (function) of class Acts::StraightLineStepper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:154: warning: return type of member Acts::StraightLineStepper::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:168: warning: return type of member Acts::StraightLineStepper::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:142: warning: return type of member Acts::StraightLineStepper::direction is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:240: warning: return type of member Acts::StraightLineStepper::getStepSize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:161: warning: return type of member Acts::StraightLineStepper::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:256: warning: return type of member Acts::StraightLineStepper::outputStepSize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:175: warning: return type of member Acts::StraightLineStepper::particleHypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:135: warning: return type of member Acts::StraightLineStepper::position is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:149: warning: return type of member Acts::StraightLineStepper::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:182: warning: return type of member Acts::StraightLineStepper::time is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:187: warning: return type of member Acts::StraightLineStepper::updateSurfaceStatus is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:97: warning: Member cov (variable) of struct Acts::StraightLineStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:75: warning: Member options (variable) of struct Acts::StraightLineStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StraightLineStepper.hpp:112: warning: Member previousStepSize (variable) of struct Acts::StraightLineStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/LineSurface.hpp:287: warning: Member lineDirection(const GeometryContext &gctx) const (function) of class Acts::LineSurface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/StrawSurface.hpp:85: warning: return type of member Acts::StrawSurface::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/StrawSurface.hpp:79: warning: return type of member Acts::StrawSurface::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/StrawSurface.hpp:82: warning: return type of member Acts::StrawSurface::type is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:477: warning: Member visualize(IVisualization3D &helper, const GeometryContext &gctx, const ViewConfig &viewConfig=s_viewSurface) const (function) of class Acts::Surface is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:115: warning: parameters of member Acts::Surface::makeShared are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:115: warning: return type of member Acts::Surface::makeShared is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:411: warning: return type of member Acts::Surface::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:145: warning: return type of member Acts::Surface::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:158: warning: return type of member Acts::Surface::operator== is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:483: warning: return type of member Acts::Surface::toStreamImpl is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:408: warning: return type of member Acts::Surface::toString is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/Surface.hpp:162: warning: return type of member Acts::Surface::type is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceArray.hpp:522: warning: return type of member Acts::SurfaceArray::binningValues is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceArray.hpp:520: warning: Member transform() const (function) of class Acts::SurfaceArray is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceArray.hpp:108: warning: return type of member Acts::SurfaceArray::ISurfaceGridLookup::binningValues is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceArray.hpp:420: warning: return type of member Acts::SurfaceArray::SingleElementLookup::completeBinning is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceArray.hpp:128: warning: Member Grid_t (typedef) of struct Acts::SurfaceArray::SurfaceGridLookup is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceArray.hpp:120: warning: Member DIM (variable) of struct Acts::SurfaceArray::SurfaceGridLookup is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceArray.hpp:259: warning: return type of member Acts::SurfaceArray::SurfaceGridLookup::binningValues is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:239: warning: return type of member Acts::SurfaceArrayCreator::isSurfaceEquivalent is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceBounds.hpp:74: warning: return type of member Acts::SurfaceBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:77: warning: Member result_type (typedef) of struct Acts::SurfaceCollector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:74: warning: Member collected (variable) of struct Acts::SurfaceCollector::this_result is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:56: warning: Member direction (variable) of struct Acts::SurfaceHit is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:55: warning: Member position (variable) of struct Acts::SurfaceHit is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:54: warning: Member surface (variable) of struct Acts::SurfaceHit is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/SurfaceMaterialMapper.hpp:82: warning: Member StraightLinePropagator (typedef) of class Acts::SurfaceMaterialMapper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/SurfaceMaterialMapper.hpp:145: warning: return type of member Acts::SurfaceMaterialMapper::createState is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceMergingException.hpp:21: warning: Member SurfaceMergingException(std::weak_ptr< const Surface > surfaceA, std::weak_ptr< const Surface > surfaceB, const std::string &reason) (function) of class Acts::SurfaceMergingException is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceMergingException.hpp:28: warning: Member what() const override (function) of class Acts::SurfaceMergingException is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:75: warning: Member SurfaceReached(double nLimit) (function) of struct Acts::SurfaceReached is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:66: warning: Member boundaryTolerance (variable) of struct Acts::SurfaceReached is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:65: warning: Member surface (variable) of struct Acts::SurfaceReached is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:79: warning: return type of member Acts::SurfaceReached::checkAbort is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:21: warning: Member selectMaterial (variable) of struct Acts::SurfaceSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:22: warning: Member selectPassive (variable) of struct Acts::SurfaceSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:20: warning: Member selectSensitive (variable) of struct Acts::SurfaceSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SurfaceCollector.hpp:37: warning: return type of member Acts::SurfaceSelector::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SympyStepper.hpp:76: warning: Member cov (variable) of struct Acts::SympyStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/SympyStepper.hpp:65: warning: Member options (variable) of struct Acts::SympyStepper::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:43: warning: Member Identifier (typedef) of class Acts::TGeoDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:42: warning: Member identifier_diff (typedef) of class Acts::TGeoDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:41: warning: Member identifier_type (typedef) of class Acts::TGeoDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:115: warning: Member identifier() const (function) of class Acts::TGeoDetectorElement is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:122: warning: return type of member Acts::TGeoDetectorElement::surface is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:133: warning: return type of member Acts::TGeoDetectorElement::tgeoNode is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:130: warning: return type of member Acts::TGeoDetectorElement::thickness is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:127: warning: return type of member Acts::TGeoDetectorElement::surface is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoDetectorElement.hpp:119: warning: return type of member Acts::TGeoDetectorElement::transform is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:92: warning: Member ElementFactory (typedef) of class Acts::TGeoLayerBuilder is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:175: warning: return type of member Acts::TGeoLayerBuilder::detectorElements is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:169: warning: return type of member Acts::TGeoLayerBuilder::getConfiguration is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:172: warning: parameters of member Acts::TGeoLayerBuilder::setLogger are not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:97: warning: Member defaultElementFactory(const TGeoDetectorElement::Identifier &identifier, const TGeoNode &tGeoNode, const TGeoMatrix &tGeoMatrix, const std::string &axes, double scalor, std::shared_ptr< const Acts::ISurfaceMaterial > material) (function) of class Acts::TGeoLayerBuilder is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:152: warning: return type of member Acts::TGeoLayerBuilder::centralLayers is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:162: warning: return type of member Acts::TGeoLayerBuilder::identification is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:146: warning: return type of member Acts::TGeoLayerBuilder::negativeLayers is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:158: warning: return type of member Acts::TGeoLayerBuilder::positiveLayers is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:61: warning: Member RangeConfig (typedef) of struct Acts::TGeoLayerBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoLayerBuilder.hpp:63: warning: Member SplitConfig (typedef) of struct Acts::TGeoLayerBuilder::LayerConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoParser.hpp:34: warning: Member ParseRange (typedef) of struct Acts::TGeoParser is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoParser.hpp:52: warning: Member node (variable) of struct Acts::TGeoParser::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoParser.hpp:54: warning: Member onBranch (variable) of struct Acts::TGeoParser::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoParser.hpp:56: warning: Member selectedNodes (variable) of struct Acts::TGeoParser::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/TGeo/include/Acts/Plugins/TGeo/TGeoParser.hpp:50: warning: Member volume (variable) of struct Acts::TGeoParser::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:81: warning: Member const_iterator (typedef) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:75: warning: Member ConstTrackStateProxy (typedef) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:79: warning: Member iterator (typedef) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:78: warning: Member size_type (typedef) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:71: warning: Member TrackContainerBackend (typedef) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:72: warning: Member TrackStateContainerBackend (typedef) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:74: warning: Member TrackStateProxy (typedef) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:344: warning: Member component(HashedString key, IndexType itrack) (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:356: warning: Member component(HashedString key, IndexType itrack) const (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:337: warning: Member component(IndexType itrack) (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:351: warning: Member component(IndexType itrack) const (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:371: warning: Member covariance(IndexType itrack) (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:377: warning: Member covariance(IndexType itrack) const (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:394: warning: Member forwardTrackStateRange(IndexType itrack) (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:404: warning: Member forwardTrackStateRange(IndexType itrack) const (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:360: warning: Member parameters(IndexType itrack) (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:366: warning: Member parameters(IndexType itrack) const (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:382: warning: Member reverseTrackStateRange(IndexType itrack) (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:389: warning: Member reverseTrackStateRange(IndexType itrack) const (function) of class Acts::TrackContainer is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:248: warning: return type of member Acts::TrackContainer::hasColumn is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackContainer.hpp:254: warning: return type of member Acts::TrackContainer::hasColumn is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/TrackDensityVertexFinder.hpp:37: warning: Member trackDensityEstimator (variable) of struct Acts::TrackDensityVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingGeometry.hpp:193: warning: return type of member Acts::TrackingGeometry::geoIdSurfaceMap is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:308: warning: Member MutablePortalRange (typedef) of class Acts::TrackingVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:328: warning: Member MutableSurfaceRange (typedef) of class Acts::TrackingVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:293: warning: Member MutableVolumeRange (typedef) of class Acts::TrackingVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:312: warning: Member PortalRange (typedef) of class Acts::TrackingVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:331: warning: Member SurfaceRange (typedef) of class Acts::TrackingVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:296: warning: Member VolumeRange (typedef) of class Acts::TrackingVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:120: warning: Member TrackingVolume(TrackingVolume &&) noexcept (function) of class Acts::TrackingVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:285: warning: return type of member Acts::TrackingVolume::motherVolume is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:282: warning: return type of member Acts::TrackingVolume::motherVolume is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:121: warning: Member operator=(TrackingVolume &&) noexcept (function) of class Acts::TrackingVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:267: warning: return type of member Acts::TrackingVolume::volumeMaterial is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:270: warning: return type of member Acts::TrackingVolume::volumeMaterialPtr is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:260: warning: return type of member Acts::TrackingVolume::volumeName is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:404: warning: return type of member Acts::TrackingVolume::confinedVolumes is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:407: warning: return type of member Acts::TrackingVolume::denseVolumes is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:410: warning: return type of member Acts::TrackingVolume::boundarySurfaces is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:477: warning: return type of member Acts::TrackingVolume::glueVolumesDescriptor is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackParamsLookupAccumulator.hpp:35: warning: Member LookupGrid (typedef) of class Acts::TrackParamsLookupAccumulator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackParamsLookupAccumulator.hpp:36: warning: Member TrackParameters (typedef) of class Acts::TrackParamsLookupAccumulator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackParamsLookupAccumulator.hpp:39: warning: parameters of member Acts::TrackParamsLookupAccumulator::TrackParamsLookupAccumulator are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackProxy.hpp:690: warning: unable to resolve reference to 'HashedString' for \ref command
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackProxy.hpp:764: warning: parameters of member Acts::TrackProxy::createParametersFromState are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackProxy.hpp:146: warning: parameters of member Acts::TrackProxy::operator== are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackProxy.hpp:621: warning: return type of member Acts::TrackProxy::shallowCopy is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:71: warning: Member absEtaMax (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:70: warning: Member absEtaMin (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:69: warning: Member etaMax (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:68: warning: Member etaMin (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:59: warning: Member loc0Max (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:58: warning: Member loc0Min (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:61: warning: Member loc1Max (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:60: warning: Member loc1Min (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:81: warning: Member maxChi2 (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:77: warning: Member maxHoles (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:79: warning: Member maxHolesAndOutliers (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:78: warning: Member maxOutliers (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:80: warning: Member maxSharedHits (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:88: warning: Member measurementCounter (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:76: warning: Member minMeasurements (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:67: warning: Member phiMax (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:66: warning: Member phiMin (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:74: warning: Member ptMax (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:73: warning: Member ptMin (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:64: warning: Member timeMax (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:63: warning: Member timeMin (variable) of struct Acts::TrackSelector::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackSelector.hpp:174: warning: parameters of member Acts::TrackSelector::EtaBinnedConfig::EtaBinnedConfig are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:43: warning: Member BoundState (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:53: warning: Member Calibrator (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:44: warning: Member candidate_container_t (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:57: warning: Member MeasurementSelector (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:48: warning: Member SourceLinkAccessor (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:41: warning: Member TrackProxy (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:39: warning: Member TrackStateContainerBackend (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:42: warning: Member TrackStateProxy (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:37: warning: Member TrackStatesResult (typedef) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:72: warning: Member measurementSelector (variable) of struct Acts::TrackStateCreator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:116: warning: return type of member Acts::TrackStateCreator::createSourceLinkTrackStates is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:214: warning: return type of member Acts::TrackStateCreator::processSelectedTrackStates is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/TrackStateCreator.hpp:285: warning: return type of member Acts::TrackStateCreator::voidMeasurementSelector is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateProxy.hpp:447: warning: Member predicted() (function) of class Acts::TrackStateProxy is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateProxy.hpp:463: warning: Member predictedCovariance() (function) of class Acts::TrackStateProxy is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateProxy.hpp:609: warning: unable to resolve reference to 'SourceLink' for \ref command
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateProxy.hpp:779: warning: parameters of member Acts::TrackStateProxy::allocateCalibrated are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateType.hpp:40: warning: Member raw_type (typedef) of class Acts::TrackStateType is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateType.hpp:41: warning: Member kRawBits (variable) of class Acts::TrackStateType is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/TrapezoidBounds.hpp:32: warning: Member BoundValues (enumeration) of class Acts::TrapezoidBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/TrapezoidBounds.hpp:122: warning: return type of member Acts::TrapezoidBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/TrapezoidBounds.hpp:118: warning: return type of member Acts::TrapezoidBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidPortalShell.hpp:25: warning: Member Face (typedef) of class Acts::TrapezoidPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidPortalShell.hpp:48: warning: Member transform() const =0 (function) of class Acts::TrapezoidPortalShell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidVolumeBounds.hpp:148: warning: Member TrapezoidVolumeBounds(const TrapezoidVolumeBounds &trabo)=default (function) of class Acts::TrapezoidVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidVolumeBounds.hpp:150: warning: Member operator=(const TrapezoidVolumeBounds &trabo)=default (function) of class Acts::TrapezoidVolumeBounds is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidVolumeBounds.hpp:198: warning: return type of member Acts::TrapezoidVolumeBounds::get is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrapezoidVolumeBounds.hpp:194: warning: return type of member Acts::TrapezoidVolumeBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:46: warning: parameters of member Acts::TripletCandidate::TripletCandidate are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:44: warning: Member operator=(const TripletCandidate &)=default (function) of struct Acts::TripletCandidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:55: warning: Member operator=(TripletCandidate &&other) noexcept (function) of struct Acts::TripletCandidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:65: warning: Member bottom (variable) of struct Acts::TripletCandidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:70: warning: Member isQuality (variable) of struct Acts::TripletCandidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:66: warning: Member middle (variable) of struct Acts::TripletCandidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:67: warning: Member top (variable) of struct Acts::TripletCandidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:68: warning: Member weight (variable) of struct Acts::TripletCandidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/CandidatesForMiddleSp.hpp:69: warning: Member zOrigin (variable) of struct Acts::TripletCandidate is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:110: warning: parameters of member Acts::PortalLinkBase::checkMergePreconditions are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalLinkBase.hpp:116: warning: Member m_surface (variable) of class Acts::PortalLinkBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:247: warning: Member Config (typedef) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:248: warning: Member Options (typedef) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:272: warning: Member currentSurface(const State &state) const (function) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:273: warning: Member currentVolume(const State &state) const (function) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:274: warning: Member currentVolumeMaterial(const State &state) const (function) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:275: warning: Member endOfWorldReached(State &state) const (function) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:267: warning: Member makeState(const Options &options) const (function) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:276: warning: Member navigationBreak(const State &state) const (function) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:277: warning: Member startSurface(const State &state) const (function) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:278: warning: Member targetSurface(const State &state) const (function) of class Acts::TryAllNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:117: warning: Member currentSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:121: warning: Member currentVolume(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:125: warning: Member currentVolumeMaterial(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:140: warning: Member endOfWorldReached(State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:144: warning: Member navigationBreak(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:132: warning: Member startSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:136: warning: Member targetSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:206: warning: parameters of member Acts::TryAllNavigatorBase::initializeVolumeCandidates are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:229: warning: Member logger() const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:223: warning: Member volInfo(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:231: warning: Member m_cfg (variable) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:233: warning: Member m_logger (variable) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:282: warning: return type of member Acts::TryAllNavigator::initialize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:252: warning: Member State(const Options &options_) (function) of struct Acts::TryAllNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:81: warning: Member State(const Options &options_) (function) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:255: warning: Member currentCandidates (variable) of struct Acts::TryAllNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:97: warning: Member currentSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:98: warning: Member currentVolume (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:83: warning: Member options (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:88: warning: Member startSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:93: warning: Member targetSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:117: warning: Member currentSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:121: warning: Member currentVolume(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:125: warning: Member currentVolumeMaterial(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:140: warning: Member endOfWorldReached(State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:144: warning: Member navigationBreak(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:132: warning: Member startSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:136: warning: Member targetSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:206: warning: parameters of member Acts::TryAllNavigatorBase::initializeVolumeCandidates are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:229: warning: Member logger() const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:223: warning: Member volInfo(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:231: warning: Member m_cfg (variable) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:233: warning: Member m_logger (variable) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:150: warning: return type of member Acts::TryAllNavigatorBase::initialize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:59: warning: Member Options(const GeometryContext &gctx) (function) of struct Acts::TryAllNavigatorBase::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:71: warning: Member setPlainOptions(const NavigatorPlainOptions &options) (function) of struct Acts::TryAllNavigatorBase::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:81: warning: Member State(const Options &options_) (function) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:97: warning: Member currentSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:98: warning: Member currentVolume (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:83: warning: Member options (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:88: warning: Member startSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:93: warning: Member targetSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:552: warning: Member Config (typedef) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:554: warning: Member Options (typedef) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:596: warning: Member currentSurface(const State &state) const (function) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:597: warning: Member currentVolume(const State &state) const (function) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:598: warning: Member currentVolumeMaterial(const State &state) const (function) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:599: warning: Member endOfWorldReached(State &state) const (function) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:591: warning: Member makeState(const Options &options) const (function) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:600: warning: Member navigationBreak(const State &state) const (function) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:601: warning: Member startSurface(const State &state) const (function) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:602: warning: Member targetSurface(const State &state) const (function) of class Acts::TryAllOverstepNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:117: warning: Member currentSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:121: warning: Member currentVolume(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:125: warning: Member currentVolumeMaterial(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:140: warning: Member endOfWorldReached(State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:144: warning: Member navigationBreak(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:132: warning: Member startSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:136: warning: Member targetSurface(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:206: warning: parameters of member Acts::TryAllNavigatorBase::initializeVolumeCandidates are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:229: warning: Member logger() const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:223: warning: Member volInfo(const State &state) const (function) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:231: warning: Member m_cfg (variable) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:233: warning: Member m_logger (variable) of class Acts::TryAllNavigatorBase is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:606: warning: return type of member Acts::TryAllOverstepNavigator::initialize is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:561: warning: Member State(const Options &options_) (function) of struct Acts::TryAllOverstepNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:572: warning: return type of member Acts::TryAllOverstepNavigator::State::activeCandidate is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:577: warning: Member endOfCandidates() const (function) of struct Acts::TryAllOverstepNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:81: warning: Member State(const Options &options_) (function) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:97: warning: Member currentSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:98: warning: Member currentVolume (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:83: warning: Member options (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:88: warning: Member startSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/TryAllNavigator.hpp:93: warning: Member targetSurface (variable) of struct Acts::TryAllNavigatorBase::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:188: warning: Member Container (typedef) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:187: warning: Member IndexType (typedef) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:191: warning: Member VariableSubspaceHelper(const other_index_range_t &indices) (function) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:205: warning: Member begin() const (function) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:199: warning: Member empty() const (function) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:206: warning: Member end() const (function) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:201: warning: Member indices() const (function) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:203: warning: Member operator[](std::size_t i) const (function) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:200: warning: Member size() const (function) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:185: warning: Member kFullSize (variable) of class Acts::VariableSubspaceHelper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/Vertex.hpp:68: warning: Member fullCovariance() (function) of class Acts::Vertex is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/Vertex.hpp:57: warning: Member fullPosition() (function) of class Acts::Vertex is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/Vertex.hpp:61: warning: Member fullSeedPosition() (function) of class Acts::Vertex is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AMVFInfo.hpp:24: warning: Member VertexInfo(const Acts::Vertex &constr, const Acts::Vector4 &pos) (function) of struct Acts::VertexInfo is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AMVFInfo.hpp:31: warning: Member constraint (variable) of struct Acts::VertexInfo is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AMVFInfo.hpp:50: warning: Member impactParams3D (variable) of struct Acts::VertexInfo is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AMVFInfo.hpp:34: warning: Member linPoint (variable) of struct Acts::VertexInfo is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AMVFInfo.hpp:37: warning: Member oldPosition (variable) of struct Acts::VertexInfo is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AMVFInfo.hpp:45: warning: Member relinearize (variable) of struct Acts::VertexInfo is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AMVFInfo.hpp:41: warning: Member seedPosition (variable) of struct Acts::VertexInfo is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/AMVFInfo.hpp:48: warning: Member trackLinks (variable) of struct Acts::VertexInfo is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:87: warning: Member checkTargetValid(const State &, const Vector3 &, const Vector3 &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:58: warning: Member currentSurface(const State &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:62: warning: Member currentVolume(const State &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:66: warning: Member currentVolumeMaterial(const State &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:92: warning: Member handleSurfaceReached(State &, const Vector3 &, const Vector3 &, const Surface &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:76: warning: Member initialize(State &, const Vector3 &, const Vector3 &, Direction) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:53: warning: Member makeState(const Options &options) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:74: warning: Member navigationBreak(const State &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:82: warning: Member nextTarget(State &, const Vector3 &, const Vector3 &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:70: warning: Member startSurface(const State &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:72: warning: Member targetSurface(const State &) const (function) of class Acts::VoidNavigator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:35: warning: Member Options(const GeometryContext &gctx) (function) of struct Acts::VoidNavigator::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:38: warning: Member setPlainOptions(const NavigatorPlainOptions &options) (function) of struct Acts::VoidNavigator::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:45: warning: Member State(const Options &options_) (function) of struct Acts::VoidNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VoidNavigator.hpp:47: warning: Member options (variable) of struct Acts::VoidNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Volume.hpp:55: warning: return type of member Acts::Volume::operator= is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeBounds.hpp:153: warning: return type of member Acts::VolumeBounds::toStream is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:76: warning: Member result_type (typedef) of struct Acts::VolumeCollector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:73: warning: Member collected (variable) of struct Acts::VolumeCollector::this_result is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:180: warning: return type of member Acts::VolumeConfig::toString is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:161: warning: return type of member Acts::VolumeConfig::contains is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:168: warning: return type of member Acts::VolumeConfig::containsInR is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:175: warning: return type of member Acts::VolumeConfig::containsInZ is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/StandardAborters.hpp:184: warning: return type of member Acts::VolumeConstraintAborter::checkAbort is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:55: warning: Member direction (variable) of struct Acts::VolumeHit is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:54: warning: Member position (variable) of struct Acts::VolumeHit is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:53: warning: Member volume (variable) of struct Acts::VolumeHit is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/VolumeMaterialMapper.hpp:69: warning: Member StraightLinePropagator (typedef) of class Acts::VolumeMaterialMapper is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/VolumeMaterialMapper.hpp:140: warning: return type of member Acts::VolumeMaterialMapper::createState is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/VolumeMaterialMapper.hpp:83: warning: parameters of member Acts::VolumeMaterialMapper::State::State are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:20: warning: Member selectLayer (variable) of struct Acts::VolumeSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:19: warning: Member selectMaterial (variable) of struct Acts::VolumeSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:21: warning: Member selectPassive (variable) of struct Acts::VolumeSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/VolumeCollector.hpp:36: warning: return type of member Acts::VolumeSelector::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:54: warning: Member m_direction (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:57: warning: Member m_gaps (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:55: warning: Member m_resizeStrategy (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeStack.hpp:58: warning: Member m_volumes (variable) of class Acts::VolumeStack is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryObject.hpp:77: warning: Member m_geometryId (variable) of class Acts::GeometryObject is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:413: warning: return type of member Acts::WrappingConfig::toString is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:194: warning: Member cVolumeConfig (variable) of struct Acts::WrappingConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:202: warning: Member fGapVolumeConfig (variable) of struct Acts::WrappingConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:195: warning: Member pVolumeConfig (variable) of struct Acts::WrappingConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:203: warning: Member sGapVolumeConfig (variable) of struct Acts::WrappingConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:210: warning: Member wCondition (variable) of struct Acts::WrappingConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:211: warning: Member wConditionScreen (variable) of struct Acts::WrappingConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:51: warning: Member constraintcutoff (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:52: warning: Member constrainttemp (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:49: warning: Member disableAllWeights (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:60: warning: Member expPt (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:65: warning: Member extractParameters (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:43: warning: Member ipEstimator (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:58: warning: Member minPt (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:62: warning: Member minWeight (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:46: warning: Member mode1dFinder (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:54: warning: Member useLogPt (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/ZScanVertexFinder.hpp:56: warning: Member usePt (variable) of struct Acts::ZScanVertexFinder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/InternalNavigation.hpp:152: warning: found documented return type for Acts::Experimental::AdditionalSurfacesNavigation::update that does not return anything
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:297: warning: parameters of member Acts::Experimental::BlueprintNode::setDepth are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Blueprint.hpp:86: warning: return type of member Acts::Experimental::Blueprint::connect is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Blueprint.hpp:68: warning: return type of member Acts::Experimental::Blueprint::construct is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:297: warning: parameters of member Acts::Experimental::BlueprintNode::setDepth are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:207: warning: return type of member Acts::Experimental::BlueprintNode::addCuboidContainer is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:195: warning: return type of member Acts::Experimental::BlueprintNode::addCylinderContainer is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:228: warning: return type of member Acts::Experimental::BlueprintNode::addLayer is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:219: warning: return type of member Acts::Experimental::BlueprintNode::addMaterial is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:182: warning: return type of member Acts::Experimental::BlueprintNode::addStaticVolume is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:92: warning: return type of member Acts::Experimental::BlueprintNode::connect is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:61: warning: return type of member Acts::Experimental::BlueprintNode::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:294: warning: parameters of member Acts::Experimental::BlueprintNode::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/PortalNavigation.hpp:77: warning: Member IndexedUpdater (typedef) of struct Acts::Experimental::BoundVolumesGrid1Navigation is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/PortalNavigation.hpp:81: warning: Member indexedUpdater (variable) of struct Acts::Experimental::BoundVolumesGrid1Navigation is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/interface/IGeometryIdGenerator.hpp:27: warning: Member GeoIdCache (typedef) of class Acts::Experimental::IGeometryIdGenerator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:297: warning: parameters of member Acts::Experimental::BlueprintNode::setDepth are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:197: warning: Member m_attachmentStrategy (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:201: warning: Member m_childVolumes (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:196: warning: Member m_direction (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:210: warning: Member m_gaps (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:195: warning: Member m_name (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:199: warning: Member m_resizeStrategy (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:207: warning: Member m_shell (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:204: warning: Member m_stack (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:205: warning: Member m_volumeToNode (variable) of class Acts::Experimental::ContainerBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/ContainerBlueprintNode.hpp:57: warning: return type of member Acts::Experimental::ContainerBlueprintNode::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/CuboidalContainerBuilder.hpp:75: warning: found documented return type for Acts::Experimental::CuboidalContainerBuilder::CuboidalContainerBuilder that does not return anything
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/CylindricalContainerBuilder.hpp:77: warning: found documented return type for Acts::Experimental::CylindricalContainerBuilder::CylindricalContainerBuilder that does not return anything
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepBlueprintFactory.hpp:46: warning: Member dd4hepStore (variable) of struct Acts::Experimental::DD4hepBlueprintFactory::Cache is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepBlueprintFactory.hpp:37: warning: Member layerStructure (variable) of struct Acts::Experimental::DD4hepBlueprintFactory::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepLayerStructure.hpp:65: warning: Member extent (variable) of struct Acts::Experimental::DD4hepLayerStructure::Options is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/DetectorNavigator.hpp:63: warning: Member State(const Options &options_) (function) of struct Acts::Experimental::DetectorNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationState.hpp:85: warning: Member surfaceCandidate() const (function) of struct Acts::Experimental::NavigationState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/DetectorNavigator.hpp:65: warning: Member options (variable) of struct Acts::Experimental::DetectorNavigator::State is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationState.hpp:74: warning: Member surfaceCandidateIndex (variable) of struct Acts::Experimental::NavigationState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:63: warning: Member BoundingBox (typedef) of class Acts::Experimental::DetectorVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:416: warning: return type of member Acts::Experimental::DetectorVolume::detector is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:284: warning: return type of member Acts::Experimental::DetectorVolume::externalNavigation is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:419: warning: Member getBoundingBox() const (function) of class Acts::Experimental::DetectorVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:373: warning: return type of member Acts::Experimental::DetectorVolume::internalNavigation is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:397: warning: return type of member Acts::Experimental::DetectorVolume::volumeMaterial is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:148: warning: Member makeShared(const GeometryContext &gctx, std::string name, const Transform3 &transform, std::shared_ptr< VolumeBounds > bounds, InternalNavigationDelegate internalNavigation) (function) of class Acts::Experimental::DetectorVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:137: warning: Member makeShared(const GeometryContext &gctx, std::string name, const Transform3 &transform, std::shared_ptr< VolumeBounds > bounds, std::vector< std::shared_ptr< Surface > > surfaces, std::vector< std::shared_ptr< DetectorVolume > > volumes, ExternalNavigationDelegate externalNavigation, InternalNavigationDelegate internalNavigation) (function) of class Acts::Experimental::DetectorVolume is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:488: warning: parameters of member Acts::Experimental::DetectorVolumeFactory::construct are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:488: warning: return type of member Acts::Experimental::DetectorVolumeFactory::construct is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:512: warning: parameters of member Acts::Experimental::DetectorVolumeFactory::construct are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorVolume.hpp:512: warning: return type of member Acts::Experimental::DetectorVolumeFactory::construct is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/PortalNavigation.hpp:32: warning: parameters of member Acts::Experimental::EndOfWorld::update are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/interface/IGeometryIdGenerator.hpp:27: warning: Member GeoIdCache (typedef) of class Acts::Experimental::IGeometryIdGenerator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/interface/IGeometryIdGenerator.hpp:27: warning: Member GeoIdCache (typedef) of class Acts::Experimental::IGeometryIdGenerator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/GeometryIdMapper.hpp:47: warning: Member portalCounter (variable) of struct Acts::Experimental::GeometryIdMapper::Cache is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/GeometryIdMapper.hpp:48: warning: Member surfaceCounter (variable) of struct Acts::Experimental::GeometryIdMapper::Cache is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/GeometryIdMapper.hpp:46: warning: Member volumeCounter (variable) of struct Acts::Experimental::GeometryIdMapper::Cache is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:686: warning: Member Gx2Fitter(propagator_t pPropagator, std::unique_ptr< const Logger > _logger=getDefaultLogger("Gx2Fitter", Logging::INFO)) (function) of class Acts::Experimental::Gx2Fitter is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:76: warning: Member Calibrator (typedef) of struct Acts::Experimental::Gx2FitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:72: warning: Member ConstTrackStateProxy (typedef) of struct Acts::Experimental::Gx2FitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:83: warning: Member OutlierFinder (typedef) of struct Acts::Experimental::Gx2FitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:74: warning: Member Parameters (typedef) of struct Acts::Experimental::Gx2FitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:71: warning: Member TrackStateProxy (typedef) of struct Acts::Experimental::Gx2FitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:80: warning: Member Updater (typedef) of struct Acts::Experimental::Gx2FitterExtensions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:160: warning: Member extensions (variable) of struct Acts::Experimental::Gx2FitterOptions is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:308: warning: Member aMatrix() (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:305: warning: Member aMatrix() const (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:314: warning: Member bVector() (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:311: warning: Member bVector() const (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:302: warning: Member chi2() (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:299: warning: Member chi2() const (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:327: warning: Member findRequiredNdf() (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:340: warning: Member isWellDefined() (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:320: warning: Member ndf() (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:317: warning: Member ndf() const (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:296: warning: Member nDims() const (function) of struct Acts::Experimental::Gx2fSystem is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/interface/IGeometryIdGenerator.hpp:27: warning: Member GeoIdCache (typedef) of class Acts::Experimental::IGeometryIdGenerator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/DetectorComponents.hpp:87: warning: Member volumeUpdater (variable) of struct Acts::Experimental::InternalStructure is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/KdtSurfacesProvider.hpp:183: warning: parameters of member Acts::Experimental::KdtSurfacesProvider::surfaces are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/KdtSurfacesProvider.hpp:183: warning: return type of member Acts::Experimental::KdtSurfacesProvider::surfaces is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:55: warning: Member navigationPolicyFactory() const (function) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:52: warning: Member setNavigationPolicyFactory(std::shared_ptr< NavigationPolicyFactory > navigationPolicyFactory) (function) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:297: warning: parameters of member Acts::Experimental::BlueprintNode::setDepth are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:64: warning: Member m_navigationPolicyFactory (variable) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:62: warning: Member m_shell (variable) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:60: warning: Member m_volume (variable) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/LayerBlueprintNode.hpp:27: warning: unable to resolve reference to 'Acts::ProtoLayer' for \ref command
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/LayerBlueprintNode.hpp:54: warning: parameters of member Acts::Experimental::LayerBlueprintNode::build are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/LayerBlueprintNode.hpp:54: warning: return type of member Acts::Experimental::LayerBlueprintNode::build is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/LayerBlueprintNode.hpp:51: warning: return type of member Acts::Experimental::LayerBlueprintNode::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/LayerStructureBuilder.hpp:64: warning: return type of member Acts::Experimental::LayerStructureBuilder::SurfacesHolder::surfaces is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/MaterialDesignatorBlueprintNode.hpp:28: warning: Member BinningConfig (typedef) of class Acts::Experimental::MaterialDesignatorBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:297: warning: parameters of member Acts::Experimental::BlueprintNode::setDepth are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/MaterialDesignatorBlueprintNode.hpp:57: warning: unable to resolve reference to 'Acts::ProtoGridSurfaceMaterial' for \ref command
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/MaterialDesignatorBlueprintNode.hpp:38: warning: return type of member Acts::Experimental::MaterialDesignatorBlueprintNode::name is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/MaterialDesignatorBlueprintNode.hpp:41: warning: parameters of member Acts::Experimental::MaterialDesignatorBlueprintNode::toStream are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/MultiWireStructureBuilder.hpp:45: warning: Member mlBinning (variable) of struct Acts::Experimental::MultiWireStructureBuilder::Config is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationState.hpp:85: warning: Member surfaceCandidate() const (function) of struct Acts::Experimental::NavigationState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationState.hpp:74: warning: Member surfaceCandidateIndex (variable) of struct Acts::Experimental::NavigationState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/MultiLayerNavigation.hpp:136: warning: Member operator()(Vector3 startPosition, const Vector3 &direction, double stepSize, std::size_t numberOfSteps) const (function) of struct Acts::Experimental::PathGridSurfacesGenerator is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/Portal.hpp:146: warning: Member attachedDetectorVolumes() (function) of class Acts::Experimental::Portal is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/Portal.hpp:143: warning: Member portalNavigation() const (function) of class Acts::Experimental::Portal is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/Portal.hpp:65: warning: return type of member Acts::Experimental::Portal::surface is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/Portal.hpp:62: warning: return type of member Acts::Experimental::Portal::surface is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Detector/Portal.hpp:103: warning: return type of member Acts::Experimental::Portal::fuse is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:262: warning: Member invCovarianceMaterial() const (function) of struct Acts::Experimental::ScatteringProperties is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:265: warning: Member materialIsValid() const (function) of struct Acts::Experimental::ScatteringProperties is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:259: warning: Member scatteringAngles() (function) of struct Acts::Experimental::ScatteringProperties is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GlobalChiSquareFitter.hpp:256: warning: Member scatteringAngles() const (function) of struct Acts::Experimental::ScatteringProperties is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Navigation/NavigationStateUpdaters.hpp:123: warning: return type of member Acts::Experimental::SingleObjectNavigation::object is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:55: warning: Member navigationPolicyFactory() const (function) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:52: warning: Member setNavigationPolicyFactory(std::shared_ptr< NavigationPolicyFactory > navigationPolicyFactory) (function) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BlueprintNode.hpp:297: warning: parameters of member Acts::Experimental::BlueprintNode::setDepth are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:64: warning: Member m_navigationPolicyFactory (variable) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:62: warning: Member m_shell (variable) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:60: warning: Member m_volume (variable) of class Acts::Experimental::StaticBlueprintNode is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/StaticBlueprintNode.hpp:43: warning: return type of member Acts::Experimental::StaticBlueprintNode::connect is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4PhysicalVolumeSelectors.hpp:44: warning: Member exact (variable) of struct Acts::Geant4PhysicalVolumeSelectors::NameSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4PhysicalVolumeSelectors.hpp:43: warning: Member names (variable) of struct Acts::Geant4PhysicalVolumeSelectors::NameSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Geant4/include/Acts/Plugins/Geant4/Geant4PhysicalVolumeSelectors.hpp:69: warning: Member m_ranges (variable) of struct Acts::Geant4PhysicalVolumeSelectors::PositionSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAccessHelpers.hpp:147: warning: Member grid_local_t (typedef) of class Acts::GridAccess::GlobalSubspace is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:53: warning: Member EqBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:118: warning: Member EqBoundEqBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:122: warning: Member EqBoundEqClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:120: warning: Member EqBoundEqOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:168: warning: Member EqBoundVarBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:172: warning: Member EqBoundVarClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:170: warning: Member EqBoundVarOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:55: warning: Member EqClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:130: warning: Member EqClosedEqBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:134: warning: Member EqClosedEqClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:132: warning: Member EqClosedEqOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:180: warning: Member EqClosedVarBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:184: warning: Member EqClosedVarClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:182: warning: Member EqClosedVarOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:54: warning: Member EqOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:124: warning: Member EqOpenEqBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:128: warning: Member EqOpenEqClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:126: warning: Member EqOpenEqOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:174: warning: Member EqOpenVarBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:178: warning: Member EqOpenVarClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:176: warning: Member EqOpenVarOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:285: warning: Member PossibleAxes (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:79: warning: Member VarBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:218: warning: Member VarBoundEqBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:222: warning: Member VarBoundEqClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:220: warning: Member VarBoundEqOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:265: warning: Member VarBoundVarBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:269: warning: Member VarBoundVarClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:267: warning: Member VarBoundVarOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:81: warning: Member VarClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:230: warning: Member VarClosedEqBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:234: warning: Member VarClosedEqClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:232: warning: Member VarClosedEqOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:277: warning: Member VarClosedVarBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:281: warning: Member VarClosedVarClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:279: warning: Member VarClosedVarOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:80: warning: Member VarOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:224: warning: Member VarOpenEqBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:228: warning: Member VarOpenEqClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:226: warning: Member VarOpenEqOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:271: warning: Member VarOpenVarBound (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:275: warning: Member VarOpenVarClosed (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:273: warning: Member VarOpenVarOpen (typedef) of namespace Acts::GridAxisGenerators is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:44: warning: return type of member Acts::GridAxisGenerators::Eq::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:42: warning: Member nBins (variable) of struct Acts::GridAxisGenerators::Eq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:41: warning: Member range (variable) of struct Acts::GridAxisGenerators::Eq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:106: warning: return type of member Acts::GridAxisGenerators::EqEq::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:102: warning: Member nBins0 (variable) of struct Acts::GridAxisGenerators::EqEq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:104: warning: Member nBins1 (variable) of struct Acts::GridAxisGenerators::EqEq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:101: warning: Member range0 (variable) of struct Acts::GridAxisGenerators::EqEq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:103: warning: Member range1 (variable) of struct Acts::GridAxisGenerators::EqEq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:158: warning: return type of member Acts::GridAxisGenerators::EqVar::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:156: warning: Member edges (variable) of struct Acts::GridAxisGenerators::EqVar is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:155: warning: Member nBins (variable) of struct Acts::GridAxisGenerators::EqVar is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:154: warning: Member range (variable) of struct Acts::GridAxisGenerators::EqVar is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:71: warning: return type of member Acts::GridAxisGenerators::Var::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:69: warning: Member edges (variable) of struct Acts::GridAxisGenerators::Var is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:208: warning: return type of member Acts::GridAxisGenerators::VarEq::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:204: warning: Member edges (variable) of struct Acts::GridAxisGenerators::VarEq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:206: warning: Member nBins (variable) of struct Acts::GridAxisGenerators::VarEq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:205: warning: Member range (variable) of struct Acts::GridAxisGenerators::VarEq is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:256: warning: return type of member Acts::GridAxisGenerators::VarVar::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:253: warning: Member edges0 (variable) of struct Acts::GridAxisGenerators::VarVar is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridAxisGenerators.hpp:254: warning: Member edges1 (variable) of struct Acts::GridAxisGenerators::VarVar is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:33: warning: Member YieldType (typedef) of namespace Acts::HoughTransformUtils is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:50: warning: Member xMax (variable) of struct Acts::HoughTransformUtils::HoughAxisRanges is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:49: warning: Member xMin (variable) of struct Acts::HoughTransformUtils::HoughAxisRanges is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:52: warning: Member yMax (variable) of struct Acts::HoughTransformUtils::HoughAxisRanges is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:51: warning: Member yMin (variable) of struct Acts::HoughTransformUtils::HoughAxisRanges is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:117: warning: Member getHits() const (function) of class Acts::HoughTransformUtils::HoughCell is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:114: warning: return type of member Acts::HoughTransformUtils::HoughCell::getLayers is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:112: warning: return type of member Acts::HoughTransformUtils::HoughCell::nHits is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:110: warning: return type of member Acts::HoughTransformUtils::HoughCell::nLayers is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:162: warning: Member HoughHist (typedef) of class Acts::HoughTransformUtils::HoughPlane is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:163: warning: Member Index (typedef) of class Acts::HoughTransformUtils::HoughPlane is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:251: warning: parameters of member Acts::HoughTransformUtils::HoughPlane::axisBins are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:251: warning: return type of member Acts::HoughTransformUtils::HoughPlane::axisBins is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:256: warning: parameters of member Acts::HoughTransformUtils::HoughPlane::globalBin are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:256: warning: return type of member Acts::HoughTransformUtils::HoughPlane::globalBin is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:261: warning: return type of member Acts::HoughTransformUtils::HoughPlane::locMaxHits is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:271: warning: return type of member Acts::HoughTransformUtils::HoughPlane::locMaxLayers is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:240: warning: return type of member Acts::HoughTransformUtils::HoughPlane::maxHits is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:267: warning: return type of member Acts::HoughTransformUtils::HoughPlane::maxLayers is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:235: warning: return type of member Acts::HoughTransformUtils::HoughPlane::nBinsX is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:237: warning: return type of member Acts::HoughTransformUtils::HoughPlane::nBinsY is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:245: warning: return type of member Acts::HoughTransformUtils::HoughPlane::getNonEmptyBins is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:149: warning: Member nBinsX (variable) of struct Acts::HoughTransformUtils::HoughPlaneConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:150: warning: Member nBinsY (variable) of struct Acts::HoughTransformUtils::HoughPlaneConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:376: warning: Member hitIdentifiers (variable) of struct Acts::HoughTransformUtils::PeakFinders::IslandsAroundMax::Maximum is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:374: warning: Member wx (variable) of struct Acts::HoughTransformUtils::PeakFinders::IslandsAroundMax::Maximum is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:375: warning: Member wy (variable) of struct Acts::HoughTransformUtils::PeakFinders::IslandsAroundMax::Maximum is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:372: warning: Member x (variable) of struct Acts::HoughTransformUtils::PeakFinders::IslandsAroundMax::Maximum is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:373: warning: Member y (variable) of struct Acts::HoughTransformUtils::PeakFinders::IslandsAroundMax::Maximum is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:354: warning: Member fractionCutoff (variable) of struct Acts::HoughTransformUtils::PeakFinders::IslandsAroundMaxConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:356: warning: Member minSpacingBetweenPeaks (variable) of struct Acts::HoughTransformUtils::PeakFinders::IslandsAroundMaxConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:352: warning: Member threshold (variable) of struct Acts::HoughTransformUtils::PeakFinders::IslandsAroundMaxConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:327: warning: Member hitIdentifiers (variable) of struct Acts::HoughTransformUtils::PeakFinders::LayerGuidedCombinatoric::Maximum is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:312: warning: Member localMaxWindowSize (variable) of struct Acts::HoughTransformUtils::PeakFinders::LayerGuidedCombinatoricConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/HoughTransformUtils.hpp:311: warning: Member threshold (variable) of struct Acts::HoughTransformUtils::PeakFinders::LayerGuidedCombinatoricConfig is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Logger.hpp:168: warning: Member levelName(Level level) (function) of namespace Acts::Logging is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Logger.hpp:192: warning: return type of member Acts::Logging::getFailureThreshold is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Logger.hpp:222: warning: parameters of member Acts::Logging::setFailureThreshold are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Logger.hpp:243: warning: Member ScopedFailureThreshold(Level level) (function) of class Acts::Logging::ScopedFailureThreshold is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:31: warning: Member chi2Sum (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:32: warning: Member measurementChi2 (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:36: warning: Member measurementLayer (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:35: warning: Member measurementVolume (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:34: warning: Member NDF (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:30: warning: Member nHoles (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:28: warning: Member nMeasurements (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:29: warning: Member nOutliers (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:39: warning: Member nSharedHits (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:27: warning: Member nStates (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:33: warning: Member outlierChi2 (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:38: warning: Member outlierLayer (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectoryHelpers.hpp:37: warning: Member outlierVolume (variable) of struct Acts::MultiTrajectoryHelpers::TrajectoryState is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:137: warning: Member IndexType (typedef) of namespace Acts::MultiTrajectoryTraits is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:138: warning: Member kInvalid (variable) of namespace Acts::MultiTrajectoryTraits is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/MultiTrajectory.hpp:136: warning: Member MeasurementSizeMax (variable) of namespace Acts::MultiTrajectoryTraits is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:259: warning: Member c (variable) of namespace Acts::PhysicalConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/ProtoAxisJsonConverter.hpp:31: warning: return type of member Acts::ProtoAxisJsonConverter::fromJson is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/ProtoAxisJsonConverter.hpp:26: warning: return type of member Acts::ProtoAxisJsonConverter::toJson is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:147: warning: Member cm (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:156: warning: Member cm2 (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:160: warning: Member cm3 (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:175: warning: Member degree (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:178: warning: Member eV (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:143: warning: Member fm (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:165: warning: Member fs (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:189: warning: Member g (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:196: warning: Member Gauss (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:177: warning: Member GeV (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:171: warning: Member h (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:182: warning: Member J (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:179: warning: Member keV (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:190: warning: Member kg (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:197: warning: Member kGauss (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:149: warning: Member km (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:148: warning: Member m (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:157: warning: Member m2 (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:161: warning: Member m3 (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:180: warning: Member MeV (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:170: warning: Member min (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:142: warning: Member mm (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:155: warning: Member mm2 (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:159: warning: Member mm3 (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:173: warning: Member mrad (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:169: warning: Member ms (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:145: warning: Member nm (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:167: warning: Member ns (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:144: warning: Member pm (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:166: warning: Member ps (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:174: warning: Member rad (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:181: warning: Member TeV (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:146: warning: Member um (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Units.hpp:168: warning: Member us (variable) of namespace Acts::UnitConstants is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:81: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::AbsPdgExcluder is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:62: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::AbsPdgSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:104: warning: Member Barcode(Barcode &&)=default (function) of class ActsFatras::Barcode is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:103: warning: Member Barcode(const Barcode &)=default (function) of class ActsFatras::Barcode is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:114: warning: return type of member ActsFatras::Barcode::generation is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:106: warning: Member operator=(Barcode &&)=default (function) of class ActsFatras::Barcode is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:105: warning: Member operator=(const Barcode &)=default (function) of class ActsFatras::Barcode is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:112: warning: return type of member ActsFatras::Barcode::particle is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:134: warning: parameters of member ActsFatras::Barcode::setGeneration are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:134: warning: return type of member ActsFatras::Barcode::setGeneration is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:129: warning: parameters of member ActsFatras::Barcode::setParticle are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:129: warning: return type of member ActsFatras::Barcode::setParticle is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:139: warning: parameters of member ActsFatras::Barcode::setSubParticle are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:139: warning: return type of member ActsFatras::Barcode::setSubParticle is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:119: warning: parameters of member ActsFatras::Barcode::setVertexPrimary are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:119: warning: return type of member ActsFatras::Barcode::setVertexPrimary is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:124: warning: parameters of member ActsFatras::Barcode::setVertexSecondary are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:124: warning: return type of member ActsFatras::Barcode::setVertexSecondary is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:116: warning: return type of member ActsFatras::Barcode::subParticle is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:152: warning: return type of member ActsFatras::Barcode::vertexId is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:108: warning: return type of member ActsFatras::Barcode::vertexPrimary is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:110: warning: return type of member ActsFatras::Barcode::vertexSecondary is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Barcode.hpp:147: warning: return type of member ActsFatras::Barcode::makeDescendant is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Physics/ElectroMagnetic/BetheHeitler.hpp:32: warning: Member uniformHertzDipoleAngle (variable) of struct ActsFatras::BetheHeitler is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Physics/ElectroMagnetic/BetheHeitler.hpp:36: warning: return type of member ActsFatras::BetheHeitler::bremPhoton is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:45: warning: Member CovarianceMatrix (typedef) of struct ActsFatras::BoundParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:44: warning: Member ParametersVector (typedef) of struct ActsFatras::BoundParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:46: warning: Member Result (typedef) of struct ActsFatras::BoundParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:53: warning: Member size() (function) of struct ActsFatras::BoundParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:51: warning: Member forcePositive (variable) of struct ActsFatras::BoundParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:50: warning: Member smearFunctions (variable) of struct ActsFatras::BoundParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:30: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::ChargedSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/DigitizationData.hpp:55: warning: Member CovarianceMatrix (typedef) of struct ActsFatras::Cluster is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/DigitizationData.hpp:54: warning: Member ParametersVector (typedef) of struct ActsFatras::Cluster is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:18: warning: Member operator()(const Particle &) const (function) of struct ActsFatras::EveryParticle is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SurfaceSelectors.hpp:26: warning: Member operator()(const Acts::Surface &) const (function) of struct ActsFatras::EverySurface is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:119: warning: Member CovarianceMatrix (typedef) of struct ActsFatras::FreeParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:118: warning: Member ParametersVector (typedef) of struct ActsFatras::FreeParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:120: warning: Member Result (typedef) of struct ActsFatras::FreeParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:126: warning: Member size() (function) of struct ActsFatras::FreeParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/UncorrelatedHitSmearer.hpp:124: warning: Member smearFunctions (variable) of struct ActsFatras::FreeParametersSmearer is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:52: warning: Member Hit(const Hit &)=default (function) of class ActsFatras::Hit is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:53: warning: Member Hit(Hit &&)=default (function) of class ActsFatras::Hit is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:85: warning: return type of member ActsFatras::Hit::direction is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:81: warning: return type of member ActsFatras::Hit::directionAfter is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:77: warning: return type of member ActsFatras::Hit::directionBefore is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:66: warning: return type of member ActsFatras::Hit::fourPosition is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:57: warning: return type of member ActsFatras::Hit::geometryId is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:75: warning: return type of member ActsFatras::Hit::momentum4After is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:73: warning: return type of member ActsFatras::Hit::momentum4Before is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:54: warning: Member operator=(const Hit &)=default (function) of class ActsFatras::Hit is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:55: warning: Member operator=(Hit &&)=default (function) of class ActsFatras::Hit is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:59: warning: return type of member ActsFatras::Hit::particleId is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:68: warning: return type of member ActsFatras::Hit::position is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Hit.hpp:70: warning: return type of member ActsFatras::Hit::time is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/InteractionList.hpp:184: warning: parameters of member ActsFatras::InteractionList::disable are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/InteractionList.hpp:195: warning: return type of member ActsFatras::InteractionList::get is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/InteractionList.hpp:202: warning: return type of member ActsFatras::InteractionList::get is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/InteractionList.hpp:179: warning: Member l0Limit (variable) of struct ActsFatras::InteractionList::Selection is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/InteractionList.hpp:181: warning: Member l0Process (variable) of struct ActsFatras::InteractionList::Selection is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/InteractionList.hpp:178: warning: Member x0Limit (variable) of struct ActsFatras::InteractionList::Selection is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/InteractionList.hpp:180: warning: Member x0Process (variable) of struct ActsFatras::InteractionList::Selection is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:57: warning: Member LandauDistribution(const LandauDistribution &)=default (function) of class ActsFatras::LandauDistribution is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:53: warning: parameters of member ActsFatras::LandauDistribution::LandauDistribution are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:51: warning: parameters of member ActsFatras::LandauDistribution::LandauDistribution are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:58: warning: Member LandauDistribution(LandauDistribution &&)=default (function) of class ActsFatras::LandauDistribution is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:71: warning: return type of member ActsFatras::LandauDistribution::max is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:69: warning: return type of member ActsFatras::LandauDistribution::min is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:74: warning: parameters of member ActsFatras::LandauDistribution::operator() are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:74: warning: return type of member ActsFatras::LandauDistribution::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:79: warning: parameters of member ActsFatras::LandauDistribution::operator() are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:79: warning: return type of member ActsFatras::LandauDistribution::operator() is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:59: warning: Member operator=(const LandauDistribution &)=default (function) of class ActsFatras::LandauDistribution is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:60: warning: Member operator=(LandauDistribution &&)=default (function) of class ActsFatras::LandauDistribution is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:64: warning: return type of member ActsFatras::LandauDistribution::param is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:66: warning: parameters of member ActsFatras::LandauDistribution::param are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:38: warning: Member param_type(const param_type &)=default (function) of struct ActsFatras::LandauDistribution::param_type is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:33: warning: parameters of member ActsFatras::LandauDistribution::param_type::param_type are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:39: warning: Member param_type(param_type &&)=default (function) of struct ActsFatras::LandauDistribution::param_type is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:40: warning: Member operator=(const param_type &)=default (function) of struct ActsFatras::LandauDistribution::param_type is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Utilities/LandauDistribution.hpp:41: warning: Member operator=(param_type &&)=default (function) of struct ActsFatras::LandauDistribution::param_type is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SelectorHelpers.hpp:36: warning: Member operator()(const T &thing) const (function) of struct ActsFatras::Max is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SelectorHelpers.hpp:33: warning: Member valMax (variable) of struct ActsFatras::Max is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SelectorHelpers.hpp:25: warning: Member operator()(const T &thing) const (function) of struct ActsFatras::Min is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SelectorHelpers.hpp:22: warning: Member valMin (variable) of struct ActsFatras::Min is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:44: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::NegativeSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:23: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::NeutralSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Physics/Decay/NoDecay.hpp:28: warning: return type of member ActsFatras::NoDecay::run is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SurfaceSelectors.hpp:19: warning: Member operator()(const Acts::Surface &) const (function) of struct ActsFatras::NoSurface is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:56: warning: Member Particle(const Particle &)=default (function) of class ActsFatras::Particle is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:57: warning: Member Particle(Particle &&)=default (function) of class ActsFatras::Particle is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:163: warning: return type of member ActsFatras::Particle::absoluteCharge is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:205: warning: return type of member ActsFatras::Particle::absoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:157: warning: return type of member ActsFatras::Particle::absolutePdg is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:261: warning: parameters of member ActsFatras::Particle::boundParameters are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:261: warning: return type of member ActsFatras::Particle::boundParameters is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:161: warning: return type of member ActsFatras::Particle::charge is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:279: warning: Member curvilinearParameters() const (function) of class ActsFatras::Particle is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:195: warning: return type of member ActsFatras::Particle::direction is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:209: warning: return type of member ActsFatras::Particle::energy is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:185: warning: return type of member ActsFatras::Particle::fourMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:179: warning: return type of member ActsFatras::Particle::fourPosition is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:258: warning: return type of member ActsFatras::Particle::hasReferenceSurface is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:168: warning: return type of member ActsFatras::Particle::hypothesis is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:212: warning: return type of member ActsFatras::Particle::isAlive is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:215: warning: return type of member ActsFatras::Particle::isSecondary is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:165: warning: return type of member ActsFatras::Particle::mass is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:207: warning: return type of member ActsFatras::Particle::momentum is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:292: warning: return type of member ActsFatras::Particle::numberOfHits is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:58: warning: Member operator=(const Particle &)=default (function) of class ActsFatras::Particle is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:59: warning: Member operator=(Particle &&)=default (function) of class ActsFatras::Particle is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:303: warning: return type of member ActsFatras::Particle::outcome is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:151: warning: return type of member ActsFatras::Particle::particleId is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:244: warning: return type of member ActsFatras::Particle::pathInL0 is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:242: warning: return type of member ActsFatras::Particle::pathInX0 is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:155: warning: return type of member ActsFatras::Particle::pdg is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:199: warning: return type of member ActsFatras::Particle::phi is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:181: warning: return type of member ActsFatras::Particle::position is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:153: warning: return type of member ActsFatras::Particle::process is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:230: warning: return type of member ActsFatras::Particle::properTime is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:174: warning: return type of member ActsFatras::Particle::qOverP is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:255: warning: return type of member ActsFatras::Particle::referenceSurface is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:130: warning: parameters of member ActsFatras::Particle::setAbsoluteMomentum are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:130: warning: return type of member ActsFatras::Particle::setAbsoluteMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:82: warning: parameters of member ActsFatras::Particle::setCharge are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:82: warning: return type of member ActsFatras::Particle::setCharge is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:116: warning: parameters of member ActsFatras::Particle::setDirection are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:116: warning: return type of member ActsFatras::Particle::setDirection is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:122: warning: parameters of member ActsFatras::Particle::setDirection are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:122: warning: return type of member ActsFatras::Particle::setDirection is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:87: warning: parameters of member ActsFatras::Particle::setMass are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:87: warning: return type of member ActsFatras::Particle::setMass is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:92: warning: parameters of member ActsFatras::Particle::setParticleId are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:92: warning: return type of member ActsFatras::Particle::setParticleId is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:77: warning: parameters of member ActsFatras::Particle::setPdg are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:77: warning: return type of member ActsFatras::Particle::setPdg is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:102: warning: parameters of member ActsFatras::Particle::setPosition4 are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:102: warning: return type of member ActsFatras::Particle::setPosition4 is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:97: warning: parameters of member ActsFatras::Particle::setPosition4 are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:97: warning: return type of member ActsFatras::Particle::setPosition4 is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:108: warning: parameters of member ActsFatras::Particle::setPosition4 are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:108: warning: return type of member ActsFatras::Particle::setPosition4 is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:72: warning: parameters of member ActsFatras::Particle::setProcess are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:72: warning: return type of member ActsFatras::Particle::setProcess is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:197: warning: return type of member ActsFatras::Particle::theta is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:183: warning: return type of member ActsFatras::Particle::time is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:201: warning: return type of member ActsFatras::Particle::transverseMomentum is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:138: warning: parameters of member ActsFatras::Particle::correctEnergy are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:138: warning: return type of member ActsFatras::Particle::correctEnergy is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:235: warning: return type of member ActsFatras::Particle::setMaterialPassed is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:286: warning: return type of member ActsFatras::Particle::setNumberOfHits is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:297: warning: return type of member ActsFatras::Particle::setOutcome is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:225: warning: return type of member ActsFatras::Particle::setProperTime is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:249: warning: return type of member ActsFatras::Particle::setReferenceSurface is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:63: warning: parameters of member ActsFatras::Particle::withParticleId are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/EventData/Particle.hpp:63: warning: return type of member ActsFatras::Particle::withParticleId is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:73: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::PdgExcluder is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:54: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::PdgSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/PlanarSurfaceMask.hpp:87: warning: Member intersector (variable) of struct ActsFatras::PlanarSurfaceMask is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/ParticleSelectors.hpp:37: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::PositiveSelector is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SelectorHelpers.hpp:50: warning: Member operator()(const T &thing) const (function) of struct ActsFatras::Range is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SelectorHelpers.hpp:47: warning: Member valMax (variable) of struct ActsFatras::Range is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/SelectorHelpers.hpp:46: warning: Member valMin (variable) of struct ActsFatras::Range is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Digitization/Segmentizer.hpp:58: warning: return type of member ActsFatras::Segmentizer::ChannelStep::operator< is not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/Simulation.hpp:142: warning: parameters of member ActsFatras::Simulation::Simulation are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/Simulation.hpp:139: warning: Member charged (variable) of struct ActsFatras::Simulation is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/Simulation.hpp:140: warning: Member neutral (variable) of struct ActsFatras::Simulation is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/Simulation.hpp:137: warning: Member selectCharged (variable) of struct ActsFatras::Simulation is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/Simulation.hpp:138: warning: Member selectNeutral (variable) of struct ActsFatras::Simulation is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/SimulationResult.hpp:39: warning: Member isAlive (variable) of struct ActsFatras::SimulationResult is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/SimulationResult.hpp:44: warning: Member l0Limit (variable) of struct ActsFatras::SimulationResult is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/SimulationResult.hpp:47: warning: Member l0Process (variable) of struct ActsFatras::SimulationResult is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/SimulationResult.hpp:41: warning: Member properTimeLimit (variable) of struct ActsFatras::SimulationResult is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/SimulationResult.hpp:43: warning: Member x0Limit (variable) of struct ActsFatras::SimulationResult is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/SimulationResult.hpp:46: warning: Member x0Process (variable) of struct ActsFatras::SimulationResult is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Kernel/Simulation.hpp:53: warning: parameters of member ActsFatras::SingleParticleSimulation::SingleParticleSimulation are not documented
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/KinematicCasts.hpp:49: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::Casts::AbsEta is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/KinematicCasts.hpp:34: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::Casts::AbsVz is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/KinematicCasts.hpp:73: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::Casts::E is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/KinematicCasts.hpp:41: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::Casts::Eta is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/KinematicCasts.hpp:66: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::Casts::P is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/KinematicCasts.hpp:57: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::Casts::Pt is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/KinematicCasts.hpp:20: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::Casts::Vrho is not documented.
+- [ ] /Users/pagessin/dev/acts/Fatras/include/ActsFatras/Selectors/KinematicCasts.hpp:27: warning: Member operator()(const Particle &particle) const (function) of struct ActsFatras::Casts::Vz is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/LayerBlueprintNode.hpp:27: warning: unable to resolve reference to 'Acts::ProtoLayer' for \ref command
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/MaterialDesignatorBlueprintNode.hpp:57: warning: unable to resolve reference to 'Acts::ProtoGridSurfaceMaterial' for \ref command
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackProxy.hpp:44: warning: unable to resolve reference to 'HashedString' for \ref command
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStateProxy.hpp:153: warning: unable to resolve reference to 'SourceLink' for \ref command

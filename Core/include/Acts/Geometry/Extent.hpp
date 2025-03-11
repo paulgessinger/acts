@@ -25,6 +25,8 @@
 
 namespace Acts {
 
+/// @brief Type alias for envelope values in different directions
+/// @details Stores the envelope values for both positive and negative directions
 using Envelope = std::array<double, 2>;
 
 constexpr Envelope zeroEnvelope = {0, 0};

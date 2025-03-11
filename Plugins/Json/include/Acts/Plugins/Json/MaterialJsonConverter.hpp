@@ -25,7 +25,9 @@ class ISurfaceMaterial;
 class IVolumeMaterial;
 class BinUtility;
 
+/// Pointer to a constant volume material object
 using volumeMaterialPointer = const Acts::IVolumeMaterial*;
+/// Pointer to a constant surface material object
 using surfaceMaterialPointer = const Acts::ISurfaceMaterial*;
 
 void to_json(nlohmann::json& j, const Material& t);

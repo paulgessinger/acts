@@ -1,0 +1,169 @@
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:49: warning: Member AxisScalar (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Types.hpp:26: warning: Member BoundSubspaceIndices (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/AmbiguityConfigJsonConverter.hpp:22: warning: Member ConfigPair (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TypeTraits.hpp:15: warning: Member const_if_t (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ProxyAccessor.hpp:115: warning: Member ConstProxyAccessor (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepIdentifierMapper.hpp:19: warning: Member DD4hepIdentifier (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/DD4hepIdentifierMapper.hpp:56: warning: Member DD4hepIdentifierMapper (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/AmbiguityConfigJsonConverter.hpp:21: warning: Member DetectorConfig (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialGridHelper.hpp:31: warning: Member EAxis (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:28: warning: Member Envelope (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:327: warning: Member FixedBoundSubspaceHelper (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:249: warning: Member GloballyIndexedSurfaceMaterial (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialGridHelper.hpp:32: warning: Member Grid2D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialGridHelper.hpp:33: warning: Member Grid3D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:254: warning: Member GridSurfaceMaterial (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/HashedString.hpp:19: warning: Member HashedString (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/GridSurfaceMaterial.hpp:244: warning: Member IndexedSurfaceMaterial (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:123: warning: Member Intersection2D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:124: warning: Member Intersection3D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialGridHelper.hpp:34: warning: Member MaterialGrid2D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialGridHelper.hpp:36: warning: Member MaterialGrid3D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialGridHelper.hpp:39: warning: Member MaterialGridAxisData (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:118: warning: Member MaterialSlabMatrix (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:117: warning: Member MaterialSlabVector (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:122: warning: Member MaxMomentumReducerLoop (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiEigenStepperLoop.hpp:124: warning: Member MaxWeightReducerLoop (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:127: warning: Member MultiIntersection3D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:48: warning: Member MutableLayerPtr (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/Onnx/include/Acts/Plugins/Onnx/OnnxRuntimeBase.hpp:18: warning: Member NetworkBatchInput (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackParameters.hpp:25: warning: Member NeutralBoundTrackParameters (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackParameters.hpp:27: warning: Member NeutralCurvilinearTrackParameters (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackParameters.hpp:29: warning: Member NeutralFreeTrackParameters (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Layer.hpp:49: warning: Member NextLayers (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/SpacePointFormation/SpacePointBuilderOptions.hpp:18: warning: Member ParamCovAccessor (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Types.hpp:22: warning: Member ProjectorBitset (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/ProtoSurfaceMaterial.hpp:114: warning: Member ProtoGridSurfaceMaterial (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Material/ProtoSurfaceMaterial.hpp:112: warning: Member ProtoSurfaceMaterial (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/ProxyAccessor.hpp:113: warning: Member ProxyAccessor (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/RangeXD.hpp:636: warning: Member Range1D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Ray.hpp:81: warning: Member Ray3D (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Types.hpp:29: warning: Member SerializedSubspaceIndices (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackParameters.hpp:18: warning: Member SinglyChargedBoundTrackParameters (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackParameters.hpp:20: warning: Member SinglyChargedCurvilinearTrackParameters (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackParameters.hpp:22: warning: Member SinglyChargedFreeTrackParameters (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Types.hpp:25: warning: Member SubspaceIndices (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:42: warning: Member SurfaceAndMaterialWithContext (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:39: warning: Member SurfaceMatcher (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:29: warning: Member surfaceMaterialPointer (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:44: warning: Member SurfaceMatrix (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:43: warning: Member SurfaceVector (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Types.hpp:18: warning: Member TrackIndexType (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:46: warning: Member TrackingVolumeAndMaterial (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolumeArrayCreator.hpp:22: warning: Member TrackingVolumeOrderPosition (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/TrackLinearizer.hpp:21: warning: Member TrackLinearizer (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:47: warning: Member V3Matrix (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:46: warning: Member V3Vector (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:329: warning: Member VariableBoundSubspaceHelper (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:28: warning: Member volumeMaterialPointer (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/IConfinedTrackingVolumeBuilder.hpp:17: warning: Member MutableTrackingVolumePtr (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/IConfinedTrackingVolumeBuilder.hpp:18: warning: Member MutableTrackingVolumeVector (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:63: warning: Member TrackingVolumeBoundaryPtr (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:65: warning: Member TrackingVolumeBoundaries (typedef) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterError.hpp:16: warning: Member CombinatorialKalmanFilterError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinder.hpp:49: warning: Member DetectorMeasurementInfo (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepperError.hpp:16: warning: Member EigenStepperError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfError.hpp:16: warning: Member GsfError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitterError.hpp:16: warning: Member KalmanFitterError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:44: warning: Member KalmanFitterTargetSurfaceStrategy (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/MagneticFieldError.hpp:16: warning: Member MagneticFieldError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiStepperError.hpp:16: warning: Member MultiStepperError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigatorError.hpp:16: warning: Member NavigatorError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalError.hpp:16: warning: Member PortalError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorError.hpp:16: warning: Member PropagatorError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinder.hpp:47: warning: Member SpacePointCandidateType (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceError.hpp:16: warning: Member SurfaceError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:42: warning: Member TrackExtrapolationError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:32: warning: Member TrackExtrapolationStrategy (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/VertexingError.hpp:16: warning: Member VertexingError (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:36: warning: Member WrappingCondition (enumeration) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:142: warning: Member Axis(AxisBoundaryTypeTag< bdt >, double min, double max, std::size_t bins) -> Axis< AxisType::Equidistant, bdt > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:149: warning: Member Axis(AxisBoundaryTypeTag< bdt >, std::vector< double > bins) -> Axis< AxisType::Variable, bdt > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:138: warning: Member Axis(double min, double max, std::size_t bins) -> Axis< AxisType::Equidistant, AxisBoundaryType::Open > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:145: warning: Member Axis(std::vector< double > bins) -> Axis< AxisType::Variable, AxisBoundaryType::Open > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/ConvertDD4hepDetector.hpp:161: warning: parameters of member Acts::cylinderVolumeHelper_dd4hep are not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/ConvertDD4hepDetector.hpp:161: warning: return type of member Acts::cylinderVolumeHelper_dd4hep is not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/GeometryHierarchyMapJsonConverter.hpp:127: warning: Member decorateJson(const decorator_t *decorator, const T &src, nlohmann::json &dest) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/GeometryHierarchyMapJsonConverter.hpp:136: warning: Member decorateJson(const decorator_t *decorator, const T*src, nlohmann::json &dest) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/DelegateChainBuilder.hpp:157: warning: Member DelegateChainBuilder(const D &) -> DelegateChainBuilder< typename D::signature_type > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MathHelpers.hpp:26: warning: Member fastHypot(T... args) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:50: warning: Member findFirstMeasurementState(const track_proxy_t &track) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:77: warning: Member findLastMeasurementState(const track_proxy_t &track) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/UtilitiesJsonConverter.hpp:27: warning: Member from_json(const nlohmann::json &j, BinningData &bd) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/UtilitiesJsonConverter.hpp:31: warning: Member from_json(const nlohmann::json &j, BinUtility &bu) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/AmbiguityConfigJsonConverter.hpp:24: warning: parameters of member Acts::from_json are not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/ExtentJsonConverter.hpp:22: warning: Member from_json(const nlohmann::json &j, Extent &e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:33: warning: Member from_json(const nlohmann::json &j, Material &t) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:37: warning: Member from_json(const nlohmann::json &j, MaterialSlab &t) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:39: warning: Member from_json(const nlohmann::json &j, MaterialSlabMatrix &t) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/ProtoDetectorJsonConverter.hpp:29: warning: Member from_json(const nlohmann::json &j, ProtoDetector &pd) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/ProtoDetectorJsonConverter.hpp:25: warning: Member from_json(const nlohmann::json &j, ProtoVolume &pv) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/UtilitiesJsonConverter.hpp:40: warning: Member from_json(const nlohmann::json &j, Range1D< Type > &r) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:47: warning: Member from_json(const nlohmann::json &j, surfaceMaterialPointer &material) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/AlgebraJsonConverter.hpp:22: warning: Member from_json(const nlohmann::json &j, Transform3 &t) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:43: warning: Member from_json(const nlohmann::json &j, volumeMaterialPointer &material) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Logger.hpp:739: warning: Member getDummyLogger() (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:761: warning: Member Grid(TypeTag< T >, Axes &&... axes) -> Grid< T, Axes... > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Grid.hpp:764: warning: Member Grid(TypeTag< T >, Axes &... axes) -> Grid< T, Axes... > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/GridIterator.hpp:283: warning: Member GridGlobalIterator(const Acts::Grid< T, Axes... > &grid, std::size_t idx) -> GridGlobalIterator< T, Axes... > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/HashedString.hpp:40: warning: Member hashString(std::string_view s) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/HashedString.hpp:44: warning: Member hashStringDynamic(std::string_view s) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MathHelpers.hpp:21: warning: Member hypotSquare(T... args) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterError.hpp:25: warning: Member make_error_code(Acts::CombinatorialKalmanFilterError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitterError.hpp:25: warning: Member make_error_code(Acts::KalmanFitterError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/MagneticFieldError.hpp:21: warning: Member make_error_code(Acts::MagneticFieldError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiStepperError.hpp:26: warning: Member make_error_code(Acts::MultiStepperError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigatorError.hpp:22: warning: Member make_error_code(Acts::NavigatorError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalError.hpp:21: warning: Member make_error_code(Acts::PortalError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorError.hpp:23: warning: Member make_error_code(Acts::PropagatorError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceError.hpp:21: warning: Member make_error_code(Acts::SurfaceError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/VertexingError.hpp:30: warning: Member make_error_code(Acts::VertexingError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepperError.hpp:23: warning: Member make_error_code(EigenStepperError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfError.hpp:23: warning: Member make_error_code(GsfError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:47: warning: Member make_error_code(TrackExtrapolationError e) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:50: warning: Member NLOHMANN_JSON_SERIALIZE_ENUM(Acts::MappingType, { {Acts::MappingType::PreMapping, "PreMapping"}, {Acts::MappingType::Default, "Default"}, {Acts::MappingType::PostMapping, "PostMapping"}, {Acts::MappingType::Sensor, "Sensor"}, }) namespace MaterialJsonConverter (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedConfirmationRangeConfig.hpp:18: warning: return type of member Acts::noopExperimentCuts is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:141: warning: Member operator*(const Acts::Vector3 &value, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:123: warning: Member operator*(Direction dir, const Acts::Vector3 &value) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:119: warning: Member operator*(Direction dir, double value) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:115: warning: Member operator*(Direction dir, float value) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:111: warning: Member operator*(Direction dir, int value) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:137: warning: Member operator*(double value, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:133: warning: Member operator*(float value, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:129: warning: Member operator*(int value, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:162: warning: Member operator*=(Acts::Vector3 &value, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:157: warning: Member operator*=(double &value, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:152: warning: Member operator*=(float &value, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:147: warning: Member operator*=(int &value, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:88: warning: Member operator<<(std::ostream &os, AxisBoundaryType bdt) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:112: warning: Member operator<<(std::ostream &os, AxisType type) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/BoundarySurfaceFace.hpp:58: warning: Member operator<<(std::ostream &os, BoundarySurfaceFace &face) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/ConstrainedStep.hpp:167: warning: Member operator<<(std::ostream &os, const ConstrainedStep &step) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/Material.hpp:149: warning: Member operator<<(std::ostream &os, const Material &material) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Material/MaterialSlab.hpp:114: warning: Member operator<<(std::ostream &os, const MaterialSlab &materialSlab) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/ProtoAxis.hpp:178: warning: Member operator<<(std::ostream &os, const std::vector< ProtoAxis > &a) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Direction.hpp:107: warning: Member operator<<(std::ostream &os, Direction dir) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GeometryIdentifier.hpp:277: warning: Member operator<<(std::ostream &os, GeometryIdentifier id) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:31: warning: parameters of member Acts::operator<< are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Intersection.hpp:31: warning: return type of member Acts::operator<< is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/Common.hpp:25: warning: Member operator<<(std::ostream &os, MaterialUpdateStage matUpdate) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/ParticleData.hpp:45: warning: parameters of member Acts::operator<< are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/ParticleData.hpp:45: warning: return type of member Acts::operator<< is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/TrackStatePropMask.hpp:41: warning: Member operator<<(std::ostream &os, TrackStatePropMask mask) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeAttachmentStrategy.hpp:30: warning: Member operator<<(std::ostream &os, VolumeAttachmentStrategy strategy) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeResizeStrategy.hpp:23: warning: Member operator<<(std::ostream &os, VolumeResizeStrategy strategy) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:350: warning: parameters of member Acts::operator<< are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Extent.hpp:350: warning: return type of member Acts::operator<< is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/GlueVolumesDescriptor.hpp:81: warning: Member operator<<(std::ostream &sl, const GlueVolumesDescriptor &gvd) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Volume.hpp:157: warning: parameters of member Acts::operator<< are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/Volume.hpp:157: warning: return type of member Acts::operator<< is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeBounds.hpp:167: warning: parameters of member Acts::operator<< are not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeBounds.hpp:167: warning: return type of member Acts::operator<< is not documented
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeBounds.hpp:177: warning: Member operator<<(std::ostream &sl, const VolumeBounds::BoundsType &bt) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/VolumeBounds.hpp:170: warning: Member operator==(const VolumeBounds &lhs, const VolumeBounds &rhs) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/Helpers.hpp:220: warning: Member overloaded(Ts...) -> overloaded< Ts... > (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Definitions/ParticleData.hpp:48: warning: Member pdgToShortAbsString(PdgParticle pdg) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MathHelpers.hpp:16: warning: Member square(T x) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/VolumeJsonConverter.hpp:35: warning: parameters of member Acts::to_json are not documented
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/UtilitiesJsonConverter.hpp:25: warning: Member to_json(nlohmann::json &j, const BinningData &bd) (function) of namespace Acts is not documented.
+- [ ] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/UtilitiesJsonConverter.hpp:29: warning: Member to_json(nlohmann::json &j, const BinUtility &bu) (function) of namespace Acts is not documented.

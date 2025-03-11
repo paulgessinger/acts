@@ -39,10 +39,14 @@ class Surface;
 class TrackingGeometry;
 class TrackingVolume;
 
+/// A tuple containing a surface, its associated material, and geometry context.
+/// @note Used for material mapping and JSON conversion.
 using SurfaceAndMaterialWithContext =
     std::tuple<std::shared_ptr<const Acts::Surface>,
                std::shared_ptr<const Acts::ISurfaceMaterial>,
                Acts::GeometryContext>;
+/// A pair containing a tracking volume and its associated material.
+/// @note Used for material mapping and JSON conversion.
 using TrackingVolumeAndMaterial =
     std::pair<const Acts::TrackingVolume*,
               std::shared_ptr<const Acts::IVolumeMaterial>>;

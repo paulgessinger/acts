@@ -315,17 +315,21 @@ class GridSurfaceMaterialT
   BoundToGridLocalDelegate m_boundToGridLocal;
 };
 
-// Indexed Surface material
+/// @brief Type alias for surface material indexed by local coordinates
+/// @details Surface material implementation that uses local coordinate indexing
+/// @tparam grid_type The type of grid used for material mapping
 template <typename grid_type>
 using IndexedSurfaceMaterial =
     GridSurfaceMaterialT<grid_type, IndexedMaterialAccessor>;
 
-// Globally Indexed Surface material
+/// @brief Type alias for surface material indexed by global coordinates
+/// @details Surface material implementation that uses global coordinate indexing
 template <typename grid_type>
 using GloballyIndexedSurfaceMaterial =
     GridSurfaceMaterialT<grid_type, GloballyIndexedMaterialAccessor>;
 
-// Grid Surface material
+/// @brief Type alias for grid-based surface material
+/// @details Surface material implementation using a regular grid structure
 template <typename grid_type>
 using GridSurfaceMaterial =
     GridSurfaceMaterialT<grid_type, GridMaterialAccessor>;

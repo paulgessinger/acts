@@ -631,6 +631,10 @@ class RangeXD {
   Vector<Type, Dims> m_maxima{};
 };
 
+/// @brief Type alias for a one-dimensional range
+/// @details Specialization of RangeXD for one-dimensional ranges
+/// @tparam Type The value type of the range
+/// @tparam Vector The container type template used to store the range bounds
 template <typename Type,
           template <typename, std::size_t> typename Vector = std::array>
 using Range1D = RangeXD<1, Type, Vector>;

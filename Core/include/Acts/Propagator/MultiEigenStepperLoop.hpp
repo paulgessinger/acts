@@ -119,8 +119,13 @@ struct SingleComponentReducer {
 
 }  // namespace detail
 
+/// @brief Type alias for loop reducer based on maximum momentum
+/// @details Reduces multiple loop iterations based on momentum criteria
 using MaxMomentumReducerLoop =
     detail::SingleComponentReducer<detail::MaxMomentumComponent>;
+
+/// @brief Type alias for loop reducer based on maximum weight
+/// @details Reduces multiple loop iterations based on weight criteria
 using MaxWeightReducerLoop =
     detail::SingleComponentReducer<detail::MaxWeightComponent>;
 
