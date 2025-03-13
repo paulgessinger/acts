@@ -52,11 +52,13 @@ using SurfaceVector = std::vector<const Surface*>;
 /// Matrix (2D vector) of pointers to constant Surface objects
 using SurfaceMatrix = std::vector<SurfaceVector>;
 
+/// @typedef V3Matrix
+/// Matrix (2D vector) of 3D vectors, used for storing grid-like collections of 3D points.
+using V3Matrix = std::vector<V3Vector>;
+
+/// @typedef V3Vector
 /// Vector of 3D vectors, used for storing collections of 3D points.
 using V3Vector = std::vector<Vector3>;
-/// Matrix (2D vector) of 3D vectors, used for storing grid-like collections of
-/// 3D points.
-using V3Matrix = std::vector<V3Vector>;
 
 /// @brief Scalar type used for axis values in surface array binning
 using AxisScalar = Vector3::Scalar;

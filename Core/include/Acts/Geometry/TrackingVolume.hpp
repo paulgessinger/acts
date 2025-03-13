@@ -60,8 +60,9 @@ class INavigationPolicy;
 using TrackingVolumePtr = std::shared_ptr<const TrackingVolume>;
 using MutableTrackingVolumePtr = std::shared_ptr<TrackingVolume>;
 
-using TrackingVolumeBoundaryPtr =
-    std::shared_ptr<const BoundarySurfaceT<TrackingVolume>>;
+/// @typedef TrackingVolumeBoundaryPtr
+/// Shared pointer to a constant BoundarySurfaceT of a TrackingVolume.
+using TrackingVolumeBoundaryPtr = std::shared_ptr<const BoundarySurfaceT<TrackingVolume>>;
 using TrackingVolumeBoundaries = std::vector<TrackingVolumeBoundaryPtr>;
 
 // possible contained

@@ -51,11 +51,44 @@
 - [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/Types.hpp:18: warning: Member TrackIndexType (typedef) of namespace Acts is not documented.
 - [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialMapJsonConverter.hpp:46: warning: Member TrackingVolumeAndMaterial (typedef) of namespace Acts is not documented.
 - [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolumeArrayCreator.hpp:22: warning: Member TrackingVolumeOrderPosition (typedef) of namespace Acts is not documented.
-- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/TrackLinearizer.hpp:21: warning: Member TrackLinearizer (typedef) of namespace Acts is not documented.
-- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:47: warning: Member V3Matrix (typedef) of namespace Acts is not documented.
-- [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:46: warning: Member V3Vector (typedef) of namespace Acts is not documented.
-- [ ] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:329: warning: Member VariableBoundSubspaceHelper (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/TrackLinearizer.hpp:21: warning: Member TrackLinearizer (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:47: warning: Member V3Matrix (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/SurfaceArrayCreator.hpp:46: warning: Member V3Vector (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/EventData/SubspaceHelpers.hpp:329: warning: Member VariableBoundSubspaceHelper (typedef) of namespace Acts is not documented.
 - [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/MaterialJsonConverter.hpp:28: warning: Member volumeMaterialPointer (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/IConfinedTrackingVolumeBuilder.hpp:17: warning: Member MutableTrackingVolumePtr (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/IConfinedTrackingVolumeBuilder.hpp:18: warning: Member MutableTrackingVolumeVector (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:63: warning: Member TrackingVolumeBoundaryPtr (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:65: warning: Member TrackingVolumeBoundaries (typedef) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/TrackFinding/CombinatorialKalmanFilterError.hpp:16: warning: Member CombinatorialKalmanFilterError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinder.hpp:49: warning: Member DetectorMeasurementInfo (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/EigenStepperError.hpp:16: warning: Member EigenStepperError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/GsfError.hpp:16: warning: Member GsfError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitterError.hpp:16: warning: Member KalmanFitterError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/TrackFitting/KalmanFitter.hpp:44: warning: Member KalmanFitterTargetSurfaceStrategy (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/MagneticField/MagneticFieldError.hpp:16: warning: Member MagneticFieldError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/MultiStepperError.hpp:16: warning: Member MultiStepperError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/NavigatorError.hpp:16: warning: Member NavigatorError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/PortalError.hpp:16: warning: Member PortalError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Propagator/PropagatorError.hpp:16: warning: Member PropagatorError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Seeding/SeedFinder.hpp:47: warning: Member SpacePointCandidateType (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Surfaces/SurfaceError.hpp:16: warning: Member SurfaceError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:42: warning: Member TrackExtrapolationError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:32: warning: Member TrackExtrapolationStrategy (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Vertexing/VertexingError.hpp:16: warning: Member VertexingError (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/CylinderVolumeBuilder.hpp:36: warning: Member WrappingCondition (enumeration) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:142: warning: Member Axis(AxisBoundaryTypeTag< bdt >, double min, double max, std::size_t bins) -> Axis< AxisType::Equidistant, bdt > (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:149: warning: Member Axis(AxisBoundaryTypeTag< bdt >, std::vector< double > bins) -> Axis< AxisType::Variable, bdt > (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:138: warning: Member Axis(double min, double max, std::size_t bins) -> Axis< AxisType::Equidistant, AxisBoundaryType::Open > (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/AxisDefinitions.hpp:145: warning: Member Axis(std::vector< double > bins) -> Axis< AxisType::Variable, AxisBoundaryType::Open > (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/ConvertDD4hepDetector.hpp:161: warning: parameters of member Acts::cylinderVolumeHelper_dd4hep are not documented
+- [x] /Users/pagessin/dev/acts/Plugins/DD4hep/include/Acts/Plugins/DD4hep/ConvertDD4hepDetector.hpp:161: warning: return type of member Acts::cylinderVolumeHelper_dd4hep is not documented
+- [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/GeometryHierarchyMapJsonConverter.hpp:127: warning: Member decorateJson(const decorator_t *decorator, const T &src, nlohmann::json &dest) (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Plugins/Json/include/Acts/Plugins/Json/GeometryHierarchyMapJsonConverter.hpp:136: warning: Member decorateJson(const decorator_t *decorator, const T*src, nlohmann::json &dest) (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/DelegateChainBuilder.hpp:157: warning: Member DelegateChainBuilder(const D &) -> DelegateChainBuilder< typename D::signature_type > (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/MathHelpers.hpp:26: warning: Member fastHypot(T... args) (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:50: warning: Member findFirstMeasurementState(const track_proxy_t &track) (function) of namespace Acts is not documented.
+- [x] /Users/pagessin/dev/acts/Core/include/Acts/Utilities/TrackHelpers.hpp:77: warning: Member findLastMeasurementState(const track_proxy_t &track) (function) of namespace Acts is not documented.
 - [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/IConfinedTrackingVolumeBuilder.hpp:17: warning: Member MutableTrackingVolumePtr (typedef) of namespace Acts is not documented.
 - [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/IConfinedTrackingVolumeBuilder.hpp:18: warning: Member MutableTrackingVolumeVector (typedef) of namespace Acts is not documented.
 - [ ] /Users/pagessin/dev/acts/Core/include/Acts/Geometry/TrackingVolume.hpp:63: warning: Member TrackingVolumeBoundaryPtr (typedef) of namespace Acts is not documented.

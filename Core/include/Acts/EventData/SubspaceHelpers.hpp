@@ -329,8 +329,9 @@ template <std::size_t SubspaceSize>
 using FixedBoundSubspaceHelper =
     FixedSubspaceHelper<Acts::eBoundSize, SubspaceSize, std::uint8_t>;
 
-/// @brief Helper type for variable-size bound parameter subspaces
-/// @details Provides utilities for working with variable-size subspaces of bound track parameters
+/// @typedef VariableBoundSubspaceHelper
+/// Helper type for variable-size bound parameter subspaces.
+/// Provides utilities for working with variable-size subspaces of bound track parameters.
 using VariableBoundSubspaceHelper =
     VariableSubspaceHelper<Acts::eBoundSize, std::uint8_t>;
 
