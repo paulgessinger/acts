@@ -16,15 +16,15 @@
 
 #include <string>
 
-#include <fastjet/ClusterSequence.hh>
-#include <fastjet/JetDefinition.hh>
-#include <fastjet/PseudoJet.hh>
+namespace fastjet {
+class PseudoJet;
+}
 
 namespace ActsExamples {
 struct AlgorithmContext;
 
 /// Print all particles.
-class TruthJetAlgorithm : public IAlgorithm {
+class TruthJetAlgorithm final : public IAlgorithm {
  public:
   struct Config {
     /// Input particles collection.
@@ -38,7 +38,7 @@ class TruthJetAlgorithm : public IAlgorithm {
   TruthJetAlgorithm(const Config& cfg, Acts::Logging::Level lvl);
 
   ProcessCode execute(const AlgorithmContext& ctx) const override;
-  ProcessCode finalize() const;
+  ProcessCode finalize() override;
 
   const Config& config() const { return m_cfg; }
 

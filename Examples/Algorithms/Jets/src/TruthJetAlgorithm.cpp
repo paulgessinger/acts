@@ -17,6 +17,10 @@
 #include <ostream>
 #include <stdexcept>
 
+#include <fastjet/ClusterSequence.hh>
+#include <fastjet/JetDefinition.hh>
+#include <fastjet/PseudoJet.hh>
+
 namespace ActsExamples {
 
 TruthJetAlgorithm::TruthJetAlgorithm(const Config& cfg,
@@ -65,7 +69,7 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
   return ProcessCode::SUCCESS;
 }
 
-ProcessCode ActsExamples::TruthJetAlgorithm::finalize() const {
+ProcessCode ActsExamples::TruthJetAlgorithm::finalize() {
   ACTS_INFO("Finalizing truth jet clustering");
   return ProcessCode::SUCCESS;
 }

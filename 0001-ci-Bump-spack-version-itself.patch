@@ -1,0 +1,39 @@
+From 15cd0124b70e071c986fcf2497197d5ddb04adcc Mon Sep 17 00:00:00 2001
+From: Paul Gessinger <paul.gessinger@cern.ch>
+Date: Mon, 26 May 2025 15:30:16 +0200
+Subject: [PATCH] ci: Bump spack version itself
+
+---
+ .github/actions/dependencies/action.yml | 2 +-
+ .gitlab-ci.yml                          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/.github/actions/dependencies/action.yml b/.github/actions/dependencies/action.yml
+index 34f6efb108..6b794c1c05 100644
+--- a/.github/actions/dependencies/action.yml
++++ b/.github/actions/dependencies/action.yml
+@@ -13,7 +13,7 @@ inputs:
+   spack_version:
+     description: 'Version of Spack to use'
+     required: false
+-    default: 'develop-2025-04-20'
++    default: 'develop-2025-05-25'
+ 
+ runs:
+   using: 'composite'
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index e09aed54ce..10a1244424 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -4,7 +4,7 @@ variables:
+   CCACHE_KEY_SUFFIX: r2
+   CTEST_OUTPUT_ON_FAILURE: 1
+ 
+-  SPACK_VERSION: develop-2025-04-20
++  SPACK_VERSION: develop-2025-05-25
+   LOCKFILE_CACHE_DIR: ${CI_PROJECT_DIR}/spack_lockfile_cache
+ 
+   DEPENDENCY_TAG: v10.0.0
+-- 
+2.39.5 (Apple Git-154)
+
