@@ -21,6 +21,7 @@ add_library(
     src/Utilities/Paths.cpp
     src/Utilities/Options.cpp
     src/Utilities/Helpers.cpp
+    src/Utilities/ParticleId.cpp
     src/Validation/DuplicationPlotTool.cpp
     src/Validation/EffPlotTool.cpp
     src/Validation/FakePlotTool.cpp
