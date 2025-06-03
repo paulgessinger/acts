@@ -18,6 +18,9 @@ def runTruthTrackingKalman(
     inputHitsPath: Optional[Path] = None,
     decorators=[],
     reverseFilteringMomThreshold=0 * u.GeV,
+    ptcl_truth: acts.PdgParticle = acts.PdgParticle.eMuon,
+    hypo: acts.ParticleHypothesis = acts.ParticleHypothesis.muon,
+    summary="tracksummary_kf.root",
     s: acts.examples.Sequencer = None,
 ):
     from acts.examples.simulation import (
@@ -52,9 +55,9 @@ def runTruthTrackingKalman(
     if inputParticlePath is None:
         addParticleGun(
             s,
-            ParticleConfig(num=1, pdg=acts.PdgParticle.eMuon, randomizeCharge=True),
+            ParticleConfig(num=1, pdg=ptcl_truth, randomizeCharge=True),
             EtaConfig(-3.0, 3.0, uniform=True),
-            MomentumConfig(1.0 * u.GeV, 100.0 * u.GeV, transverse=True),
+            MomentumConfig(1.0 * u.GeV, 1.0 * u.GeV, transverse=True),
             PhiConfig(0.0, 360.0 * u.degree),
             vtxGen=acts.examples.GaussianVertexGenerator(
                 mean=acts.Vector4(0, 0, 0, 0),
@@ -119,7 +122,7 @@ def runTruthTrackingKalman(
         rnd=rnd,
         inputParticles="particles_generated",
         seedingAlgorithm=SeedingAlgorithm.TruthSmeared,
-        particleHypothesis=acts.ParticleHypothesis.muon,
+        particleHypothesis=hypo,
     )
 
     addKalmanTracks(
@@ -141,17 +144,17 @@ def runTruthTrackingKalman(
     )
     s.addWhiteboardAlias("tracks", "selected-tracks")
 
-    s.addWriter(
-        acts.examples.RootTrackStatesWriter(
-            level=acts.logging.INFO,
-            inputTracks="tracks",
-            inputParticles="particles_selected",
-            inputTrackParticleMatching="track_particle_matching",
-            inputSimHits="simhits",
-            inputMeasurementSimHitsMap="measurement_simhits_map",
-            filePath=str(outputDir / "trackstates_kf.root"),
-        )
-    )
+    # s.addWriter(
+    #     acts.examples.RootTrackStatesWriter(
+    #         level=acts.logging.INFO,
+    #         inputTracks="tracks",
+    #         inputParticles="particles_selected",
+    #         inputTrackParticleMatching="track_particle_matching",
+    #         inputSimHits="simhits",
+    #         inputMeasurementSimHitsMap="measurement_simhits_map",
+    #         filePath=str(outputDir / "trackstates_kf.root"),
+    #     )
+    # )
 
     s.addWriter(
         acts.examples.RootTrackSummaryWriter(
@@ -159,32 +162,51 @@ def runTruthTrackingKalman(
             inputTracks="tracks",
             inputParticles="particles_selected",
             inputTrackParticleMatching="track_particle_matching",
-            filePath=str(outputDir / "tracksummary_kf.root"),
+            filePath=str(outputDir / summary),
         )
     )
 
-    s.addWriter(
-        acts.examples.TrackFitterPerformanceWriter(
-            level=acts.logging.INFO,
-            inputTracks="tracks",
-            inputParticles="particles_selected",
-            inputTrackParticleMatching="track_particle_matching",
-            filePath=str(outputDir / "performance_kf.root"),
-        )
-    )
+    # s.addWriter(
+    #     acts.examples.TrackFitterPerformanceWriter(
+    #         level=acts.logging.INFO,
+    #         inputTracks="tracks",
+    #         inputParticles="particles_selected",
+    #         inputTrackParticleMatching="track_particle_matching",
+    #         filePath=str(outputDir / "performance_kf.root"),
+    #     )
+    # )
 
     return s
 
 
 if "__main__" == __name__:
+
+    import argparse
+
+    p = argparse.ArgumentParser()
+    choices = ["mu", "pi", "p", "kaon"]
+    p.add_argument("--ptcl", choices=choices)
+    p.add_argument("--hypo", choices=choices)
+    args = p.parse_args()
+
     srcdir = Path(__file__).resolve().parent.parent.parent.parent
 
     # ODD
-    from acts.examples.odd import getOpenDataDetector
+    from acts.examples.odd import getOpenDataDetector, getOpenDataDetectorDirectory
 
-    detector = getOpenDataDetector()
+    geoDir = getOpenDataDetectorDirectory()
+    actsDir = Path(__file__).parent.parent.parent.parent
+    # acts.examples.dump_args_calls(locals())  # show python binding calls
+
+    oddMaterialMap = geoDir / "data/odd-material-maps.root"
+
+    oddDigiConfig = actsDir / "Examples/Configs/odd-digi-smearing-config.json"
+
+    oddSeedingSel = actsDir / "Examples/Configs/odd-seeding-config.json"
+    oddMaterialDeco = acts.IMaterialDecorator.fromFile(oddMaterialMap)
+
+    detector = getOpenDataDetector(odd_dir=geoDir, materialDecorator=oddMaterialDeco)
     trackingGeometry = detector.trackingGeometry()
-    digiConfigFile = srcdir / "Examples/Configs/odd-digi-smearing-config.json"
 
     ## GenericDetector
     # detector = acts.examples.GenericDetector()
@@ -196,9 +218,39 @@ if "__main__" == __name__:
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
+    s = acts.examples.Sequencer(events=10000, numThreads=-1, logLevel=acts.logging.INFO)
+
+    if args.ptcl == "mu":
+        ptcl_truth = acts.PdgParticle.eMuon
+    elif args.ptcl == "pi":
+        ptcl_truth = acts.PdgParticle.ePionMinus
+    elif args.ptcl == "p":
+        ptcl_truth = acts.PdgParticle.eProton
+    elif args.ptcl == "kaon":
+        ptcl_truth = acts.PdgParticle.eKaonMinus
+    else:
+        raise ValueError(f"Unknown particle type: {args.ptcl}")
+
+    if args.hypo == "mu":
+        hypo = acts.ParticleHypothesis.muon
+    elif args.hypo == "pi":
+        hypo = acts.ParticleHypothesis.pion
+    elif args.hypo == "p":
+        hypo = acts.ParticleHypothesis.proton
+    elif args.hypo == "kaon":
+        hypo = acts.ParticleHypothesis.kaon
+    else:
+        raise ValueError(f"Unknown hypothesis: {args.hypo}")
+
+    summary = f"tracksummary_kf_h_{args.hypo}_t_{args.ptcl}.root"
+
     runTruthTrackingKalman(
         trackingGeometry=trackingGeometry,
         field=field,
-        digiConfigFile=digiConfigFile,
+        digiConfigFile=oddDigiConfig,
         outputDir=Path.cwd(),
+        ptcl_truth=ptcl_truth,
+        hypo=hypo,
+        summary=summary,
+        s=s,
     ).run()
