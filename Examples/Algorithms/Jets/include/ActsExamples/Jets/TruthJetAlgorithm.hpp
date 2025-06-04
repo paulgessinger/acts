@@ -21,6 +21,10 @@ namespace fastjet {
 class PseudoJet;
 }
 
+namespace HepMC3 {
+class GenEvent;
+}
+
 namespace ActsExamples {
 struct AlgorithmContext;
 
@@ -33,12 +37,15 @@ class TruthJetAlgorithm final : public IAlgorithm {
     std::string outputJets;
     /// Minimum jet pT.
     double jetPtMin;
+
+    std::optional<std::string> inputHepMC3Event;
+    bool doJetLabeling = true;
+    double jetLabelingDeltaR = 0.4;
   };
 
   TruthJetAlgorithm(const Config& cfg, Acts::Logging::Level lvl);
 
   ProcessCode execute(const AlgorithmContext& ctx) const override;
-  ProcessCode finalize() override;
 
   const Config& config() const { return m_cfg; }
 
@@ -47,6 +54,9 @@ class TruthJetAlgorithm final : public IAlgorithm {
   ReadDataHandle<SimParticleContainer> m_inputTruthParticles{
       this, "inputTruthParticles"};
   WriteDataHandle<TrackJetContainer> m_outputJets{this, "outputJets"};
+
+  ReadDataHandle<std::shared_ptr<HepMC3::GenEvent>> m_inputHepMC3Event{
+      this, "inputHepMC3Event"};
 };
 
 }  // namespace ActsExamples
