@@ -55,8 +55,14 @@ ParticleSelectorConfig = namedtuple(
 
 TruthJetConfig = namedtuple(
     "TruthJetConfig",
-    ["inputTruthParticles", "outputJets", "jetPtMin"],
-    defaults=[None, None],
+    [
+        "inputTruthParticles",
+        "outputJets",
+        "jetPtMin",
+        "inputHepMC3Event",
+        "doJetLabeling",
+    ],
+    defaults=[None, None, None, None, None],
 )
 
 TrackToTruthJetConfig = namedtuple(
@@ -96,10 +102,13 @@ def _getParticleSelectionKWargs(config: ParticleSelectorConfig) -> dict:
 
 
 def _getTruthJetKWargs(config: TruthJetConfig) -> dict:
+    print(config)
     return {
         "inputTruthParticles": config.inputTruthParticles,
         "outputJets": config.outputJets,
         "jetPtMin": config.jetPtMin,
+        "inputHepMC3Event": config.inputHepMC3Event,
+        "doJetLabeling": config.doJetLabeling,
     }
 
 
@@ -874,9 +883,11 @@ def addTruthJetAlg(
 ) -> None:
     from acts.examples import TruthJetAlgorithm
 
+    kwargs = acts.examples.defaultKWArgs(**_getTruthJetKWargs(config))
+    print(kwargs)
     customLogLevel = acts.examples.defaultLogging(s, loglevel)
     truthJetAlg = acts.examples.TruthJetAlgorithm(
-        **acts.examples.defaultKWArgs(**_getTruthJetKWargs(config)),
+        **kwargs,
         level=customLogLevel(),
     )
 
