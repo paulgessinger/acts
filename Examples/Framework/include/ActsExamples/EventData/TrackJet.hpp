@@ -14,43 +14,25 @@
 #include <vector>
 
 namespace ActsExamples {
-// TODO: Capitalize enum names for consistency
-enum jetlabel { unknown = -99, ljet = 0, cjet = 4, bjet = 5 };
-// TODO: Remove hadronlabel
-enum hadronlabel {
-  Hadron = 1,
-  BBbarMesonPart = 2,
-  CCbarMesonPart = 3,
-  BottomMesonPart = 4,
-  BottomBaryonPart = 5,
-  CharmedMesonPart = 6,
-  CharmedBaryonPart = 7,
-  StrangeMesonPart = 8,
-  StrangeBaryonPart = 9,
-  LightMesonPart = 10,
-  LightBaryonPart = 11,
-  Unknown = 12
-};
+
+enum class JetLabel { Unknown = -99, LightJet = 0, CJet = 4, BJet = 5 };
 
 class TrackJet {
  public:
-  TrackJet(const Acts::Vector4& fm) {
-    m_fourMomentum = fm;
-    m_label = ActsExamples::unknown;
-  }
+  explicit TrackJet(const Acts::Vector4& fourMomentum)
+      : m_fourMomentum(fourMomentum) {}
 
-  TrackJet(const Acts::Vector4& fm, const ActsExamples::jetlabel jl) {
-    m_fourMomentum = fm;
-    m_label = jl;
-  }
+  TrackJet(const Acts::Vector4& fourMomentum,
+           const ActsExamples::JetLabel label)
+      : m_fourMomentum(fourMomentum), m_label(label) {}
 
-  void setLabel(const ActsExamples::jetlabel jl) { m_label = jl; }
+  void setLabel(ActsExamples::JetLabel jl) { m_label = jl; }
 
-  ActsExamples::jetlabel getLabel() const { return m_label; }
+  ActsExamples::JetLabel getLabel() const { return m_label; }
 
   // TODO::Pass references instead of copies.
 
-  void setConstituents(const std::vector<int> constituents) {
+  void setConstituents(const std::vector<int>& constituents) {
     m_constituents = constituents;
   }
 
@@ -58,10 +40,11 @@ class TrackJet {
 
   Acts::Vector4 getFourMomentum() const { return m_fourMomentum; }
 
-  void addTrack(const int trk_idx) { m_trk_idxs.push_back(trk_idx); }
+  void addTrack(const int trk_idx) { m_trackIndices.push_back(trk_idx); }
 
-  std::vector<int> getTracks() const { return m_trk_idxs; }
+  std::vector<int> getTracks() const { return m_trackIndices; }
 
+  // @TODO: Turn into an output stream operator
   void print() const {
     std::cout << "Printing Jet information" << std::endl;
     std::cout << "4mom=(" << m_fourMomentum(0) << "," << m_fourMomentum(1)
@@ -75,9 +58,9 @@ class TrackJet {
     }
     std::cout << std::endl;
 
-    std::cout << "With  " << m_trk_idxs.size() << " associated tracks"
+    std::cout << "With  " << m_trackIndices.size() << " associated tracks"
               << std::endl;
-    for (auto& trkidx : m_trk_idxs) {
+    for (auto& trkidx : m_trackIndices) {
       std::cout << trkidx << " ";
     }
     std::cout << std::endl;
@@ -85,13 +68,13 @@ class TrackJet {
 
  private:
   Acts::Vector4 m_fourMomentum{0., 0., 0., 0.};
-  ActsExamples::jetlabel m_label{ActsExamples::unknown};
+  ActsExamples::JetLabel m_label{ActsExamples::JetLabel::Unknown};
 
   // The indices of the constituexonts wrt the global container
   std::vector<int> m_constituents{};
 
   // The indices of the tracks associated to this jet
-  std::vector<int> m_trk_idxs{};
+  std::vector<int> m_trackIndices{};
 };
 
 using TrackJetContainer = std::vector<TrackJet>;

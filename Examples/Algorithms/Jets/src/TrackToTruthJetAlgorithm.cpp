@@ -39,8 +39,8 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
 
   const auto& tracks = m_inputTracks(ctx);
   const auto& truthJets = m_inputJets(ctx);
-  TrackJetContainer jets; // track jets to be filled
-  //copy truth jets to jets
+  TrackJetContainer jets;  // track jets to be filled
+  // copy truth jets to jets
   for (const auto& jet : truthJets) {
     jets.emplace_back(jet.getFourMomentum(), jet.getLabel());
     jets.back().setConstituents(jet.getConstituents());
@@ -58,10 +58,10 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
         sqrt(track.absoluteMomentum() *
              track.absoluteMomentum());  // need to add mass here!
 
-    // ACTS_DEBUG("Track index: "
-    //            << track.index() << ", momentum: " << track.momentum().x()
-    //            << ", " << track.momentum().y() << ", " << track.momentum().z()
-    //            << ", energy: " << trackEnergy);
+    ACTS_VERBOSE("Track index: "
+                 << track.index() << ", momentum: " << track.momentum().x()
+                 << ", " << track.momentum().y() << ", " << track.momentum().z()
+                 << ", energy: " << trackEnergy);
 
     // Create a fastjet::PseudoJet object for the track
     fastjet::PseudoJet trackJet(track.momentum().x(), track.momentum().y(),
@@ -73,12 +73,11 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
       const auto& jet = jets[i];
 
       // Create a fastjet::PseudoJet object for the jet
-      fastjet::PseudoJet jetPseudo(jet.getFourMomentum()(0),
-                                   jet.getFourMomentum()(1),
-                                   jet.getFourMomentum()(2),
-                                   jet.getFourMomentum()(3));
+      fastjet::PseudoJet jetPseudo(
+          jet.getFourMomentum()(0), jet.getFourMomentum()(1),
+          jet.getFourMomentum()(2), jet.getFourMomentum()(3));
 
-      // TODO: instead pseudo jet use directly eta phi from trackjet 
+      // TODO: instead pseudo jet use directly eta phi from trackjet
       if (trackJet.delta_R(jetPseudo) < minDeltaR) {
         minDeltaR = trackJet.delta_R(jetPseudo);
         closestJetIndex = i;
@@ -86,7 +85,7 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
 
       ACTS_DEBUG("Track " << track.index() << " delta R to jet " << i << ": "
                           << trackJet.delta_R(jetPseudo));
-      if(closestJetIndex != -1) {
+      if (closestJetIndex != -1) {
         ACTS_DEBUG("Closest jet so far: " << closestJetIndex
                                           << " with delta R: " << minDeltaR);
       }
@@ -94,15 +93,15 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
     }  // loop over jets
 
     if (closestJetIndex != -1) {
-      ACTS_DEBUG("Adding track " << track.index() << " to jet " << closestJetIndex );
+      ACTS_VERBOSE("Adding track " << track.index() << " to jet "
+                                   << closestJetIndex);
       jets[closestJetIndex].addTrack(track.index());
     }
 
   }  // loop over tracks
-                
+
   // Write the matched jets to the output
   m_outputTrackJets(ctx, std::move(jets));
-
 
   return ProcessCode::SUCCESS;
 }

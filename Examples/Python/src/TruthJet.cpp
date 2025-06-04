@@ -29,7 +29,8 @@ void addTruthJet(Context& ctx) {
 
   ACTS_PYTHON_DECLARE_ALGORITHM(ActsExamples::TruthJetAlgorithm, mex,
                                 "TruthJetAlgorithm", inputTruthParticles,
-                                outputJets, jetPtMin);
+                                outputJets, jetPtMin, inputHepMC3Event,
+                                doJetLabeling);
 }  // addTruthJet
 
 void addTrackToTruthJet(Context& ctx) {
