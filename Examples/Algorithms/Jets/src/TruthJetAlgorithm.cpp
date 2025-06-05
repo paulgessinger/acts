@@ -9,16 +9,12 @@
 #include "ActsExamples/Jets/TruthJetAlgorithm.hpp"
 
 #include "Acts/Definitions/ParticleData.hpp"
-#include "Acts/Definitions/Units.hpp"
-#include "Acts/Utilities/Helpers.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "Acts/Utilities/ScopedTimer.hpp"
 #include "ActsExamples/EventData/SimParticle.hpp"
 #include "ActsExamples/EventData/TrackJet.hpp"
 #include "ActsExamples/Framework/AlgorithmContext.hpp"
-#include "ActsExamples/Io/HepMC3/HepMC3Util.hpp"
 #include "ActsExamples/Utilities/ParticleId.hpp"
-#include "ActsFatras/EventData/ProcessType.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -64,35 +60,20 @@ JetLabel jetLabelFromHadronType(ParticleId::HadronType hType) {
     case CharmedMeson:
     case CharmedBaryon:
       return JetLabel::CJet;
+    case StrangeMeson:
+    case StrangeBaryon:
+    case LightMeson:
+    case LightBaryon:
+      return JetLabel::LightJet;
     default:
       return JetLabel::Unknown;
   }
 }
-
-// void findInputParticles(const HepMC3::GenEvent& event,
-//                         std::vector<const HepMC3::GenParticle*>& particles) {
-//   for (const auto& particle : event.particles()) {
-//     if (particle->end_vertex() != nullptr) {
-//       continue;
-//     }
-
-//     if (particle->status() != HepMC3Util::kUndecayedParticleStatus) {
-//       continue;
-//     }
-
-//     // if (!ParticleId::isInteracting(particle->pdg_id())) {
-//     //   continue;
-//     // }
-
-//     particles.push_back(particle.get());
-//   }
-// }
-
 }  // namespace
 
 ProcessCode ActsExamples::TruthJetAlgorithm::initialize() {
   std::ofstream outfile;
-  outfile.open("pseudojets.csv");
+  outfile.open("particles.csv");
   outfile << "event,pt,eta,phi,pdg" << std::endl;
 
   outfile.flush();
@@ -113,20 +94,11 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
 
   const SimParticleContainer& truthParticlesRaw = m_inputTruthParticles(ctx);
   std::vector<const SimParticle*> truthParticles;
+  truthParticles.reserve(truthParticlesRaw.size());
   std::ranges::transform(truthParticlesRaw, std::back_inserter(truthParticles),
                          [](const auto& particle) { return &particle; });
 
-  // std::vector<const HepMC3::GenParticle*> truthParticlesHepMC3;
-  // findInputParticles(genEvent, truthParticlesHepMC3);
-
   ACTS_DEBUG("Number of truth particles: " << truthParticles.size());
-  // ACTS_DEBUG(
-  //     "Number of truth particles (HepMC3): " << truthParticlesHepMC3.size());
-
-  // if (truthParticlesHepMC3.size() != truthParticles.size()) {
-  //   ACTS_ERROR("Number of truth particles (HepMC3) and (SimParticle)
-  //   differ"); return ProcessCode::ABORT;
-  // }
 
   const fastjet::JetDefinition defaultJetDefinition =
       fastjet::JetDefinition(fastjet::antikt_algorithm, m_cfg.jetClusteringR);
@@ -139,22 +111,18 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
   {
     std::lock_guard lock(mtxPseudoJets);
     std::ofstream outfile;
-    outfile.open("pseudojets.csv",
+    outfile.open("particles.csv",
                  std::ios_base::app);  // append instead of overwrite
 
     for (unsigned int i = 0; i < truthParticles.size(); i++) {
       const auto* particle = truthParticles.at(i);
-      //   fastjet::PseudoJet pseudoJet(
-      //       particle->momentum().px(), particle->momentum().py(),
-      // particle->momentum().pz(), particle->momentum().e());
-
       fastjet::PseudoJet pseudoJet(
           particle->momentum().x(), particle->momentum().y(),
           particle->momentum().z(), particle->energy());
 
       outfile << ctx.eventNumber << "," << pseudoJet.pt() << ","
               << pseudoJet.eta() << "," << pseudoJet.phi() << ","
-              << particle->pdg();
+              << static_cast<int>(particle->pdg());
       outfile << std::endl;
 
       pseudoJet.set_user_index(i);
@@ -165,7 +133,7 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
     outfile.close();
   }
 
-  ACTS_DEBUG("Number of input pseudo jets: " << inputPseudoJets.size());
+  ACTS_DEBUG("Number of input jet input particles: " << inputPseudoJets.size());
 
   std::vector<fastjet::PseudoJet> jets;
   fastjet::ClusterSequence clusterSeq;
@@ -197,7 +165,7 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
           return std::pair{label, particle};
         }) |
         std::views::filter([](const auto& hadron) {
-          return hadron.first > JetLabel::LightJet;
+          return hadron.first > JetLabel::Unknown;
         });
 
     std::ranges::copy(hadronView, std::back_inserter(hadrons));
@@ -258,7 +226,8 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
         });
 
     if (maxHadronIt == hadronsInJet.end()) {
-      return JetLabel::LightJet;
+      // Now hadronic "jet"
+      return JetLabel::Unknown;
     }
 
     const auto& [maxHadron, maxHadronLabel] = *maxHadronIt;
@@ -326,12 +295,12 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
       ACTS_VERBOSE("-> jet label: " << label);
       ACTS_VERBOSE("-> jet constituents: ");
 
-      // if (logger().doPrint(Acts::Logging::VERBOSE)) {
-      //   for (const auto& constituent : constituentIndices) {
-      //     const auto& particle = inputParticles.at(constituent);
-      //     ACTS_VERBOSE("- " << particle);
-      //   }
-      // }
+      if (logger().doPrint(Acts::Logging::VERBOSE)) {
+        for (const auto& constituent : constituentIndices) {
+          const auto& particle = truthParticles.at(constituent);
+          ACTS_VERBOSE("- " << particle);
+        }
+      }
     }
 
     outfile.flush();
