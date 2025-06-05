@@ -11,11 +11,30 @@
 #include "Acts/Definitions/Algebra.hpp"
 
 #include <iostream>
+#include <ostream>
 #include <vector>
 
 namespace ActsExamples {
 
 enum class JetLabel { Unknown = -99, LightJet = 0, CJet = 4, BJet = 5 };
+
+inline std::ostream& operator<<(std::ostream& os, const JetLabel& label) {
+  switch (label) {
+    case JetLabel::Unknown:
+      os << "Unknown";
+      break;
+    case JetLabel::LightJet:
+      os << "LightJet";
+      break;
+    case JetLabel::CJet:
+      os << "CJet";
+      break;
+    case JetLabel::BJet:
+      os << "BJet";
+      break;
+  }
+  return os;
+}
 
 class TrackJet {
  public:
