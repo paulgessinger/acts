@@ -36,7 +36,8 @@ class TruthJetAlgorithm final : public IAlgorithm {
     /// Output jets collection.
     std::string outputJets;
     /// Minimum jet pT.
-    double jetPtMin;
+    double jetPtMin = 20 * Acts::UnitConstants::GeV;
+    double jetClusteringR = 0.4;
 
     std::optional<std::string> inputHepMC3Event;
     bool doJetLabeling = true;
@@ -44,6 +45,8 @@ class TruthJetAlgorithm final : public IAlgorithm {
   };
 
   TruthJetAlgorithm(const Config& cfg, Acts::Logging::Level lvl);
+
+  ProcessCode initialize() override;
 
   ProcessCode execute(const AlgorithmContext& ctx) const override;
 
