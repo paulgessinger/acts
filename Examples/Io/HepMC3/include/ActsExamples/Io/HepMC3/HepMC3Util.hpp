@@ -22,6 +22,10 @@ class Logger;
 
 namespace ActsExamples::HepMC3Util {
 
+constexpr int kBeamParticleStatus = 4;
+constexpr int kUndecayedParticleStatus = 1;
+constexpr int kDecayedParticleStatus = 2;
+
 std::shared_ptr<HepMC3::GenEvent> mergeEvents(
     std::span<const HepMC3::GenEvent*> genEvents, const Acts::Logger& logger);
 
