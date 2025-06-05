@@ -47,9 +47,9 @@ void pythonRangeProperty(T& obj, const std::string& name, Ur Ut::*begin,
                          Ur Ut::*end) {
   obj.def_property(
       name.c_str(), [=](Ut& self) { return std::pair{self.*begin, self.*end}; },
-      [=](Ut& self, std::pair<Ur, Ur> p) {
-        self.*begin = p.first;
-        self.*end = p.second;
+      [=](Ut& self, std::pair<std::optional<Ur>, std::optional<Ur>> p) {
+        self.*begin = p.first.value_or(self.*begin);
+        self.*end = p.second.value_or(self.*end);
       });
 }
 
