@@ -25,7 +25,7 @@ struct ParticleData {
 /// Find the charge for a given PDG particle number.
 ///
 /// @return Charge in native units.
-std::optional<float> findCharge(PdgParticle pdg);
+std::optional<float> findCharge(std::int32_t pdg);
 
 /// Find the mass for a given PDG particle number.
 ///
@@ -35,7 +35,7 @@ std::optional<float> findMass(PdgParticle pdg);
 /// Find a descriptive particle name for a given PDG particle number.
 ///
 /// @return Particle name.
-std::optional<std::string_view> findName(PdgParticle pdg);
+std::optional<std::string_view> findName(std::int32_t pdg);
 
 /// Find all known particle data for a given PDG particle number.
 ///
