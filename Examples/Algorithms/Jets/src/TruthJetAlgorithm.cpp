@@ -15,7 +15,6 @@
 #include "ActsExamples/EventData/TrackJet.hpp"
 #include "ActsExamples/Framework/AlgorithmContext.hpp"
 #include "ActsExamples/Io/HepMC3/HepMC3Util.hpp"
-#include "ActsExamples/Utilities/ParticleId.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -50,8 +49,8 @@ TruthJetAlgorithm::TruthJetAlgorithm(const Config& cfg,
 
 namespace {
 
-JetLabel jetLabelFromHadronType(ParticleId::HadronType hType) {
-  using enum ActsExamples::ParticleId::HadronType;
+JetLabel jetLabelFromHadronType(Acts::HadronType hType) {
+  using enum Acts::HadronType;
   switch (hType) {
     case BBbarMeson:
     case BottomMeson:
@@ -206,13 +205,13 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
             }
           }
 
-          return ParticleId::isHadron(particle->pdg_id()) &&
+          return Acts::ParticleId::isHadron(particle->pdg_id()) &&
                  (particle->status() == HepMC3Util::kDecayedParticleStatus ||
                   particle->status() == HepMC3Util::kUndecayedParticleStatus) &&
                  particle->momentum().pt() >= m_cfg.jetLabelingHadronPtMin;
         }) |
         std::views::transform([](const auto& particle) {
-          auto type = ActsExamples::ParticleId::hadronType(particle->pdg_id());
+          auto type = Acts::ParticleId::hadronType(particle->pdg_id());
           auto label = jetLabelFromHadronType(type);
           return std::pair{label, particle};
         }) |
@@ -266,10 +265,9 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
           return deltaR(jet, hadronJet) < m_cfg.jetLabelingDeltaR;
         }) |
         std::views::transform([](const auto& hadron) {
-          return std::pair{
-              hadron.second,
-              jetLabelFromHadronType(ActsExamples::ParticleId::hadronType(
-                  hadron.second->pdg_id()))};
+          return std::pair{hadron.second,
+                           jetLabelFromHadronType(Acts::ParticleId::hadronType(
+                               hadron.second->pdg_id()))};
         });
 
     std::vector<std::pair<std::shared_ptr<const HepMC3::GenParticle>, JetLabel>>
