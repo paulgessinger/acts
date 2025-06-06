@@ -48,6 +48,12 @@ class TruthJetAlgorithm final : public IAlgorithm {
     double jetLabelingHadronPtMin = 5 * Acts::UnitConstants::GeV;
     bool jetLabelingHardScatterHadronsOnly = true;
 
+    // Isolated TRUTH lepton overlap removal
+    bool doOverlapRemoval = false;
+    double overlapRemovalDeltaR = 0.2;
+    double overlapRemovalIsolationDeltaR = 0.2;
+    double overlapRemovalIsolation = 0.1;
+
     bool debugCsvOutput = false;
   };
 
@@ -60,6 +66,9 @@ class TruthJetAlgorithm final : public IAlgorithm {
   const Config& config() const { return m_cfg; }
 
  private:
+  void overlapRemoval(const SimParticleContainer& truthParticles,
+                      TrackJetContainer& jets) const;
+
   Config m_cfg;
   ReadDataHandle<SimParticleContainer> m_inputTruthParticles{
       this, "inputTruthParticles"};
