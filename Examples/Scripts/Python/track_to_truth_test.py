@@ -230,6 +230,10 @@ truthJetAlg = acts.examples.TruthJetAlgorithm(
     # if we don't have hard scatter, use all particles, else only use hard scatter particles
     jetLabelingHardScatterHadronsOnly=args.hardscatter != 0,
     clusterHardScatterParticlesOnly=args.hardscatter != 0,
+    doOverlapRemoval=True,
+    overlapRemovalDeltaR=0.2,
+    overlapRemovalIsolationDeltaR=0.2,
+    overlapRemovalIsolation=0.1,
     debugCsvOutput=args.csv,
 )
 
