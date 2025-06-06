@@ -9,17 +9,11 @@
 #include "Acts/Definitions/ParticleData.hpp"
 
 #include "Acts/Definitions/PdgParticle.hpp"
-#include "Acts/Definitions/Units.hpp"
 
-#include <algorithm>
-#include <array>
 #include <cassert>
 #include <cstdint>
-#include <iterator>
-#include <limits>
 #include <optional>
 #include <ostream>
-#include <type_traits>
 
 #include "ParticleDataTable.hpp"
 
