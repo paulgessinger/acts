@@ -9,6 +9,7 @@
 #pragma once
 
 #include <cstdint>
+#include <iosfwd>
 
 namespace Acts {
 
@@ -40,5 +41,22 @@ static constexpr PdgParticle makeAbsolutePdgParticle(PdgParticle pdg) {
   const auto value = static_cast<std::int32_t>(pdg);
   return static_cast<PdgParticle>((0 <= value) ? value : -value);
 }
+
+enum class HadronType {
+  Hadron = 1,
+  BBbarMeson = 2,
+  CCbarMeson = 3,
+  BottomMeson = 4,
+  BottomBaryon = 5,
+  CharmedMeson = 6,
+  CharmedBaryon = 7,
+  StrangeMeson = 8,
+  StrangeBaryon = 9,
+  LightMeson = 10,
+  LightBaryon = 11,
+  Unknown = 12
+};
+
+std::ostream& operator<<(std::ostream& os, HadronType hadron);
 
 }  // namespace Acts
