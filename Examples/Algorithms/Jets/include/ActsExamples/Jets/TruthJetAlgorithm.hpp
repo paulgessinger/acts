@@ -37,6 +37,8 @@ class TruthJetAlgorithm final : public IAlgorithm {
     std::string outputJets;
     /// Minimum jet pT.
     double jetPtMin = 20 * Acts::UnitConstants::GeV;
+    std::pair<std::optional<double>, std::optional<double>> jetEtaRange = {
+        std::nullopt, std::nullopt};
     double jetClusteringR = 0.4;
     bool clusterHardScatterParticlesOnly = true;
 
