@@ -14,7 +14,8 @@
 
 namespace HepMC3 {
 class GenEvent;
-}
+class GenParticle;
+}  // namespace HepMC3
 
 namespace Acts {
 class Logger;
@@ -36,5 +37,10 @@ std::ostream& operator<<(std::ostream& os, HepMC3Util::Compression compression);
 std::span<const Compression> availableCompressionModes();
 
 std::string_view compressionExtension(Compression compression);
+
+static constexpr std::string_view kEventGeneratorIndexAttribute =
+    "acts_gen_event_index";
+
+int eventGeneratorIndex(const HepMC3::GenParticle& particle);
 
 }  // namespace ActsExamples::HepMC3Util

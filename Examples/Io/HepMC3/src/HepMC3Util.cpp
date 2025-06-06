@@ -152,4 +152,17 @@ std::ostream& HepMC3Util::operator<<(std::ostream& os,
   }
 }
 
+namespace {
+int eventGeneratorIndexImpl(const auto& obj) {
+  return obj
+      .template attribute<HepMC3::IntAttribute>(
+          std::string{HepMC3Util::kEventGeneratorIndexAttribute})
+      ->value();
+}
+}  // namespace
+
+int HepMC3Util::eventGeneratorIndex(const HepMC3::GenParticle& particle) {
+  return eventGeneratorIndexImpl(particle);
+}
+
 }  // namespace ActsExamples
