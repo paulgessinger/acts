@@ -38,10 +38,15 @@ class TruthJetAlgorithm final : public IAlgorithm {
     /// Minimum jet pT.
     double jetPtMin = 20 * Acts::UnitConstants::GeV;
     double jetClusteringR = 0.4;
+    bool clusterHardScatterParticlesOnly = true;
 
     std::optional<std::string> inputHepMC3Event;
     bool doJetLabeling = true;
     double jetLabelingDeltaR = 0.4;
+    double jetLabelingHadronPtMin = 5 * Acts::UnitConstants::GeV;
+    bool jetLabelingHardScatterHadronsOnly = true;
+
+    bool debugCsvOutput = false;
   };
 
   TruthJetAlgorithm(const Config& cfg, Acts::Logging::Level lvl);
