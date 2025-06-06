@@ -227,17 +227,26 @@ truthJetAlg = acts.examples.TruthJetAlgorithm(
     debugCsvOutput=args.csv,
 )
 
-s.addAlgorithm(truthJetAlg)
+addTrackToTruthJetAlg(
+    s,
+    TrackToTruthJetConfig(
+        inputTracks="tracks",
+        inputJets="truth_jets",
+        outputTrackJets="track_jets",
+        maxDeltaR=0.4
+    ),
+    loglevel=acts.logging.DEBUG
+)
 
-# addTrackToTruthJetAlg(
-#     s,
-#     TrackToTruthJetConfig(
-#         inputTracks="tracks",
-#         inputJets="truth_jets",
-#         outputTrackJets="track_jets",
-#         maxDeltaR=0.4,
-#     ),
-#     loglevel=acts.logging.DEBUG,
-# )
+s.addWriter(
+    acts.examples.RootJetWriter(
+        level=acts.logging.DEBUG,
+        inputJets="truth_jets",
+        inputTracks="tracks",
+        inputTrackJets="track_jets",
+        field=acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T)),
+        filePath=str(outputDir / "track_to_truth_jets.root"),
+    )
+)
 
 s.run()
