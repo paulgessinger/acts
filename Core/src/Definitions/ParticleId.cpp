@@ -13,6 +13,7 @@
 #include <ostream>
 #include <utility>
 #include <vector>
+#include <array>
 
 // This file is based on the following files, with modifications:
 //
