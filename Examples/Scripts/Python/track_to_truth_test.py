@@ -227,6 +227,8 @@ truthJetAlg = acts.examples.TruthJetAlgorithm(
     debugCsvOutput=args.csv,
 )
 
+s.addAlgorithm(truthJetAlg)
+
 addTrackToTruthJetAlg(
     s,
     TrackToTruthJetConfig(
