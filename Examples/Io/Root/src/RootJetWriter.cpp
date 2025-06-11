@@ -25,7 +25,6 @@
 #include "ActsExamples/Utilities/Range.hpp"
 #include "ActsFatras/EventData/Barcode.hpp"
 
-
 #include <cmath>
 #include <ios>
 #include <limits>
@@ -38,11 +37,10 @@
 #include <TFile.h>
 #include <TTree.h>
 
-
 const Acts::MagneticFieldContext magFieldContext;
 
 Acts::MagneticFieldProvider::Cache magFieldCache() {
-  return Acts::NullBField{}.makeCache(magFieldContext );
+  return Acts::NullBField{}.makeCache(magFieldContext);
 }
 
 namespace ActsExamples {
@@ -52,52 +50,35 @@ using Acts::VectorHelpers::perp;
 using Acts::VectorHelpers::phi;
 using Acts::VectorHelpers::theta;
 
-RootJetWriter::RootJetWriter(
-    const RootJetWriter::Config& config, Acts::Logging::Level level)
-    : WriterT(config.inputJets, "RootJetWriter", level),
-      m_cfg(config) {
-
-    if (m_cfg.inputJets.empty()) {
-    throw std::invalid_argument("Missing jets input collection");
-    }
-    // if (m_cfg.inputProtoTracks.empty()) {
-    // throw std::invalid_argument("Missing proto tracks input collection");
-    // }
-    // if (m_cfg.inputParticles.empty()) {
-    // throw std::invalid_argument("Missing particles input collection");
-    // }
-    // if (m_cfg.inputSimHits.empty()) {
-    // throw std::invalid_argument("Missing simulated hits input collection");
-    // }
-    if (m_cfg.inputTracks.empty()) {
+RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
+                             Acts::Logging::Level level)
+    : WriterT(config.inputTrackJets, "RootJetWriter", level), m_cfg(config) {
+  if (m_cfg.inputTracks.empty()) {
     throw std::invalid_argument("Missing tracks input collection");
-    }
-    if (m_cfg.inputJets.empty()) {
-    throw std::invalid_argument("Missing jets input collection");
-    }
-    if (m_cfg.inputTrackJets.empty()) {
+  }
+  if (m_cfg.inputTrackJets.empty()) {
     throw std::invalid_argument("Missing track jets input collection");
-    }
-    if (m_cfg.filePath.empty()) {
+  }
+  if (m_cfg.inputVertices.empty()) {
+    throw std::invalid_argument("Missing vertices input collection");
+  }
+  if (m_cfg.filePath.empty()) {
     throw std::invalid_argument("Missing output filename");
-    }
-    if (m_cfg.treeName.empty()) {
+  }
+  if (m_cfg.treeName.empty()) {
     throw std::invalid_argument("Missing tree name");
-    }
+  }
 
-    m_inputJets.initialize(m_cfg.inputJets);
-    m_inputTracks.initialize(m_cfg.inputTracks);
-    m_inputTrackJets.initialize(m_cfg.inputTrackJets);
-    
+  // Initialize the input handles
+  m_inputTracks.initialize(m_cfg.inputTracks);
+  m_inputTrackJets.initialize(m_cfg.inputTrackJets);
+  m_inputVertices.initialize(m_cfg.inputVertices);
 
+  // Tools
   Acts::EigenStepper<> stepper(m_cfg.field);
   m_propagator = std::make_shared<Propagator>(stepper);
-
-      //Setting up the ImpactPointEstimator
   Acts::ImpactPointEstimator::Config ipEstCfg(m_cfg.field, m_propagator);
-
   m_ipEst = std::make_shared<Acts::ImpactPointEstimator>(ipEstCfg);
-
 
   // Setup ROOT I/O
   auto path = m_cfg.filePath;
@@ -111,109 +92,82 @@ RootJetWriter::RootJetWriter(
     throw std::bad_alloc();
   }
 
-   m_outputTree->Branch("EventNumber", &m_eventNr);
+  m_outputTree->Branch("EventNumber", &m_eventNr);
 
+  m_outputTree->Branch("vertex_x", &m_vtx_x);
+  m_outputTree->Branch("vertex_y", &m_vtx_y);
+  m_outputTree->Branch("vertex_z", &m_vtx_z);
+  m_outputTree->Branch("vertex_t", &m_vtx_t);
+  m_outputTree->Branch("vertex_sumPt2", &m_vtx_sumPt2);
+  m_outputTree->Branch("vertex_isHS", &m_vtx_isHS);
+  m_outputTree->Branch("vertex_isPU", &m_vtx_isPU);
 
-    // The Truth HS Vertex
-    
-    // The reco vertices
-    
-    // m_outputTree->Branch("recovertex_x",&m_vtx_x);
-    // m_outputTree->Branch("recovertex_y",&m_vtx_y);
-    // m_outputTree->Branch("recovertex_z",&m_vtx_z);
-    // m_outputTree->Branch("recovertex_t",&m_vtx_t);
-    // m_outputTree->Branch("recovertex_sumPt2",&m_vtx_sumPt2);
-    // m_outputTree->Branch("recovertex_isHS",&m_vtx_isHS);
-    // m_outputTree->Branch("recovertex_isPU",&m_vtx_isPU);
+  /*
+  m_outputTree->Branch("vertex_cov_xx",&m_vtx_cov_xx);
+  m_outputTree->Branch("vertex_cov_xy",&m_vtx_cov_xy);
+  m_outputTree->Branch("vertex_cov_xz",&m_vtx_cov_xz);
+  m_outputTree->Branch("vertex_cov_xt",&m_vtx_cov_xt);
+  m_outputTree->Branch("vertex_cov_yy",&m_vtx_cov_yy);
+  m_outputTree->Branch("vertex_cov_yz",&m_vtx_cov_yz);
+  m_outputTree->Branch("vertex_cov_yt",&m_vtx_cov_yt);
+  m_outputTree->Branch("vertex_cov_zz",&m_vtx_cov_zz);
+  m_outputTree->Branch("vertex_cov_zt",&m_vtx_cov_zt);
+  m_outputTree->Branch("vertex_cov_tt",&m_vtx_cov_tt);
+  */
 
-    /*
-    m_outputTree->Branch("recovertex_cov_xx",&m_vtx_cov_xx);
-    m_outputTree->Branch("recovertex_cov_xy",&m_vtx_cov_xy);
-    m_outputTree->Branch("recovertex_cov_xz",&m_vtx_cov_xz);
-    m_outputTree->Branch("recovertex_cov_xt",&m_vtx_cov_xt);
-    m_outputTree->Branch("recovertex_cov_yy",&m_vtx_cov_yy);
-    m_outputTree->Branch("recovertex_cov_yz",&m_vtx_cov_yz);
-    m_outputTree->Branch("recovertex_cov_yt",&m_vtx_cov_yt);
-    m_outputTree->Branch("recovertex_cov_zz",&m_vtx_cov_zz);
-    m_outputTree->Branch("recovertex_cov_zt",&m_vtx_cov_zt);
-    m_outputTree->Branch("recovertex_cov_tt",&m_vtx_cov_tt);
-    */
-    
-    
-    //m_outputTree->Branch("recovertex_tracks_idx",m_vtx_tracks_idx);
-    //m_outputTree->Branch("recovertex_tracks_weight",m_vtx_tracks_weight);
-    
-    
-    
-    // The jets
-    m_outputTree->Branch("jet_pt",&m_jet_pt);
-    m_outputTree->Branch("jet_eta",&m_jet_eta);
-    m_outputTree->Branch("jet_phi",&m_jet_phi);
-    m_outputTree->Branch("jet_ncomponents",&m_jet_ncomponents);
-    m_outputTree->Branch("jet_components",&m_jet_components);
-    m_outputTree->Branch("jet_tracks_idx",&m_jet_tracks_idx);
-    m_outputTree->Branch("jet_isPU",&m_jet_isPU);
-    m_outputTree->Branch("jet_isHS",&m_jet_isHS);
-    m_outputTree->Branch("jet_label",&m_jet_label);
-    
-    //Tracks in jets
-    m_outputTree->Branch("track_prob",       &m_tracks_prob);
-    m_outputTree->Branch("track_d0",         &m_trk_d0);
-    m_outputTree->Branch("track_z0",         &m_trk_z0);
-     m_outputTree->Branch("track_signedd0",             &m_trk_signed_d0);
-    // m_outputTree->Branch("track_signedd0sig",          &m_trk_signed_d0sig);
-     m_outputTree->Branch("track_signedz0sinTheta",     &m_trk_signed_z0sinTheta);
-    //m_outputTree->Branch("track_signedz0sinThetasig",  &m_trk_signed_z0sinThetasig);
-    m_outputTree->Branch("track_eta",        &m_trk_eta);
-    m_outputTree->Branch("track_theta",      &m_trk_theta);
-    m_outputTree->Branch("track_phi",        &m_trk_phi);
-    m_outputTree->Branch("track_pt",         &m_trk_pt);
-    m_outputTree->Branch("track_qOverP",     &m_trk_qOverP);
-    m_outputTree->Branch("track_t",          &m_trk_t);
-    m_outputTree->Branch("track_t30",        &m_trk_t30);
-    m_outputTree->Branch("track_t60",        &m_trk_t60);
-    m_outputTree->Branch("track_t90",        &m_trk_t90);
-    m_outputTree->Branch("track_t120",       &m_trk_t120);
-    m_outputTree->Branch("track_t180",       &m_trk_t180);
-    m_outputTree->Branch("track_z",          &m_trk_z);
+  // m_outputTree->Branch("vertex_tracks_idx",m_vtx_tracks_idx);
+  // m_outputTree->Branch("vertex_tracks_weight",m_vtx_tracks_weight);
 
-    // m_outputTree->Branch("track_var_d0",     &m_trk_var_d0);
-    // m_outputTree->Branch("track_var_z0",     &m_trk_var_z0);
-    // m_outputTree->Branch("track_var_phi",    &m_trk_var_phi);
-    // m_outputTree->Branch("track_var_theta",  &m_trk_var_theta);
-    // m_outputTree->Branch("track_var_qOverP", &m_trk_var_qOverP);
+  // The jets
+  m_outputTree->Branch("jet_pt", &m_jet_pt);
+  m_outputTree->Branch("jet_eta", &m_jet_eta);
+  m_outputTree->Branch("jet_phi", &m_jet_phi);
+  m_outputTree->Branch("jet_ncomponents", &m_jet_ncomponents);
+  m_outputTree->Branch("jet_components", &m_jet_components);
+  m_outputTree->Branch("jet_tracks_idx", &m_jet_tracks_idx);
+  m_outputTree->Branch("jet_ntracks", &m_jet_ntracks);
+  m_outputTree->Branch("jet_isPU", &m_jet_isPU);
+  m_outputTree->Branch("jet_isHS", &m_jet_isHS);
+  m_outputTree->Branch("jet_label", &m_jet_label);
 
-    // m_outputTree->Branch("track_cov_d0z0"       ,&m_trk_cov_d0z0);
-    // m_outputTree->Branch("track_cov_d0phi"      ,&m_trk_cov_d0phi);
-    // m_outputTree->Branch("track_cov_d0theta"    ,&m_trk_cov_d0theta);
-    // m_outputTree->Branch("track_cov_d0qOverP"   ,&m_trk_cov_d0qOverP);
-    // m_outputTree->Branch("track_cov_z0phi"      ,&m_trk_cov_z0phi);
-    // m_outputTree->Branch("track_cov_z0theta"    ,&m_trk_cov_z0theta);
-    // m_outputTree->Branch("track_cov_z0qOverP"   ,&m_trk_cov_z0qOverP);
-    // m_outputTree->Branch("track_cov_phitheta"   ,&m_trk_cov_phitheta);
-    // m_outputTree->Branch("track_cov_phiqOverP"  ,&m_trk_cov_phiqOverP);
-    // m_outputTree->Branch("track_cov_tehtaqOverP",&m_trk_cov_thetaqOverP);
+  // Tracks in jets
+  m_outputTree->Branch("track_prob", &m_tracks_prob);
+  m_outputTree->Branch("track_d0", &m_trk_d0);
+  m_outputTree->Branch("track_z0", &m_trk_z0);
+  m_outputTree->Branch("track_signedd0", &m_trk_signed_d0);
+  m_outputTree->Branch("track_signedd0sig", &m_trk_signed_d0sig);
+  m_outputTree->Branch("track_signedz0sinTheta", &m_trk_signed_z0sinTheta);
+  m_outputTree->Branch("track_signedz0sinThetasig",
+                       &m_trk_signed_z0sinThetasig);
+  m_outputTree->Branch("track_eta", &m_trk_eta);
+  m_outputTree->Branch("track_theta", &m_trk_theta);
+  m_outputTree->Branch("track_phi", &m_trk_phi);
+  m_outputTree->Branch("track_pt", &m_trk_pt);
+  m_outputTree->Branch("track_qOverP", &m_trk_qOverP);
+  m_outputTree->Branch("track_t", &m_trk_t);
+  m_outputTree->Branch("track_t30", &m_trk_t30);
+  m_outputTree->Branch("track_t60", &m_trk_t60);
+  m_outputTree->Branch("track_t90", &m_trk_t90);
+  m_outputTree->Branch("track_t120", &m_trk_t120);
+  m_outputTree->Branch("track_t180", &m_trk_t180);
+  m_outputTree->Branch("track_z", &m_trk_z);
 
-    // // Number of Innermost Pixel Layer Hits
-    // m_outputTree->Branch("track_numPix1L" ,&m_trk_numPix1L);
-    // // Number of Next to Innermost Pixel Layer Hits
-    // m_outputTree->Branch("track_numPix2L" ,&m_trk_numPix2L);   
-    // m_outputTree->Branch("track_numPix"   ,&m_trk_numPix);   
-    // m_outputTree->Branch("track_numSCT"   ,&m_trk_numSCT);  
-    // m_outputTree->Branch("track_numLSCT"  ,&m_trk_numLSCT);
+  // m_outputTree->Branch("track_var_d0",     &m_trk_var_d0);
+  // m_outputTree->Branch("track_var_z0",     &m_trk_var_z0);
+  // m_outputTree->Branch("track_var_phi",    &m_trk_var_phi);
+  // m_outputTree->Branch("track_var_theta",  &m_trk_var_theta);
+  // m_outputTree->Branch("track_var_qOverP", &m_trk_var_qOverP);
 
-    // The truth track parameters
-    /*
-    m_outputTree->Branch("eventNr", &m_eventNr);
-    m_outputTree->Branch("t_loc0", &m_t_loc0);
-    m_outputTree->Branch("t_loc1", &m_t_loc1);
-    m_outputTree->Branch("t_phi", &m_t_phi);
-    m_outputTree->Branch("t_theta", &m_t_theta);
-    m_outputTree->Branch("t_qop", &m_t_qop);
-    m_outputTree->Branch("t_time", &m_t_time);
-    m_outputTree->Branch("truthMatched", &m_truthMatched);
-    */
-  
+  // m_outputTree->Branch("track_cov_d0z0"       ,&m_trk_cov_d0z0);
+  // m_outputTree->Branch("track_cov_d0phi"      ,&m_trk_cov_d0phi);
+  // m_outputTree->Branch("track_cov_d0theta"    ,&m_trk_cov_d0theta);
+  // m_outputTree->Branch("track_cov_d0qOverP"   ,&m_trk_cov_d0qOverP);
+  // m_outputTree->Branch("track_cov_z0phi"      ,&m_trk_cov_z0phi);
+  // m_outputTree->Branch("track_cov_z0theta"    ,&m_trk_cov_z0theta);
+  // m_outputTree->Branch("track_cov_z0qOverP"   ,&m_trk_cov_z0qOverP);
+  // m_outputTree->Branch("track_cov_phitheta"   ,&m_trk_cov_phitheta);
+  // m_outputTree->Branch("track_cov_phiqOverP"  ,&m_trk_cov_phiqOverP);
+  // m_outputTree->Branch("track_cov_tehtaqOverP",&m_trk_cov_thetaqOverP);
 }
 
 RootJetWriter::~RootJetWriter() {
@@ -231,241 +185,218 @@ ProcessCode RootJetWriter::finalize() {
   return ProcessCode::SUCCESS;
 }
 
-
-
 ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
-                                          const TrackJetContainer& tp) {
+                                  const TrackJetContainer& tp) {
+  // Exclusive access to all the writing procedure
+  std::lock_guard<std::mutex> lock(m_writeMutex);
 
-// Exclusive access to all the writing procedure
-std::lock_guard<std::mutex> lock(m_writeMutex);
-  
-Clear();
+  Clear();
 
-if (m_outputFile == nullptr) {
+  if (m_outputFile == nullptr) {
     return ProcessCode::SUCCESS;
   }
-  
-// Read input collections
-// FIX: remove truth jets and keep only track jets!!
-const auto& jets = m_inputJets(ctx);
-const auto& tracks = m_inputTracks(ctx);
-const auto& trackJets = m_inputTrackJets(ctx);
 
-ACTS_DEBUG("RootWriter::Number of " << m_cfg.inputTracks << " " << tracks.size());
-ACTS_DEBUG("RootWriter::Number of " << m_cfg.inputJets << " " << jets.size());
-ACTS_DEBUG("RootWriter::Number of " << m_cfg.inputTrackJets << " " << trackJets.size());
+  // Read input collections
 
+  const auto& tracks = m_inputTracks(ctx);
+  const auto& trackJets = m_inputTrackJets(ctx);
+  const auto& vertices = m_inputVertices(ctx);
 
-  for (size_t ijets = 0; ijets < jets.size(); ++ijets) {
+  ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputTracks << " "
+                                        << tracks.size());
+  ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputTrackJets << " "
+                                        << trackJets.size());
+  ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputVertices << " "
+                                        << m_inputVertices(ctx).size());
 
-    //Only store jets with tracks associated to them and with label > -99
-    //For now we don't have a label for the jets, so we skip this check
-
-    // int jLabel = static_cast<int>(jets[ijets].getLabel());
-    // int nTracksOnJet =  jets[ijets].getTracks().size();
-
-    // if (jLabel < 0 || nTracksOnJet < 1 ) {
-    //   continue;
-    // }
-    
-    Acts::Vector4 jet_4mom = jets[ijets].getFourMomentum();
-    Acts::Vector3 jet_3mom{jet_4mom[0],jet_4mom[1],jet_4mom[2]};
+  for (std::size_t ijets = 0; ijets < trackJets.size(); ++ijets) {
+    Acts::Vector4 jet_4mom = trackJets[ijets].getFourMomentum();
+    Acts::Vector3 jet_3mom{jet_4mom[0], jet_4mom[1], jet_4mom[2]};
     float jet_theta = theta(jet_3mom);
     m_jet_pt.push_back(perp(jet_4mom));
-    //m_jet_eta.push_back(jets[ijets].eta());
     m_jet_eta.push_back(std::atanh(std::cos(jet_theta)));
     m_jet_phi.push_back(phi(jet_4mom));
 
-    m_jet_ncomponents.push_back(jets[ijets].getConstituents().size());
-    m_jet_components.push_back(jets[ijets].getConstituents());
-    m_jet_tracks_idx.push_back(jets[ijets].getTracks());
-    
-    m_jet_label.push_back(static_cast<int>(jets[ijets].getLabel()));
-    
-    m_jet_isPU.push_back(0);
+    m_jet_ncomponents.push_back(trackJets[ijets].getConstituents().size());
+    m_jet_components.push_back(trackJets[ijets].getConstituents());
+    m_jet_tracks_idx.push_back(trackJets[ijets].getTracks());
+    m_jet_ntracks.push_back(trackJets[ijets].getTracks().size());
+    m_jet_label.push_back(static_cast<int>(trackJets[ijets].getLabel()));
+
+    m_jet_isPU.push_back(0);  // Need to check....
     m_jet_isHS.push_back(1);
+  }  // jets
 
-    std::vector<int> jetTracks = jets[ijets].getTracks();
-    // ACTS_DEBUG("Jet " << ijets << " with pt: " << m_jet_pt[ijets] << " GeV"
-    //            << " with label: " << m_jet_label[ijets]
-    //            << " has " << jetTracks.size() << " tracks associated");
+  // Read the vertices and find the HS vertex
+  // Find the vertex with the highest sumPt2
+  double maxSumPt2 = -1.;
+  int HS_idx = -1;
 
-    
-  } // jets
+  for (int v = 0; v < vertices.size(); v++) {
+    double sumPt2 = calcSumPt2(vertices.at(v));
+    if (sumPt2 > maxSumPt2) {
+      maxSumPt2 = sumPt2;
+      HS_idx = v;
+    }
+  }
 
+  ACTS_VERBOSE("Vertex " << HS_idx << " with sumPt2: " << maxSumPt2 << " has "
+                         << vertices.at(HS_idx).tracks().size()
+                         << " tracks associated");
 
-    //Do not fill the event if there is a jet without tracks associated to it
-    bool keepEvent = true;
-    for (auto links : m_jet_tracks_idx) {
-      if (links.size() == 0)
-        keepEvent = false;
-      break;
+  // Fill the vertex information
+  for (const auto& vtx : vertices) {
+    m_vtx_x.push_back(vtx.position()[Acts::ePos0]);
+    m_vtx_y.push_back(vtx.position()[Acts::ePos1]);
+    m_vtx_z.push_back(vtx.position()[Acts::ePos2]);
+    m_vtx_t.push_back(vtx.time());
+    m_vtx_sumPt2.push_back(calcSumPt2(vtx));
+
+    if (&vtx == &m_inputVertices(ctx).at(HS_idx)) {
+      m_vtx_isHS.push_back(1);
+      m_vtx_isPU.push_back(0);
+    } else {
+      m_vtx_isHS.push_back(0);
+      m_vtx_isPU.push_back(1);
     }
 
-Acts::Vector3 vertexPosition{0., 0., 0.};
-Acts::Vector4 stddev;
-stddev[Acts::ePos0] = 10 * Acts::UnitConstants::um;
-stddev[Acts::ePos1] = 10 * Acts::UnitConstants::um;
-stddev[Acts::ePos2] = 75 * Acts::UnitConstants::um;
-stddev[Acts::eTime] = 1 * Acts::UnitConstants::ns;
-Acts::SquareMatrix4 vertexCov = stddev.cwiseProduct(stddev).asDiagonal();
+  }  // vertices
 
-Acts::Vertex ip_vtx(vertexPosition);
+  Acts::Vector3 vertexPosition =
+      vertices.at(HS_idx).position();  // Hard scatter vertex position
+  Acts::Vector4 stddev;
+  stddev[Acts::ePos0] = 10 * Acts::UnitConstants::um;
+  stddev[Acts::ePos1] = 10 * Acts::UnitConstants::um;
+  stddev[Acts::ePos2] = 75 * Acts::UnitConstants::um;
+  stddev[Acts::eTime] = 1 * Acts::UnitConstants::ns;
+  Acts::SquareMatrix4 vertexCov = stddev.cwiseProduct(stddev).asDiagonal();
 
-
+  Acts::Vertex ip_vtx(vertexPosition);
   Acts::ImpactPointEstimator::State state{magFieldCache()};
 
-// Loop over the tracks
-for (size_t itrk = 0; itrk < tracks.size(); itrk++) {
-
-    double signed_d0             = -9999;
-    double signed_z0SinTheta     = -9999;
-    double signed_d0_err         = 1.;
+  // Loop over the tracks
+  for (std::size_t itrk = 0; itrk < tracks.size(); itrk++) {
+    double signed_d0 = -9999;
+    double signed_z0SinTheta = -9999;
+    double signed_d0_err = 1.;
     double signed_z0SinTheta_err = 1.;
 
-    double covd0         = -999;
-    double covz0         = -999;
-    double covphi        = -999;
-    double covtheta      = -999;
-    double covqOverP     = -999;
-    double covd0z0       = -999;
-    double covd0phi      = -999;
-    double covd0theta    = -999;
-    double covd0qOverP   = -999;
-    double covz0phi      = -999;
-    double covz0theta    = -999;
-    double covz0qOverP   = -999;
-    double covphitheta   = -999;
-    double covphiqOverP  = -999;
-    double covthetaqOverP= -999;
-        
+    double covd0 = -999;
+    double covz0 = -999;
+    double covphi = -999;
+    double covtheta = -999;
+    double covqOverP = -999;
+    double covd0z0 = -999;
+    double covd0phi = -999;
+    double covd0theta = -999;
+    double covd0qOverP = -999;
+    double covz0phi = -999;
+    double covz0theta = -999;
+    double covz0qOverP = -999;
+    double covphitheta = -999;
+    double covphiqOverP = -999;
+    double covthetaqOverP = -999;
 
     const auto trk = tracks.at(itrk);
-    // const auto hit_infos  = hitInfos[itrk];
-    const auto params     = trk.parameters();
+    const auto params = trk.parameters();
 
     auto boundParams = trk.createParametersAtReference();
 
-
-
-    //Check if this track belongs to a jet and compute the IPs
-    for (size_t ijet = 0; ijet<trackJets.size(); ++ijet) {
+    // Check if this track belongs to a jet and compute the IPs
+    for (std::size_t ijet = 0; ijet < trackJets.size(); ++ijet) {
       std::vector<int> jtrks = trackJets[ijet].getTracks();
-      
-      
-      if (std::find(jtrks.begin(), jtrks.end(),itrk) != jtrks.end()) {
 
-        Acts::Vector3 jetDir{jets[ijet].getFourMomentum()[0],
-          trackJets[ijet].getFourMomentum()[1],
-          trackJets[ijet].getFourMomentum()[2]};
-      
-      auto ipAndSigma = m_ipEst->estimate3DImpactParameters(gctx_, mctx_, boundParams, vertexPosition, state);
-      auto vszs = m_ipEst->getLifetimeSignOfTrack(boundParams, ip_vtx, jetDir, gctx_, mctx_);
-      
-    
+      if (std::find(jtrks.begin(), jtrks.end(), itrk) != jtrks.end()) {
+        Acts::Vector3 jetDir{trackJets[ijet].getFourMomentum()[0],
+                             trackJets[ijet].getFourMomentum()[1],
+                             trackJets[ijet].getFourMomentum()[2]};
+
+        auto ipAndSigma =
+            m_ipEst->getImpactParameters(boundParams, ip_vtx, gctx_, mctx_, 1);
+        auto vszs = m_ipEst->getLifetimeSignOfTrack(boundParams, ip_vtx, jetDir,
+                                                    gctx_, mctx_);
+
         if (!ipAndSigma.ok() || !vszs.ok()) {
           continue;
         }
 
-          signed_d0 = std::fabs((*ipAndSigma).parameters()(0))  * (*vszs).first;
-          auto z0 = std::fabs((*ipAndSigma).parameters()(1));
-          auto theta = (*ipAndSigma).theta();
-          signed_z0SinTheta = z0 * std::sin(theta) * (*vszs).second;
-          
-          
-        //This is not unbiased!
-        // signed_d0             = std::fabs((*ipAndSigma).IPd0)  * (*vszs).first;
-        // signed_z0SinTheta     = std::fabs((*ipAndSigma).IPz0SinTheta) * (*vszs).second;
-        // signed_d0_err         = (*ipAndSigma).sigmad0;
-        // signed_z0SinTheta_err = (*ipAndSigma).sigmaz0SinTheta;
+        signed_d0 = std::fabs((*ipAndSigma).d0) * (*vszs).first;
+        auto z0 = std::fabs((*ipAndSigma).z0);
+        auto theta = boundParams.theta();
+        signed_z0SinTheta = z0 * std::sin(theta) * (*vszs).second;
+        signed_d0_err = (*ipAndSigma).sigmaD0;
+        signed_z0SinTheta_err =
+            (*ipAndSigma).sigmaZ0;  // not correct yet - have to take into
+                                    // account the sin(theta) factor
 
-      }//track in jet
-    }//loop on jets
+      }  // track in jet
+    }  // loop on jets
 
-// FIX: Still need to add vertex information to check covariances
+    // const auto& cov  = *trk.covariance();
 
-//const auto& cov  = *trk.covariance();
-      
-      float trk_theta = params[Acts::eBoundTheta];
-      float trk_eta   = std::atanh(std::cos(trk_theta));
-      float trk_qop   = params[Acts::eBoundQOverP];
-      float trk_p     = std::abs(1.0 / trk_qop);
-      float trk_pt    = trk_p * std::sin(trk_theta); 
-      
-      m_tracks_prob.push_back(1.);   // todo
-      m_trk_d0.push_back(params[Acts::eBoundLoc0]);             
-      m_trk_z0.push_back(params[Acts::eBoundLoc1]);
-      
-      m_trk_signed_d0.push_back(signed_d0);
-      //m_trk_signed_d0sig.push_back(signed_d0 / signed_d0_err);
-      m_trk_signed_z0sinTheta.push_back(signed_z0SinTheta);
-      //m_trk_signed_z0sinThetasig.push_back(signed_z0SinTheta / signed_z0SinTheta_err);
+    float trk_theta = params[Acts::eBoundTheta];
+    float trk_eta = std::atanh(std::cos(trk_theta));
+    float trk_qop = params[Acts::eBoundQOverP];
+    float trk_p = std::abs(1.0 / trk_qop);
+    float trk_pt = trk_p * std::sin(trk_theta);
 
-      // m_trk_numPix1L.push_back(hit_infos.nPixInnermost);
-      // m_trk_numPix2L.push_back(hit_infos.nPixNextToInnermost);
-      // m_trk_numPix  .push_back(hit_infos.nPix);
-      // m_trk_numSCT  .push_back(hit_infos.nSStrip);
-      // m_trk_numLSCT .push_back(hit_infos.nLStrip);
-      
-      
-      m_trk_eta.push_back(trk_eta);            
-      m_trk_theta.push_back(trk_theta);          
-      m_trk_phi.push_back(params[Acts::eBoundPhi]);            
-      m_trk_pt.push_back(trk_pt);             
-      m_trk_qOverP.push_back(trk_p);         
-      m_trk_t.push_back(params[Acts::eBoundTime]);              
-      m_trk_t30.push_back(1.);            //todo
-      m_trk_t60.push_back(1.);            //todo
-      m_trk_t90.push_back(1.);            //todo
-      m_trk_t120.push_back(1.);           //todo
-      m_trk_t180.push_back(1.);           //todo
-      m_trk_z.push_back(1.);              //todo
-      
-      // //This give un-initialized warnings
-      
-      // covd0          = cov(Acts::eBoundLoc0,Acts::eBoundLoc0);
-      // covz0          = cov(Acts::eBoundLoc1,Acts::eBoundLoc1);
-      // covphi         = cov(Acts::eBoundPhi,Acts::eBoundPhi);
-      // covtheta       = cov(Acts::eBoundTheta,Acts::eBoundTheta);
-      // covqOverP      = cov(Acts::eBoundQOverP,Acts::eBoundQOverP);
-      // covd0z0        = cov(Acts::eBoundLoc0,Acts::eBoundLoc1);
-      // covd0phi       = cov(Acts::eBoundLoc0,Acts::eBoundPhi);
-      // covd0theta     = cov(Acts::eBoundLoc0,Acts::eBoundTheta);
-      // covd0qOverP    = cov(Acts::eBoundLoc0,Acts::eBoundQOverP);
-      // covz0phi       = cov(Acts::eBoundLoc1,Acts::eBoundPhi);
-      // covz0theta     = cov(Acts::eBoundLoc1,Acts::eBoundTheta);
-      // covz0qOverP    = cov(Acts::eBoundLoc1,Acts::eBoundQOverP);
-      // covphitheta    = cov(Acts::eBoundPhi,Acts::eBoundTheta);
-      // covphiqOverP   = cov(Acts::eBoundPhi,Acts::eBoundQOverP);
-      // covthetaqOverP = cov(Acts::eBoundTheta,Acts::eBoundQOverP);
-            
-      
-      // m_trk_var_d0.push_back(covd0);
-      // m_trk_var_z0.push_back(covz0);         
-      // m_trk_var_phi.push_back(covphi);        
-      // m_trk_var_theta.push_back(covtheta);      
-      // m_trk_var_qOverP.push_back(covqOverP);     
-      // m_trk_cov_d0z0.push_back(covd0z0);       
-      // m_trk_cov_d0phi.push_back(covd0phi);      
-      // m_trk_cov_d0theta.push_back(covd0theta);    
-      // m_trk_cov_d0qOverP.push_back(covd0qOverP);   
-      // m_trk_cov_z0phi.push_back(covz0phi);      
-      // m_trk_cov_z0theta.push_back(covz0theta);    
-      // m_trk_cov_z0qOverP.push_back(covz0qOverP);   
-      // m_trk_cov_phitheta.push_back(covphitheta);   
-      // m_trk_cov_phiqOverP.push_back(covphiqOverP);  
-      // m_trk_cov_thetaqOverP.push_back(covthetaqOverP);
-      
+    m_tracks_prob.push_back(1.);  // todo
+    m_trk_d0.push_back(params[Acts::eBoundLoc0]);
+    m_trk_z0.push_back(params[Acts::eBoundLoc1]);
 
-}// loop over tracks
+    m_trk_signed_d0.push_back(signed_d0);
+    m_trk_signed_d0sig.push_back(signed_d0 / signed_d0_err);
+    m_trk_signed_z0sinTheta.push_back(signed_z0SinTheta);
+    m_trk_signed_z0sinThetasig.push_back(signed_z0SinTheta /
+                                         signed_z0SinTheta_err);
 
+    m_trk_eta.push_back(trk_eta);
+    m_trk_theta.push_back(trk_theta);
+    m_trk_phi.push_back(params[Acts::eBoundPhi]);
+    m_trk_pt.push_back(trk_pt);
+    m_trk_qOverP.push_back(trk_p);
+    m_trk_t.push_back(params[Acts::eBoundTime]);
 
+    // //This give un-initialized warnings
 
-// const auto& inputTrajectories = m_inputTrajectories(ctx);
-// const auto& reco_vertices = m_recoVertices(ctx);
+    // covd0          = cov(Acts::eBoundLoc0,Acts::eBoundLoc0);
+    // covz0          = cov(Acts::eBoundLoc1,Acts::eBoundLoc1);
+    // covphi         = cov(Acts::eBoundPhi,Acts::eBoundPhi);
+    // covtheta       = cov(Acts::eBoundTheta,Acts::eBoundTheta);
+    // covqOverP      = cov(Acts::eBoundQOverP,Acts::eBoundQOverP);
+    // covd0z0        = cov(Acts::eBoundLoc0,Acts::eBoundLoc1);
+    // covd0phi       = cov(Acts::eBoundLoc0,Acts::eBoundPhi);
+    // covd0theta     = cov(Acts::eBoundLoc0,Acts::eBoundTheta);
+    // covd0qOverP    = cov(Acts::eBoundLoc0,Acts::eBoundQOverP);
+    // covz0phi       = cov(Acts::eBoundLoc1,Acts::eBoundPhi);
+    // covz0theta     = cov(Acts::eBoundLoc1,Acts::eBoundTheta);
+    // covz0qOverP    = cov(Acts::eBoundLoc1,Acts::eBoundQOverP);
+    // covphitheta    = cov(Acts::eBoundPhi,Acts::eBoundTheta);
+    // covphiqOverP   = cov(Acts::eBoundPhi,Acts::eBoundQOverP);
+    // covthetaqOverP = cov(Acts::eBoundTheta,Acts::eBoundQOverP);
 
+    // m_trk_var_d0.push_back(covd0);
+    // m_trk_var_z0.push_back(covz0);
+    // m_trk_var_phi.push_back(covphi);
+    // m_trk_var_theta.push_back(covtheta);
+    // m_trk_var_qOverP.push_back(covqOverP);
+    // m_trk_cov_d0z0.push_back(covd0z0);
+    // m_trk_cov_d0phi.push_back(covd0phi);
+    // m_trk_cov_d0theta.push_back(covd0theta);
+    // m_trk_cov_d0qOverP.push_back(covd0qOverP);
+    // m_trk_cov_z0phi.push_back(covz0phi);
+    // m_trk_cov_z0theta.push_back(covz0theta);
+    // m_trk_cov_z0qOverP.push_back(covz0qOverP);
+    // m_trk_cov_phitheta.push_back(covphitheta);
+    // m_trk_cov_phiqOverP.push_back(covphiqOverP);
+    // m_trk_cov_thetaqOverP.push_back(covthetaqOverP);
 
-    m_outputTree->Fill();
+  }  // loop over tracks
+
+  // const auto& inputTrajectories = m_inputTrajectories(ctx);
+  // const auto& reco_vertices = m_recoVertices(ctx);
+
+  m_outputTree->Fill();
 
   return ProcessCode::SUCCESS;
 }
@@ -473,66 +404,73 @@ for (size_t itrk = 0; itrk < tracks.size(); itrk++) {
 }  // namespace ActsExamples
 
 void ActsExamples::RootJetWriter::Clear() {
-    //Vertices
-//   m_vtx_x.clear();
-//   m_vtx_y.clear();
-//   m_vtx_z.clear();
-//   m_vtx_t.clear();
-//   m_vtx_sumPt2.clear();
-//   m_vtx_isHS.clear();
-//   m_vtx_isPU.clear();
-  
-  //Jets
+  // Vertices
+  m_vtx_x.clear();
+  m_vtx_y.clear();
+  m_vtx_z.clear();
+  m_vtx_t.clear();
+  m_vtx_sumPt2.clear();
+  m_vtx_isHS.clear();
+  m_vtx_isPU.clear();
+
+  // Jets
   m_jet_pt.clear();
   m_jet_eta.clear();
   m_jet_phi.clear();
   m_jet_ncomponents.clear();
   m_jet_components.clear();
   m_jet_tracks_idx.clear();
+  m_jet_ntracks.clear();
   m_jet_isPU.clear();
   m_jet_isHS.clear();
   m_jet_label.clear();
 
-//   //Tracks
-//   m_tracks_prob.clear();        
-//   m_trk_d0.clear();             
-//   m_trk_z0.clear();
+  // Tracks
+  m_tracks_prob.clear();
+  m_trk_d0.clear();
+  m_trk_z0.clear();
   m_trk_signed_d0.clear();
-//   m_trk_signed_d0sig.clear();
+  m_trk_signed_d0sig.clear();
   m_trk_signed_z0sinTheta.clear();
-//  m_trk_signed_z0sinThetasig.clear();
-//   m_trk_eta.clear();            
-//   m_trk_theta.clear();          
-//   m_trk_phi.clear();            
-//   m_trk_pt.clear();
-//   m_trk_qOverP.clear();             
-//   m_trk_t.clear();              
-//   m_trk_t30.clear();            
-//   m_trk_t60.clear();            
-//   m_trk_t90.clear();            
-//   m_trk_t120.clear();           
-//   m_trk_t180.clear();           
-//   m_trk_z.clear();              
-//   m_trk_var_d0.clear();         
-//   m_trk_var_z0.clear();         
-//   m_trk_var_phi.clear();        
-//   m_trk_var_theta.clear();      
-//   m_trk_var_qOverP.clear();     
-//   m_trk_cov_d0z0.clear();       
-//   m_trk_cov_d0phi.clear();      
-//   m_trk_cov_d0theta.clear();    
-//   m_trk_cov_d0qOverP.clear();   
-//   m_trk_cov_z0phi.clear();      
-//   m_trk_cov_z0theta.clear();    
-//   m_trk_cov_z0qOverP.clear();   
-//   m_trk_cov_phitheta.clear();   
-//   m_trk_cov_phiqOverP.clear();  
-//   m_trk_cov_thetaqOverP.clear();
-
-//   m_trk_numPix1L.clear();
-//   m_trk_numPix2L.clear();
-//   m_trk_numPix  .clear();
-//   m_trk_numSCT  .clear();
-//   m_trk_numLSCT .clear();
+  m_trk_signed_z0sinThetasig.clear();
+  m_trk_eta.clear();
+  m_trk_theta.clear();
+  m_trk_phi.clear();
+  m_trk_pt.clear();
+  m_trk_qOverP.clear();
+  m_trk_t.clear();
+  m_trk_t30.clear();
+  m_trk_t60.clear();
+  m_trk_t90.clear();
+  m_trk_t120.clear();
+  m_trk_t180.clear();
+  m_trk_z.clear();
+  //   m_trk_var_d0.clear();
+  //   m_trk_var_z0.clear();
+  //   m_trk_var_phi.clear();
+  //   m_trk_var_theta.clear();
+  //   m_trk_var_qOverP.clear();
+  //   m_trk_cov_d0z0.clear();
+  //   m_trk_cov_d0phi.clear();
+  //   m_trk_cov_d0theta.clear();
+  //   m_trk_cov_d0qOverP.clear();
+  //   m_trk_cov_z0phi.clear();
+  //   m_trk_cov_z0theta.clear();
+  //   m_trk_cov_z0qOverP.clear();
+  //   m_trk_cov_phitheta.clear();
+  //   m_trk_cov_phiqOverP.clear();
+  //   m_trk_cov_thetaqOverP.clear();
 }
 
+double ActsExamples::RootJetWriter::calcSumPt2(const Acts::Vertex& vtx) {
+  double sumPt2 = 0;
+  const double minTrkWeight = 0.0;
+  for (const auto& trk : vtx.tracks()) {
+    if (trk.trackWeight > minTrkWeight) {
+      double pt = trk.originalParams.as<Acts::BoundTrackParameters>()
+                      ->transverseMomentum();
+      sumPt2 += pt * pt;
+    }
+  }
+  return sumPt2;
+}
