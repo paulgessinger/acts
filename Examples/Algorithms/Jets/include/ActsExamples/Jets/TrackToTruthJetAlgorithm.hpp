@@ -23,7 +23,6 @@
 #include <fastjet/JetDefinition.hh>
 #include <fastjet/PseudoJet.hh>
 
-
 namespace ActsExamples {
 struct AlgorithmContext;
 
@@ -51,10 +50,8 @@ class TrackToTruthJetAlgorithm : public IAlgorithm {
  private:
   Config m_cfg;
   ReadDataHandle<ConstTrackContainer> m_inputTracks{this, "inputTracks"};
-  ReadDataHandle<TrackJetContainer> m_inputJets{this,
-                                                              "inputJets"};
+  ReadDataHandle<TrackJetContainer> m_inputJets{this, "inputJets"};
   WriteDataHandle<TrackJetContainer> m_outputTrackJets{this, "outputTrackJets"};
-
 };
 
 }  // namespace ActsExamples
