@@ -212,9 +212,11 @@ void addRootOutput(Context& ctx) {
       invariantMassBins, multiplicityMax, writeOptionalHistograms,
       nSimulatedEvents);
 
-   ACTS_PYTHON_DECLARE_WRITER(
-      ActsExamples::RootJetWriter, mex, "RootJetWriter", inputJets, inputTracks, inputTrackJets, field,
-      //inputTrackParameters, inputTrajectories, recoVertices, inputProtoTracks, inputParticles, inputSimHits, 
+  ACTS_PYTHON_DECLARE_WRITER(
+      ActsExamples::RootJetWriter, mex, "RootJetWriter", inputTracks,
+      inputTrackJets, inputVertices, field,
+      // inputTrackParameters, inputTrajectories, recoVertices,
+      // inputProtoTracks, inputParticles, inputSimHits,
       filePath, treeName, fileMode);
 }
 

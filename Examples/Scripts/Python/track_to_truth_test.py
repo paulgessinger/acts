@@ -32,11 +32,13 @@ from acts.examples.reconstruction import (
     addSeeding,
     SeedingAlgorithm,
     addKalmanTracks,
+    addVertexFitting,
+    VertexFinder,
 )
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--events", "-n", type=int, default=1000)
-parser.add_argument("--pileup", "--pu", "-p", type=int, default=0)
+parser.add_argument("--events", "-n", type=int, default=10)
+parser.add_argument("--pileup", "--pu", "-p", type=int, default=50)
 parser.add_argument("--hardscatter", "--hs", type=int, default=1)
 parser.add_argument("--jobs", "-j", type=int, default=-1)
 parser.add_argument("--csv", action="store_true")
@@ -187,9 +189,18 @@ s.addWriter(
     )
 )
 
+
+addVertexFitting(
+    s,
+    field,
+    vertexFinder=VertexFinder.AMVF,
+    outputDirRoot=outputDir,
+    logLevel=acts.logging.FATAL,
+)
+
 s.addWriter(
     acts.examples.TrackFitterPerformanceWriter(
-        level=acts.logging.FATAL,
+        level=acts.logging.INFO,
         inputTracks="tracks",
         inputParticles="particles_selected",
         inputTrackParticleMatching="track_particle_matching",
@@ -235,16 +246,16 @@ addTrackToTruthJetAlg(
         inputTracks="tracks",
         inputJets="truth_jets",
         outputTrackJets="track_jets",
-        maxDeltaR=0.4
+        maxDeltaR=0.4,
     ),
-    loglevel=acts.logging.DEBUG
+    loglevel=acts.logging.INFO,
 )
 
 s.addWriter(
     acts.examples.RootJetWriter(
         level=acts.logging.DEBUG,
-        inputJets="truth_jets",
         inputTracks="tracks",
+        inputVertices="fittedVertices",
         inputTrackJets="track_jets",
         field=acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T)),
         filePath=str(outputDir / "track_to_truth_jets.root"),
