@@ -9,11 +9,11 @@
 #include "Acts/Definitions/ParticleData.hpp"
 #include "Acts/Definitions/PdgParticle.hpp"
 
+#include <array>
 #include <cmath>
 #include <ostream>
 #include <utility>
 #include <vector>
-#include <array>
 
 // This file is based on the following files, with modifications:
 //
