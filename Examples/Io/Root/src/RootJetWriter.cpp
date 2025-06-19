@@ -25,6 +25,7 @@
 #include "ActsExamples/Utilities/Range.hpp"
 #include "ActsFatras/EventData/Barcode.hpp"
 
+
 #include <cmath>
 #include <ios>
 #include <limits>
@@ -36,6 +37,7 @@
 
 #include <TFile.h>
 #include <TTree.h>
+
 
 const Acts::MagneticFieldContext magFieldContext;
 
@@ -62,6 +64,12 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   if (m_cfg.inputVertices.empty()) {
     throw std::invalid_argument("Missing vertices input collection");
   }
+  if (m_cfg.inputTrackParticleMatching.empty()) {
+    throw std::invalid_argument("Missing hit-particles map input collection");
+  }
+  if (m_cfg.inputParticles.empty()) {
+    throw std::invalid_argument("Missing particles input collection");
+  }
   if (m_cfg.filePath.empty()) {
     throw std::invalid_argument("Missing output filename");
   }
@@ -73,6 +81,9 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_inputTracks.initialize(m_cfg.inputTracks);
   m_inputTrackJets.initialize(m_cfg.inputTrackJets);
   m_inputVertices.initialize(m_cfg.inputVertices);
+  m_inputTrackParticleMatching.initialize(
+      m_cfg.inputTrackParticleMatching);
+  m_inputParticles.initialize(m_cfg.inputParticles);
 
   // Tools
   Acts::EigenStepper<> stepper(m_cfg.field);
@@ -94,29 +105,19 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
 
   m_outputTree->Branch("EventNumber", &m_eventNr);
 
-  m_outputTree->Branch("vertex_x", &m_vtx_x);
-  m_outputTree->Branch("vertex_y", &m_vtx_y);
-  m_outputTree->Branch("vertex_z", &m_vtx_z);
-  m_outputTree->Branch("vertex_t", &m_vtx_t);
-  m_outputTree->Branch("vertex_sumPt2", &m_vtx_sumPt2);
-  m_outputTree->Branch("vertex_isHS", &m_vtx_isHS);
-  m_outputTree->Branch("vertex_isPU", &m_vtx_isPU);
+  m_outputTree->Branch("recovertex_x", &m_recovtx_x);
+  m_outputTree->Branch("recovertex_y", &m_recovtx_y);
+  m_outputTree->Branch("recovertex_z", &m_recovtx_z);
+  m_outputTree->Branch("recovertex_t", &m_recovtx_t);
+  m_outputTree->Branch("recovertex_sumPt2", &m_recovtx_sumPt2);
+  m_outputTree->Branch("recovertex_isHS", &m_recovtx_isHS);
+  m_outputTree->Branch("recovertex_isPU", &m_recovtx_isPU);
+  m_outputTree->Branch("recovertex_isSec", &m_recovtx_isSec);
 
-  /*
-  m_outputTree->Branch("vertex_cov_xx",&m_vtx_cov_xx);
-  m_outputTree->Branch("vertex_cov_xy",&m_vtx_cov_xy);
-  m_outputTree->Branch("vertex_cov_xz",&m_vtx_cov_xz);
-  m_outputTree->Branch("vertex_cov_xt",&m_vtx_cov_xt);
-  m_outputTree->Branch("vertex_cov_yy",&m_vtx_cov_yy);
-  m_outputTree->Branch("vertex_cov_yz",&m_vtx_cov_yz);
-  m_outputTree->Branch("vertex_cov_yt",&m_vtx_cov_yt);
-  m_outputTree->Branch("vertex_cov_zz",&m_vtx_cov_zz);
-  m_outputTree->Branch("vertex_cov_zt",&m_vtx_cov_zt);
-  m_outputTree->Branch("vertex_cov_tt",&m_vtx_cov_tt);
-  */
-
-  // m_outputTree->Branch("vertex_tracks_idx",m_vtx_tracks_idx);
-  // m_outputTree->Branch("vertex_tracks_weight",m_vtx_tracks_weight);
+  m_outputTree->Branch("secvertex_x", &m_secvtx_x);
+  m_outputTree->Branch("secvertex_y", &m_secvtx_y);
+  m_outputTree->Branch("secvertex_z", &m_secvtx_z);
+  m_outputTree->Branch("secvertex_t", &m_secvtx_t);
 
   // The jets
   m_outputTree->Branch("jet_pt", &m_jet_pt);
@@ -124,13 +125,15 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("jet_phi", &m_jet_phi);
   m_outputTree->Branch("jet_ncomponents", &m_jet_ncomponents);
   m_outputTree->Branch("jet_components", &m_jet_components);
-  m_outputTree->Branch("jet_tracks_idx", &m_jet_tracks_idx);
+  m_outputTree->Branch("jet_tracks_idx", &m_jet_tracks_idx); // for each jet, the indices of the tracks it contains
   m_outputTree->Branch("jet_ntracks", &m_jet_ntracks);
   m_outputTree->Branch("jet_isPU", &m_jet_isPU);
   m_outputTree->Branch("jet_isHS", &m_jet_isHS);
   m_outputTree->Branch("jet_label", &m_jet_label);
 
   // Tracks in jets
+  m_outputTree->Branch("track_matched_secvtx_idx", &m_matched_secvtx_idx); // for each track (that is matched to a jet), the index of the vertex it belongs to
+  m_outputTree->Branch("track_matched_jet_idx", &m_matched_jet_idx); // for each track, the index of the jet it belongs to
   m_outputTree->Branch("track_prob", &m_tracks_prob);
   m_outputTree->Branch("track_d0", &m_trk_d0);
   m_outputTree->Branch("track_z0", &m_trk_z0);
@@ -145,33 +148,27 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("track_pt", &m_trk_pt);
   m_outputTree->Branch("track_qOverP", &m_trk_qOverP);
   m_outputTree->Branch("track_t", &m_trk_t);
-  m_outputTree->Branch("track_t30", &m_trk_t30);
-  m_outputTree->Branch("track_t60", &m_trk_t60);
-  m_outputTree->Branch("track_t90", &m_trk_t90);
-  m_outputTree->Branch("track_t120", &m_trk_t120);
-  m_outputTree->Branch("track_t180", &m_trk_t180);
-  m_outputTree->Branch("track_z", &m_trk_z);
 
-  // m_outputTree->Branch("track_var_d0",     &m_trk_var_d0);
-  // m_outputTree->Branch("track_var_z0",     &m_trk_var_z0);
-  // m_outputTree->Branch("track_var_phi",    &m_trk_var_phi);
-  // m_outputTree->Branch("track_var_theta",  &m_trk_var_theta);
-  // m_outputTree->Branch("track_var_qOverP", &m_trk_var_qOverP);
+  m_outputTree->Branch("track_var_d0",     &m_trk_var_d0);
+  m_outputTree->Branch("track_var_z0",     &m_trk_var_z0);
+  m_outputTree->Branch("track_var_phi",    &m_trk_var_phi);
+  m_outputTree->Branch("track_var_theta",  &m_trk_var_theta);
+  m_outputTree->Branch("track_var_qOverP", &m_trk_var_qOverP);
 
-  // m_outputTree->Branch("track_cov_d0z0"       ,&m_trk_cov_d0z0);
-  // m_outputTree->Branch("track_cov_d0phi"      ,&m_trk_cov_d0phi);
-  // m_outputTree->Branch("track_cov_d0theta"    ,&m_trk_cov_d0theta);
-  // m_outputTree->Branch("track_cov_d0qOverP"   ,&m_trk_cov_d0qOverP);
-  // m_outputTree->Branch("track_cov_z0phi"      ,&m_trk_cov_z0phi);
-  // m_outputTree->Branch("track_cov_z0theta"    ,&m_trk_cov_z0theta);
-  // m_outputTree->Branch("track_cov_z0qOverP"   ,&m_trk_cov_z0qOverP);
-  // m_outputTree->Branch("track_cov_phitheta"   ,&m_trk_cov_phitheta);
-  // m_outputTree->Branch("track_cov_phiqOverP"  ,&m_trk_cov_phiqOverP);
-  // m_outputTree->Branch("track_cov_tehtaqOverP",&m_trk_cov_thetaqOverP);
+  m_outputTree->Branch("track_cov_d0z0"       ,&m_trk_cov_d0z0);
+  m_outputTree->Branch("track_cov_d0phi"      ,&m_trk_cov_d0phi);
+  m_outputTree->Branch("track_cov_d0theta"    ,&m_trk_cov_d0theta);
+  m_outputTree->Branch("track_cov_d0qOverP"   ,&m_trk_cov_d0qOverP);
+  m_outputTree->Branch("track_cov_z0phi"      ,&m_trk_cov_z0phi);
+  m_outputTree->Branch("track_cov_z0theta"    ,&m_trk_cov_z0theta);
+  m_outputTree->Branch("track_cov_z0qOverP"   ,&m_trk_cov_z0qOverP);
+  m_outputTree->Branch("track_cov_phitheta"   ,&m_trk_cov_phitheta);
+  m_outputTree->Branch("track_cov_phiqOverP"  ,&m_trk_cov_phiqOverP);
+  m_outputTree->Branch("track_cov_tehtaqOverP",&m_trk_cov_thetaqOverP);
 }
 
 RootJetWriter::~RootJetWriter() {
-  m_outputFile->Close();
+ // m_outputFile->Close();
 }
 
 ProcessCode RootJetWriter::finalize() {
@@ -193,7 +190,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   Clear();
 
   if (m_outputFile == nullptr) {
-    return ProcessCode::SUCCESS;
+    return ProcessCode::SUCCESS; // make it an error condition
   }
 
   // Read input collections
@@ -201,6 +198,9 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   const auto& tracks = m_inputTracks(ctx);
   const auto& trackJets = m_inputTrackJets(ctx);
   const auto& vertices = m_inputVertices(ctx);
+  const auto& trackParticleMatching =
+      m_inputTrackParticleMatching(ctx);
+  const auto& particles = m_inputParticles(ctx);
 
   ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputTracks << " "
                                         << tracks.size());
@@ -209,23 +209,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputVertices << " "
                                         << m_inputVertices(ctx).size());
 
-  for (std::size_t ijets = 0; ijets < trackJets.size(); ++ijets) {
-    Acts::Vector4 jet_4mom = trackJets[ijets].getFourMomentum();
-    Acts::Vector3 jet_3mom{jet_4mom[0], jet_4mom[1], jet_4mom[2]};
-    float jet_theta = theta(jet_3mom);
-    m_jet_pt.push_back(perp(jet_4mom));
-    m_jet_eta.push_back(std::atanh(std::cos(jet_theta)));
-    m_jet_phi.push_back(phi(jet_4mom));
-
-    m_jet_ncomponents.push_back(trackJets[ijets].getConstituents().size());
-    m_jet_components.push_back(trackJets[ijets].getConstituents());
-    m_jet_tracks_idx.push_back(trackJets[ijets].getTracks());
-    m_jet_ntracks.push_back(trackJets[ijets].getTracks().size());
-    m_jet_label.push_back(static_cast<int>(trackJets[ijets].getLabel()));
-
-    m_jet_isPU.push_back(0);  // Need to check....
-    m_jet_isHS.push_back(1);
-  }  // jets
+  m_eventNr = ctx.eventNumber;
 
   // Read the vertices and find the HS vertex
   // Find the vertex with the highest sumPt2
@@ -244,24 +228,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
                          << vertices.at(HS_idx).tracks().size()
                          << " tracks associated");
 
-  // Fill the vertex information
-  for (const auto& vtx : vertices) {
-    m_vtx_x.push_back(vtx.position()[Acts::ePos0]);
-    m_vtx_y.push_back(vtx.position()[Acts::ePos1]);
-    m_vtx_z.push_back(vtx.position()[Acts::ePos2]);
-    m_vtx_t.push_back(vtx.time());
-    m_vtx_sumPt2.push_back(calcSumPt2(vtx));
-
-    if (&vtx == &m_inputVertices(ctx).at(HS_idx)) {
-      m_vtx_isHS.push_back(1);
-      m_vtx_isPU.push_back(0);
-    } else {
-      m_vtx_isHS.push_back(0);
-      m_vtx_isPU.push_back(1);
-    }
-
-  }  // vertices
-
+  Acts::Vertex hs_vtx = vertices.at(HS_idx);
   Acts::Vector3 vertexPosition =
       vertices.at(HS_idx).position();  // Hard scatter vertex position
   Acts::Vector4 stddev;
@@ -271,8 +238,8 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   stddev[Acts::eTime] = 1 * Acts::UnitConstants::ns;
   Acts::SquareMatrix4 vertexCov = stddev.cwiseProduct(stddev).asDiagonal();
 
-  Acts::Vertex ip_vtx(vertexPosition);
   Acts::ImpactPointEstimator::State state{magFieldCache()};
+  std::vector<Acts::Vector4> secondaryVertices;
 
   // Loop over the tracks
   for (std::size_t itrk = 0; itrk < tracks.size(); itrk++) {
@@ -280,6 +247,9 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     double signed_z0SinTheta = -9999;
     double signed_d0_err = 1.;
     double signed_z0SinTheta_err = 1.;
+
+    int matched_jet_idx = -999;
+    int isecvtx = -999; // flag to check if we found a secondary vertex
 
     double covd0 = -999;
     double covz0 = -999;
@@ -305,15 +275,21 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     // Check if this track belongs to a jet and compute the IPs
     for (std::size_t ijet = 0; ijet < trackJets.size(); ++ijet) {
       std::vector<int> jtrks = trackJets[ijet].getTracks();
+      
 
       if (std::find(jtrks.begin(), jtrks.end(), itrk) != jtrks.end()) {
+        ACTS_DEBUG("Track " << itrk << " is in jet " << ijet);
+        matched_jet_idx = ijet;
+
         Acts::Vector3 jetDir{trackJets[ijet].getFourMomentum()[0],
                              trackJets[ijet].getFourMomentum()[1],
                              trackJets[ijet].getFourMomentum()[2]};
 
+        jetDir = jetDir.normalized();  // normalize the jet direction
+
         auto ipAndSigma =
-            m_ipEst->getImpactParameters(boundParams, ip_vtx, gctx_, mctx_, 1);
-        auto vszs = m_ipEst->getLifetimeSignOfTrack(boundParams, ip_vtx, jetDir,
+            m_ipEst->getImpactParameters(boundParams, hs_vtx, gctx_, mctx_, 1);
+        auto vszs = m_ipEst->getLifetimeSignOfTrack(boundParams, hs_vtx, jetDir,
                                                     gctx_, mctx_);
 
         if (!ipAndSigma.ok() || !vszs.ok()) {
@@ -329,10 +305,36 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
             (*ipAndSigma).sigmaZ0;  // not correct yet - have to take into
                                     // account the sin(theta) factor
 
+        // Get the associated truth particle for this track
+        // if matched, take this truth particle's initial ? position 
+        // make a vector for 2ndvtxpos (out of the loop) am I close enough to the position of the truth particle?
+
+        auto match = trackParticleMatching.find(itrk);
+        if(match != trackParticleMatching.end() && match->second.particle.has_value()) {
+          auto barcode = match->second.particle.value();
+          auto findParticle = particles.find(barcode);
+
+          if(findParticle != particles.end()) {
+            auto initParticle = *findParticle;
+            Acts::Vector4 initParticlePosition = initParticle.fourPosition();
+
+              auto it = std::ranges::find_if(
+                  secondaryVertices.begin(), secondaryVertices.end(),
+                  [&initParticlePosition](const Acts::Vector4& vtx) {
+                    return (vtx - initParticlePosition).norm() < 1e-3;  // tolerance // can also make it configurable
+                  });
+              if(it == secondaryVertices.end()) {
+                secondaryVertices.push_back(initParticlePosition);
+                isecvtx = secondaryVertices.size() - 1; // index of the new secondary vertex
+              }
+              else {
+              isecvtx = std::distance(secondaryVertices.begin(), it);
+              }
+
+            } // if found
+          } // if match
       }  // track in jet
     }  // loop on jets
-
-    // const auto& cov  = *trk.covariance();
 
     float trk_theta = params[Acts::eBoundTheta];
     float trk_eta = std::atanh(std::cos(trk_theta));
@@ -350,6 +352,21 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_trk_signed_z0sinThetasig.push_back(signed_z0SinTheta /
                                          signed_z0SinTheta_err);
 
+    m_matched_jet_idx.push_back(matched_jet_idx); // for each track, the index of the jet it belongs to
+    m_matched_secvtx_idx.push_back(isecvtx); // fill number of secondary vertices for each track that are matched to a jet HINT: this might also include the hard scatter vertex
+
+    if (isecvtx > -999) {
+      m_secvtx_x.push_back(secondaryVertices[isecvtx][Acts::ePos0]);
+      m_secvtx_y.push_back(secondaryVertices[isecvtx][Acts::ePos1]);
+      m_secvtx_z.push_back(secondaryVertices[isecvtx][Acts::ePos2]);
+      m_secvtx_t.push_back(secondaryVertices[isecvtx][Acts::eTime]); }
+    else {
+      m_secvtx_x.push_back(-9999.);
+      m_secvtx_y.push_back(-9999.);
+      m_secvtx_z.push_back(-9999.);
+      m_secvtx_t.push_back(-9999.);
+    }
+
     m_trk_eta.push_back(trk_eta);
     m_trk_theta.push_back(trk_theta);
     m_trk_phi.push_back(params[Acts::eBoundPhi]);
@@ -359,42 +376,81 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
     // //This give un-initialized warnings
 
-    // covd0          = cov(Acts::eBoundLoc0,Acts::eBoundLoc0);
-    // covz0          = cov(Acts::eBoundLoc1,Acts::eBoundLoc1);
-    // covphi         = cov(Acts::eBoundPhi,Acts::eBoundPhi);
-    // covtheta       = cov(Acts::eBoundTheta,Acts::eBoundTheta);
-    // covqOverP      = cov(Acts::eBoundQOverP,Acts::eBoundQOverP);
-    // covd0z0        = cov(Acts::eBoundLoc0,Acts::eBoundLoc1);
-    // covd0phi       = cov(Acts::eBoundLoc0,Acts::eBoundPhi);
-    // covd0theta     = cov(Acts::eBoundLoc0,Acts::eBoundTheta);
-    // covd0qOverP    = cov(Acts::eBoundLoc0,Acts::eBoundQOverP);
-    // covz0phi       = cov(Acts::eBoundLoc1,Acts::eBoundPhi);
-    // covz0theta     = cov(Acts::eBoundLoc1,Acts::eBoundTheta);
-    // covz0qOverP    = cov(Acts::eBoundLoc1,Acts::eBoundQOverP);
-    // covphitheta    = cov(Acts::eBoundPhi,Acts::eBoundTheta);
-    // covphiqOverP   = cov(Acts::eBoundPhi,Acts::eBoundQOverP);
-    // covthetaqOverP = cov(Acts::eBoundTheta,Acts::eBoundQOverP);
+    auto cov = trk.covariance();
 
-    // m_trk_var_d0.push_back(covd0);
-    // m_trk_var_z0.push_back(covz0);
-    // m_trk_var_phi.push_back(covphi);
-    // m_trk_var_theta.push_back(covtheta);
-    // m_trk_var_qOverP.push_back(covqOverP);
-    // m_trk_cov_d0z0.push_back(covd0z0);
-    // m_trk_cov_d0phi.push_back(covd0phi);
-    // m_trk_cov_d0theta.push_back(covd0theta);
-    // m_trk_cov_d0qOverP.push_back(covd0qOverP);
-    // m_trk_cov_z0phi.push_back(covz0phi);
-    // m_trk_cov_z0theta.push_back(covz0theta);
-    // m_trk_cov_z0qOverP.push_back(covz0qOverP);
-    // m_trk_cov_phitheta.push_back(covphitheta);
-    // m_trk_cov_phiqOverP.push_back(covphiqOverP);
-    // m_trk_cov_thetaqOverP.push_back(covthetaqOverP);
+    covd0          = cov(Acts::eBoundLoc0,Acts::eBoundLoc0);
+    covz0          = cov(Acts::eBoundLoc1,Acts::eBoundLoc1);
+    covphi         = cov(Acts::eBoundPhi,Acts::eBoundPhi);
+    covtheta       = cov(Acts::eBoundTheta,Acts::eBoundTheta);
+    covqOverP      = cov(Acts::eBoundQOverP,Acts::eBoundQOverP);
+    covd0z0        = cov(Acts::eBoundLoc0,Acts::eBoundLoc1);
+    covd0phi       = cov(Acts::eBoundLoc0,Acts::eBoundPhi);
+    covd0theta     = cov(Acts::eBoundLoc0,Acts::eBoundTheta);
+    covd0qOverP    = cov(Acts::eBoundLoc0,Acts::eBoundQOverP);
+    covz0phi       = cov(Acts::eBoundLoc1,Acts::eBoundPhi);
+    covz0theta     = cov(Acts::eBoundLoc1,Acts::eBoundTheta);
+    covz0qOverP    = cov(Acts::eBoundLoc1,Acts::eBoundQOverP);
+    covphitheta    = cov(Acts::eBoundPhi,Acts::eBoundTheta);
+    covphiqOverP   = cov(Acts::eBoundPhi,Acts::eBoundQOverP);
+    covthetaqOverP = cov(Acts::eBoundTheta,Acts::eBoundQOverP);
+
+    m_trk_var_d0.push_back(covd0);
+    m_trk_var_z0.push_back(covz0);
+    m_trk_var_phi.push_back(covphi);
+    m_trk_var_theta.push_back(covtheta);
+    m_trk_var_qOverP.push_back(covqOverP);
+    m_trk_cov_d0z0.push_back(covd0z0);
+    m_trk_cov_d0phi.push_back(covd0phi);
+    m_trk_cov_d0theta.push_back(covd0theta);
+    m_trk_cov_d0qOverP.push_back(covd0qOverP);
+    m_trk_cov_z0phi.push_back(covz0phi);
+    m_trk_cov_z0theta.push_back(covz0theta);
+    m_trk_cov_z0qOverP.push_back(covz0qOverP);
+    m_trk_cov_phitheta.push_back(covphitheta);
+    m_trk_cov_phiqOverP.push_back(covphiqOverP);
+    m_trk_cov_thetaqOverP.push_back(covthetaqOverP);
+
+  
 
   }  // loop over tracks
 
-  // const auto& inputTrajectories = m_inputTrajectories(ctx);
-  // const auto& reco_vertices = m_recoVertices(ctx);
+  for (std::size_t ijets = 0; ijets < trackJets.size(); ++ijets) {
+    Acts::Vector4 jet_4mom = trackJets[ijets].getFourMomentum();
+    Acts::Vector3 jet_3mom{jet_4mom[0], jet_4mom[1], jet_4mom[2]};
+    float jet_theta = theta(jet_3mom);
+    m_jet_pt.push_back(perp(jet_4mom));
+    m_jet_eta.push_back(std::atanh(std::cos(jet_theta)));
+    m_jet_phi.push_back(phi(jet_4mom));
+
+    m_jet_ncomponents.push_back(trackJets[ijets].getConstituents().size());
+    m_jet_components.push_back(trackJets[ijets].getConstituents());
+    m_jet_tracks_idx.push_back(trackJets[ijets].getTracks());
+    m_jet_ntracks.push_back(trackJets[ijets].getTracks().size());
+    m_jet_label.push_back(static_cast<int>(trackJets[ijets].getLabel()));
+
+    m_jet_isPU.push_back(0);  // Need to check....
+    m_jet_isHS.push_back(1);
+
+  }  // jets
+
+  // Fill the reconstructed vertex information
+  for (std::size_t ivtx = 0; ivtx < vertices.size(); ivtx++) {
+    const auto& vtx = vertices.at(ivtx);
+    m_recovtx_x.push_back(vtx.position()[Acts::ePos0]);
+    m_recovtx_y.push_back(vtx.position()[Acts::ePos1]);
+    m_recovtx_z.push_back(vtx.position()[Acts::ePos2]);
+    m_recovtx_t.push_back(vtx.time());
+    m_recovtx_sumPt2.push_back(calcSumPt2(vtx));
+
+    if (&vtx == &m_inputVertices(ctx).at(HS_idx)) {
+      m_recovtx_isHS.push_back(1);
+      m_recovtx_isPU.push_back(0);
+    } else {
+      m_recovtx_isHS.push_back(0);
+      m_recovtx_isPU.push_back(1);
+    }
+    
+  }  // vertices
 
   m_outputTree->Fill();
 
@@ -405,13 +461,21 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
 void ActsExamples::RootJetWriter::Clear() {
   // Vertices
-  m_vtx_x.clear();
-  m_vtx_y.clear();
-  m_vtx_z.clear();
-  m_vtx_t.clear();
-  m_vtx_sumPt2.clear();
-  m_vtx_isHS.clear();
-  m_vtx_isPU.clear();
+  m_recovtx_x.clear();
+  m_recovtx_y.clear();
+  m_recovtx_z.clear();
+  m_recovtx_t.clear();
+  m_recovtx_sumPt2.clear();
+  m_recovtx_isHS.clear();
+  m_recovtx_isPU.clear();
+  m_recovtx_isSec.clear();
+  m_matched_secvtx_idx.clear(); // for each track (that is matched to a jet), the index of the vertex it belongs to
+
+  // clear secondary vertex information
+  m_secvtx_x.clear();
+  m_secvtx_y.clear();
+  m_secvtx_z.clear();
+  m_secvtx_t.clear();
 
   // Jets
   m_jet_pt.clear();
@@ -420,6 +484,7 @@ void ActsExamples::RootJetWriter::Clear() {
   m_jet_ncomponents.clear();
   m_jet_components.clear();
   m_jet_tracks_idx.clear();
+  m_matched_jet_idx.clear(); // for each track, the index of the jet it belongs to
   m_jet_ntracks.clear();
   m_jet_isPU.clear();
   m_jet_isHS.clear();
@@ -439,27 +504,21 @@ void ActsExamples::RootJetWriter::Clear() {
   m_trk_pt.clear();
   m_trk_qOverP.clear();
   m_trk_t.clear();
-  m_trk_t30.clear();
-  m_trk_t60.clear();
-  m_trk_t90.clear();
-  m_trk_t120.clear();
-  m_trk_t180.clear();
-  m_trk_z.clear();
-  //   m_trk_var_d0.clear();
-  //   m_trk_var_z0.clear();
-  //   m_trk_var_phi.clear();
-  //   m_trk_var_theta.clear();
-  //   m_trk_var_qOverP.clear();
-  //   m_trk_cov_d0z0.clear();
-  //   m_trk_cov_d0phi.clear();
-  //   m_trk_cov_d0theta.clear();
-  //   m_trk_cov_d0qOverP.clear();
-  //   m_trk_cov_z0phi.clear();
-  //   m_trk_cov_z0theta.clear();
-  //   m_trk_cov_z0qOverP.clear();
-  //   m_trk_cov_phitheta.clear();
-  //   m_trk_cov_phiqOverP.clear();
-  //   m_trk_cov_thetaqOverP.clear();
+    m_trk_var_d0.clear();
+    m_trk_var_z0.clear();
+    m_trk_var_phi.clear();
+    m_trk_var_theta.clear();
+    m_trk_var_qOverP.clear();
+    m_trk_cov_d0z0.clear();
+    m_trk_cov_d0phi.clear();
+    m_trk_cov_d0theta.clear();
+    m_trk_cov_d0qOverP.clear();
+    m_trk_cov_z0phi.clear();
+    m_trk_cov_z0theta.clear();
+    m_trk_cov_z0qOverP.clear();
+    m_trk_cov_phitheta.clear();
+    m_trk_cov_phiqOverP.clear();
+    m_trk_cov_thetaqOverP.clear();
 }
 
 double ActsExamples::RootJetWriter::calcSumPt2(const Acts::Vertex& vtx) {
