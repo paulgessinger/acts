@@ -32,11 +32,14 @@
 #include "Acts/Vertexing/Vertex.hpp"
 #include "ActsExamples/EventData/Trajectories.hpp"
 
+
 #include <array>
 #include <cstdint>
 #include <mutex>
 #include <string>
 #include <vector>
+
+
 
 class TFile;
 class TTree;
@@ -47,9 +50,6 @@ using TrackJetWriter = WriterT<TrackJetContainer>;
 using VertexContainer = std::vector<Acts::Vertex>;
 
 using Propagator = Acts::Propagator<Acts::EigenStepper<>>;
-// // using PropagatorOptions = Acts::PropagatorOptions<>;
-// using ImpactPointEstimator =
-//       Acts::ImpactPointEstimator<Acts::BoundTrackParameters, Propagator>;
 
 class RootJetWriter final : public TrackJetWriter {
  public:
@@ -60,19 +60,10 @@ class RootJetWriter final : public TrackJetWriter {
     std::string inputTrackJets;
     /// Input vertices
     std::string inputVertices;
-    // /// Input estimated track parameters collection.
-    // std::string inputTrackParameters;
-    // // Input trajectories
-    // std::string inputTrajectories;
-    // // Input Reco Vertices
-    // std::string recoVertices;
-
-    // /// Input reconstructed proto tracks collection.
-    // std::string inputProtoTracks;
-    // /// Input particles collection.
-    // std::string inputParticles;
-    // /// Input collection of simulated hits.
-    // std::string inputSimHits;
+    /// Input measurement particles map
+    std::string inputTrackParticleMatching;
+    /// Input particles
+    std::string inputParticles;
     /// output filename.
     std::string filePath = "events.root";
     /// name of the output tree.
@@ -121,19 +112,26 @@ class RootJetWriter final : public TrackJetWriter {
   ReadDataHandle<ConstTrackContainer> m_inputTracks{this, "inputTracks"};
   ReadDataHandle<TrackJetContainer> m_inputTrackJets{this, "inputTrackJets"};
   ReadDataHandle<VertexContainer> m_inputVertices{this, "inputVertices"};
-  // ReadDataHandle<TrajectoriesContainer> m_inputTrajectories{this,
-  // "inputTrajectories"}; ReadDataHandle<VertexContainer> m_recoVertices{this,
-  // "recoVertices"};
+  ReadDataHandle<TrackParticleMatching> m_inputTrackParticleMatching{
+      this, "inputTrackParticleMatching"};
+  ReadDataHandle<SimParticleContainer> m_inputParticles{
+      this, "inputParticles"};
 
   // Vertices//
-  std::vector<float> m_vtx_x;
-  std::vector<float> m_vtx_y;
-  std::vector<float> m_vtx_z;
-  std::vector<float> m_vtx_t;
-  std::vector<float> m_vtx_sumPt2;
-  std::vector<int> m_vtx_isHS;
-  std::vector<int> m_vtx_isPU;
+  std::vector<float> m_recovtx_x;
+  std::vector<float> m_recovtx_y;
+  std::vector<float> m_recovtx_z;
+  std::vector<float> m_recovtx_t;
+  std::vector<float> m_recovtx_sumPt2;
+  std::vector<int> m_recovtx_isHS;
+  std::vector<int> m_recovtx_isPU;
+  std::vector<int> m_recovtx_isSec;
+  std::vector<int> m_matched_secvtx_idx;  // for each track (that is matched to a jet), the index of the vertex it belongs to  
 
+  std::vector<float> m_secvtx_x;
+  std::vector<float> m_secvtx_y;
+  std::vector<float> m_secvtx_z;
+  std::vector<float> m_secvtx_t;
   // Jets//
 
   // skipping jet_m, jet_q
@@ -161,12 +159,6 @@ class RootJetWriter final : public TrackJetWriter {
   std::vector<float> m_trk_pt;
   std::vector<float> m_trk_qOverP;
   std::vector<float> m_trk_t;
-  std::vector<float> m_trk_t30;
-  std::vector<float> m_trk_t60;
-  std::vector<float> m_trk_t90;
-  std::vector<float> m_trk_t120;
-  std::vector<float> m_trk_t180;
-  std::vector<float> m_trk_z;
 
   std::vector<float> m_trk_var_d0;
   std::vector<float> m_trk_var_z0;
@@ -184,14 +176,8 @@ class RootJetWriter final : public TrackJetWriter {
   std::vector<float> m_trk_cov_phiqOverP;
   std::vector<float> m_trk_cov_thetaqOverP;
 
-  std::vector<int> m_trk_numPix1L;
-  std::vector<int> m_trk_numPix2L;
-  std::vector<int> m_trk_numPix;
-  std::vector<int> m_trk_numSCT;   // short strips
-  std::vector<int> m_trk_numLSCT;  // long strips
-
   // the index of the jet the tracks belong to
-  std::vector<int> m_trk_jet_idx;
+  std::vector<int> m_matched_jet_idx;
 
   // Tools
 

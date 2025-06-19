@@ -46,9 +46,9 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
     jets.back().setConstituents(jet.getConstituents());
   }
 
-  ACTS_INFO("TrackToTruthJetAlg - Number of tracks: " << tracks.size());
-  ACTS_INFO("TrackToTruthJetAlg - Number of truth jets: " << truthJets.size());
-  ACTS_INFO("TrackToTruthJetAlg - Number of jets: " << jets.size());
+  ACTS_DEBUG("TrackToTruthJetAlg - Number of tracks: " << tracks.size());
+  ACTS_DEBUG("TrackToTruthJetAlg - Number of truth jets: " << truthJets.size());
+  ACTS_DEBUG("TrackToTruthJetAlg - Number of jets: " << jets.size());
 
   for (const auto& track : tracks) {
     double minDeltaR = m_cfg.maxDeltaR;
