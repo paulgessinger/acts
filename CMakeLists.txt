@@ -43,6 +43,11 @@ if(POLICY CMP0167)
     cmake_policy(SET CMP0167 NEW)
 endif()
 
+# Ignore <PACKAGENAME>_ROOT variables in find_package
+if(POLICY CMP0144)
+    cmake_policy(SET CMP0144 NEW)
+endif()
+
 # build options
 
 # all options and compile-time parameters must be defined here for clear

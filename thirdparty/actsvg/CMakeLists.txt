@@ -16,6 +16,12 @@ message(STATUS "Building actsvg as part of the ACTS project")
 
 FetchContent_Declare(actsvg SYSTEM ${ACTS_ACTSVG_SOURCE})
 
+set(ACTSVG_USE_SYSTEM_PYBIND11
+    ${ACTS_USE_SYSTEM_PYBIND11}
+    CACHE BOOL
+    "Harmonize pybind11 discovery settings"
+)
+
 set(ACTSVG_BUILD_PYTHON_BINDINGS
     ${ACTS_BUILD_EXAMPLES_PYTHON_BINDINGS}
     CACHE BOOL
