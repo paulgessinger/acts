@@ -886,5 +886,6 @@ std::ostream& operator<<(std::ostream& os, HadronType hadron) {
     case Unknown:
       return os << "Unknown";
   }
+  return os;
 }
 }  // namespace Acts
