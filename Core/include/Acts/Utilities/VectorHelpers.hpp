@@ -237,6 +237,22 @@ inline std::pair<double, double> incidentAngles(
 
 /// Calculate the deltaR between two vectors.
 /// @note DeltaR is defined as sqrt(deltaPhi^2 + deltaEta^2)
+/// @param phi1 The first vector's phi value
+/// @param eta1 The first vectors' eta value
+/// @param phi2 The second vector's phi value
+/// @param eta2 The second vectors' eta value
+/// @return The deltaR value
+inline double deltaR(double phi1, double eta1, double phi2, double eta2) {
+  double dphi = std::abs(phi1 - phi2);
+  if (dphi > std::numbers::pi) {
+    dphi = std::numbers::pi * 2 - dphi;
+  }
+  double deta = eta1 - eta2;
+  return std::sqrt(dphi * dphi + deta * deta);
+}
+
+/// Calculate the deltaR between two vectors.
+/// @note DeltaR is defined as sqrt(deltaPhi^2 + deltaEta^2)
 /// @tparam Derived Eigen derived concrete type
 /// @param v1 First vector
 /// @param v2 Second vector
@@ -246,12 +262,7 @@ double deltaR(const Eigen::MatrixBase<Derived>& v1,
               const Eigen::MatrixBase<Derived>& v2)
   requires(Eigen::MatrixBase<Derived>::RowsAtCompileTime == 3)
 {
-  double dphi = abs(phi(v1) - phi(v2));
-  if (dphi > std::numbers::pi) {
-    dphi = std::numbers::pi * 2 - dphi;
-  }
-  double deta = eta(v1) - eta(v2);
-  return std::sqrt(dphi * dphi + deta * deta);
+  return deltaR(phi(v1), phi(v2), eta(v1), eta(v2));
 }
 
 }  // namespace Acts::VectorHelpers
