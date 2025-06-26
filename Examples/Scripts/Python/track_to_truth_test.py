@@ -269,6 +269,7 @@ def job(index: int, events: int, skip: int, outputDir: Path, args):
             numThreads=1,
             logLevel=acts.logging.INFO,
             outputDir=str(job_out),
+            trackFpes=False,
         )
 
         detector, oddDigiConfig = make_geometry()
@@ -280,7 +281,7 @@ def job(index: int, events: int, skip: int, outputDir: Path, args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--events", "-n", type=int, default=10)
-    parser.add_argument("--pileup", "--pu", "-p", type=int, default=50)
+    parser.add_argument("--pileup", "--pu", type=int, default=50)
     parser.add_argument("--hardscatter", "--hs", type=int, default=1)
     parser.add_argument("--threads", "-t", type=int, default=-1)
     parser.add_argument("--procs", type=int, default=1)
@@ -289,12 +290,13 @@ def main():
 
     outputDir = Path.cwd() / "trackToTruth_output"
 
-    next_run = max(max([int(f.name[1:]) for f in outputDir.glob("r*")]), 0) + 1
+    runs = [int(f.name[1:]) for f in outputDir.glob("r*")]
+    next_run = max(max(runs), 0) + 1 if len(runs) > 0 else 1
 
     outputDir = outputDir / f"r{next_run:03d}"
 
     print(outputDir)
-    outputDir.mkdir(exist_ok=True)
+    outputDir.mkdir(exist_ok=True, parents=True)
 
     if args.procs == 1:
         s = acts.examples.Sequencer(
@@ -302,6 +304,7 @@ def main():
             numThreads=args.threads,
             logLevel=acts.logging.INFO,
             outputDir=str(outputDir),
+            trackFpes=False,
         )
 
         detector, oddDigiConfig = make_geometry()
