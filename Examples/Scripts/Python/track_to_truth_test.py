@@ -3,6 +3,9 @@
 from pathlib import Path
 from typing import Optional
 import argparse
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import os
+import sys
 
 import acts
 import acts.examples
@@ -36,230 +39,295 @@ from acts.examples.reconstruction import (
     VertexFinder,
 )
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--events", "-n", type=int, default=10)
-parser.add_argument("--pileup", "--pu", "-p", type=int, default=50)
-parser.add_argument("--hardscatter", "--hs", type=int, default=1)
-parser.add_argument("--jobs", "-j", type=int, default=-1)
-parser.add_argument("--csv", action="store_true")
-args = parser.parse_args()
 
-outputDir = Path.cwd() / "trackToTruth_output"
-print(outputDir)
-outputDir.mkdir(exist_ok=True)
-s = acts.examples.Sequencer(
-    events=args.events,
-    numThreads=args.jobs,
-    logLevel=acts.logging.INFO,
-    outputDir=str(outputDir),
-)
+def make_sequencer(
+    s: acts.examples.Sequencer, outputDir: Path, detector, digiConfig, args
+):
 
-from acts.examples.odd import getOpenDataDetector, getOpenDataDetectorDirectory
+    trackingGeometry = detector.trackingGeometry()
 
-geoDir = getOpenDataDetectorDirectory()
-# acts.examples.dump_args_calls(locals())  # show python binding calls
+    field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
-oddMaterialMap = geoDir / "data/odd-material-maps.root"
-assert oddMaterialMap.exists(), f"Material map file {oddMaterialMap} does not exist"
+    rnd = acts.examples.RandomNumbers(seed=42)
 
-oddDigiConfig = actsDir / "Examples/Configs/odd-digi-smearing-config.json"
-assert oddDigiConfig.exists(), f"Digi config file {oddDigiConfig} does not exist"
+    addPythia8(
+        s,
+        nhard=args.hardscatter,
+        npileup=args.pileup,
+        hardProcess=["Top:qqbar2ttbar=on"],
+        vtxGen=acts.examples.GaussianVertexGenerator(
+            mean=acts.Vector4(0, 0, 0, 0),
+            stddev=acts.Vector4(0.0125 * u.mm, 0.0125 * u.mm, 55.5 * u.mm, 5.0 * u.ns),
+        ),
+        rnd=rnd,
+        outputDirRoot=None,
+        outputDirCsv=None,
+        writeHepMC3=None,
+    )
 
-oddSeedingSel = actsDir / "Examples/Configs/odd-seeding-config.json"
-assert oddSeedingSel.exists(), f"Seeding config file {oddSeedingSel} does not exist"
-
-oddMaterialDeco = acts.IMaterialDecorator.fromFile(oddMaterialMap)
-
-detector = getOpenDataDetector(
-    odd_dir=geoDir,
-    materialDecorator=oddMaterialDeco,
-)
-trackingGeometry = detector.trackingGeometry()
-
-field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
-
-
-rnd = acts.examples.RandomNumbers(seed=42)
-
-addPythia8(
-    s,
-    nhard=args.hardscatter,
-    npileup=args.pileup,
-    hardProcess=["Top:qqbar2ttbar=on"],
-    vtxGen=acts.examples.GaussianVertexGenerator(
-        mean=acts.Vector4(0, 0, 0, 0),
-        stddev=acts.Vector4(0.0125 * u.mm, 0.0125 * u.mm, 55.5 * u.mm, 5.0 * u.ns),
-    ),
-    rnd=rnd,
-    outputDirRoot=None,
-    outputDirCsv=None,
-    writeHepMC3=None,
-)
-
-# Effective truth level selection for simulation + track reconstruction
-addGenParticleSelection(
-    s,
-    ParticleSelectorConfig(
-        rho=(0.0, 24 * u.mm),
-        absZ=(0.0, 1.0 * u.m),
-        eta=(-3.0, 3.0),
-        pt=(150 * u.MeV, None),
-    ),
-)
-
-addFatras(
-    s,
-    trackingGeometry,
-    field,
-    rnd=rnd,
-    enableInteractions=True,
-)
-
-
-addDigitization(
-    s,
-    trackingGeometry,
-    field,
-    digiConfigFile=oddDigiConfig,
-    rnd=rnd,
-    logLevel=acts.logging.ERROR,
-)
-
-addDigiParticleSelection(
-    s,
-    ParticleSelectorConfig(
-        pt=(0.9 * u.GeV, None),
-        measurements=(7, None),
-        removeNeutral=True,
-        removeSecondaries=True,
-    ),
-)
-
-addSeeding(
-    s,
-    trackingGeometry,
-    field,
-    rnd=rnd,
-    inputParticles="particles_generated",
-    seedingAlgorithm=SeedingAlgorithm.TruthSmeared,
-    particleHypothesis=acts.ParticleHypothesis.muon,
-)
-
-reverseFilteringMomThreshold = 0 * u.GeV
-
-addKalmanTracks(
-    s,
-    trackingGeometry,
-    field,
-    reverseFilteringMomThreshold,
-    logLevel=acts.logging.FATAL,
-)
-
-s.addAlgorithm(
-    acts.examples.TrackSelectorAlgorithm(
-        level=acts.logging.INFO,
-        inputTracks="tracks",
-        outputTracks="selected-tracks",
-        selectorConfig=acts.TrackSelector.Config(
-            minMeasurements=7,
+    # Effective truth level selection for simulation + track reconstruction
+    addGenParticleSelection(
+        s,
+        ParticleSelectorConfig(
+            rho=(0.0, 24 * u.mm),
+            absZ=(0.0, 1.0 * u.m),
+            eta=(-3.0, 3.0),
+            pt=(150 * u.MeV, None),
         ),
     )
-)
-s.addWhiteboardAlias("tracks", "selected-tracks")
 
-# s.addWriter(
-#     acts.examples.RootTrackStatesWriter(
-#         level=acts.logging.INFO,
-#         inputTracks="tracks",
-#         inputParticles="particles_selected",
-#         inputTrackParticleMatching="track_particle_matching",
-#         inputSimHits="simhits",
-#         inputMeasurementSimHitsMap="measurement_simhits_map",
-#         filePath=str(outputDir / "trackstates_kf.root"),
-#     )
-# )
-
-s.addWriter(
-    acts.examples.RootTrackSummaryWriter(
-        level=acts.logging.FATAL,
-        inputTracks="tracks",
-        inputParticles="particles_selected",
-        inputTrackParticleMatching="track_particle_matching",
-        filePath=str(outputDir / "tracksummary_kf.root"),
+    addFatras(
+        s,
+        trackingGeometry,
+        field,
+        rnd=rnd,
+        enableInteractions=True,
     )
-)
 
-
-addVertexFitting(
-    s,
-    field,
-    vertexFinder=VertexFinder.AMVF,
-    outputDirRoot=outputDir,
-    logLevel=acts.logging.FATAL,
-)
-
-s.addWriter(
-    acts.examples.TrackFitterPerformanceWriter(
-        level=acts.logging.INFO,
-        inputTracks="tracks",
-        inputParticles="particles_selected",
-        inputTrackParticleMatching="track_particle_matching",
-        filePath=str(outputDir / "performance_kf.root"),
+    addDigitization(
+        s,
+        trackingGeometry,
+        field,
+        digiConfigFile=digiConfig,
+        rnd=rnd,
+        logLevel=acts.logging.ERROR,
     )
-)
 
-s.addAlgorithm(
-    acts.examples.ParticleSelector(
-        level=acts.logging.INFO,
+    addDigiParticleSelection(
+        s,
+        ParticleSelectorConfig(
+            pt=(0.9 * u.GeV, None),
+            measurements=(7, None),
+            removeNeutral=True,
+            removeSecondaries=True,
+        ),
+    )
+
+    addSeeding(
+        s,
+        trackingGeometry,
+        field,
+        rnd=rnd,
         inputParticles="particles_generated",
-        outputParticles="jet_input_particles",
-        # eta=(-3.0, 3.0),
-        pt=(150 * u.MeV, None),
+        seedingAlgorithm=SeedingAlgorithm.TruthSmeared,
+        particleHypothesis=acts.ParticleHypothesis.muon,
     )
-)
 
-truthJetAlg = acts.examples.TruthJetAlgorithm(
-    level=acts.logging.INFO,
-    inputTruthParticles="jet_input_particles",
-    outputJets="truth_jets",
-    jetPtMin=10 * u.GeV,
-    jetEtaRange=(-3.0, 3.0),
-    inputHepMC3Event="pythia8-event",
-    doJetLabeling=True,
-    jetLabelingHadronPtMin=5 * u.GeV,
-    jetLabelingDeltaR=0.4,
-    # if we don't have hard scatter, use all particles, else only use hard scatter particles
-    jetLabelingHardScatterHadronsOnly=args.hardscatter != 0,
-    clusterHardScatterParticlesOnly=args.hardscatter != 0,
-    doOverlapRemoval=True,
-    overlapRemovalDeltaR=0.2,
-    overlapRemovalIsolationDeltaR=0.2,
-    overlapRemovalIsolation=0.1,
-    debugCsvOutput=args.csv,
-)
+    reverseFilteringMomThreshold = 0 * u.GeV
 
-s.addAlgorithm(truthJetAlg)
-
-addTrackToTruthJetAlg(
-    s,
-    TrackToTruthJetConfig(
-        inputTracks="tracks",
-        inputJets="truth_jets",
-        outputTrackJets="track_jets",
-        maxDeltaR=0.4,
-    ),
-    loglevel=acts.logging.INFO,
-)
-
-s.addWriter(
-    acts.examples.RootJetWriter(
-        level=acts.logging.DEBUG,
-        inputTracks="tracks",
-        inputVertices="fittedVertices",
-        inputTrackJets="track_jets",
-        field=acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T)),
-        filePath=str(outputDir / "track_to_truth_jets.root"),
+    addKalmanTracks(
+        s,
+        trackingGeometry,
+        field,
+        reverseFilteringMomThreshold,
+        logLevel=acts.logging.FATAL,
     )
-)
 
-s.run()
+    s.addAlgorithm(
+        acts.examples.TrackSelectorAlgorithm(
+            level=acts.logging.INFO,
+            inputTracks="tracks",
+            outputTracks="selected-tracks",
+            selectorConfig=acts.TrackSelector.Config(
+                minMeasurements=7,
+            ),
+        )
+    )
+    s.addWhiteboardAlias("tracks", "selected-tracks")
+
+    # s.addWriter(
+    #     acts.examples.RootTrackStatesWriter(
+    #         level=acts.logging.INFO,
+    #         inputTracks="tracks",
+    #         inputParticles="particles_selected",
+    #         inputTrackParticleMatching="track_particle_matching",
+    #         inputSimHits="simhits",
+    #         inputMeasurementSimHitsMap="measurement_simhits_map",
+    #         filePath=str(outputDir / "trackstates_kf.root"),
+    #     )
+    # )
+
+    s.addWriter(
+        acts.examples.RootTrackSummaryWriter(
+            level=acts.logging.FATAL,
+            inputTracks="tracks",
+            inputParticles="particles_selected",
+            inputTrackParticleMatching="track_particle_matching",
+            filePath=str(outputDir / "tracksummary_kf.root"),
+        )
+    )
+
+    addVertexFitting(
+        s,
+        field,
+        vertexFinder=VertexFinder.AMVF,
+        outputDirRoot=outputDir,
+        logLevel=acts.logging.FATAL,
+    )
+
+    s.addWriter(
+        acts.examples.TrackFitterPerformanceWriter(
+            level=acts.logging.FATAL,
+            inputTracks="tracks",
+            inputParticles="particles_selected",
+            inputTrackParticleMatching="track_particle_matching",
+            filePath=str(outputDir / "performance_kf.root"),
+        )
+    )
+
+    s.addAlgorithm(
+        acts.examples.ParticleSelector(
+            level=acts.logging.INFO,
+            inputParticles="particles_generated",
+            outputParticles="jet_input_particles",
+            # eta=(-3.0, 3.0),
+            pt=(150 * u.MeV, None),
+        )
+    )
+
+    truthJetAlg = acts.examples.TruthJetAlgorithm(
+        level=acts.logging.INFO,
+        inputTruthParticles="jet_input_particles",
+        outputJets="truth_jets",
+        jetPtMin=10 * u.GeV,
+        jetEtaRange=(-3.0, 3.0),
+        inputHepMC3Event="pythia8-event",
+        doJetLabeling=True,
+        jetLabelingHadronPtMin=5 * u.GeV,
+        jetLabelingDeltaR=0.4,
+        # if we don't have hard scatter, use all particles, else only use hard scatter particles
+        jetLabelingHardScatterHadronsOnly=args.hardscatter != 0,
+        clusterHardScatterParticlesOnly=args.hardscatter != 0,
+        doOverlapRemoval=True,
+        overlapRemovalDeltaR=0.2,
+        overlapRemovalIsolationDeltaR=0.2,
+        overlapRemovalIsolation=0.1,
+        debugCsvOutput=args.csv,
+    )
+
+    s.addAlgorithm(truthJetAlg)
+
+    addTrackToTruthJetAlg(
+        s,
+        TrackToTruthJetConfig(
+            inputTracks="tracks",
+            inputJets="truth_jets",
+            outputTrackJets="track_jets",
+            maxDeltaR=0.4,
+        ),
+        loglevel=acts.logging.INFO,
+    )
+
+    s.addWriter(
+        acts.examples.RootJetWriter(
+            level=acts.logging.INFO,
+            inputTracks="tracks",
+            inputVertices="fittedVertices",
+            inputTrackJets="track_jets",
+            # inputTrackJets="truth_jets",
+            inputTrackParticleMatching="kf_track_particle_matching",
+            inputParticles="particles",
+            field=acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T)),
+            filePath=str(outputDir / "track_to_truth_jets.root"),
+        )
+    )
+
+
+def make_geometry():
+    from acts.examples.odd import getOpenDataDetector, getOpenDataDetectorDirectory
+
+    geoDir = getOpenDataDetectorDirectory()
+    # acts.examples.dump_args_calls(locals())  # show python binding calls
+
+    oddMaterialMap = geoDir / "data/odd-material-maps.root"
+    assert oddMaterialMap.exists(), f"Material map file {oddMaterialMap} does not exist"
+
+    oddDigiConfig = actsDir / "Examples/Configs/odd-digi-smearing-config.json"
+    assert oddDigiConfig.exists(), f"Digi config file {oddDigiConfig} does not exist"
+
+    oddMaterialDeco = acts.IMaterialDecorator.fromFile(oddMaterialMap)
+
+    detector = getOpenDataDetector(
+        odd_dir=geoDir,
+        materialDecorator=oddMaterialDeco,
+    )
+
+    return detector, oddDigiConfig
+
+
+def job(index: int, events: int, skip: int, outputDir: Path, args):
+    job_out = outputDir / f"proc_{index:>02d}"
+    job_out.mkdir(exist_ok=False)
+
+    with (job_out / "out.log").open("w") as log_file:
+        os.dup2(log_file.fileno(), sys.stdout.fileno())
+        os.dup2(log_file.fileno(), sys.stderr.fileno())
+
+        s = acts.examples.Sequencer(
+            events=events,
+            skip=skip,
+            numThreads=1,
+            logLevel=acts.logging.INFO,
+            outputDir=str(job_out),
+        )
+
+        detector, oddDigiConfig = make_geometry()
+        make_sequencer(s, job_out, detector, digiConfig=oddDigiConfig, args=args)
+
+        s.run()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--events", "-n", type=int, default=10)
+    parser.add_argument("--pileup", "--pu", "-p", type=int, default=50)
+    parser.add_argument("--hardscatter", "--hs", type=int, default=1)
+    parser.add_argument("--threads", "-t", type=int, default=-1)
+    parser.add_argument("--procs", type=int, default=1)
+    parser.add_argument("--csv", action="store_true")
+    args = parser.parse_args()
+
+    outputDir = Path.cwd() / "trackToTruth_output"
+
+    next_run = max(max([int(f.name[1:]) for f in outputDir.glob("r*")]), 0) + 1
+
+    outputDir = outputDir / f"r{next_run:03d}"
+
+    print(outputDir)
+    outputDir.mkdir(exist_ok=True)
+
+    if args.procs == 1:
+        s = acts.examples.Sequencer(
+            events=args.events,
+            numThreads=args.threads,
+            logLevel=acts.logging.INFO,
+            outputDir=str(outputDir),
+        )
+
+        detector, oddDigiConfig = make_geometry()
+        make_sequencer(s, outputDir, detector, digiConfig=oddDigiConfig, args=args)
+
+        s.run()
+    else:
+
+        with ProcessPoolExecutor(max_workers=args.procs) as ex:
+            futures = []
+            per_proc = args.events // args.procs
+            for i in range(args.procs):
+                skip = i * per_proc
+                nevents = per_proc
+                if i == args.procs - 1:
+                    nevents = args.events - skip
+
+                futures.append(ex.submit(job, i, nevents, skip, outputDir, args))
+
+            for i, f in enumerate(as_completed(futures)):
+                print(i, "/", len(futures), "done")
+                try:
+                    f.result()
+                except Exception as e:
+                    print(f"Job failed with exception: {e}")
+
+
+if __name__ == "__main__":
+    main()

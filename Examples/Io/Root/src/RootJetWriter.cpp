@@ -22,10 +22,11 @@
 #include "ActsExamples/EventData/IndexSourceLink.hpp"
 #include "ActsExamples/EventData/Track.hpp"
 #include "ActsExamples/Framework/AlgorithmContext.hpp"
+#include "ActsExamples/Framework/ProcessCode.hpp"
 #include "ActsExamples/Utilities/Range.hpp"
 #include "ActsFatras/EventData/Barcode.hpp"
 
-
+#include <algorithm>
 #include <cmath>
 #include <ios>
 #include <limits>
@@ -38,8 +39,22 @@
 #include <TFile.h>
 #include <TTree.h>
 
-
 const Acts::MagneticFieldContext magFieldContext;
+
+namespace {
+double calcSumPt2(const Acts::Vertex& vtx) {
+  double sumPt2 = 0;
+  const double minTrkWeight = 0.0;
+  for (const auto& trk : vtx.tracks()) {
+    if (trk.trackWeight > minTrkWeight) {
+      double pt = trk.originalParams.as<Acts::BoundTrackParameters>()
+                      ->transverseMomentum();
+      sumPt2 += pt * pt;
+    }
+  }
+  return sumPt2;
+}
+}  // namespace
 
 Acts::MagneticFieldProvider::Cache magFieldCache() {
   return Acts::NullBField{}.makeCache(magFieldContext);
@@ -65,7 +80,8 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
     throw std::invalid_argument("Missing vertices input collection");
   }
   if (m_cfg.inputTrackParticleMatching.empty()) {
-    throw std::invalid_argument("Missing hit-particles map input collection");
+    throw std::invalid_argument(
+        "Missing track to particle map input collection");
   }
   if (m_cfg.inputParticles.empty()) {
     throw std::invalid_argument("Missing particles input collection");
@@ -81,8 +97,7 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_inputTracks.initialize(m_cfg.inputTracks);
   m_inputTrackJets.initialize(m_cfg.inputTrackJets);
   m_inputVertices.initialize(m_cfg.inputVertices);
-  m_inputTrackParticleMatching.initialize(
-      m_cfg.inputTrackParticleMatching);
+  m_inputTrackParticleMatching.initialize(m_cfg.inputTrackParticleMatching);
   m_inputParticles.initialize(m_cfg.inputParticles);
 
   // Tools
@@ -125,15 +140,20 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("jet_phi", &m_jet_phi);
   m_outputTree->Branch("jet_ncomponents", &m_jet_ncomponents);
   m_outputTree->Branch("jet_components", &m_jet_components);
-  m_outputTree->Branch("jet_tracks_idx", &m_jet_tracks_idx); // for each jet, the indices of the tracks it contains
+  // for each jet, the indices of the  tracks it contains
+  m_outputTree->Branch("jet_tracks_idx", &m_jet_tracks_idx);
   m_outputTree->Branch("jet_ntracks", &m_jet_ntracks);
   m_outputTree->Branch("jet_isPU", &m_jet_isPU);
   m_outputTree->Branch("jet_isHS", &m_jet_isHS);
   m_outputTree->Branch("jet_label", &m_jet_label);
 
   // Tracks in jets
-  m_outputTree->Branch("track_matched_secvtx_idx", &m_matched_secvtx_idx); // for each track (that is matched to a jet), the index of the vertex it belongs to
-  m_outputTree->Branch("track_matched_jet_idx", &m_matched_jet_idx); // for each track, the index of the jet it belongs to
+  // for each track (that is matched to a jet), the index of the vertex it
+  // belongs to
+  m_outputTree->Branch("track_matched_secvtx_idx", &m_matched_secvtx_idx);
+  m_outputTree->Branch("track_matched_jet_idx",
+                       &m_matched_jet_idx);  // for each track, the index of the
+                                             // jet it belongs to
   m_outputTree->Branch("track_prob", &m_tracks_prob);
   m_outputTree->Branch("track_d0", &m_trk_d0);
   m_outputTree->Branch("track_z0", &m_trk_z0);
@@ -149,26 +169,22 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("track_qOverP", &m_trk_qOverP);
   m_outputTree->Branch("track_t", &m_trk_t);
 
-  m_outputTree->Branch("track_var_d0",     &m_trk_var_d0);
-  m_outputTree->Branch("track_var_z0",     &m_trk_var_z0);
-  m_outputTree->Branch("track_var_phi",    &m_trk_var_phi);
-  m_outputTree->Branch("track_var_theta",  &m_trk_var_theta);
+  m_outputTree->Branch("track_var_d0", &m_trk_var_d0);
+  m_outputTree->Branch("track_var_z0", &m_trk_var_z0);
+  m_outputTree->Branch("track_var_phi", &m_trk_var_phi);
+  m_outputTree->Branch("track_var_theta", &m_trk_var_theta);
   m_outputTree->Branch("track_var_qOverP", &m_trk_var_qOverP);
 
-  m_outputTree->Branch("track_cov_d0z0"       ,&m_trk_cov_d0z0);
-  m_outputTree->Branch("track_cov_d0phi"      ,&m_trk_cov_d0phi);
-  m_outputTree->Branch("track_cov_d0theta"    ,&m_trk_cov_d0theta);
-  m_outputTree->Branch("track_cov_d0qOverP"   ,&m_trk_cov_d0qOverP);
-  m_outputTree->Branch("track_cov_z0phi"      ,&m_trk_cov_z0phi);
-  m_outputTree->Branch("track_cov_z0theta"    ,&m_trk_cov_z0theta);
-  m_outputTree->Branch("track_cov_z0qOverP"   ,&m_trk_cov_z0qOverP);
-  m_outputTree->Branch("track_cov_phitheta"   ,&m_trk_cov_phitheta);
-  m_outputTree->Branch("track_cov_phiqOverP"  ,&m_trk_cov_phiqOverP);
-  m_outputTree->Branch("track_cov_tehtaqOverP",&m_trk_cov_thetaqOverP);
-}
-
-RootJetWriter::~RootJetWriter() {
- // m_outputFile->Close();
+  m_outputTree->Branch("track_cov_d0z0", &m_trk_cov_d0z0);
+  m_outputTree->Branch("track_cov_d0phi", &m_trk_cov_d0phi);
+  m_outputTree->Branch("track_cov_d0theta", &m_trk_cov_d0theta);
+  m_outputTree->Branch("track_cov_d0qOverP", &m_trk_cov_d0qOverP);
+  m_outputTree->Branch("track_cov_z0phi", &m_trk_cov_z0phi);
+  m_outputTree->Branch("track_cov_z0theta", &m_trk_cov_z0theta);
+  m_outputTree->Branch("track_cov_z0qOverP", &m_trk_cov_z0qOverP);
+  m_outputTree->Branch("track_cov_phitheta", &m_trk_cov_phitheta);
+  m_outputTree->Branch("track_cov_phiqOverP", &m_trk_cov_phiqOverP);
+  m_outputTree->Branch("track_cov_tehtaqOverP", &m_trk_cov_thetaqOverP);
 }
 
 ProcessCode RootJetWriter::finalize() {
@@ -183,23 +199,21 @@ ProcessCode RootJetWriter::finalize() {
 }
 
 ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
-                                  const TrackJetContainer& tp) {
+                                  const TrackJetContainer& trackJets) {
   // Exclusive access to all the writing procedure
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
-  Clear();
+  clear();
 
   if (m_outputFile == nullptr) {
-    return ProcessCode::SUCCESS; // make it an error condition
+    return ProcessCode::ABORT;  // make it an error condition
   }
 
   // Read input collections
 
   const auto& tracks = m_inputTracks(ctx);
-  const auto& trackJets = m_inputTrackJets(ctx);
   const auto& vertices = m_inputVertices(ctx);
-  const auto& trackParticleMatching =
-      m_inputTrackParticleMatching(ctx);
+  const auto& trackParticleMatching = m_inputTrackParticleMatching(ctx);
   const auto& particles = m_inputParticles(ctx);
 
   ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputTracks << " "
@@ -214,29 +228,24 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   // Read the vertices and find the HS vertex
   // Find the vertex with the highest sumPt2
   double maxSumPt2 = -1.;
-  int HS_idx = -1;
 
-  for (int v = 0; v < vertices.size(); v++) {
-    double sumPt2 = calcSumPt2(vertices.at(v));
+  const Acts::Vertex* hsVtx = nullptr;
+
+  for (const auto& vtx : vertices) {
+    double sumPt2 = calcSumPt2(vtx);
     if (sumPt2 > maxSumPt2) {
       maxSumPt2 = sumPt2;
-      HS_idx = v;
+      hsVtx = &vtx;
     }
   }
 
-  ACTS_VERBOSE("Vertex " << HS_idx << " with sumPt2: " << maxSumPt2 << " has "
-                         << vertices.at(HS_idx).tracks().size()
-                         << " tracks associated");
+  if (hsVtx == nullptr) {
+    ACTS_ERROR("No hard-scatter vertex found");
+    return ProcessCode::ABORT;
+  }
 
-  Acts::Vertex hs_vtx = vertices.at(HS_idx);
-  Acts::Vector3 vertexPosition =
-      vertices.at(HS_idx).position();  // Hard scatter vertex position
-  Acts::Vector4 stddev;
-  stddev[Acts::ePos0] = 10 * Acts::UnitConstants::um;
-  stddev[Acts::ePos1] = 10 * Acts::UnitConstants::um;
-  stddev[Acts::ePos2] = 75 * Acts::UnitConstants::um;
-  stddev[Acts::eTime] = 1 * Acts::UnitConstants::ns;
-  Acts::SquareMatrix4 vertexCov = stddev.cwiseProduct(stddev).asDiagonal();
+  ACTS_VERBOSE("Vertex " << hsVtx << " with sumPt2: " << maxSumPt2 << " has "
+                         << hsVtx->tracks().size() << " tracks associated");
 
   Acts::ImpactPointEstimator::State state{magFieldCache()};
   std::vector<Acts::Vector4> secondaryVertices;
@@ -249,7 +258,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     double signed_z0SinTheta_err = 1.;
 
     int matched_jet_idx = -999;
-    int isecvtx = -999; // flag to check if we found a secondary vertex
+    int isecvtx = -999;  // flag to check if we found a secondary vertex
 
     double covd0 = -999;
     double covz0 = -999;
@@ -274,66 +283,72 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
     // Check if this track belongs to a jet and compute the IPs
     for (std::size_t ijet = 0; ijet < trackJets.size(); ++ijet) {
-      std::vector<int> jtrks = trackJets[ijet].getTracks();
-      
+      auto& jet = trackJets.at(ijet);
+      auto jtrks = jet.getTracks();
 
-      if (std::find(jtrks.begin(), jtrks.end(), itrk) != jtrks.end()) {
-        ACTS_DEBUG("Track " << itrk << " is in jet " << ijet);
-        matched_jet_idx = ijet;
+      if (std::ranges::find(jtrks, itrk) == jtrks.end()) {
+        continue;
+      }
 
-        Acts::Vector3 jetDir{trackJets[ijet].getFourMomentum()[0],
-                             trackJets[ijet].getFourMomentum()[1],
-                             trackJets[ijet].getFourMomentum()[2]};
+      ACTS_DEBUG("Track " << itrk << " is in jet " << ijet);
+      matched_jet_idx = ijet;
 
-        jetDir = jetDir.normalized();  // normalize the jet direction
+      auto ipAndSigma =
+          m_ipEst->getImpactParameters(boundParams, *hsVtx, gctx_, mctx_, true);
+      auto vszs = m_ipEst->getLifetimeSignOfTrack(
+          boundParams, *hsVtx, jet.getDirection(), gctx_, mctx_);
 
-        auto ipAndSigma =
-            m_ipEst->getImpactParameters(boundParams, hs_vtx, gctx_, mctx_, 1);
-        auto vszs = m_ipEst->getLifetimeSignOfTrack(boundParams, hs_vtx, jetDir,
-                                                    gctx_, mctx_);
+      if (!ipAndSigma.ok() || !vszs.ok()) {
+        continue;
+      }
 
-        if (!ipAndSigma.ok() || !vszs.ok()) {
-          continue;
-        }
+      double absD0 = std::abs((*ipAndSigma).d0);
+      double absZ0 = std::abs((*ipAndSigma).z0);
 
-        signed_d0 = std::fabs((*ipAndSigma).d0) * (*vszs).first;
-        auto z0 = std::fabs((*ipAndSigma).z0);
-        auto theta = boundParams.theta();
-        signed_z0SinTheta = z0 * std::sin(theta) * (*vszs).second;
-        signed_d0_err = (*ipAndSigma).sigmaD0;
-        signed_z0SinTheta_err =
-            (*ipAndSigma).sigmaZ0;  // not correct yet - have to take into
-                                    // account the sin(theta) factor
+      signed_d0 = absD0 * (*vszs).first;
+      double theta = boundParams.theta();
+      signed_z0SinTheta = absZ0 * std::sin(theta) * (*vszs).second;
+      signed_d0_err = (*ipAndSigma).sigmaD0;
+      signed_z0SinTheta_err =
+          (*ipAndSigma).sigmaZ0;  // not correct yet - have to take into
+                                  // account the sin(theta) factor
 
-        // Get the associated truth particle for this track
-        // if matched, take this truth particle's initial ? position 
-        // make a vector for 2ndvtxpos (out of the loop) am I close enough to the position of the truth particle?
+      // Get the associated truth particle for this track
+      // if matched, take this truth particle's initial ? position
+      // make a vector for 2ndvtxpos (out of the loop) am I close enough to
+      // the position of the truth particle?
 
-        auto match = trackParticleMatching.find(itrk);
-        if(match != trackParticleMatching.end() && match->second.particle.has_value()) {
-          auto barcode = match->second.particle.value();
-          auto findParticle = particles.find(barcode);
+      auto match = trackParticleMatching.find(itrk);
 
-          if(findParticle != particles.end()) {
-            auto initParticle = *findParticle;
-            Acts::Vector4 initParticlePosition = initParticle.fourPosition();
+      if (match == trackParticleMatching.end() ||
+          !match->second.particle.has_value()) {
+        continue;
+      }
 
-              auto it = std::ranges::find_if(
-                  secondaryVertices.begin(), secondaryVertices.end(),
-                  [&initParticlePosition](const Acts::Vector4& vtx) {
-                    return (vtx - initParticlePosition).norm() < 1e-3;  // tolerance // can also make it configurable
-                  });
-              if(it == secondaryVertices.end()) {
-                secondaryVertices.push_back(initParticlePosition);
-                isecvtx = secondaryVertices.size() - 1; // index of the new secondary vertex
-              }
-              else {
-              isecvtx = std::distance(secondaryVertices.begin(), it);
-              }
+      auto barcode = match->second.particle.value();
 
-            } // if found
-          } // if match
-      }  // track in jet
+      auto findParticle = particles.find(barcode);
+      if (findParticle == particles.end()) {
+        continue;
+      }
+
+      auto initParticle = *findParticle;
+      Acts::Vector4 initParticlePosition = initParticle.fourPosition();
+
+      auto it = std::ranges::find_if(
+          secondaryVertices.begin(), secondaryVertices.end(),
+          [&initParticlePosition](const Acts::Vector4& vtx) {
+            return (vtx - initParticlePosition).norm() <
+                   1e-3;  // tolerance // can also make it configurable
+          });
+
+      if (it == secondaryVertices.end()) {
+        secondaryVertices.push_back(initParticlePosition);
+        // index of the new secondary vertex
+        isecvtx = secondaryVertices.size() - 1;
+      } else {
+        isecvtx = std::distance(secondaryVertices.begin(), it);
+      }
     }  // loop on jets
 
     float trk_theta = params[Acts::eBoundTheta];
@@ -352,15 +367,19 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_trk_signed_z0sinThetasig.push_back(signed_z0SinTheta /
                                          signed_z0SinTheta_err);
 
-    m_matched_jet_idx.push_back(matched_jet_idx); // for each track, the index of the jet it belongs to
-    m_matched_secvtx_idx.push_back(isecvtx); // fill number of secondary vertices for each track that are matched to a jet HINT: this might also include the hard scatter vertex
+    m_matched_jet_idx.push_back(
+        matched_jet_idx);  // for each track, the index of the jet it belongs to
+    m_matched_secvtx_idx.push_back(
+        isecvtx);  // fill number of secondary vertices for each track that are
+                   // matched to a jet HINT: this might also include the hard
+                   // scatter vertex
 
     if (isecvtx > -999) {
       m_secvtx_x.push_back(secondaryVertices[isecvtx][Acts::ePos0]);
       m_secvtx_y.push_back(secondaryVertices[isecvtx][Acts::ePos1]);
       m_secvtx_z.push_back(secondaryVertices[isecvtx][Acts::ePos2]);
-      m_secvtx_t.push_back(secondaryVertices[isecvtx][Acts::eTime]); }
-    else {
+      m_secvtx_t.push_back(secondaryVertices[isecvtx][Acts::eTime]);
+    } else {
       m_secvtx_x.push_back(-9999.);
       m_secvtx_y.push_back(-9999.);
       m_secvtx_z.push_back(-9999.);
@@ -378,21 +397,21 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
     auto cov = trk.covariance();
 
-    covd0          = cov(Acts::eBoundLoc0,Acts::eBoundLoc0);
-    covz0          = cov(Acts::eBoundLoc1,Acts::eBoundLoc1);
-    covphi         = cov(Acts::eBoundPhi,Acts::eBoundPhi);
-    covtheta       = cov(Acts::eBoundTheta,Acts::eBoundTheta);
-    covqOverP      = cov(Acts::eBoundQOverP,Acts::eBoundQOverP);
-    covd0z0        = cov(Acts::eBoundLoc0,Acts::eBoundLoc1);
-    covd0phi       = cov(Acts::eBoundLoc0,Acts::eBoundPhi);
-    covd0theta     = cov(Acts::eBoundLoc0,Acts::eBoundTheta);
-    covd0qOverP    = cov(Acts::eBoundLoc0,Acts::eBoundQOverP);
-    covz0phi       = cov(Acts::eBoundLoc1,Acts::eBoundPhi);
-    covz0theta     = cov(Acts::eBoundLoc1,Acts::eBoundTheta);
-    covz0qOverP    = cov(Acts::eBoundLoc1,Acts::eBoundQOverP);
-    covphitheta    = cov(Acts::eBoundPhi,Acts::eBoundTheta);
-    covphiqOverP   = cov(Acts::eBoundPhi,Acts::eBoundQOverP);
-    covthetaqOverP = cov(Acts::eBoundTheta,Acts::eBoundQOverP);
+    covd0 = cov(Acts::eBoundLoc0, Acts::eBoundLoc0);
+    covz0 = cov(Acts::eBoundLoc1, Acts::eBoundLoc1);
+    covphi = cov(Acts::eBoundPhi, Acts::eBoundPhi);
+    covtheta = cov(Acts::eBoundTheta, Acts::eBoundTheta);
+    covqOverP = cov(Acts::eBoundQOverP, Acts::eBoundQOverP);
+    covd0z0 = cov(Acts::eBoundLoc0, Acts::eBoundLoc1);
+    covd0phi = cov(Acts::eBoundLoc0, Acts::eBoundPhi);
+    covd0theta = cov(Acts::eBoundLoc0, Acts::eBoundTheta);
+    covd0qOverP = cov(Acts::eBoundLoc0, Acts::eBoundQOverP);
+    covz0phi = cov(Acts::eBoundLoc1, Acts::eBoundPhi);
+    covz0theta = cov(Acts::eBoundLoc1, Acts::eBoundTheta);
+    covz0qOverP = cov(Acts::eBoundLoc1, Acts::eBoundQOverP);
+    covphitheta = cov(Acts::eBoundPhi, Acts::eBoundTheta);
+    covphiqOverP = cov(Acts::eBoundPhi, Acts::eBoundQOverP);
+    covthetaqOverP = cov(Acts::eBoundTheta, Acts::eBoundQOverP);
 
     m_trk_var_d0.push_back(covd0);
     m_trk_var_z0.push_back(covz0);
@@ -410,8 +429,6 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_trk_cov_phiqOverP.push_back(covphiqOverP);
     m_trk_cov_thetaqOverP.push_back(covthetaqOverP);
 
-  
-
   }  // loop over tracks
 
   for (std::size_t ijets = 0; ijets < trackJets.size(); ++ijets) {
@@ -424,7 +441,10 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
     m_jet_ncomponents.push_back(trackJets[ijets].getConstituents().size());
     m_jet_components.push_back(trackJets[ijets].getConstituents());
-    m_jet_tracks_idx.push_back(trackJets[ijets].getTracks());
+
+    auto jtrks = trackJets[ijets].getTracks();
+    m_jet_tracks_idx.emplace_back(jtrks.begin(), jtrks.end());
+
     m_jet_ntracks.push_back(trackJets[ijets].getTracks().size());
     m_jet_label.push_back(static_cast<int>(trackJets[ijets].getLabel()));
 
@@ -434,22 +454,15 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   }  // jets
 
   // Fill the reconstructed vertex information
-  for (std::size_t ivtx = 0; ivtx < vertices.size(); ivtx++) {
-    const auto& vtx = vertices.at(ivtx);
-    m_recovtx_x.push_back(vtx.position()[Acts::ePos0]);
-    m_recovtx_y.push_back(vtx.position()[Acts::ePos1]);
-    m_recovtx_z.push_back(vtx.position()[Acts::ePos2]);
-    m_recovtx_t.push_back(vtx.time());
+  for (const auto& vtx : vertices) {
+    const auto pos4 = vtx.fullPosition();
+    m_recovtx_x.push_back(pos4[Acts::ePos0]);
+    m_recovtx_y.push_back(pos4[Acts::ePos1]);
+    m_recovtx_z.push_back(pos4[Acts::ePos2]);
+    m_recovtx_t.push_back(pos4[Acts::eTime]);
     m_recovtx_sumPt2.push_back(calcSumPt2(vtx));
 
-    if (&vtx == &m_inputVertices(ctx).at(HS_idx)) {
-      m_recovtx_isHS.push_back(1);
-      m_recovtx_isPU.push_back(0);
-    } else {
-      m_recovtx_isHS.push_back(0);
-      m_recovtx_isPU.push_back(1);
-    }
-    
+    m_recovtx_isHS.push_back(static_cast<int>(&vtx == hsVtx));
   }  // vertices
 
   m_outputTree->Fill();
@@ -459,7 +472,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
 }  // namespace ActsExamples
 
-void ActsExamples::RootJetWriter::Clear() {
+void ActsExamples::RootJetWriter::clear() {
   // Vertices
   m_recovtx_x.clear();
   m_recovtx_y.clear();
@@ -469,7 +482,8 @@ void ActsExamples::RootJetWriter::Clear() {
   m_recovtx_isHS.clear();
   m_recovtx_isPU.clear();
   m_recovtx_isSec.clear();
-  m_matched_secvtx_idx.clear(); // for each track (that is matched to a jet), the index of the vertex it belongs to
+  m_matched_secvtx_idx.clear();  // for each track (that is matched to a jet),
+                                 // the index of the vertex it belongs to
 
   // clear secondary vertex information
   m_secvtx_x.clear();
@@ -484,7 +498,8 @@ void ActsExamples::RootJetWriter::Clear() {
   m_jet_ncomponents.clear();
   m_jet_components.clear();
   m_jet_tracks_idx.clear();
-  m_matched_jet_idx.clear(); // for each track, the index of the jet it belongs to
+  m_matched_jet_idx
+      .clear();  // for each track, the index of the jet it belongs to
   m_jet_ntracks.clear();
   m_jet_isPU.clear();
   m_jet_isHS.clear();
@@ -504,32 +519,19 @@ void ActsExamples::RootJetWriter::Clear() {
   m_trk_pt.clear();
   m_trk_qOverP.clear();
   m_trk_t.clear();
-    m_trk_var_d0.clear();
-    m_trk_var_z0.clear();
-    m_trk_var_phi.clear();
-    m_trk_var_theta.clear();
-    m_trk_var_qOverP.clear();
-    m_trk_cov_d0z0.clear();
-    m_trk_cov_d0phi.clear();
-    m_trk_cov_d0theta.clear();
-    m_trk_cov_d0qOverP.clear();
-    m_trk_cov_z0phi.clear();
-    m_trk_cov_z0theta.clear();
-    m_trk_cov_z0qOverP.clear();
-    m_trk_cov_phitheta.clear();
-    m_trk_cov_phiqOverP.clear();
-    m_trk_cov_thetaqOverP.clear();
-}
-
-double ActsExamples::RootJetWriter::calcSumPt2(const Acts::Vertex& vtx) {
-  double sumPt2 = 0;
-  const double minTrkWeight = 0.0;
-  for (const auto& trk : vtx.tracks()) {
-    if (trk.trackWeight > minTrkWeight) {
-      double pt = trk.originalParams.as<Acts::BoundTrackParameters>()
-                      ->transverseMomentum();
-      sumPt2 += pt * pt;
-    }
-  }
-  return sumPt2;
+  m_trk_var_d0.clear();
+  m_trk_var_z0.clear();
+  m_trk_var_phi.clear();
+  m_trk_var_theta.clear();
+  m_trk_var_qOverP.clear();
+  m_trk_cov_d0z0.clear();
+  m_trk_cov_d0phi.clear();
+  m_trk_cov_d0theta.clear();
+  m_trk_cov_d0qOverP.clear();
+  m_trk_cov_z0phi.clear();
+  m_trk_cov_z0theta.clear();
+  m_trk_cov_z0qOverP.clear();
+  m_trk_cov_phitheta.clear();
+  m_trk_cov_phiqOverP.clear();
+  m_trk_cov_thetaqOverP.clear();
 }

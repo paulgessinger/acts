@@ -32,14 +32,11 @@
 #include "Acts/Vertexing/Vertex.hpp"
 #include "ActsExamples/EventData/Trajectories.hpp"
 
-
 #include <array>
 #include <cstdint>
 #include <mutex>
 #include <string>
 #include <vector>
-
-
 
 class TFile;
 class TTree;
@@ -80,8 +77,6 @@ class RootJetWriter final : public TrackJetWriter {
   /// @param level Message level declaration
   RootJetWriter(const Config& config, Acts::Logging::Level level);
 
-  ~RootJetWriter() override;
-
   /// End-of-run hook
   ProcessCode finalize() override;
 
@@ -93,7 +88,7 @@ class RootJetWriter final : public TrackJetWriter {
   /// @param [in] ctx is the algorithm context for event information
   /// @param [in] tracks are what to be written out
   ProcessCode writeT(const AlgorithmContext& ctx,
-                     const TrackJetContainer& tracks) override;
+                     const TrackJetContainer& trackJets) override;
 
  private:
   /// The config class
@@ -104,8 +99,7 @@ class RootJetWriter final : public TrackJetWriter {
   TTree* m_outputTree{nullptr};  ///< The output tree
   int m_eventNr{0};              ///< the event number of
 
-  void Clear();
-  double calcSumPt2(const Acts::Vertex& vtx);
+  void clear();
 
   // Handles
 
@@ -114,8 +108,7 @@ class RootJetWriter final : public TrackJetWriter {
   ReadDataHandle<VertexContainer> m_inputVertices{this, "inputVertices"};
   ReadDataHandle<TrackParticleMatching> m_inputTrackParticleMatching{
       this, "inputTrackParticleMatching"};
-  ReadDataHandle<SimParticleContainer> m_inputParticles{
-      this, "inputParticles"};
+  ReadDataHandle<SimParticleContainer> m_inputParticles{this, "inputParticles"};
 
   // Vertices//
   std::vector<float> m_recovtx_x;
@@ -126,7 +119,9 @@ class RootJetWriter final : public TrackJetWriter {
   std::vector<int> m_recovtx_isHS;
   std::vector<int> m_recovtx_isPU;
   std::vector<int> m_recovtx_isSec;
-  std::vector<int> m_matched_secvtx_idx;  // for each track (that is matched to a jet), the index of the vertex it belongs to  
+  std::vector<int>
+      m_matched_secvtx_idx;  // for each track (that is matched to a jet), the
+                             // index of the vertex it belongs to
 
   std::vector<float> m_secvtx_x;
   std::vector<float> m_secvtx_y;
