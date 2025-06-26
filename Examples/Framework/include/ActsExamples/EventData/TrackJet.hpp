@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <ostream>
+#include <span>
 #include <vector>
 
 namespace ActsExamples {
@@ -65,7 +66,9 @@ class TrackJet {
 
   void addTrack(const int trk_idx) { m_trackIndices.push_back(trk_idx); }
 
-  std::vector<int> getTracks() const { return m_trackIndices; }
+  std::span<const int> getTracks() const {
+    return {m_trackIndices.data(), m_trackIndices.size()};
+  }
 
   // @TODO: Turn into an output stream operator
   void print() const {
