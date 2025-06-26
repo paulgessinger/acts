@@ -63,6 +63,8 @@ class TruthJetAlgorithm final : public IAlgorithm {
 
   ProcessCode execute(const AlgorithmContext& ctx) const override;
 
+  ProcessCode finalize() override;
+
   const Config& config() const { return m_cfg; }
 
  private:
@@ -76,6 +78,13 @@ class TruthJetAlgorithm final : public IAlgorithm {
 
   ReadDataHandle<std::shared_ptr<HepMC3::GenEvent>> m_inputHepMC3Event{
       this, "inputHepMC3Event"};
+
+  // Statistics
+  mutable std::atomic<std::size_t> m_numJets = 0;
+  mutable std::atomic<std::size_t> m_numJetsAfterOverlapRemoval = 0;
+  mutable std::atomic<std::size_t> m_numLightJets = 0;
+  mutable std::atomic<std::size_t> m_numCJets = 0;
+  mutable std::atomic<std::size_t> m_numBJets = 0;
 };
 
 }  // namespace ActsExamples

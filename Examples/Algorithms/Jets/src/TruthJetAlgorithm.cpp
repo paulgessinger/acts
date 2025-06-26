@@ -10,11 +10,13 @@
 
 #include "Acts/Definitions/ParticleData.hpp"
 #include "Acts/Definitions/PdgParticle.hpp"
+#include "Acts/Definitions/Units.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "Acts/Utilities/ScopedTimer.hpp"
 #include "ActsExamples/EventData/SimParticle.hpp"
 #include "ActsExamples/EventData/TrackJet.hpp"
 #include "ActsExamples/Framework/AlgorithmContext.hpp"
+#include "ActsExamples/Framework/ProcessCode.hpp"
 #include "ActsExamples/Io/HepMC3/HepMC3Util.hpp"
 
 #include <algorithm>
@@ -33,6 +35,8 @@
 #include <fastjet/PseudoJet.hh>
 
 namespace ActsExamples {
+
+using namespace Acts::UnitLiterals;
 
 TruthJetAlgorithm::TruthJetAlgorithm(const Config& cfg,
                                      Acts::Logging::Level lvl)
@@ -400,6 +404,7 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
     }
   }
 
+  m_numJets += outputJets.size();
   if (m_cfg.doOverlapRemoval) {
     overlapRemoval(truthParticlesRaw, outputJets);
   }
@@ -408,6 +413,11 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
   for (const auto& [label, count] : jetLabelCounts) {
     ACTS_DEBUG("  - " << label << ": " << count);
   }
+
+  m_numLightJets += jetLabelCounts[JetLabel::LightJet];
+  m_numCJets += jetLabelCounts[JetLabel::CJet];
+  m_numBJets += jetLabelCounts[JetLabel::BJet];
+  m_numJetsAfterOverlapRemoval += outputJets.size();
 
   m_outputJets(ctx, std::move(outputJets));
   return ProcessCode::SUCCESS;
@@ -487,6 +497,18 @@ void TruthJetAlgorithm::overlapRemoval(
   });
 
   ACTS_DEBUG("Number of jets after overlap removal: " << jets.size());
+}
+
+ProcessCode TruthJetAlgorithm::finalize() {
+  ACTS_INFO("TruthJetAlgorithm::finalize:");
+
+  ACTS_INFO("- Total jets         : " << m_numJets);
+  ACTS_INFO("- Total jets after OR: " << m_numJetsAfterOverlapRemoval);
+  ACTS_INFO("- Light jets         : " << m_numLightJets);
+  ACTS_INFO("- C jets             : " << m_numCJets);
+  ACTS_INFO("- B jets             : " << m_numBJets);
+
+  return ProcessCode::SUCCESS;
 }
 
 }  // namespace ActsExamples
