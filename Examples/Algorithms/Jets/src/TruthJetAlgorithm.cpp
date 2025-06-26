@@ -419,8 +419,26 @@ void TruthJetAlgorithm::overlapRemoval(
   Acts::ScopedTimer timer("Overlap removal", logger(), Acts::Logging::DEBUG);
 
   std::vector<const SimParticle*> isolatedLeptons;
+  // Empirical size estimate
+  isolatedLeptons.reserve(5 * std::log(truthParticles.size()));
 
-  for (const auto& particle : truthParticles) {
+  std::vector<double> phis;
+  std::vector<double> etas;
+
+  phis.reserve(truthParticles.size());
+  etas.reserve(truthParticles.size());
+
+  {
+    Acts::ScopedTimer t{"Calculating phis and etas", logger(),
+                        Acts::Logging::DEBUG};
+
+    for (const auto& particle : truthParticles) {
+      phis.push_back(Acts::VectorHelpers::phi(particle.direction()));
+      etas.push_back(Acts::VectorHelpers::eta(particle.direction()));
+    }
+  }
+
+  for (const auto& [i, particle] : Acts::enumerate(truthParticles)) {
     bool accept = Acts::ParticleId::isMuon(particle.pdg()) ||
                   Acts::ParticleId::isElectron(particle.pdg()) ||
                   Acts::ParticleId::isTau(particle.pdg()) ||
@@ -432,22 +450,22 @@ void TruthJetAlgorithm::overlapRemoval(
 
     // For this lepton, sum up all total momenta inside a cone
     double totalMomentum = 0.;
-    for (const auto& otherParticle : truthParticles) {
+    for (const auto& [j, otherParticle] : Acts::enumerate(truthParticles)) {
       // exclude self
       if (particle.particleId() == otherParticle.particleId()) {
         continue;
       }
 
-      double deltaR = Acts::VectorHelpers::deltaR(particle.direction(),
-                                                  otherParticle.direction());
+      double deltaR =
+          Acts::VectorHelpers::deltaR(phis[i], etas[i], phis[j], etas[j]);
 
       if (deltaR < m_cfg.overlapRemovalIsolationDeltaR) {
         // Add the momentum of the other particle to the total momentum
-        totalMomentum += otherParticle.fourMomentum().norm();
+        totalMomentum += otherParticle.absoluteMomentum();
       }
     }
 
-    double isolation = totalMomentum / particle.fourMomentum().norm();
+    double isolation = totalMomentum / particle.absoluteMomentum();
     if (isolation < m_cfg.overlapRemovalIsolation) {
       isolatedLeptons.push_back(&particle);
     }
