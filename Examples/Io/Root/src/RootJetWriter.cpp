@@ -390,7 +390,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_trk_theta.push_back(trk_theta);
     m_trk_phi.push_back(params[Acts::eBoundPhi]);
     m_trk_pt.push_back(trk_pt);
-    m_trk_qOverP.push_back(trk_p);
+    m_trk_qOverP.push_back(trk_qop);
     m_trk_t.push_back(params[Acts::eBoundTime]);
 
     // //This give un-initialized warnings
