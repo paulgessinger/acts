@@ -430,7 +430,8 @@ void TruthJetAlgorithm::overlapRemoval(
 
   std::vector<const SimParticle*> isolatedLeptons;
   // Empirical size estimate
-  isolatedLeptons.reserve(5 * std::log(truthParticles.size()));
+  isolatedLeptons.reserve(
+      static_cast<std::size_t>(5 * std::log(truthParticles.size())));
 
   std::vector<double> phis;
   std::vector<double> etas;
