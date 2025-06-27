@@ -281,7 +281,8 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
     return std::sqrt(dphi * dphi + drap * drap);
   };
 
-  auto classifyJet = [&](const fastjet::PseudoJet& jet) {
+  auto classifyJet = [&](const fastjet::PseudoJet& jet)
+      -> std::pair<std::shared_ptr<const HepMC3::GenParticle>, JetLabel> {
     auto hadronsInJetView =
         hadrons | std::views::filter([&jet, this](const auto& hadron) {
           const auto& momentum = hadron.second->momentum();
@@ -316,7 +317,7 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
 
     if (maxHadronIt == hadronsInJet.end()) {
       // Now hadronic "jet"
-      return JetLabel::Unknown;
+      return {nullptr, JetLabel::Unknown};
     }
 
     const auto& [maxHadron, maxHadronLabel] = *maxHadronIt;
@@ -325,7 +326,7 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
                  << Acts::findName(maxHadron->pdg_id()).value_or("UNKNOWN")
                  << " label=" << maxHadronLabel);
 
-    return maxHadronLabel;
+    return *maxHadronIt;
   };
 
   boost::container::flat_map<JetLabel, std::size_t> jetLabelCounts;
@@ -360,10 +361,11 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
                    << " constituents.");
 
       JetLabel label = JetLabel::Unknown;
+      std::shared_ptr<const HepMC3::GenParticle> hadron;
       if (m_cfg.doJetLabeling) {
         ACTS_DEBUG("Classifying jet " << i);
         auto sample = timer.sample();
-        label = classifyJet(jet);
+        std::tie(hadron, label) = classifyJet(jet);
       }
 
       if (m_cfg.debugCsvOutput) {
@@ -374,6 +376,7 @@ ProcessCode ActsExamples::TruthJetAlgorithm::execute(
 
       // Initialize the (track) jet with 4-momentum and jet label
       ActsExamples::TrackJet storedJet(jetFourMomentum, label);
+      storedJet.getLabelHadron(hadron.get());
 
       // Add the jet constituents to the (track)jet
       for (unsigned int j = 0; j < jetConstituents.size(); j++) {

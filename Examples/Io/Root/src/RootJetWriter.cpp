@@ -23,6 +23,7 @@
 #include "ActsExamples/EventData/Track.hpp"
 #include "ActsExamples/Framework/AlgorithmContext.hpp"
 #include "ActsExamples/Framework/ProcessCode.hpp"
+#include "ActsExamples/Io/HepMC3/HepMC3Util.hpp"
 #include "ActsExamples/Utilities/Range.hpp"
 #include "ActsFatras/EventData/Barcode.hpp"
 
@@ -36,6 +37,7 @@
 #include <stdexcept>
 #include <utility>
 
+#include <HepMC3/GenParticle.h>
 #include <TFile.h>
 #include <TTree.h>
 
@@ -146,6 +148,7 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("jet_isPU", &m_jet_isPU);
   m_outputTree->Branch("jet_isHS", &m_jet_isHS);
   m_outputTree->Branch("jet_label", &m_jet_label);
+  m_outputTree->Branch("jet_label_hadron_pt", &m_jet_label_hadron_pt);
 
   // Tracks in jets
   // for each track (that is matched to a jet), the index of the vertex it
@@ -439,17 +442,23 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_jet_eta.push_back(std::atanh(std::cos(jet_theta)));
     m_jet_phi.push_back(phi(jet_4mom));
 
-    m_jet_ncomponents.push_back(trackJets[ijets].getConstituents().size());
-    m_jet_components.push_back(trackJets[ijets].getConstituents());
+    const auto& jet = trackJets[ijets];
 
-    auto jtrks = trackJets[ijets].getTracks();
+    m_jet_ncomponents.push_back(jet.getConstituents().size());
+    m_jet_components.push_back(jet.getConstituents());
+
+    auto jtrks = jet.getTracks();
     m_jet_tracks_idx.emplace_back(jtrks.begin(), jtrks.end());
 
-    m_jet_ntracks.push_back(trackJets[ijets].getTracks().size());
-    m_jet_label.push_back(static_cast<int>(trackJets[ijets].getLabel()));
+    m_jet_ntracks.push_back(jet.getTracks().size());
+    m_jet_label.push_back(static_cast<int>(jet.getLabel()));
+    m_jet_isHS.push_back(1);  // this is not correct
 
-    m_jet_isPU.push_back(0);  // Need to check....
-    m_jet_isHS.push_back(1);
+    const auto* labelHadron = jet.getLabelHadron();
+
+    if (labelHadron != nullptr) {
+      m_jet_label_hadron_pt.push_back(labelHadron->momentum().pt());
+    }
 
   }  // jets
 
@@ -504,6 +513,7 @@ void ActsExamples::RootJetWriter::clear() {
   m_jet_isPU.clear();
   m_jet_isHS.clear();
   m_jet_label.clear();
+  m_jet_label_hadron_pt.clear();
 
   // Tracks
   m_tracks_prob.clear();
