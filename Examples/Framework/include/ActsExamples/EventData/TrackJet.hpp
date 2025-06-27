@@ -15,6 +15,10 @@
 #include <span>
 #include <vector>
 
+namespace HepMC3 {
+class GenParticle;
+}
+
 namespace ActsExamples {
 
 enum class JetLabel { Unknown = -99, LightJet = 0, CJet = 4, BJet = 5 };
@@ -49,6 +53,12 @@ class TrackJet {
   void setLabel(ActsExamples::JetLabel jl) { m_label = jl; }
 
   ActsExamples::JetLabel getLabel() const { return m_label; }
+
+  void getLabelHadron(const HepMC3::GenParticle* hadron) {
+    m_labelHadron = hadron;
+  }
+
+  const HepMC3::GenParticle* getLabelHadron() const { return m_labelHadron; }
 
   // TODO::Pass references instead of copies.
 
@@ -95,6 +105,7 @@ class TrackJet {
  private:
   Acts::Vector4 m_fourMomentum{0., 0., 0., 0.};
   ActsExamples::JetLabel m_label{ActsExamples::JetLabel::Unknown};
+  const HepMC3::GenParticle* m_labelHadron = nullptr;
 
   // The indices of the constituexonts wrt the global container
   std::vector<int> m_constituents{};

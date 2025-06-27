@@ -44,6 +44,7 @@ target_link_libraries(
         ActsExamplesPropagation
         ActsExamplesTruthTracking
         ActsExamplesMaterialMapping
+        ActsExamplesIoHepMC3
         Threads::Threads
     PRIVATE ROOT::Core ROOT::Hist ROOT::Tree
 )
