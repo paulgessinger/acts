@@ -6,6 +6,7 @@ import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import os
 import sys
+import time
 
 import acts
 import acts.examples
@@ -324,8 +325,18 @@ def main():
 
                 futures.append(ex.submit(job, i, nevents, skip, outputDir, args))
 
+            spin = r"/-\|"
+            i = 0
+            while any([not f.done() for f in futures]):
+                time.sleep(0.25)
+                i += 1
+                i = i % len(spin)
+
+                ndone = len([f for f in futures if f.done()])
+                sys.stdout.write(f"\r{spin[i]} {ndone} / {len(futures)} done")
+            print()
+
             for i, f in enumerate(as_completed(futures)):
-                print(i, "/", len(futures), "done")
                 try:
                     f.result()
                 except Exception as e:
