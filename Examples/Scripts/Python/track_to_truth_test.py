@@ -100,7 +100,7 @@ def make_sequencer(
             pt=(0.150 * u.GeV, None),
             measurements=(7, None),
             removeNeutral=True,
-            removeSecondaries=True,
+            removeSecondaries=False,
         ),
     )
 
