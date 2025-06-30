@@ -244,7 +244,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
   if (hsVtx == nullptr) {
     ACTS_ERROR("No hard-scatter vertex found");
-    return ProcessCode::ABORT;
+    return ProcessCode::SUCCESS;
   }
 
   ACTS_VERBOSE("Vertex " << hsVtx << " with sumPt2: " << maxSumPt2 << " has "
