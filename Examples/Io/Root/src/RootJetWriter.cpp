@@ -377,18 +377,6 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
                    // matched to a jet HINT: this might also include the hard
                    // scatter vertex
 
-    if (isecvtx > -999) {
-      m_secvtx_x.push_back(secondaryVertices[isecvtx][Acts::ePos0]);
-      m_secvtx_y.push_back(secondaryVertices[isecvtx][Acts::ePos1]);
-      m_secvtx_z.push_back(secondaryVertices[isecvtx][Acts::ePos2]);
-      m_secvtx_t.push_back(secondaryVertices[isecvtx][Acts::eTime]);
-    } else {
-      m_secvtx_x.push_back(-9999.);
-      m_secvtx_y.push_back(-9999.);
-      m_secvtx_z.push_back(-9999.);
-      m_secvtx_t.push_back(-9999.);
-    }
-
     m_trk_eta.push_back(trk_eta);
     m_trk_theta.push_back(trk_theta);
     m_trk_phi.push_back(params[Acts::eBoundPhi]);
@@ -433,6 +421,13 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_trk_cov_thetaqOverP.push_back(covthetaqOverP);
 
   }  // loop over tracks
+
+  for (const auto& secVtx : secondaryVertices) {
+    m_secvtx_x.push_back(secVtx[Acts::ePos0]);
+    m_secvtx_y.push_back(secVtx[Acts::ePos1]);
+    m_secvtx_z.push_back(secVtx[Acts::ePos2]);
+    m_secvtx_t.push_back(secVtx[Acts::eTime]);
+  }
 
   for (std::size_t ijets = 0; ijets < trackJets.size(); ++ijets) {
     Acts::Vector4 jet_4mom = trackJets[ijets].getFourMomentum();
