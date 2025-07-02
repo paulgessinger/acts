@@ -418,6 +418,13 @@ linux_ubuntu_2204_clang:
 
     - ctest --test-dir build -j$(nproc)
 
+    # Set up and run examples test suite
+    - geant4-config --install-datasets
+    - source build/this_acts_withdeps.sh
+    - cd src
+    - python3 -m pip install -r Examples/Python/tests/requirements.txt
+    - pytest -rFsv -k "not exatrkx" -v -s
+
 
 lcg_105:
   extends: .lcg_base_job
