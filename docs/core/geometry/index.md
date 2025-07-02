@@ -12,11 +12,21 @@ become natively integrated into the tracking software.
 There is an ongoing rewrite of the geometry and navigation modules where
 logical layers will be modelled as volumes, see [](layerless_geometry).
 
+The Acts geometry system now provides two construction approaches:
+- **Gen1 (Original)**: Traditional builders and manual assembly
+- **Gen3 (Blueprint)**: Tree-based declarative construction with automatic portal management
+
+For new projects, use the Gen3 Blueprint system. See the migration guide for transitioning existing code.
+
 ```
 
 :::{toctree}
 :maxdepth: 1
 concepts
+construction_approaches
+blueprint_api_guide
+blueprint_diagrams
+gen1_to_gen3_migration
 geometry_id
 material
 surfaces
