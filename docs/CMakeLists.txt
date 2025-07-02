@@ -1,40 +1,18 @@
-# to be compatible with readthedocs.org, the documentation build is always
-# in-source; as opposed to the configurable out-of-source build directory for
-# the code. when running running on readthedocs.org, the build is fully driven
-# by Sphinx, including running Doxygen.
-#
-# this CMake-based build is only intended for local development.
-
-set(sphinx_build ${CMAKE_CURRENT_SOURCE_DIR}/_build)
-set(sphinx_doctrees ${CMAKE_CURRENT_SOURCE_DIR}/_build/doctrees)
-set(sphinx_html ${CMAKE_CURRENT_SOURCE_DIR}/_build/html)
-
-set(sphinx_command)
-list(APPEND sphinx_command "-b;html")
-list(APPEND sphinx_command "-d;${sphinx_doctrees}")
-list(APPEND sphinx_command "-j;auto")
-list(APPEND sphinx_command "-W;--keep-going")
-list(APPEND sphinx_command "-t;run_doxygen;-t;lazy_autodoc")
-
-if(DEFINED ENV{CI})
-    list(APPEND sphinx_command "-b;linkcheck")
-endif()
-
-list(APPEND sphinx_command "${CMAKE_CURRENT_SOURCE_DIR}")
-list(APPEND sphinx_command "${sphinx_html}")
-
-message(${sphinx_command})
-
-# standard target to build the documentation without automatic API generation
-add_custom_target(
+doxygen_add_docs(
     docs
-    COMMAND ${Sphinx_EXECUTABLE} ${sphinx_command}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Build documentation"
+    COMMENT "Generating documentation using doxygen"
+    CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
 )
 
-install(
-    DIRECTORY ${sphinx_html}/
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/Acts
-    OPTIONAL
+include(ExternalProject)
+
+ExternalProject_Add(
+    doxygen_awesome_css
+    GIT_REPOSITORY https://github.com/jothepro/doxygen-awesome-css.git
+    GIT_TAG 9760c30
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/_build/doxygen-awesome-css
 )
+add_dependencies(docs doxygen_awesome_css)
