@@ -149,6 +149,7 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("jet_isHS", &m_jet_isHS);
   m_outputTree->Branch("jet_label", &m_jet_label);
   m_outputTree->Branch("jet_label_hadron_pt", &m_jet_label_hadron_pt);
+  m_outputTree->Branch("jet_num_sec_vtx", &m_jet_num_sec_vtx);
 
   // Tracks in jets
   // for each track (that is matched to a jet), the index of the vertex it
@@ -253,6 +254,8 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   Acts::ImpactPointEstimator::State state{magFieldCache()};
   std::vector<Acts::Vector4> secondaryVertices;
 
+  std::map<std::size_t, std::vector<int>> secVerticesByJet;
+
   // Loop over the tracks
   for (std::size_t itrk = 0; itrk < tracks.size(); itrk++) {
     double signed_d0 = -9999;
@@ -352,6 +355,9 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
       } else {
         isecvtx = std::distance(secondaryVertices.begin(), it);
       }
+
+      secVerticesByJet[ijet].push_back(isecvtx);
+
     }  // loop on jets
 
     float trk_theta = params[Acts::eBoundTheta];
@@ -370,12 +376,12 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_trk_signed_z0sinThetasig.push_back(signed_z0SinTheta /
                                          signed_z0SinTheta_err);
 
-    m_matched_jet_idx.push_back(
-        matched_jet_idx);  // for each track, the index of the jet it belongs to
-    m_matched_secvtx_idx.push_back(
-        isecvtx);  // fill number of secondary vertices for each track that are
-                   // matched to a jet HINT: this might also include the hard
-                   // scatter vertex
+    // for each track, the index of the jet it belongs to
+    m_matched_jet_idx.push_back(matched_jet_idx);
+    // fill number of secondary vertices for each track that are
+    // matched to a jet HINT: this might also include the hard
+    // scatter vertex
+    m_matched_secvtx_idx.push_back(isecvtx);
 
     m_trk_eta.push_back(trk_eta);
     m_trk_theta.push_back(trk_theta);
@@ -383,8 +389,6 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_trk_pt.push_back(trk_pt);
     m_trk_qOverP.push_back(trk_qop);
     m_trk_t.push_back(params[Acts::eBoundTime]);
-
-    // //This give un-initialized warnings
 
     auto cov = trk.covariance();
 
@@ -427,6 +431,14 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_secvtx_y.push_back(secVtx[Acts::ePos1]);
     m_secvtx_z.push_back(secVtx[Acts::ePos2]);
     m_secvtx_t.push_back(secVtx[Acts::eTime]);
+  }
+
+  for (auto& [ijet, secVtxIndices] : secVerticesByJet) {
+    std::ranges::sort(secVtxIndices);
+    const auto ret = std::ranges::unique(secVtxIndices);
+    secVtxIndices.erase(ret.begin(), ret.end());
+    std::size_t nSecVtx = secVtxIndices.size();
+    m_jet_num_sec_vtx.push_back(nSecVtx);
   }
 
   for (std::size_t ijets = 0; ijets < trackJets.size(); ++ijets) {
@@ -509,6 +521,7 @@ void ActsExamples::RootJetWriter::clear() {
   m_jet_isHS.clear();
   m_jet_label.clear();
   m_jet_label_hadron_pt.clear();
+  m_jet_num_sec_vtx.clear();
 
   // Tracks
   m_tracks_prob.clear();

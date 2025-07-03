@@ -140,6 +140,7 @@ class RootJetWriter final : public TrackJetWriter {
   std::vector<int> m_jet_isPU;
   std::vector<int> m_jet_isHS;
   std::vector<float> m_jet_label_hadron_pt;
+  std::vector<int> m_jet_num_sec_vtx;
 
   // Tracks in jets
   std::vector<float> m_tracks_prob;
