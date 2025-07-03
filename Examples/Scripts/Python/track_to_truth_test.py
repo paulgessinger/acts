@@ -221,7 +221,7 @@ def make_sequencer(
 
     s.addWriter(
         acts.examples.RootJetWriter(
-            level=acts.logging.INFO,
+            level=acts.logging.VERBOSE,
             inputTracks="tracks",
             inputVertices="fittedVertices",
             inputTrackJets="track_jets",
@@ -229,7 +229,7 @@ def make_sequencer(
             inputTrackParticleMatching="kf_track_particle_matching",
             inputParticles="particles",
             field=acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T)),
-            filePath=str(outputDir / "track_to_truth_jets.root"),
+            filePath=str(outputDir / "track_to_truth_jets_TEST2.root"),
         )
     )
 
