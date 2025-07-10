@@ -1,0 +1,60 @@
+name: Devcontainer Test
+
+on:
+  push:
+    branches: [ main, devcontainer ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  devcontainer-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          
+      - name: Fetch devcontainer configuration
+        run: |
+          # Create .devcontainer directory if it doesn't exist
+          mkdir -p .devcontainer
+          # Fetch the devcontainer branch to get the configuration
+          git fetch origin devcontainer
+          # Copy devcontainer configuration from the devcontainer branch
+          git show origin/devcontainer:.devcontainer/devcontainer.json > .devcontainer/devcontainer.json
+          git show origin/devcontainer:.devcontainer/Dockerfile > .devcontainer/Dockerfile
+          git show origin/devcontainer:.devcontainer/setup.sh > .devcontainer/setup.sh
+          # Make setup script executable
+          chmod +x .devcontainer/setup.sh
+          
+      - name: Install devcontainer CLI
+        run: |
+          npm install -g @devcontainers/cli
+          
+      - name: Build devcontainer
+        run: |
+          echo "Building devcontainer..."
+          devcontainer build --workspace-folder . --config .devcontainer/devcontainer.json
+        timeout-minutes: 30
+          
+      - name: Run configure_acts in devcontainer
+        run: |
+          echo "Running configure_acts..."
+          devcontainer exec --workspace-folder . --config .devcontainer/devcontainer.json configure_acts
+        timeout-minutes: 15
+          
+      - name: Run build_acts --target ActsCore in devcontainer
+        run: |
+          echo "Running build_acts --target ActsCore..."
+          devcontainer exec --workspace-folder . --config .devcontainer/devcontainer.json build_acts --target ActsCore
+        timeout-minutes: 45
+          
+      - name: Check build artifacts
+        run: |
+          echo "Checking build artifacts..."
+          devcontainer exec --workspace-folder . --config .devcontainer/devcontainer.json ls -la build_devcontainer/
+        if: always()
+        timeout-minutes: 5
