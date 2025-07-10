@@ -148,15 +148,15 @@ def make_sequencer(
     #     )
     # )
 
-    s.addWriter(
-        acts.examples.RootTrackSummaryWriter(
-            level=acts.logging.FATAL,
-            inputTracks="tracks",
-            inputParticles="particles_selected",
-            inputTrackParticleMatching="track_particle_matching",
-            filePath=str(outputDir / "tracksummary_kf.root"),
-        )
-    )
+    # s.addWriter(
+    #     acts.examples.RootTrackSummaryWriter(
+    #         level=acts.logging.FATAL,
+    #         inputTracks="tracks",
+    #         inputParticles="particles_selected",
+    #         inputTrackParticleMatching="track_particle_matching",
+    #         filePath=str(outputDir / "tracksummary_kf.root"),
+    #     )
+    # )
 
     addVertexFitting(
         s,
@@ -166,15 +166,15 @@ def make_sequencer(
         logLevel=acts.logging.FATAL,
     )
 
-    s.addWriter(
-        acts.examples.TrackFitterPerformanceWriter(
-            level=acts.logging.FATAL,
-            inputTracks="tracks",
-            inputParticles="particles_selected",
-            inputTrackParticleMatching="track_particle_matching",
-            filePath=str(outputDir / "performance_kf.root"),
-        )
-    )
+    # s.addWriter(
+    #     acts.examples.TrackFitterPerformanceWriter(
+    #         level=acts.logging.FATAL,
+    #         inputTracks="tracks",
+    #         inputParticles="particles_selected",
+    #         inputTrackParticleMatching="track_particle_matching",
+    #         filePath=str(outputDir / "performance_kf.root"),
+    #     )
+    # )
 
     s.addAlgorithm(
         acts.examples.ParticleSelector(
