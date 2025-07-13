@@ -57,7 +57,7 @@ def runTruthTrackingKalman(
             s,
             ParticleConfig(num=1, pdg=ptcl_truth, randomizeCharge=True),
             EtaConfig(-3.0, 3.0, uniform=True),
-            MomentumConfig(1.0 * u.GeV, 1.0 * u.GeV, transverse=True),
+            MomentumConfig(0.9 * u.GeV, 0.9 * u.GeV, transverse=True),
             PhiConfig(0.0, 360.0 * u.degree),
             vtxGen=acts.examples.GaussianVertexGenerator(
                 mean=acts.Vector4(0, 0, 0, 0),
@@ -218,13 +218,17 @@ if "__main__" == __name__:
 
     field = acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T))
 
+    outdir = Path.cwd() / "output_time_pid"
+    outdir.mkdir(exist_ok=True)
 
     for ptcl in choices:
         for hypo in choices:
             print(ptcl, hypo)
 
-            s = acts.examples.Sequencer(events=10000, numThreads=-1, logLevel=acts.logging.INFO)
-            
+            s = acts.examples.Sequencer(
+                events=10000, numThreads=-1, logLevel=acts.logging.INFO
+            )
+
             if ptcl == "mu":
                 ptcl_truth = acts.PdgParticle.eMuon
             elif ptcl == "pi":
@@ -247,7 +251,7 @@ if "__main__" == __name__:
             else:
                 raise ValueError(f"Unknown hypothesis: {hypo}")
 
-            summary = f"tracksummary_kf_h_{hypo}_t_{ptcl}.root"
+            summary = outdir / f"tracksummary_kf_h_{hypo}_t_{ptcl}.root"
             print(summary)
 
             runTruthTrackingKalman(
@@ -257,6 +261,6 @@ if "__main__" == __name__:
                 outputDir=Path.cwd(),
                 ptcl_truth=ptcl_truth,
                 hypo=hypo2,
-                summary=summary,
-                s=s
+                summary=str(summary),
+                s=s,
             ).run()
