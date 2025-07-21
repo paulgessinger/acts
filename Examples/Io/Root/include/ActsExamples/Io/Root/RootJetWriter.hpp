@@ -189,6 +189,7 @@ class RootJetWriter final : public TrackJetWriter {
 
   Acts::GeometryContext gctx_;
   Acts::MagneticFieldContext mctx_;
+  double deltaR(TrackJet jet, Acts::TrackProxy<Acts::ConstVectorTrackContainer, Acts::ConstVectorMultiTrajectory, std::shared_ptr, true> trk);
 };
 
 }  // namespace ActsExamples
