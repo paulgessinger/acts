@@ -176,6 +176,12 @@ class RootJetWriter final : public TrackJetWriter {
   // the index of the jet the tracks belong to
   std::vector<int> m_matched_jet_idx;
 
+  // deltaR for all tracks in the jet, not only the ones matched to a jet
+  std::vector<float> m_jet_track_deltaR_all;
+  // deltaR for tracks that are matched to a jet
+  std::vector<float> m_jet_track_deltaR_matched;
+  
+
   // Tools
 
   std::shared_ptr<Propagator> m_propagator;

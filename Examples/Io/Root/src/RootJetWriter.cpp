@@ -189,6 +189,15 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("track_cov_phitheta", &m_trk_cov_phitheta);
   m_outputTree->Branch("track_cov_phiqOverP", &m_trk_cov_phiqOverP);
   m_outputTree->Branch("track_cov_tehtaqOverP", &m_trk_cov_thetaqOverP);
+
+  m_outputTree->Branch("jet_track_deltaR_all",
+                       &m_jet_track_deltaR_all);  // deltaR for all tracks in
+                                                  // the jet, not only the ones
+                                                  // matched to a jet
+                                                  
+  m_outputTree->Branch("jet_track_deltaR_matched",
+                       &m_jet_track_deltaR_matched);  // deltaR for tracks that
+                                                      // are matched to a jet
 }
 
 ProcessCode RootJetWriter::finalize() {
@@ -307,6 +316,32 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
       if (!ipAndSigma.ok() || !vszs.ok()) {
         continue;
       }
+      double jetPx = jet.getFourMomentum().x();
+      double jetPy = jet.getFourMomentum().y();
+      double jetPz = jet.getFourMomentum().z();
+      double trackPx = trk.momentum().x();
+      double trackPy = trk.momentum().y();
+      double trackPz = trk.momentum().z();
+      double pjet = std::sqrt(jetPx * jetPx + jetPy * jetPy + jetPz * jetPz);
+      double ptrack = std::sqrt(trackPx * trackPx + trackPy * trackPy + trackPz * trackPz);
+
+      // Calculate eta and phi for the jet and track
+      // Note: eta = arctanh(pz/|p|), phi = atan2(py, px)
+      // where theta is the polar angle of the momentum vector
+      // and phi is the azimuthal angle in the xy-plane.
+      // Here we use the four-momentum to calculate eta and phi.  
+
+      double jetEta = std::atanh(jetPz / pjet);
+      double jetPhi = std::atan2(jetPy, jetPx);
+      double trackEta = std::atanh(trackPz / ptrack);
+      double trackPhi = std::atan2(trackPy, trackPx);
+
+      // Calculate delta R
+      double deltaEta = jetEta - trackEta;
+      double deltaPhi = jetPhi - trackPhi;
+      double deltaR = std::sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
+
+      m_jet_track_deltaR_matched.push_back(deltaR); 
 
       double absD0 = std::abs((*ipAndSigma).d0);
       double absZ0 = std::abs((*ipAndSigma).z0);
@@ -500,6 +535,11 @@ void ActsExamples::RootJetWriter::clear() {
   m_recovtx_isSec.clear();
   m_matched_secvtx_idx.clear();  // for each track (that is matched to a jet),
                                  // the index of the vertex it belongs to
+
+  m_jet_track_deltaR_all.clear();  // deltaR for all tracks in the jet,
+                                    // not only the ones matched to a jet
+    m_jet_track_deltaR_matched.clear();  // deltaR for tracks that are matched to a
+                                        // jet    
 
   // clear secondary vertex information
   m_secvtx_x.clear();
