@@ -262,7 +262,7 @@ double deltaR(const Eigen::MatrixBase<Derived>& v1,
               const Eigen::MatrixBase<Derived>& v2)
   requires(Eigen::MatrixBase<Derived>::RowsAtCompileTime == 3)
 {
-  return deltaR(phi(v1), phi(v2), eta(v1), eta(v2));
+  return deltaR(phi(v1), eta(v1), phi(v2), eta(v2));
 }
 
 }  // namespace Acts::VectorHelpers
