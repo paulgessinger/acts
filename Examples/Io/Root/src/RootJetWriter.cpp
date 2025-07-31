@@ -130,11 +130,20 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("recovertex_isHS", &m_recovtx_isHS);
   m_outputTree->Branch("recovertex_isPU", &m_recovtx_isPU);
   m_outputTree->Branch("recovertex_isSec", &m_recovtx_isSec);
+  m_outputTree->Branch("recovertex_eta", &m_recovtx_eta);
+  m_outputTree->Branch("recovertex_theta", &m_recovtx_theta);
+  m_outputTree->Branch("recovertex_phi", &m_recovtx_phi);
 
   m_outputTree->Branch("secvertex_x", &m_secvtx_x);
   m_outputTree->Branch("secvertex_y", &m_secvtx_y);
   m_outputTree->Branch("secvertex_z", &m_secvtx_z);
   m_outputTree->Branch("secvertex_t", &m_secvtx_t);
+  m_outputTree->Branch("secvtx_Lxy", &m_secvtx_Lxy);
+  m_outputTree->Branch("secvertex_eta", &m_secvtx_eta);
+  m_outputTree->Branch("secvertex_theta", &m_secvtx_theta);
+  m_outputTree->Branch("secvertex_phi", &m_secvtx_phi);
+  m_outputTree->Branch("jet_secvtx_deltaR", &m_jet_secvtx_deltaR);
+  m_outputTree->Branch("secvtx_pt", &m_secvtx_pt);
 
   // The jets
   m_outputTree->Branch("jet_pt", &m_jet_pt);
@@ -235,6 +244,10 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
                                         << trackJets.size());
   ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputVertices << " "
                                         << m_inputVertices(ctx).size());
+  ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputTrackParticleMatching
+                                        << " " << trackParticleMatching.size());
+  ACTS_VERBOSE("RootWriter::Number of " << m_cfg.inputParticles << " "
+                                        << particles.size());
 
   m_eventNr = ctx.eventNumber;
 
@@ -257,13 +270,16 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     return ProcessCode::SUCCESS;
   }
 
-  ACTS_VERBOSE("Vertex " << hsVtx << " with sumPt2: " << maxSumPt2 << " has "
-                         << hsVtx->tracks().size() << " tracks associated");
+  ACTS_VERBOSE("Hard-scatter vertex found at position: ("
+               << hsVtx->position().x() << ", " << hsVtx->position().y() << ", "
+               << hsVtx->position().z() << ")");
 
   Acts::ImpactPointEstimator::State state{magFieldCache()};
   std::vector<Acts::Vector4> secondaryVertices;
 
   std::map<std::size_t, std::vector<int>> secVerticesByJet;
+
+  double secVtx_hs_Lxy = -9999;  // Lxy for each secondary vertex
 
   // Loop over the tracks
   for (std::size_t itrk = 0; itrk < tracks.size(); itrk++) {
@@ -356,25 +372,64 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
         continue;
       }
 
-      auto initParticle = *findParticle;
+      auto initParticle = *findParticle;  // This is the initial particle
+                                          // matched to the track with type
+
       Acts::Vector4 initParticlePosition = initParticle.fourPosition();
+      Acts::Vector4 hsPosition = hsVtx->fullPosition();
 
-      auto it = std::ranges::find_if(
-          secondaryVertices.begin(), secondaryVertices.end(),
-          [&initParticlePosition](const Acts::Vector4& vtx) {
-            return (vtx - initParticlePosition).norm() <
-                   1e-3;  // tolerance // can also make it configurable
-          });
+      if (jet.getLabel() == JetLabel::BJet) {
+        auto hs_it = std::ranges::find_if(
+            secondaryVertices.begin(), secondaryVertices.end(),
+            [&hsPosition](const Acts::Vector4& vtx) {
+              return (vtx - hsPosition).norm() < 1e-3;  // tolerance
+            });
 
-      if (it == secondaryVertices.end()) {
-        secondaryVertices.push_back(initParticlePosition);
-        // index of the new secondary vertex
-        isecvtx = secondaryVertices.size() - 1;
+        if (hs_it == secondaryVertices.end()) {
+          auto it = std::ranges::find_if(
+              secondaryVertices.begin(), secondaryVertices.end(),
+              [&initParticlePosition](const Acts::Vector4& vtx) {
+                return (vtx - initParticlePosition).norm() <
+                       1e-3;  // tolerance // can also make it configurable
+              });
+
+          if (it == secondaryVertices.end()) {
+            double initParticleR =
+                std::sqrt(initParticlePosition[Acts::ePos0] *
+                              initParticlePosition[Acts::ePos0] +
+                          initParticlePosition[Acts::ePos1] *
+                              initParticlePosition[Acts::ePos1]);
+            if (m_cfg.useOnlyBeamPipe &&
+                (initParticleR < 1.0 || initParticleR > 30.0)) {
+              ACTS_DEBUG("Skipping secondary vertex matching for track "
+                         << itrk << " in jet " << ijet
+                         << " due to beam pipe radius condition");
+              continue;
+            }
+            secondaryVertices.push_back(initParticlePosition);
+
+            isecvtx = secondaryVertices.size() - 1;
+
+          } else {
+            isecvtx = std::distance(secondaryVertices.begin(), it);
+          }
+          secVerticesByJet[ijet].push_back(isecvtx);
+        } else {
+          ACTS_VERBOSE("Hard scatter vertex already exists at position: ("
+                       << hsPosition[Acts::ePos0] << ", "
+                       << hsPosition[Acts::ePos1] << ", "
+                       << hsPosition[Acts::ePos2] << ")");
+        }
       } else {
-        isecvtx = std::distance(secondaryVertices.begin(), it);
+        ACTS_VERBOSE("Jet is not a B-jet, skipping secondary vertex matching");
       }
-
-      secVerticesByJet[ijet].push_back(isecvtx);
+      secVtx_hs_Lxy =
+          std::sqrt(std::pow(std::abs(initParticlePosition[Acts::ePos0] -
+                                      hsPosition[Acts::ePos0]),
+                             2) +
+                    std::pow(std::abs(initParticlePosition[Acts::ePos1] -
+                                      hsPosition[Acts::ePos1]),
+                             2));
 
     }  // loop on jets
 
@@ -397,9 +452,9 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
     // for each track, the index of the jet it belongs to
     m_matched_jet_idx.push_back(matched_jet_idx);
-    // fill number of secondary vertices for each track that are
-    // matched to a jet HINT: this might also include the hard
-    // scatter vertex
+    // fill number of secondary vertices for each track (PROBABLY WRONG:
+    // MATCHING MUST BE IN THE JET LOOP-that are matched to a jet) HINT: this
+    // might also include the hard scatter vertex
     m_matched_secvtx_idx.push_back(isecvtx);
 
     m_trk_eta.push_back(trk_eta);
@@ -446,10 +501,36 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   }  // loop over tracks
 
   for (const auto& secVtx : secondaryVertices) {
+    double R = std::sqrt(secVtx[Acts::ePos0] * secVtx[Acts::ePos0] +
+                         secVtx[Acts::ePos1] * secVtx[Acts::ePos1]);
+
     m_secvtx_x.push_back(secVtx[Acts::ePos0]);
     m_secvtx_y.push_back(secVtx[Acts::ePos1]);
     m_secvtx_z.push_back(secVtx[Acts::ePos2]);
     m_secvtx_t.push_back(secVtx[Acts::eTime]);
+
+    double sec_vtx_theta = std::atan2(R, secVtx[Acts::ePos2]);
+    double eta = -std::log(std::tan(sec_vtx_theta / 2.0));
+    m_secvtx_eta.push_back(eta);
+    m_secvtx_theta.push_back(sec_vtx_theta);
+    m_secvtx_phi.push_back(phi(secVtx));
+    m_secvtx_Lxy.push_back(secVtx_hs_Lxy);
+
+    double deltaR_jet_secvtx = -9999;
+    for (std::size_t j = 0; j < trackJets.size(); ++j) {
+      // Calculate deltaR between jet and secondary vertex
+      auto& jet = trackJets.at(j);
+      Acts::Vector4 jet_4mom = jet.getFourMomentum();
+      Acts::Vector3 jet_3mom{jet_4mom[0], jet_4mom[1], jet_4mom[2]};
+      double jetTheta = theta(jet_3mom);
+      double jetEta = std::atanh(std::cos(jetTheta));
+      double jetPhi = phi(jet_4mom);
+
+      deltaR_jet_secvtx =
+          std::sqrt((jetEta - eta) * (jetEta - eta) +
+                    (jetPhi - phi(secVtx)) * (jetPhi - phi(secVtx)));
+    }
+    m_jet_secvtx_deltaR.push_back(deltaR_jet_secvtx);
   }
 
   for (auto& [ijet, secVtxIndices] : secVerticesByJet) {
@@ -491,10 +572,14 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
   // Fill the reconstructed vertex information
   for (const auto& vtx : vertices) {
     const auto pos4 = vtx.fullPosition();
+    const auto pos3 = vtx.position();
     m_recovtx_x.push_back(pos4[Acts::ePos0]);
     m_recovtx_y.push_back(pos4[Acts::ePos1]);
     m_recovtx_z.push_back(pos4[Acts::ePos2]);
     m_recovtx_t.push_back(pos4[Acts::eTime]);
+    m_recovtx_eta.push_back(eta(pos3));
+    m_recovtx_theta.push_back(theta(pos3));
+    m_recovtx_phi.push_back(phi(pos3));
     m_recovtx_sumPt2.push_back(calcSumPt2(vtx));
 
     m_recovtx_isHS.push_back(static_cast<int>(&vtx == hsVtx));
@@ -517,6 +602,9 @@ void ActsExamples::RootJetWriter::clear() {
   m_recovtx_isHS.clear();
   m_recovtx_isPU.clear();
   m_recovtx_isSec.clear();
+  m_recovtx_eta.clear();
+  m_recovtx_theta.clear();
+  m_recovtx_phi.clear();
   m_matched_secvtx_idx.clear();    // for each track (that is matched to a jet),
                                    // the index of the vertex it belongs to
   m_jet_track_deltaR_all.clear();  // deltaR for all tracks in the jet, not only
@@ -529,6 +617,12 @@ void ActsExamples::RootJetWriter::clear() {
   m_secvtx_y.clear();
   m_secvtx_z.clear();
   m_secvtx_t.clear();
+  m_secvtx_Lxy.clear();  // Lxy for each secondary vertex
+  m_secvtx_eta.clear();
+  m_secvtx_theta.clear();
+  m_secvtx_phi.clear();
+  m_jet_secvtx_deltaR.clear();  // deltaR for each jet and secondary vertex
+  m_secvtx_pt.clear();          // pt for each secondary vertex
 
   // Jets
   m_jet_pt.clear();

@@ -197,8 +197,10 @@ def make_sequencer(
         jetLabelingHadronPtMin=5 * u.GeV,
         jetLabelingDeltaR=0.4,
         # if we don't have hard scatter, use all particles, else only use hard scatter particles
-        jetLabelingHardScatterHadronsOnly=args.hardscatter != 0,
-        clusterHardScatterParticlesOnly=args.hardscatter != 0,
+        # jetLabelingHardScatterHadronsOnly=args.hardscatter != 0,
+        # clusterHardScatterParticlesOnly=args.hardscatter != 0,
+        jetLabelingHardScatterHadronsOnly=False,
+        clusterHardScatterParticlesOnly=False,
         doOverlapRemoval=True,
         overlapRemovalDeltaR=0.2,
         overlapRemovalIsolationDeltaR=0.2,
@@ -228,6 +230,7 @@ def make_sequencer(
             # inputTrackJets="truth_jets",
             inputTrackParticleMatching="kf_track_particle_matching",
             inputParticles="particles",
+            useOnlyBeamPipe=True,
             field=acts.ConstantBField(acts.Vector3(0, 0, 2 * u.T)),
             filePath=str(outputDir / "track_to_truth_jets.root"),
         )
@@ -249,8 +252,7 @@ def make_geometry():
     oddMaterialDeco = acts.IMaterialDecorator.fromFile(oddMaterialMap)
 
     detector = getOpenDataDetector(
-        odd_dir=geoDir,
-        materialDecorator=oddMaterialDeco,
+        odd_dir=geoDir, materialDecorator=oddMaterialDeco, logLevel=acts.logging.INFO
     )
 
     return detector, oddDigiConfig
@@ -282,7 +284,7 @@ def job(index: int, events: int, skip: int, outputDir: Path, args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--events", "-n", type=int, default=10)
-    parser.add_argument("--pileup", "--pu", type=int, default=50)
+    parser.add_argument("--pileup", "--pu", type=int, default=0)
     parser.add_argument("--hardscatter", "--hs", type=int, default=1)
     parser.add_argument("--threads", "-t", type=int, default=-1)
     parser.add_argument("--procs", type=int, default=1)

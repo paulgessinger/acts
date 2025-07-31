@@ -38,6 +38,8 @@
 #include <string>
 #include <vector>
 
+#include <HepMC3/GenParticle.h>
+
 class TFile;
 class TTree;
 
@@ -69,6 +71,8 @@ class RootJetWriter final : public TrackJetWriter {
     std::string fileMode = "RECREATE";
     /// Magnetic field provider
     std::shared_ptr<Acts::MagneticFieldProvider> field;
+    /// Use only beam pipe radius for secondary vertex matching
+    bool useOnlyBeamPipe = false;
   };
 
   /// Constructor
@@ -123,10 +127,21 @@ class RootJetWriter final : public TrackJetWriter {
       m_matched_secvtx_idx;  // for each track (that is matched to a jet), the
                              // index of the vertex it belongs to
 
+  std::vector<float> m_recovtx_eta;
+  std::vector<float> m_recovtx_theta;
+  std::vector<float> m_recovtx_phi;
+
   std::vector<float> m_secvtx_x;
   std::vector<float> m_secvtx_y;
   std::vector<float> m_secvtx_z;
   std::vector<float> m_secvtx_t;
+  std::vector<float> m_secvtx_Lxy;  // Lxy for each secondary vertex
+  std::vector<float> m_secvtx_eta;
+  std::vector<float> m_secvtx_theta;
+  std::vector<float> m_secvtx_phi;
+  std::vector<float> m_jet_secvtx_deltaR;  // deltaR for each jet and secondary
+                                           // vertex
+  std::vector<float> m_secvtx_pt;          // pt for each secondary vertex
   // Jets//
 
   // skipping jet_m, jet_q
@@ -180,7 +195,6 @@ class RootJetWriter final : public TrackJetWriter {
   std::vector<float> m_jet_track_deltaR_all;
   // deltaR for tracks that are matched to a jet
   std::vector<float> m_jet_track_deltaR_matched;
-  
 
   // Tools
 
@@ -189,7 +203,11 @@ class RootJetWriter final : public TrackJetWriter {
 
   Acts::GeometryContext gctx_;
   Acts::MagneticFieldContext mctx_;
-  double deltaR(TrackJet jet, Acts::TrackProxy<Acts::ConstVectorTrackContainer, Acts::ConstVectorMultiTrajectory, std::shared_ptr, true> trk);
+  double deltaR(
+      TrackJet jet,
+      Acts::TrackProxy<Acts::ConstVectorTrackContainer,
+                       Acts::ConstVectorMultiTrajectory, std::shared_ptr, true>
+          trk);
 };
 
 }  // namespace ActsExamples
