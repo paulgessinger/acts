@@ -135,7 +135,7 @@ class RootJetWriter final : public TrackJetWriter {
   std::vector<float> m_secvtx_y;
   std::vector<float> m_secvtx_z;
   std::vector<float> m_secvtx_t;
-  std::vector<float> m_secvtx_Lxy;  // Lxy for each secondary vertex
+  std::vector<float> m_secvtx_hs_Lxy;  // Lxy for each secondary vertex
   std::vector<float> m_secvtx_eta;
   std::vector<float> m_secvtx_theta;
   std::vector<float> m_secvtx_phi;

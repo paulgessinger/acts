@@ -43,7 +43,6 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
   ACTS_DEBUG("TrackToTruthJetAlg - Number of truth jets: " << truthJets.size());
   ACTS_DEBUG("TrackToTruthJetAlg - Number of jets: " << jets.size());
 
-
   for (const auto& track : tracks) {
     double minDeltaR = m_cfg.maxDeltaR;
 
@@ -57,7 +56,7 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
     // Loop over the jets to find the closest one
     std::size_t i = 0;
     for (auto& jet : jets) {
-      //Calculate eta and phi of the jet and track
+      // Calculate eta and phi of the jet and track
 
       double jetPx = jet.getFourMomentum().x();
       double jetPy = jet.getFourMomentum().y();
@@ -66,13 +65,14 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
       double trackPy = track.momentum().y();
       double trackPz = track.momentum().z();
       double pjet = std::sqrt(jetPx * jetPx + jetPy * jetPy + jetPz * jetPz);
-      double ptrack = std::sqrt(trackPx * trackPx + trackPy * trackPy + trackPz * trackPz);
+      double ptrack =
+          std::sqrt(trackPx * trackPx + trackPy * trackPy + trackPz * trackPz);
 
       // Calculate eta and phi for the jet and track
       // Note: eta = arctanh(pz/|p|), phi = atan2(py, px)
       // where theta is the polar angle of the momentum vector
       // and phi is the azimuthal angle in the xy-plane.
-      // Here we use the four-momentum to calculate eta and phi.  
+      // Here we use the four-momentum to calculate eta and phi.
 
       double jetEta = std::atanh(jetPz / pjet);
       double jetPhi = std::atan2(jetPy, jetPx);
@@ -84,7 +84,6 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
       double deltaPhi = jetPhi - trackPhi;
       double deltaR = std::sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
 
-
       // Acts::Vector3 jetMom = jet.getFourMomentum().head<3>();
       // double deltaR = Acts::VectorHelpers::deltaR(jetMom, track.momentum());
 
@@ -94,11 +93,12 @@ ProcessCode ActsExamples::TrackToTruthJetAlgorithm::execute(
       }
 
       ACTS_DEBUG("Track " << track.index() << " delta R to jet " << i << ": "
-                          << deltaR << ", jet px: "
-                          << jet.getFourMomentum().head<1>());
+                          << deltaR
+                          << ", jet px: " << jet.getFourMomentum().head<1>());
       if (deltaR < m_cfg.maxDeltaR) {
         ACTS_DEBUG("Track " << track.index() << " matches jet " << i
-                    << " with delta R: " << deltaR); }
+                            << " with delta R: " << deltaR);
+      }
 
       i++;
     }  // loop over jets

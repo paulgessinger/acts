@@ -127,9 +127,9 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("recovertex_z", &m_recovtx_z);
   m_outputTree->Branch("recovertex_t", &m_recovtx_t);
   m_outputTree->Branch("recovertex_sumPt2", &m_recovtx_sumPt2);
-  m_outputTree->Branch("recovertex_isHS", &m_recovtx_isHS);
-  m_outputTree->Branch("recovertex_isPU", &m_recovtx_isPU);
-  m_outputTree->Branch("recovertex_isSec", &m_recovtx_isSec);
+  // m_outputTree->Branch("recovertex_isHS", &m_recovtx_isHS);
+  // m_outputTree->Branch("recovertex_isPU", &m_recovtx_isPU);
+  // m_outputTree->Branch("recovertex_isSec", &m_recovtx_isSec);
   m_outputTree->Branch("recovertex_eta", &m_recovtx_eta);
   m_outputTree->Branch("recovertex_theta", &m_recovtx_theta);
   m_outputTree->Branch("recovertex_phi", &m_recovtx_phi);
@@ -137,13 +137,13 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("secvertex_x", &m_secvtx_x);
   m_outputTree->Branch("secvertex_y", &m_secvtx_y);
   m_outputTree->Branch("secvertex_z", &m_secvtx_z);
-  m_outputTree->Branch("secvertex_t", &m_secvtx_t);
-  m_outputTree->Branch("secvtx_Lxy", &m_secvtx_Lxy);
+  // m_outputTree->Branch("secvertex_t", &m_secvtx_t);
+  m_outputTree->Branch("secvtx_hs_Lxy", &m_secvtx_hs_Lxy);
   m_outputTree->Branch("secvertex_eta", &m_secvtx_eta);
   m_outputTree->Branch("secvertex_theta", &m_secvtx_theta);
   m_outputTree->Branch("secvertex_phi", &m_secvtx_phi);
   m_outputTree->Branch("jet_secvtx_deltaR", &m_jet_secvtx_deltaR);
-  m_outputTree->Branch("secvtx_pt", &m_secvtx_pt);
+  // m_outputTree->Branch("secvtx_pt", &m_secvtx_pt);
 
   // The jets
   m_outputTree->Branch("jet_pt", &m_jet_pt);
@@ -154,12 +154,19 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   // for each jet, the indices of the  tracks it contains
   m_outputTree->Branch("jet_tracks_idx", &m_jet_tracks_idx);
   m_outputTree->Branch("jet_ntracks", &m_jet_ntracks);
-  m_outputTree->Branch("jet_isPU", &m_jet_isPU);
-  m_outputTree->Branch("jet_isHS", &m_jet_isHS);
+  // m_outputTree->Branch("jet_isPU", &m_jet_isPU);
+  // m_outputTree->Branch("jet_isHS", &m_jet_isHS);
   m_outputTree->Branch("jet_label", &m_jet_label);
   m_outputTree->Branch("jet_label_hadron_pt", &m_jet_label_hadron_pt);
   m_outputTree->Branch("jet_num_sec_vtx", &m_jet_num_sec_vtx);
+  m_outputTree->Branch("jet_track_deltaR_all",
+                       &m_jet_track_deltaR_all);  // deltaR for all tracks in
+                                                  // the jet, not only the ones
+                                                  // matched to a jet
 
+  m_outputTree->Branch("jet_track_deltaR_matched",
+                       &m_jet_track_deltaR_matched);  // deltaR for tracks that
+                                                      // are matched to a jet
   // Tracks in jets
   // for each track (that is matched to a jet), the index of the vertex it
   // belongs to
@@ -198,15 +205,6 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("track_cov_phitheta", &m_trk_cov_phitheta);
   m_outputTree->Branch("track_cov_phiqOverP", &m_trk_cov_phiqOverP);
   m_outputTree->Branch("track_cov_tehtaqOverP", &m_trk_cov_thetaqOverP);
-
-  m_outputTree->Branch("jet_track_deltaR_all",
-                       &m_jet_track_deltaR_all);  // deltaR for all tracks in
-                                                  // the jet, not only the ones
-                                                  // matched to a jet
-
-  m_outputTree->Branch("jet_track_deltaR_matched",
-                       &m_jet_track_deltaR_matched);  // deltaR for tracks that
-                                                      // are matched to a jet
 }
 
 ProcessCode RootJetWriter::finalize() {
@@ -514,7 +512,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_secvtx_eta.push_back(eta);
     m_secvtx_theta.push_back(sec_vtx_theta);
     m_secvtx_phi.push_back(phi(secVtx));
-    m_secvtx_Lxy.push_back(secVtx_hs_Lxy);
+    m_secvtx_hs_Lxy.push_back(secVtx_hs_Lxy);
 
     double deltaR_jet_secvtx = -9999;
     for (std::size_t j = 0; j < trackJets.size(); ++j) {
@@ -559,7 +557,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
 
     m_jet_ntracks.push_back(jet.getTracks().size());
     m_jet_label.push_back(static_cast<int>(jet.getLabel()));
-    m_jet_isHS.push_back(1);  // this is not correct
+    // m_jet_isHS.push_back(1);  // this is not correct
 
     const auto* labelHadron = jet.getLabelHadron();
 
@@ -582,7 +580,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_recovtx_phi.push_back(phi(pos3));
     m_recovtx_sumPt2.push_back(calcSumPt2(vtx));
 
-    m_recovtx_isHS.push_back(static_cast<int>(&vtx == hsVtx));
+    // m_recovtx_isHS.push_back(static_cast<int>(&vtx == hsVtx));
   }  // vertices
 
   m_outputTree->Fill();
@@ -599,9 +597,9 @@ void ActsExamples::RootJetWriter::clear() {
   m_recovtx_z.clear();
   m_recovtx_t.clear();
   m_recovtx_sumPt2.clear();
-  m_recovtx_isHS.clear();
-  m_recovtx_isPU.clear();
-  m_recovtx_isSec.clear();
+  // m_recovtx_isHS.clear();
+  // m_recovtx_isPU.clear();
+  // m_recovtx_isSec.clear();
   m_recovtx_eta.clear();
   m_recovtx_theta.clear();
   m_recovtx_phi.clear();
@@ -617,7 +615,7 @@ void ActsExamples::RootJetWriter::clear() {
   m_secvtx_y.clear();
   m_secvtx_z.clear();
   m_secvtx_t.clear();
-  m_secvtx_Lxy.clear();  // Lxy for each secondary vertex
+  m_secvtx_hs_Lxy.clear();  // Lxy for each secondary vertex
   m_secvtx_eta.clear();
   m_secvtx_theta.clear();
   m_secvtx_phi.clear();
@@ -634,8 +632,8 @@ void ActsExamples::RootJetWriter::clear() {
   m_matched_jet_idx
       .clear();  // for each track, the index of the jet it belongs to
   m_jet_ntracks.clear();
-  m_jet_isPU.clear();
-  m_jet_isHS.clear();
+  // m_jet_isPU.clear();
+  // m_jet_isHS.clear();
   m_jet_label.clear();
   m_jet_label_hadron_pt.clear();
   m_jet_num_sec_vtx.clear();
