@@ -167,6 +167,11 @@ RootJetWriter::RootJetWriter(const RootJetWriter::Config& config,
   m_outputTree->Branch("jet_track_deltaR_matched",
                        &m_jet_track_deltaR_matched);  // deltaR for tracks that
                                                       // are matched to a jet
+
+  m_outputTree->Branch("jet_secvtx_dPhi", &m_jet_secvtx_dPhi);  // dPhi between
+                                                              // jet and
+                                                              // secondary
+                                                              // vertex
   // Tracks in jets
   // for each track (that is matched to a jet), the index of the vertex it
   // belongs to
@@ -310,6 +315,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     const auto params = trk.parameters();
 
     auto boundParams = trk.createParametersAtReference();
+    ACTS_VERBOSE("Now at track: " << itrk);
 
     for (std::size_t ijet = 0; ijet < trackJets.size(); ++ijet) {
       auto& jet = trackJets.at(ijet);
@@ -325,7 +331,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
         continue;
       }
 
-      ACTS_DEBUG("Track " << itrk << " is in jet " << ijet);
+      ACTS_VERBOSE("Track " << itrk << " is in jet " << ijet);
       matched_jet_idx = ijet;
 
       auto ipAndSigma =
@@ -340,12 +346,13 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
       auto deltaR_matched = Acts::VectorHelpers::deltaR(jetMom, trkMom);
       m_jet_track_deltaR_matched.push_back(deltaR_matched);
 
+
       double absD0 = std::abs((*ipAndSigma).d0);
       double absZ0 = std::abs((*ipAndSigma).z0);
 
       signed_d0 = absD0 * (*vszs).first;
-      double theta = boundParams.theta();
-      signed_z0SinTheta = absZ0 * std::sin(theta) * (*vszs).second;
+      float theta_ = boundParams.theta();
+      signed_z0SinTheta = absZ0 * std::sin(theta_) * (*vszs).second;
       signed_d0_err = (*ipAndSigma).sigmaD0;
       signed_z0SinTheta_err =
           (*ipAndSigma).sigmaZ0;  // not correct yet - have to take into
@@ -376,6 +383,22 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
       Acts::Vector4 initParticlePosition = initParticle.fourPosition();
       Acts::Vector4 hsPosition = hsVtx->fullPosition();
 
+      // calculate initial particle momentum
+      Acts::Vector4 truth4Mom = initParticle.fourMomentum();
+      Acts::Vector3 truthMom = truth4Mom.template head<3>();
+
+
+      double deltaR_track_particle = Acts::VectorHelpers::deltaR(trkMom, truthMom);
+      ACTS_DEBUG("Track " << itrk << " matched to truth particle with barcode "
+                   << barcode << " and deltaR: " << deltaR_track_particle);
+      if (deltaR_track_particle > 0.5) {
+        ACTS_DEBUG("Track " << itrk << " has deltaR " << deltaR_track_particle
+                   << " larger than maxDeltaR " << 0.5
+                   << ", skipping track");
+        continue;
+      }
+
+
       if (jet.getLabel() == JetLabel::BJet) {
         auto hs_it = std::ranges::find_if(
             secondaryVertices.begin(), secondaryVertices.end(),
@@ -399,7 +422,7 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
                               initParticlePosition[Acts::ePos1]);
             if (m_cfg.useOnlyBeamPipe &&
                 (initParticleR < 1.0 || initParticleR > 30.0)) {
-              ACTS_DEBUG("Skipping secondary vertex matching for track "
+              ACTS_VERBOSE("Skipping secondary vertex matching for track "
                          << itrk << " in jet " << ijet
                          << " due to beam pipe radius condition");
               continue;
@@ -412,6 +435,11 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
             isecvtx = std::distance(secondaryVertices.begin(), it);
           }
           secVerticesByJet[ijet].push_back(isecvtx);
+          ACTS_DEBUG("Found new secondary vertex at position: ("
+                       << initParticlePosition[Acts::ePos0] << ", "
+                       << initParticlePosition[Acts::ePos1] << ", "
+                       << initParticlePosition[Acts::ePos2] << ") for track " << itrk << " in jet " << ijet);
+
         } else {
           ACTS_VERBOSE("Hard scatter vertex already exists at position: ("
                        << hsPosition[Acts::ePos0] << ", "
@@ -428,6 +456,8 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
                     std::pow(std::abs(initParticlePosition[Acts::ePos1] -
                                       hsPosition[Acts::ePos1]),
                              2));
+
+
 
     }  // loop on jets
 
@@ -507,28 +537,13 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     m_secvtx_z.push_back(secVtx[Acts::ePos2]);
     m_secvtx_t.push_back(secVtx[Acts::eTime]);
 
-    double sec_vtx_theta = std::atan2(R, secVtx[Acts::ePos2]);
+    double sec_vtx_theta = std::atan2(R, secVtx[Acts::ePos2] - hsVtx->position().z());
     double eta = -std::log(std::tan(sec_vtx_theta / 2.0));
     m_secvtx_eta.push_back(eta);
     m_secvtx_theta.push_back(sec_vtx_theta);
-    m_secvtx_phi.push_back(phi(secVtx));
+    m_secvtx_phi.push_back(correctedSinglePhi(phi(secVtx)));
     m_secvtx_hs_Lxy.push_back(secVtx_hs_Lxy);
 
-    double deltaR_jet_secvtx = -9999;
-    for (std::size_t j = 0; j < trackJets.size(); ++j) {
-      // Calculate deltaR between jet and secondary vertex
-      auto& jet = trackJets.at(j);
-      Acts::Vector4 jet_4mom = jet.getFourMomentum();
-      Acts::Vector3 jet_3mom{jet_4mom[0], jet_4mom[1], jet_4mom[2]};
-      double jetTheta = theta(jet_3mom);
-      double jetEta = std::atanh(std::cos(jetTheta));
-      double jetPhi = phi(jet_4mom);
-
-      deltaR_jet_secvtx =
-          std::sqrt((jetEta - eta) * (jetEta - eta) +
-                    (jetPhi - phi(secVtx)) * (jetPhi - phi(secVtx)));
-    }
-    m_jet_secvtx_deltaR.push_back(deltaR_jet_secvtx);
   }
 
   for (auto& [ijet, secVtxIndices] : secVerticesByJet) {
@@ -536,8 +551,55 @@ ProcessCode RootJetWriter::writeT(const AlgorithmContext& ctx,
     const auto ret = std::ranges::unique(secVtxIndices);
     secVtxIndices.erase(ret.begin(), ret.end());
     std::size_t nSecVtx = secVtxIndices.size();
+
     m_jet_num_sec_vtx.push_back(nSecVtx);
-  }
+      for (size_t secvtx = 0; secvtx < secondaryVertices.size(); ++secvtx) {
+                ACTS_VERBOSE("Secondary vertices in the event are with index " << secvtx << ": " << secondaryVertices[secvtx].transpose());
+      }
+        for (size_t secvtx = 0; secvtx < secondaryVertices.size(); ++secvtx) {
+                    for(size_t i = 0; i < nSecVtx; ++i) {
+                      ACTS_VERBOSE("Jet " << ijet << " has " << nSecVtx
+                              << " secondary vertices with indexes: " << secVtxIndices[i]);
+                      if (secvtx == secVtxIndices[i]) {
+                        auto& secVtx_ofJet = secondaryVertices[secvtx];
+                        auto vtxjet = trackJets.at(ijet);
+                        Acts::Vector4 vtxjet_4mom = vtxjet.getFourMomentum();
+                        Acts::Vector3 vtxjet_3mom{vtxjet_4mom[0], vtxjet_4mom[1], vtxjet_4mom[2]};
+                        double vtxjet_theta = theta(vtxjet_3mom);
+                        double vtxjet_eta = std::atanh(std::cos(vtxjet_theta));
+                        double vtxjet_phi = correctedSinglePhi(phi(vtxjet_4mom));
+
+                        double secVtxR = std::sqrt(
+                            secVtx_ofJet[Acts::ePos0] * secVtx_ofJet[Acts::ePos0] +
+                            secVtx_ofJet[Acts::ePos1] * secVtx_ofJet[Acts::ePos1]);
+                        double sec_vtx_theta = std::atan2(secVtxR,
+                                                        secVtx_ofJet[Acts::ePos2] -
+                                                        hsVtx->position().z());
+                        double sec_vtx_eta = -std::log(std::tan(sec_vtx_theta / 2.0));
+                        double sec_vtx_phi = correctedSinglePhi(phi(secVtx_ofJet));
+
+                        double dPhi = correctedPhi(vtxjet_phi, sec_vtx_phi);
+
+                        double deltaR_jet_secvtx = std::sqrt(
+                            (vtxjet_eta - sec_vtx_eta) * (vtxjet_eta - sec_vtx_eta) +
+                            (dPhi * dPhi));
+                        ACTS_DEBUG("Jet " << ijet <<" has " << vtxjet.getTracks().size() << " tracks associated with it");
+                        ACTS_DEBUG("Jet " << ijet
+                                << " has secondary vertex with index: " << secvtx
+                                << " and deltaR: " << deltaR_jet_secvtx);
+                        ACTS_DEBUG("Secondary vertex position: "
+                                << secVtx_ofJet[Acts::ePos0] << ", "
+                                << secVtx_ofJet[Acts::ePos1] << ", "
+                                << secVtx_ofJet[Acts::ePos2] << ")");
+
+                        m_jet_secvtx_deltaR.emplace_back(deltaR_jet_secvtx);
+                        m_jet_secvtx_dPhi.emplace_back(dPhi);
+                      }
+          }
+      }
+
+}
+  
 
   for (std::size_t ijets = 0; ijets < trackJets.size(); ++ijets) {
     Acts::Vector4 jet_4mom = trackJets[ijets].getFourMomentum();
@@ -637,6 +699,7 @@ void ActsExamples::RootJetWriter::clear() {
   m_jet_label.clear();
   m_jet_label_hadron_pt.clear();
   m_jet_num_sec_vtx.clear();
+  m_jet_secvtx_dPhi.clear();  // dPhi between jet and secondary vertex
 
   // Tracks
   m_tracks_prob.clear();
@@ -700,4 +763,24 @@ double ActsExamples::RootJetWriter::deltaR(
   double deltaPhi = jetPhi - trackPhi;
   double deltaR = std::sqrt(deltaEta * deltaEta + deltaPhi * deltaPhi);
   return deltaR;
+}
+
+double ActsExamples::RootJetWriter::correctedPhi(double phi1, double phi2) {
+  double dPhi = phi1 - phi2;
+  if (dPhi < -std::numbers::pi) {
+    dPhi += 2 * std::numbers::pi;
+  } else if (dPhi > std::numbers::pi) {
+    dPhi -= 2 * std::numbers::pi;
+  }
+  return dPhi;
+}
+
+double ActsExamples::RootJetWriter::correctedSinglePhi(double phi1) {
+  double dSPhi = phi1;
+  if (dSPhi < -std::numbers::pi) {
+    dSPhi += 2 * std::numbers::pi;
+  } else if (dSPhi > std::numbers::pi) {
+    dSPhi -= 2 * std::numbers::pi;
+  }
+  return dSPhi;
 }

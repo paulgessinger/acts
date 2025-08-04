@@ -102,7 +102,6 @@ class RootJetWriter final : public TrackJetWriter {
   TFile* m_outputFile{nullptr};  ///< The output file
   TTree* m_outputTree{nullptr};  ///< The output tree
   int m_eventNr{0};              ///< the event number of
-
   void clear();
 
   // Handles
@@ -156,6 +155,7 @@ class RootJetWriter final : public TrackJetWriter {
   std::vector<int> m_jet_isHS;
   std::vector<float> m_jet_label_hadron_pt;
   std::vector<int> m_jet_num_sec_vtx;
+  std::vector<float> m_jet_secvtx_dPhi;
 
   // Tracks in jets
   std::vector<float> m_tracks_prob;
@@ -208,6 +208,9 @@ class RootJetWriter final : public TrackJetWriter {
       Acts::TrackProxy<Acts::ConstVectorTrackContainer,
                        Acts::ConstVectorMultiTrajectory, std::shared_ptr, true>
           trk);
+
+  double correctedPhi(double phi1, double phi2);
+  double correctedSinglePhi(double phi1);
 };
 
 }  // namespace ActsExamples
