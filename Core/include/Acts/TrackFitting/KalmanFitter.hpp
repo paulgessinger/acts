@@ -382,7 +382,8 @@ class KalmanFitter {
           ACTS_VERBOSE("Perform " << direction << " filter step");
           auto res = filter(surface, state, stepper, navigator, result);
           if (!res.ok()) {
-            ACTS_ERROR("Error in " << direction << " filter: " << res.error());
+            ACTS_ERROR("Error in " << direction << " filter: " << res.error()
+                                   << ": " << res.error().message());
             result.result = res.error();
           }
         }
@@ -654,6 +655,9 @@ class KalmanFitter {
 
       } else if ((precedingMeasurementExists && surfaceIsSensitive) ||
                  surfaceHasMaterial) {
+        ACTS_VERBOSE("No measurement on surface "
+                     << surface->geometryId()
+                     << ", but it is sensitive or has material.");
         // We only create track states here if there is already measurement
         // detected or if the surface has material (no holes before the first
         // measurement)
@@ -663,6 +667,10 @@ class KalmanFitter {
             freeToBoundCorrection);
 
         if (!trackStateProxyRes.ok()) {
+          ACTS_ERROR("Failed to handle no measurement on surface "
+                     << surface->geometryId() << ": "
+                     << trackStateProxyRes.error() << " "
+                     << trackStateProxyRes.error().message());
           return trackStateProxyRes.error();
         }
 
@@ -676,6 +684,8 @@ class KalmanFitter {
 
         ++result.processedStates;
 
+        ACTS_VERBOSE("Handling material on surface without measurement "
+                     << surface->geometryId());
         // Update state and stepper with (possible) material effects
         materialInteractor(surface, state, stepper, navigator,
                            MaterialUpdateStage::FullUpdate);

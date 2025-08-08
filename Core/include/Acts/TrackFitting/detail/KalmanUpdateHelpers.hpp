@@ -139,6 +139,8 @@ auto kalmanHandleNoMeasurement(
     const bool precedingMeasurementExists,
     const FreeToBoundCorrection &freeToBoundCorrection = FreeToBoundCorrection(
         false)) -> Result<typename traj_t::TrackStateProxy> {
+  ACTS_VERBOSE("Handling case of no measurement on surface "
+               << surface.geometryId() << " at update stage.");
   // Add a <mask> TrackState entry multi trajectory. This allocates storage for
   // all components, which we will set later.
   TrackStatePropMask mask = TrackStatePropMask::Predicted |
@@ -155,9 +157,16 @@ auto kalmanHandleNoMeasurement(
     auto res = stepper.boundState(state, surface, doCovTransport,
                                   freeToBoundCorrection);
     if (!res.ok()) {
+      ACTS_ERROR("Propagate to surface " << surface.geometryId()
+                                         << " failed: " << res.error() << " "
+                                         << res.error().message());
       return res.error();
     }
     const auto &[boundParams, jacobian, pathLength] = *res;
+
+    ACTS_VERBOSE("Bound state to surface " << surface.geometryId()
+                                           << " with parameters:\n"
+                                           << boundParams);
 
     // Fill the track state
     trackStateProxy.predicted() = boundParams.parameters();
