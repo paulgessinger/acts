@@ -143,6 +143,13 @@ class RootJetWriter final : public TrackJetWriter {
   std::vector<float> m_secvtx_pt;          // pt for each secondary vertex
   // Jets//
 
+  std::vector<int>
+      m_lightjet_nsecvtx;  // number of secondary vertices for light jets
+  std::vector<int> m_bjet_nsecvtx;  // number of secondary vertices for b-jets
+  std::vector<int> m_cjet_nsecvtx;  // number of secondary vertices for c-jets
+  std::vector<int>
+      m_ntracks_per_secvtx;  // number of tracks for each secondary vertex
+
   // skipping jet_m, jet_q
 
   std::vector<float> m_jet_pt, m_jet_eta, m_jet_phi;
