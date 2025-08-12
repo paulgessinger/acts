@@ -308,6 +308,7 @@ def job(index: int, events: int, skip: int, outputDir: Path, args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--events", "-n", type=int, default=10)
+    parser.add_argument("--skip", "-s", type=int, default=0)
     parser.add_argument("--pileup", "--pu", type=int, default=0)
     parser.add_argument("--hardscatter", "--hs", type=int, default=1)
     parser.add_argument("--threads", "-t", type=int, default=-1)
@@ -328,6 +329,7 @@ def main():
     if args.procs == 1:
         s = acts.examples.Sequencer(
             events=args.events,
+            skip=args.skip,
             numThreads=args.threads,
             logLevel=acts.logging.INFO,
             outputDir=str(outputDir),
