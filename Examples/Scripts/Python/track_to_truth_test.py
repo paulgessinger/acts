@@ -113,6 +113,17 @@ def make_sequencer(
         particleHypothesis=acts.ParticleHypothesis.pion,
         seedingAlgorithm=SeedingAlgorithm.TruthEstimated,
         geoSelectionConfigFile=geoSel,
+        initialSigmas=[
+            1 * u.mm,
+            1 * u.mm,
+            1 * u.degree,
+            1 * u.degree,
+            0 * u.e / u.GeV,
+            1 * u.ns,
+        ],
+        initialSigmaQoverPt=0.1 * u.e / u.GeV,
+        initialSigmaPtRel=0.1,
+        initialVarInflation=[1.0] * 6,
     )
 
     reverseFilteringMomThreshold = 0 * u.GeV
