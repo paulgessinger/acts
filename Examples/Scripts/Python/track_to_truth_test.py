@@ -42,7 +42,7 @@ from acts.examples.reconstruction import (
 
 
 def make_sequencer(
-    s: acts.examples.Sequencer, outputDir: Path, detector, digiConfig, args
+    s: acts.examples.Sequencer, outputDir: Path, detector, digiConfig, geoSel, args
 ):
 
     trackingGeometry = detector.trackingGeometry()
@@ -110,8 +110,9 @@ def make_sequencer(
         field,
         rnd=rnd,
         inputParticles="particles_generated",
-        seedingAlgorithm=SeedingAlgorithm.TruthSmeared,
         particleHypothesis=acts.ParticleHypothesis.muon,
+        seedingAlgorithm=SeedingAlgorithm.TruthEstimated,
+        geoSelectionConfigFile=geoSel,
     )
 
     reverseFilteringMomThreshold = 0 * u.GeV
@@ -249,13 +250,18 @@ def make_geometry():
     oddDigiConfig = actsDir / "Examples/Configs/odd-digi-smearing-config.json"
     assert oddDigiConfig.exists(), f"Digi config file {oddDigiConfig} does not exist"
 
+    oddSeedingSel = actsDir / "Examples/Configs/odd-seeding-config.json"
+    assert (
+        oddSeedingSel.exists()
+    ), f"Seeding selection file {oddSeedingSel} does not exist"
+
     oddMaterialDeco = acts.IMaterialDecorator.fromFile(oddMaterialMap)
 
     detector = getOpenDataDetector(
         odd_dir=geoDir, materialDecorator=oddMaterialDeco, logLevel=acts.logging.INFO
     )
 
-    return detector, oddDigiConfig
+    return detector, oddDigiConfig, oddSeedingSel
 
 
 def job(index: int, events: int, skip: int, outputDir: Path, args):
@@ -275,8 +281,15 @@ def job(index: int, events: int, skip: int, outputDir: Path, args):
             trackFpes=False,
         )
 
-        detector, oddDigiConfig = make_geometry()
-        make_sequencer(s, job_out, detector, digiConfig=oddDigiConfig, args=args)
+        detector, oddDigiConfig, oddSeedingSel = make_geometry()
+        make_sequencer(
+            s,
+            job_out,
+            detector,
+            digiConfig=oddDigiConfig,
+            geoSel=oddSeedingSel,
+            args=args,
+        )
 
         s.run()
 
@@ -310,8 +323,10 @@ def main():
             trackFpes=False,
         )
 
-        detector, oddDigiConfig = make_geometry()
-        make_sequencer(s, outputDir, detector, digiConfig=oddDigiConfig, args=args)
+        detector, oddDigiConfig, geoSel = make_geometry()
+        make_sequencer(
+            s, outputDir, detector, digiConfig=oddDigiConfig, geoSel=geoSel, args=args
+        )
 
         s.run()
     else:
