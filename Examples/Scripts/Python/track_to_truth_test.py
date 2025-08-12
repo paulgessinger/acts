@@ -73,7 +73,7 @@ def make_sequencer(
             rho=(0.0, 24 * u.mm),
             absZ=(0.0, 1.0 * u.m),
             eta=(-3.0, 3.0),
-            pt=(150 * u.MeV, None),
+            pt=(500 * u.MeV, None),
         ),
     )
 
@@ -97,7 +97,7 @@ def make_sequencer(
     addDigiParticleSelection(
         s,
         ParticleSelectorConfig(
-            pt=(0.150 * u.GeV, None),
+            pt=(0.500 * u.GeV, None),
             measurements=(7, None),
             removeNeutral=True,
             removeSecondaries=False,
