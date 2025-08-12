@@ -110,7 +110,7 @@ def make_sequencer(
         field,
         rnd=rnd,
         inputParticles="particles_generated",
-        particleHypothesis=acts.ParticleHypothesis.muon,
+        particleHypothesis=acts.ParticleHypothesis.pion,
         seedingAlgorithm=SeedingAlgorithm.TruthEstimated,
         geoSelectionConfigFile=geoSel,
     )
