@@ -9,6 +9,7 @@
 #include "Acts/Definitions/ParticleData.hpp"
 #include "Acts/Definitions/PdgParticle.hpp"
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <ostream>
