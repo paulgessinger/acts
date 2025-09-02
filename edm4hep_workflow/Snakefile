@@ -1,0 +1,41 @@
+rule all:
+  input: 
+    expand("digi/pg_mu_pt{pt}.edm4hep.root", pt=[1,10,100])
+
+rule particle_gun:
+  output:
+    "gen/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.gz"
+  params:
+    events=100
+  threads: workflow.cores
+  shell:
+    "./with_env.sh ./gen_particle_gun.py -j {threads} --output {output} --type {wildcards.particle} --pt {wildcards.pt} --events {params.events}"
+
+rule count_hepmc:
+  input:
+    "gen/{sample}.hepmc3.gz"
+  output: 
+    "gen/{sample}.hepmc3.gz.count"
+  shell:
+    "./with_env.sh python3 ./count_hepmc3.py {input} {output}"
+
+rule sim:
+  input:
+    "gen/{sample}.hepmc3.gz",
+    "gen/{sample}.hepmc3.gz.count",
+  output: 
+    "sim/{sample}.edm4hep.root"
+  params:
+    minkin=0.001
+  threads: 1
+  shell:
+    "./with_env.sh python3 ./ddsim.py --input {input[0]} --output {output} --minimalKineticEnergy {params.minkin}"
+
+rule digi:
+  input:
+    "sim/{sample}.edm4hep.root"
+  output: 
+    "digi/{sample}.edm4hep.root"
+  threads: workflow.cores
+  shell:
+    "./with_env.sh python3 ./digitization.py {input} {output} --jobs {threads}"
