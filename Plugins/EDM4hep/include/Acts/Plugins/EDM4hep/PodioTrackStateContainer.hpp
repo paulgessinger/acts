@@ -14,9 +14,9 @@
 #include "Acts/EventData/TrackStatePropMask.hpp"
 #include "Acts/EventData/Types.hpp"
 #include "Acts/EventData/detail/DynamicKeyIterator.hpp"
-#include "Acts/Plugins/Podio/PodioDynamicColumns.hpp"
-#include "Acts/Plugins/Podio/PodioTrackContainer.hpp"
-#include "Acts/Plugins/Podio/PodioUtil.hpp"
+#include "Acts/Plugins/EDM4hep/PodioDynamicColumns.hpp"
+#include "Acts/Plugins/EDM4hep/PodioTrackContainer.hpp"
+#include "Acts/Plugins/EDM4hep/PodioUtil.hpp"
 #include "Acts/Utilities/HashedString.hpp"
 #include "Acts/Utilities/Helpers.hpp"
 
