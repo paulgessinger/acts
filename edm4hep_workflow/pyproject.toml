@@ -1,0 +1,11 @@
+[project]
+name = "edm4hep-workflow"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pyhepmc>=2.14.0",
+    "rich>=14.1.0",
+    "typer>=0.17.3",
+]
