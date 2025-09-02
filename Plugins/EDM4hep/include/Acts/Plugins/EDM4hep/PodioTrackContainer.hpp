@@ -14,8 +14,8 @@
 #include "Acts/EventData/TrackStateProxy.hpp"
 #include "Acts/EventData/detail/DynamicColumn.hpp"
 #include "Acts/EventData/detail/DynamicKeyIterator.hpp"
-#include "Acts/Plugins/Podio/PodioDynamicColumns.hpp"
-#include "Acts/Plugins/Podio/PodioUtil.hpp"
+#include "Acts/Plugins/EDM4hep/PodioDynamicColumns.hpp"
+#include "Acts/Plugins/EDM4hep/PodioUtil.hpp"
 #include "Acts/Utilities/Helpers.hpp"
 #include "ActsPodioEdm/Surface.h"
 

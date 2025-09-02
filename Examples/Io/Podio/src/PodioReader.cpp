@@ -8,7 +8,7 @@
 
 #include "ActsExamples/Io/Podio/PodioReader.hpp"
 
-#include "Acts/Plugins/Podio/PodioUtil.hpp"
+#include "Acts/Plugins/EDM4hep/PodioUtil.hpp"
 #include "Acts/Utilities/ScopedTimer.hpp"
 #include "ActsExamples/Framework/DataHandle.hpp"
 
