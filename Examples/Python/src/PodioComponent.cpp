@@ -6,6 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#include "ActsExamples/Io/Podio/PodioOutputConverter.hpp"
 #include "ActsExamples/Io/Podio/PodioReader.hpp"
 #include "ActsExamples/Io/Podio/PodioWriter.hpp"
 #include "ActsPython/Utilities/Helpers.hpp"
@@ -25,6 +26,10 @@ PYBIND11_MODULE(ActsPythonBindingsPodio, m) {
   ACTS_PYTHON_DECLARE_READER(PodioReader, m, "PodioReader", inputPath,
                              outputFrame, category);
 
-  ACTS_PYTHON_DECLARE_WRITER(PodioWriter, m, "PodioWriter", inputFrame,
-                             outputPath, category, collections);
+  ACTS_PYTHON_DECLARE_WRITER(ActsExamples::PodioWriter, m, "PodioWriter",
+                             inputFrame, outputPath, category, collections);
+
+  py::class_<PodioOutputConverter, IAlgorithm,
+             std::shared_ptr<PodioOutputConverter>>(m, "PodioOutputConverter")
+      .def_property_readonly("collections", &PodioOutputConverter::collections);
 }
