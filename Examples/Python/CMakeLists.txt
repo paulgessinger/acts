@@ -201,7 +201,10 @@ if(ACTS_BUILD_EXAMPLES_EDM4HEP)
     pybind11_add_module(ActsPythonBindingsEDM4hep src/EDM4hepComponent.cpp)
     target_link_libraries(
         ActsPythonBindingsEDM4hep
-        PUBLIC Acts::PythonUtilities Acts::ExamplesIoEDM4hep
+        PUBLIC
+            Acts::PythonUtilities
+            Acts::ExamplesIoEDM4hep
+            Acts::ExamplesIoPodio
     )
     add_dependencies(ActsPythonBindings ActsPythonBindingsEDM4hep)
     install(
@@ -216,25 +219,6 @@ if(ACTS_BUILD_EXAMPLES_EDM4HEP)
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts
     )
     list(APPEND py_files examples/edm4hep.py)
-endif()
-
-if(ACTS_BUILD_EXAMPLES_PODIO)
-    pybind11_add_module(ActsPythonBindingsPodio src/PodioComponent.cpp)
-    target_link_libraries(
-        ActsPythonBindingsPodio
-        PUBLIC Acts::PythonUtilities Acts::ExamplesIoPodio
-    )
-    add_dependencies(ActsPythonBindings ActsPythonBindingsPodio)
-    install(TARGETS ActsPythonBindingsPodio DESTINATION ${_python_install_dir})
-    set_target_properties(
-        ActsPythonBindingsPodio
-        PROPERTIES INSTALL_RPATH "\$ORIGIN/../../${CMAKE_INSTALL_LIBDIR}"
-    )
-    set_target_properties(
-        ActsPythonBindingsPodio
-        PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_python_dir}/acts
-    )
-    list(APPEND py_files examples/podio.py)
 endif()
 
 if(ACTS_BUILD_PLUGIN_ONNX)
