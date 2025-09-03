@@ -1,12 +1,12 @@
 rule all:
   input: 
-    expand("digi/pg_mu_pt{pt}.edm4hep.root", pt=[1,10,100])
+    expand("reco/pg_mu_pt{pt}.edm4hep.root", pt=[1])
 
 rule particle_gun:
   output:
     "gen/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.gz"
   params:
-    events=100
+    events=5
   threads: workflow.cores
   shell:
     "./with_env.sh ./gen_particle_gun.py -j {threads} --output {output} --type {wildcards.particle} --pt {wildcards.pt} --events {params.events}"
@@ -39,3 +39,12 @@ rule digi:
   threads: workflow.cores
   shell:
     "./with_env.sh python3 ./digitization.py {input} {output} --jobs {threads}"
+
+rule reco:
+  input:
+    "digi/{sample}.edm4hep.root"
+  output: 
+    "reco/{sample}.edm4hep.root"
+  threads: workflow.cores
+  shell:
+    "./with_env.sh python3 ./reconstruction.py {input} {output} --jobs {threads}"
