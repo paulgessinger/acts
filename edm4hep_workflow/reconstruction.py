@@ -88,58 +88,37 @@ def main(
     s.addAlgorithm(edm4hepConverter)
     s.addWhiteboardAlias("particles", "particles_input")
 
-    # Do we digitize all particles? Otherwise, we don't need this yet
-    # addSimParticleSelection(
-    #     s,
-    #     ParticleSelectorConfig(
-    #         rho=(0.0, 24 * u.mm),
-    #         absZ=(0.0, 1.0 * u.m),
-    #         eta=(-4.0, 4.0),
-    #         pt=(150 * u.MeV, None),
-    #         removeNeutral=True,
-    #     ),
-    #     logLevel=logLevel,
-    # )
-
-    # Add digitization if enabled
-    addDigitization(
+    # Add sim particle selection (filters particles from simulation)
+    addSimParticleSelection(
         s,
-        trackingGeometry,
-        field,
-        digiConfigFile=oddDigiConfig,
-        # outputDirRoot=perf_output if getattr(config, "output_root", True) else None,
-        outputDirCsv=None,
-        rnd=rnd,
+        ParticleSelectorConfig(
+            rho=(0.0, 24 * u.mm),
+            absZ=(0.0, 1.0 * u.m),
+            eta=(-4.0, 4.0),
+            pt=(150 * u.MeV, None),
+            removeNeutral=True,
+        ),
         logLevel=logLevel,
     )
 
-    # Removed since reconstruction is done later
-    # addDigiParticleSelection(
-    #     s,
-    #     ParticleSelectorConfig(
-    #         pt=(1.0 * u.GeV, None),
-    #         eta=(-3.0, 3.0),
-    #         measurements=(9, None),
-    #         removeNeutral=True,
-    #     ),
-    #     logLevel=logLevel,
-    # )
-
-    measConv = PodioMeasurementOutputConverter(
-        level=logLevel,
-        inputMeasurements="measurements",
-        outputMeasurements="ActsMeasurements",
-        inputMeasurementSimHitsMap="measurement_simhits_map",
-        inputSimHitAssociation=edm4hepConverter.config.outputSimHitAssociation,
+    # Add digi particle selection (filters particles with sufficient measurements)
+    addDigiParticleSelection(
+        s,
+        ParticleSelectorConfig(
+            pt=(1.0 * u.GeV, None),
+            eta=(-3.0, 3.0),
+            measurements=(9, None),
+            removeNeutral=True,
+        ),
+        logLevel=logLevel,
     )
-    s.addAlgorithm(measConv)
 
     podioWriter = PodioWriter(
         level=logLevel,
         outputPath=str(output),
         inputFrame="events",
         category=podioReader.config.category,
-        collections=measConv.collections,
+        collections=[],
     )
     s.addWriter(podioWriter)
 
