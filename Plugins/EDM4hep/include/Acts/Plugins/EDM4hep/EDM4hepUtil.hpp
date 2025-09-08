@@ -248,4 +248,22 @@ void readTrack(const edm4hep::Track& from, track_proxy_t& track, double Bz,
   track.nMeasurements() = track.nTrackStates();
 }
 
+class SimHitAssociation {
+ public:
+  void reserve(std::size_t size);
+
+  std::size_t size() const;
+
+  void add(std::size_t internalIndex, const edm4hep::SimTrackerHit& edm4hepHit);
+
+  [[nodiscard]]
+  edm4hep::SimTrackerHit lookup(std::size_t internalIndex) const;
+
+  std::size_t lookup(const edm4hep::SimTrackerHit& hit) const;
+
+ private:
+  std::vector<edm4hep::SimTrackerHit> m_internalToEdm4hep;
+  std::unordered_map<podio::ObjectID, std::size_t> m_edm4hepToInternal;
+};
+
 }  // namespace Acts::EDM4hepUtil
