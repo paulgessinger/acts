@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Acts/Geometry/TrackingGeometry.hpp"
+#include "Acts/Plugins/EDM4hep/EDM4hepUtil.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "ActsExamples/EventData/SimHit.hpp"
 #include "ActsExamples/EventData/SimParticle.hpp"
@@ -35,6 +36,8 @@ struct ParticleInfo;
 }
 
 class DD4hepDetector;
+
+using EDM4hepSimHitAssociation = std::vector<edm4hep::SimTrackerHit>;
 
 /// Read particles from EDM4hep.
 ///
@@ -117,7 +120,7 @@ class EDM4hepSimInputConverter final : public PodioInputConverter {
       this, "OutputParticlesSimulation"};
 
   WriteDataHandle<SimHitContainer> m_outputSimHits{this, "OutputSimHits"};
-  WriteDataHandle<std::vector<edm4hep::SimTrackerHit>>
+  WriteDataHandle<Acts::EDM4hepUtil::SimHitAssociation>
       m_outputSimHitAssociation{this, "OutputSimHitAssociation"};
 
   WriteDataHandle<SimVertexContainer> m_outputSimVertices{this,
