@@ -89,17 +89,17 @@ def main(
     s.addWhiteboardAlias("particles", "particles_input")
 
     # Do we digitize all particles? Otherwise, we don't need this yet
-    # addSimParticleSelection(
-    #     s,
-    #     ParticleSelectorConfig(
-    #         rho=(0.0, 24 * u.mm),
-    #         absZ=(0.0, 1.0 * u.m),
-    #         eta=(-4.0, 4.0),
-    #         pt=(150 * u.MeV, None),
-    #         removeNeutral=True,
-    #     ),
-    #     logLevel=logLevel,
-    # )
+    addSimParticleSelection(
+        s,
+        ParticleSelectorConfig(
+            rho=(0.0, 24 * u.mm),
+            absZ=(0.0, 1.0 * u.m),
+            eta=(-4.0, 4.0),
+            pt=(150 * u.MeV, None),
+            removeNeutral=True,
+        ),
+        logLevel=logLevel,
+    )
 
     # Add digitization if enabled
     addDigitization(
@@ -114,15 +114,92 @@ def main(
     )
 
     # Removed since reconstruction is done later
-    # addDigiParticleSelection(
+    addDigiParticleSelection(
+        s,
+        ParticleSelectorConfig(
+            # we are only interested in the hard scatter vertex
+            # primaryVertexId=(1, 2),
+            rho=(0.0, 24 * u.mm),
+            absZ=(0.0, 1.0 * u.m),
+            eta=(-3.0, 3.0),
+            # using something close to 1 to include for sure
+            pt=(0.999 * u.GeV, None),
+            measurements=(6, None),
+            removeNeutral=True,
+            removeSecondaries=False,
+            # nMeasurementsGroupMin=measurementCounter,
+        ),
+        logLevel=logLevel,
+    )
+
+    # from acts.examples.reconstruction import (
+    #     addSeeding,
+    #     addCKFTracks,
+    #     TrackSelectorConfig,
+    #     CkfConfig,
+    #     SeedingAlgorithm,
+    #     SeedFinderConfigArg,
+    # )
+    #
+    # oddSeedingSel = geoDir / "config/odd-seeding-config.json"
+    # addSeeding(
     #     s,
-    #     ParticleSelectorConfig(
-    #         pt=(1.0 * u.GeV, None),
-    #         eta=(-3.0, 3.0),
-    #         measurements=(9, None),
-    #         removeNeutral=True,
+    #     trackingGeometry,
+    #     field,
+    #     seedingAlgorithm=SeedingAlgorithm.Default,
+    #     particleHypothesis=acts.ParticleHypothesis.pion,
+    #     seedFinderConfigArg=SeedFinderConfigArg(
+    #         r=(33 * u.mm, 200 * u.mm),
+    #         # kills efficiency at |eta|~2
+    #         deltaR=(1 * u.mm, 300 * u.mm),
+    #         collisionRegion=(-250 * u.mm, 250 * u.mm),
+    #         z=(-2000 * u.mm, 2000 * u.mm),
+    #         maxSeedsPerSpM=40,
+    #         sigmaScattering=5,
+    #         radLengthPerSeed=0.1,
+    #         minPt=0.5 * u.GeV,
+    #         impactMax=3 * u.mm,
+    #         zBinEdges=[-1600, -1000, -600, 0, 600, 1000, 1600],
     #     ),
-    #     logLevel=logLevel,
+    #     initialSigmas=[
+    #         1 * u.mm,
+    #         1 * u.mm,
+    #         1 * u.degree,
+    #         1 * u.degree,
+    #         0.1 / u.GeV,
+    #         1 * u.ns,
+    #     ],
+    #     initialSigmaQoverPt=0.1 * u.e / u.GeV,
+    #     initialSigmaPtRel=0.1,
+    #     initialVarInflation=[1e0, 1e0, 1e0, 1e0, 1e0, 1e0],
+    #     geoSelectionConfigFile=oddSeedingSel,
+    #     outputDirRoot=None,
+    # )
+    #
+    # addCKFTracks(
+    #     s,
+    #     trackingGeometry,
+    #     field,
+    #     trackSelectorConfig=TrackSelectorConfig(
+    #         pt=(0.7 * u.GeV, None),
+    #         absEta=(None, 3.5),
+    #         nMeasurementsMin=6,
+    #         maxHolesAndOutliers=3,
+    #     ),
+    #     ckfConfig=CkfConfig(
+    #         chi2CutOffMeasurement=15.0,
+    #         chi2CutOffOutlier=25.0,
+    #         numMeasurementsCutOff=1,
+    #         seedDeduplication=True,
+    #         stayOnSeed=True,
+    #     ),
+    #     twoWay=True,
+    #     outputDirRoot=Path.cwd() / "reco",
+    #     outputDirCsv=None,
+    #     writeCovMat=None,
+    #     writeTrackStates=None,
+    #     writeTrackSummary=True,
+    #     writePerformance=True,
     # )
 
     measConv = PodioMeasurementOutputConverter(
