@@ -1,0 +1,7 @@
+#set lhapdf /Users/pagessin/dev/ci-dependencies/.spack-env/view/bin/lhapdf-config
+
+import model sm-no_b_mass
+generate p p > t t~ [QCD]
+
+output proc_output_mg -f
+exit

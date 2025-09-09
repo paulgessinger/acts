@@ -1,12 +1,21 @@
+finding_plots = expand("trackeff_vs_{q}", q=["eta", "pT", "phi"])\
+            + ["nHoles_vs_eta", "nMeasurements_vs_eta", "nOutliers_vs_eta"]
+
+fitting_plots = expand("reswidth_{q}_vs_eta", q=["d0", "z0", "qop", "phi", "theta", "t"])
+
+samples = []\
+  + expand("pg_mu_pt{pt}", pt=[100])
+
 rule all:
   input: 
-    expand("reco/pg_mu_pt{pt}.edm4hep.root", pt=[100])
+    expand("reco/{sample}.edm4hep.root", sample=samples),
+    expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots)
 
 rule particle_gun:
   output:
     "gen/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.gz"
   params:
-    events=1000
+    events=10000
   threads: workflow.cores
   shell:
     "./with_env.sh ./gen_particle_gun.py -j {threads} --output {output} --type {wildcards.particle} --pt {wildcards.pt} --events {params.events}"
@@ -50,3 +59,15 @@ rule reco:
   threads: workflow.cores
   shell:
     "./with_env.sh python3 ./reconstruction.py {input} {output[0]} --jobs {threads} --loglevel VERBOSE"
+
+rule reco_plots:
+  input:
+    "reco/performance_finding_ckf_{sample}.root",
+    "reco/performance_fitting_ckf_{sample}.root"
+  output: 
+    [f"reco/plots/{{sample}}/{plot}.pdf" for plot in finding_plots+fitting_plots]
+  params:
+    finding_plots = ','.join(finding_plots),
+    fitting_plots = ','.join(fitting_plots)
+  shell:
+    "./with_env.sh python3 ./plot_basic_diagnostics.py {input} reco/plots/{wildcards.sample} --finding-plots {params.finding_plots} --fitting-plots {params.fitting_plots}"

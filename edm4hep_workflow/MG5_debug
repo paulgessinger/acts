@@ -1,0 +1,85 @@
+#************************************************************
+#*                     MadGraph5_aMC@NLO                    *
+#*                                                          *
+#*                *                       *                 *
+#*                  *        * *        *                   *
+#*                    * * * * 5 * * * *                     *
+#*                  *        * *        *                   *
+#*                *                       *                 *
+#*                                                          *
+#*                                                          *
+#*         VERSION 2.9.20                2024-06-17         *
+#*                                                          *
+#*    The MadGraph5_aMC@NLO Development Team - Find us at   *
+#*    https://server06.fynu.ucl.ac.be/projects/madgraph     *
+#*                                                          *
+#************************************************************
+#*                                                          *
+#*               Command File for MadGraph5_aMC@NLO         *
+#*                                                          *
+#*     run as ./bin/mg5_aMC  filename                       *
+#*                                                          *
+#************************************************************
+set group_subprocesses Auto
+set ignore_six_quark_processes False
+set low_mem_multicore_nlo_generation False
+set complex_mass_scheme False
+set gauge unitary
+set loop_optimized_output True
+set loop_color_flows False
+set max_npoint_for_channel 0
+set default_unset_couplings 99
+set max_t_for_channel 99
+set zerowidth_tchannel True
+import model sm-no_b_mass
+Traceback (most recent call last):
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/models/model_reader.py", line 234, in set_parameters_and_couplings
+    exec("locals()[\'%s\'] = %s" % (param.name, param.expr))
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 1, in <module>
+NameError: name 'mdl_lamWS' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/extended_cmd.py", line 1541, in onecmd
+    return self.onecmd_orig(line, **opt)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/extended_cmd.py", line 1490, in onecmd_orig
+    return func(arg, **opt)
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/master_interface.py", line 281, in do_import
+    self.cmd.do_import(self, *args, **opts)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/madgraph_interface.py", line 5588, in do_import
+    self.import_command_file(args[1])
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/extended_cmd.py", line 1689, in import_command_file
+    self.exec_cmd(line, precmd=True)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/extended_cmd.py", line 1570, in exec_cmd
+    stop = Cmd.onecmd_orig(current_interface, line, **opt)
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/extended_cmd.py", line 1490, in onecmd_orig
+    return func(arg, **opt)
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/master_interface.py", line 281, in do_import
+    self.cmd.do_import(self, *args, **opts)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/madgraph/interface/madgraph_interface.py", line 5514, in do_import
+    self._curr_model = import_ufo.import_model(args[1], prefix=prefix,
+                       ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+        complex_mass_scheme=self.options['complex_mass_scheme'],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        options=options)
+        ^^^^^^^^^^^^^^^^
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/models/import_ufo.py", line 309, in import_model
+    model.restrict_model(restrict_file, rm_parameter=not decay,
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       keep_external=keep_external, complex_mass_scheme=complex_mass_scheme)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/models/import_ufo.py", line 1920, in restrict_model
+    model_definitions = self.set_parameters_and_couplings(param_card,
+                                    complex_mass_scheme=complex_mass_scheme,
+                                    auto_width=self.modify_autowidth)
+  File "/Users/pagessin/spack/opt/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_pl/darwin-aarch64/madgraph5amc-2.9.20-iln6q7lw44x3alzv7blucfn5djtqkvn7/models/model_reader.py", line 237, in set_parameters_and_couplings
+    raise MadGraph5Error(msg)
+madgraph.MadGraph5Error: Unable to evaluate mdl_lamWS__exp__2 = mdl_lamWS**2: raise error: name 'mdl_lamWS' is not defined
+Fail to write options with error No model currently active, please import a model!
