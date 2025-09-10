@@ -14,38 +14,62 @@ def split(delim: str) -> Callable[[str], list[str]]:
     return fn
 
 
+def plot_from_file(
+    file_path: Path,
+    plots: list[str],
+    output_dir: Path,
+    output_file: Path,
+    canvas: ROOT.TCanvas,
+    label: str | None,
+):
+    """Open ROOT file, find keys, and draw specified plots."""
+    root_file = ROOT.TFile.Open(str(file_path))
+    keys = [k.GetName() for k in root_file.GetListOfKeys()]
+
+    if label is not None:
+        text = ROOT.TText(0.12, 0.95, label)
+        text.SetNDC()
+    for key in sorted(plots):
+        canvas.Clear()
+
+        obj = root_file.Get(key)
+        assert key in keys, f"Object {key} not found in file"
+        obj.Draw()
+
+        if label is not None:
+            text.Draw("same")
+
+        canvas.Print(f"{output_file}", obj.GetTitle())  # add page
+        canvas.Print(str(output_dir / f"{key}.pdf"))
+
+
 def main(
     finding: Annotated[Path, typer.Argument(dir_okay=False, exists=True)],
     fitting: Annotated[Path, typer.Argument(dir_okay=False, exists=True)],
     output: Annotated[Path, typer.Argument(file_okay=False)],
     finding_plots: Annotated[str, typer.Option(..., parser=split(","))],
     fitting_plots: Annotated[str, typer.Option(..., parser=split(","))],
+    label: str | None = None,
 ):
     print(finding, fitting)
 
     output.mkdir(parents=True, exist_ok=True)
 
-    finding = ROOT.TFile.Open(str(finding))
-    finding_keys = [k.GetName() for k in finding.GetListOfKeys()]
+    ROOT.gStyle.SetOptStat(0)
 
-    c = ROOT.TCanvas("c", "c", 800, 600)
+    outfile = output / f"plots_{output.name}.pdf"
 
-    for key in finding_plots:
-        obj = finding.Get(key)
-        assert key in finding_keys, f"Object {key} not found in file"
-        obj.Draw()
-        c.SaveAs(str(output / f"{key}.pdf"))
+    canvas = ROOT.TCanvas("c", "c", 800, 600)
+    canvas.Print(f"{outfile}[")  # open pdf
 
-    fitting = ROOT.TFile.Open(str(fitting))
-    fitting_keys = [k.GetName() for k in fitting.GetListOfKeys()]
+    plot_from_file(
+        finding, finding_plots, output, output_file=outfile, canvas=canvas, label=label
+    )
+    plot_from_file(
+        fitting, fitting_plots, output, output_file=outfile, canvas=canvas, label=label
+    )
 
-    print(fitting_keys)
-
-    for key in fitting_plots:
-        obj = fitting.Get(key)
-        assert key in fitting_keys, f"Object {key} not found in file"
-        obj.Draw()
-        c.SaveAs(str(output / f"{key}.pdf"))
+    canvas.Print(f"{outfile}]")  # close pdf
 
 
 typer.run(main)

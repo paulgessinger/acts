@@ -3,6 +3,9 @@ from pathlib import Path
 import re
 import typer
 import acts
+from typing import Annotated
+
+from config import Config
 
 
 def main(
@@ -11,6 +14,7 @@ def main(
     jobs: int = -1,
     seed: int = 998877,
     logLevel: str = "INFO",
+    config_path: Annotated[Path | None, typer.Option("--config")] = None,
 ):
     from acts import UnitConstants as u
     import acts.examples
@@ -39,6 +43,8 @@ def main(
     )
 
     print(input, "->", output)
+
+    config = Config.load(config_path)
 
     logLevel = getattr(acts.logging, logLevel.upper(), acts.logging.INFO)
 
@@ -95,6 +101,7 @@ def main(
         sortSimHitsInTime=True,
         dd4hepDetector=detector,
         trackingGeometry=trackingGeometry,
+        **config.sim_hit_reading.model_dump(),
     )
     s.addAlgorithm(edm4hepConverter)
     s.addWhiteboardAlias("particles", "particles_input")
@@ -180,6 +187,7 @@ def main(
         initialVarInflation=[1e0, 1e0, 1e0, 1e0, 1e0, 1e0],
         geoSelectionConfigFile=oddSeedingSel,
         outputDirRoot=None,
+        logLevel=logLevel,
     )
 
     # Add CKF tracking
@@ -207,6 +215,7 @@ def main(
         writeTrackStates=None,
         writeTrackSummary=True,
         writePerformance=True,
+        logLevel=logLevel,
     )
 
     podioWriter = PodioWriter(
