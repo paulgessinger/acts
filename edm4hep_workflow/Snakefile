@@ -4,12 +4,13 @@ finding_plots = expand("trackeff_vs_{q}", q=["eta", "pT", "phi"])\
 fitting_plots = expand("reswidth_{q}_vs_eta", q=["d0", "z0", "qop", "phi", "theta", "t"])
 
 samples = []\
-  + expand("pg_mu_pt{pt}", pt=[100])
+  + expand("pg_mu_pt{pt}", pt=[1, 10, 100])
 
 rule all:
   input: 
     expand("reco/{sample}.edm4hep.root", sample=samples),
-    expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots)
+    expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
+    expand("reco/plots/{sample}/plots_{sample}.pdf", sample=samples),
 
 rule particle_gun:
   output:
@@ -47,7 +48,7 @@ rule digi:
     "digi/{sample}.edm4hep.root"
   threads: workflow.cores
   shell:
-    "./with_env.sh python3 ./digitization.py {input} {output} --jobs {threads}"
+    "./with_env.sh python3 ./digitization.py {input} {output} --jobs {threads} --config config.toml"
 
 rule reco:
   input:
@@ -58,16 +59,17 @@ rule reco:
     "reco/performance_fitting_ckf_{sample}.root"
   threads: workflow.cores
   shell:
-    "./with_env.sh python3 ./reconstruction.py {input} {output[0]} --jobs {threads} --loglevel VERBOSE"
+    "./with_env.sh python3 ./reconstruction.py {input} {output[0]} --jobs {threads} --loglevel INFO --config config.toml"
 
 rule reco_plots:
   input:
     "reco/performance_finding_ckf_{sample}.root",
     "reco/performance_fitting_ckf_{sample}.root"
   output: 
-    [f"reco/plots/{{sample}}/{plot}.pdf" for plot in finding_plots+fitting_plots]
+    [f"reco/plots/{{sample}}/{plot}.pdf" for plot in finding_plots+fitting_plots],
+    "reco/plots/{sample}/plots_{sample}.pdf"
   params:
     finding_plots = ','.join(finding_plots),
     fitting_plots = ','.join(fitting_plots)
   shell:
-    "./with_env.sh python3 ./plot_basic_diagnostics.py {input} reco/plots/{wildcards.sample} --finding-plots {params.finding_plots} --fitting-plots {params.fitting_plots}"
+    "./with_env.sh python3 ./plot_basic_diagnostics.py {input} reco/plots/{wildcards.sample} --finding-plots {params.finding_plots} --fitting-plots {params.fitting_plots} --label {wildcards.sample}"

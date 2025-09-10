@@ -1,0 +1,3 @@
+[sim_hit_reading]
+particleZ = [-3000, 3000]
+particleR = [0, 1150]
