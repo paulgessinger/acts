@@ -10,6 +10,8 @@ def main(
     jobs: int = -1,
     seed: int = 998877,
     logLevel: str = "INFO",
+    skip: int = 0,
+    events: int | None = None,
 ):
     from acts import UnitConstants as u
     import acts.examples
@@ -34,7 +36,7 @@ def main(
 
     rnd = acts.examples.RandomNumbers(seed=seed)
 
-    s = Sequencer(numThreads=jobs)
+    s = Sequencer(numThreads=jobs, skip=skip, events=events)
     s.config.logLevel = acts.logging.DEBUG
 
     # Get detector and field
