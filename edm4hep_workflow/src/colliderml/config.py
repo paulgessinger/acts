@@ -1,5 +1,6 @@
+from enum import StrEnum
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 import pydantic
 import tomllib
 
@@ -28,20 +29,27 @@ class Config(TomlConfigBase):
     sim_hit_reading: SimHitReading = pydantic.Field(default_factory=SimHitReading)
 
 
-class CardCustomization(pydantic.BaseModel):
-    pass
-
-
 class CardCustomizations(pydantic.BaseModel):
-    run_card: CardCustomization = pydantic.Field(default_factory=CardCustomization)
-    shower_card: CardCustomization = pydantic.Field(default_factory=CardCustomization)
-    pythia8_card: CardCustomization = pydantic.Field(default_factory=CardCustomization)
+    run_card: dict[str, Any] = pydantic.Field(default_factory=dict)
+    shower_card: dict[str, Any] = pydantic.Field(default_factory=dict)
+    pythia8_card: dict[str, Any] = pydantic.Field(default_factory=dict)
+
+
+class RunMode(StrEnum):
+    nlo_fxfx = "nlo_fxfx"
+    lo_mlm = "lo_mlm"
 
 
 class SampleConfig(TomlConfigBase):
+    label: str
 
     model: str
+    run_mode: RunMode
 
-    definitions: list[str] | None = None
+    definitions: str = ""
 
     generate_command: str
+
+    card_customizations: CardCustomizations = pydantic.Field(
+        default_factory=CardCustomizations
+    )

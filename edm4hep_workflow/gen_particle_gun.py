@@ -6,7 +6,7 @@ import acts.examples.hepmc3
 
 from acts import UnitConstants as u
 
-from args import make_parser
+from edm4hep_workflow.args import make_parser
 
 p = make_parser()
 p.add_argument("--type", required=True, choices=["mu", "pi", "el"])

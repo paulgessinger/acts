@@ -7,6 +7,9 @@ import typer
 import ROOT
 
 
+app = typer.Typer()
+
+
 def split(delim: str) -> Callable[[str], list[str]]:
     def fn(arg: str):
         return arg.split(delim)
@@ -72,4 +75,5 @@ def main(
     canvas.Print(f"{outfile}]")  # close pdf
 
 
-typer.run(main)
+if __name__ == "__main__":
+    app()

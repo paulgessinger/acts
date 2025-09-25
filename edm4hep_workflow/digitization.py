@@ -4,7 +4,7 @@ import typer
 import acts
 from typing import Annotated
 
-from config import Config
+from edm4hep_workflow.config import Config
 
 
 def main(
