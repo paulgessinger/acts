@@ -7,7 +7,7 @@ from DDSim.DD4hepSimulation import DD4hepSimulation
 from acts.examples.odd import getOpenDataDetectorDirectory
 from g4units import GeV
 
-from args import make_parser
+from edm4hep_workflow.args import make_parser
 
 p = make_parser()
 p.add_argument("--input", type=Path, required=True)
