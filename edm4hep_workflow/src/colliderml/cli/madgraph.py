@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from contextlib import ExitStack
+import contextlib
 import os
 import logging
 from pathlib import Path
@@ -74,7 +74,7 @@ def update_madgraph_card(file_path: Path, updates: dict[str, str], log_base: Pat
         prefix, val, infix, key, suffix = m.groups()
 
         existing.add(key)
-        if key in updates:
+        if key in updates and str(updates[key]) != val:
             logger.debug("Updating key %s: %s -> %s", key, val, updates[key])
             val = updates[key]
         return prefix + str(val) + infix + key + suffix
@@ -86,6 +86,27 @@ def update_madgraph_card(file_path: Path, updates: dict[str, str], log_base: Pat
         updated += f"\n{updates[key]} = {key} ! added after the fact\n"
 
     file_path.write_text(updated)
+
+
+@contextlib.contextmanager
+def with_madgraph_card_customization(
+    file_path: Path, updates: dict[str, str], log_base: Path
+):
+    logger.info(
+        "Applying temporary Madgraph card customizations to [b]%s[/b]",
+        file_path.relative_to(log_base),
+    )
+    original = file_path.read_text()
+    update_madgraph_card(file_path, updates, log_base)
+
+    try:
+        yield
+    finally:
+        logger.info(
+            "Restoring original Madgraph card [b]%s[/b]",
+            file_path.relative_to(log_base),
+        )
+        file_path.write_text(original)
 
 
 def parse_pythia8_card(path_or_string: Path | str) -> dict[str, str]:
@@ -121,7 +142,7 @@ def update_pythia8_card(file_path: Path, updates: dict[str, str], log_base: Path
         prefix, key, infix, val, suffix = m.groups()
 
         existing.add(key)
-        if key in updates:
+        if key in updates and str(updates[key]) != val:
             logger.debug("Updating key %s: %s -> %s", key, val, updates[key])
             if val is None:
                 suffix = " " + suffix
@@ -134,7 +155,6 @@ def update_pythia8_card(file_path: Path, updates: dict[str, str], log_base: Path
         return prefix + key + infix + str(val) + suffix
 
     ex = r"^(\s*?)(\w+)(\s*=\s*)(.*?)(\s?#\s.*)"
-    print(re.findall(ex, raw))
     updated = re.sub(ex, repl, raw, flags=re.MULTILINE)
 
     for key in set(updates.keys()) - existing:
@@ -207,7 +227,7 @@ def init(
     logger.info("Process:\n%s", sample_config.generate_command)
     logger.info("Run mode: %s", sample_config.run_mode)
 
-    with ExitStack() as stack:
+    with contextlib.ExitStack() as stack:
         if scratch_dir is None:
             scratch_dir = Path(stack.enter_context(tempfile.TemporaryDirectory()))
 
@@ -237,8 +257,7 @@ exit
         script_file.write_text(mg_script)
 
         logger.info("Running Madgraph...")
-        mg.run(script_file, cwd=scratch_dir)
-
+        # mg.run(script_file, cwd=scratch_dir)
         logger.info(
             "Applying run card and shower card customizations for run mode %s",
             sample_config.run_mode,
@@ -246,6 +265,28 @@ exit
         output_dir = scratch_dir / MG_OUTPUT_DIR
 
         apply_card_customizations(sample_config, output_dir)
+
+        generate_events_exe = output_dir / "bin" / "generate_events"
+        if not generate_events_exe.exists():
+            raise FileNotFoundError(generate_events_exe)
+
+        if sample_config.run_mode == RunMode.nlo_fxfx:
+            logger.info("Build Grids/Envelopes (zero events)")
+
+            with with_madgraph_card_customization(
+                output_dir / "Cards" / "run_card.dat",
+                {"nevents": "10", "req_acc": "0.001"},
+                log_base=output_dir,
+            ):
+
+                cmd = [str(generate_events_exe), "-f", "--name", "run_build"]
+                logger.info(
+                    f"Running grid/envelope compilation via {" ".join(cmd)}"
+                )
+                subprocess.run(cmd, cwd=output_dir, check=True)
+
+        elif sample_config.run_mode == RunMode.lo_mlm:
+            raise NotImplementedError("LO MLM not implemented yet")
 
         # @TODO: madgraph might already be creating a tarball in amcatnlo.tar.gz
         logger.info("Packing output to %s", output)
