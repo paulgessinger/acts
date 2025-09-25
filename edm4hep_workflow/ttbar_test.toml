@@ -1,0 +1,25 @@
+model = "sm-no_b_mass"
+
+definitions = []
+
+generate_command = """
+generate p p > t t~ [QCD]
+add process p p > t t~ j [QCD]
+add process p p > t t~ j j [QCD]
+"""
+
+[card_customizations]
+
+[run_card]
+parton_shower = "PYTHIA8"
+# 14 TeV center of mass energy
+ebeam1 = 7000.0
+ebeam2 = 7000.0
+ptj = 20.0 # minimum jet pT
+
+[shower_card]
+
+Qcut = 40.0
+time_shower_me_corrections = "F"
+
+[pythia8_card]
