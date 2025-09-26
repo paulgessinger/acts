@@ -15,6 +15,11 @@ dependencies = [
     "typer>=0.17.3",
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+]
+
 [project.scripts]
 colliderml = "colliderml.cli.cli:app"
 
@@ -24,3 +29,8 @@ build-backend = "uv_build"
 
 [tool.setuptools.packages.find]
 include = ["edm4hep_workflow*"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]

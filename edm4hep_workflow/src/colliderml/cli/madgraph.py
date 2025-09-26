@@ -34,6 +34,7 @@ class Madgraph:
                 ["which", "mg5_aMC"], capture_output=True, text=True, check=True
             ).stdout.strip()
         )
+        self._exe = self._exe.resolve()
         logger.debug("Found Madgraph executable at %s", self._exe)
 
     def run(self, script: Path, **kwargs):
@@ -64,7 +65,7 @@ def parse_madgraph_card(path_or_string: Path | str) -> dict[str, str]:
 
 
 def update_madgraph_card(file_path: Path, updates: dict[str, str], log_base: Path):
-    logger.info("Updating Madgraph card [b]%s[/b]", file_path.relative_to(log_base))
+    logger.info("Updating Madgraph card [b]%s[/b] with overrides %s", file_path.relative_to(log_base), updates)
 
     raw = file_path.read_text()
 
@@ -74,7 +75,7 @@ def update_madgraph_card(file_path: Path, updates: dict[str, str], log_base: Pat
         prefix, val, infix, key, suffix = m.groups()
 
         existing.add(key)
-        if key in updates and str(updates[key]) != val:
+        if key in updates:
             logger.debug("Updating key %s: %s -> %s", key, val, updates[key])
             val = updates[key]
         return prefix + str(val) + infix + key + suffix
@@ -121,7 +122,7 @@ def parse_pythia8_card(path_or_string: Path | str) -> dict[str, str]:
         if re.match(r"^\s*#.*$", line):
             continue
 
-        m = re.match(r"^\s*?(?P<key>\w+)\s*=\s*(?P<val>[^#\n]+)\b", line)
+        m = re.match(r"^\s*?(?P<key>[\w:]+)\s*=\s*(?P<val>[^#\n]+?)(?:\s*#.*)?$", line)
         if m is None:
             continue
         key = m.group("key")
@@ -132,7 +133,7 @@ def parse_pythia8_card(path_or_string: Path | str) -> dict[str, str]:
 
 
 def update_pythia8_card(file_path: Path, updates: dict[str, str], log_base: Path):
-    logger.info("Updating Pythia8 card [b]%s[/b]", file_path.relative_to(log_base))
+    logger.info("Updating Pythia8 card [b]%s[/b] with overrides %s", file_path.relative_to(log_base), updates)
 
     raw = file_path.read_text()
 
@@ -142,7 +143,8 @@ def update_pythia8_card(file_path: Path, updates: dict[str, str], log_base: Path
         prefix, key, infix, val, suffix = m.groups()
 
         existing.add(key)
-        if key in updates and str(updates[key]) != val:
+        logger.debug("matched %s = %s", key, val)
+        if key in updates :
             logger.debug("Updating key %s: %s -> %s", key, val, updates[key])
             if val is None:
                 suffix = " " + suffix
@@ -154,7 +156,7 @@ def update_pythia8_card(file_path: Path, updates: dict[str, str], log_base: Path
 
         return prefix + key + infix + str(val) + suffix
 
-    ex = r"^(\s*?)(\w+)(\s*=\s*)(.*?)(\s?#\s.*)"
+    ex = r"^(\s*?)([\w:]+)(\s*=\s*)(.*?)(\s?#\s.*)"
     updated = re.sub(ex, repl, raw, flags=re.MULTILINE)
 
     for key in set(updates.keys()) - existing:
@@ -172,6 +174,62 @@ def backup_file(file_path: Path, suffix: str, log_base: Path):
         new_path.relative_to(log_base),
     )
     shutil.copy(file_path, new_path)
+
+
+def fix_fortran_dollar_syntax(file_path: Path, log_base: Path):
+    """
+    Fix non-standard Fortran $ format descriptor with standard advance='no'.
+    
+    Replaces patterns like:
+    write(26,'(x,i1,a2$)') with write(26,'(x,i1,a2)',advance='no')
+    """
+    if not file_path.exists():
+        logger.warning("Fortran file not found: %s", file_path.relative_to(log_base))
+        return
+    
+    logger.info("Fixing Fortran syntax in [b]%s[/b]", file_path.relative_to(log_base))
+    
+    content = file_path.read_text()
+    original_content = content
+    
+    # Pattern to match write statements with $ format descriptor
+    # Matches: write(unit,'(format$)') args
+    pattern = r"write\(([^,]+),\s*'\(([^']*)\$\)'\)\s*([^\n]*)"
+    
+    def replace_dollar_format(match):
+        unit = match.group(1)
+        format_str = match.group(2)  # format without the $
+        args = match.group(3)
+        
+        # Construct the replacement with advance='no'
+        return f"write({unit},'({format_str})',advance='no') {args}"
+    
+    content = re.sub(pattern, replace_dollar_format, content)
+    
+    if content != original_content:
+        # Create backup before modifying
+        backup_file(file_path, ".orig", log_base)
+        file_path.write_text(content)
+        logger.debug("Fixed non-standard Fortran $ syntax in %s", file_path.name)
+    else:
+        logger.debug("No Fortran $ syntax found in %s", file_path.name)
+
+
+def fix_madgraph_fortran(output_dir: Path):
+    """Fix non-standard Fortran syntax in MadGraph generated files."""
+    logger.info("Fixing non-standard Fortran syntax in MadGraph files")
+    
+    # Files that need Fortran fixes
+    fortran_files = [
+        "SubProcesses/symmetry_fks_v3.f",
+        "SubProcesses/write_ajob.f",
+    ]
+    
+    for file_rel_path in fortran_files:
+        file_path = output_dir / file_rel_path
+        if not file_path.exists(): 
+            continue
+        fix_fortran_dollar_syntax(file_path, output_dir)
 
 
 def apply_card_customizations(sample_config: SampleConfig, output_dir: Path):
@@ -209,7 +267,26 @@ def apply_card_customizations(sample_config: SampleConfig, output_dir: Path):
             log_base=output_dir,
         )
     elif sample_config.run_mode == RunMode.lo_mlm:
-        raise NotImplementedError("LO MLM not implemented yet")
+        logger.info("Applying Pythia8 card customizations for run mode [b]%s[/b]", sample_config.run_mode)
+        pythia8_card_path: Path|None = None
+        for candidate in ["pythia8_card.dat", "pythia8_card_default.dat"]:
+            candidate_path = cards_dir / candidate
+            if candidate_path.exists():
+                pythia8_card_path = candidate_path
+                break
+        if pythia8_card_path is None:
+            raise FileNotFoundError("Found no pythia8_card.dat in Cards/")
+
+        pythia8_data_content = parse_pythia8_card(pythia8_card_path)
+        logger.debug("pythia8 data settings: %s", pythia8_data_content)
+
+        backup_file(pythia8_card_path, ".orig", log_base=output_dir)
+
+        update_pythia8_card(
+            pythia8_card_path,
+            sample_config.card_customizations.pythia8_card,
+            log_base=output_dir,
+        )
 
 
 @app.command()
@@ -257,14 +334,19 @@ exit
         script_file.write_text(mg_script)
 
         logger.info("Running Madgraph...")
-        # mg.run(script_file, cwd=scratch_dir)
+        mg.run(script_file, cwd=scratch_dir)
         logger.info(
             "Applying run card and shower card customizations for run mode %s",
             sample_config.run_mode,
         )
         output_dir = scratch_dir / MG_OUTPUT_DIR
 
+        # Fix non-standard Fortran syntax
+        fix_madgraph_fortran(output_dir)
+
         apply_card_customizations(sample_config, output_dir)
+
+        return
 
         generate_events_exe = output_dir / "bin" / "generate_events"
         if not generate_events_exe.exists():
@@ -275,7 +357,7 @@ exit
 
             with with_madgraph_card_customization(
                 output_dir / "Cards" / "run_card.dat",
-                {"nevents": "10", "req_acc": "0.001"},
+                {"nevents": "0", "req_acc": "0.001"},
                 log_base=output_dir,
             ):
 
@@ -286,7 +368,20 @@ exit
                 subprocess.run(cmd, cwd=output_dir, check=True)
 
         elif sample_config.run_mode == RunMode.lo_mlm:
-            raise NotImplementedError("LO MLM not implemented yet")
+            # Daniel reports it's not possible to precompile this, but lets see
+            logger.info("Build Grids/Envelopes (zero events)")
+
+            with with_madgraph_card_customization(
+                output_dir / "Cards" / "run_card.dat",
+                {"nevents": "0", "req_acc": "0.001"},
+                log_base=output_dir,
+            ):
+
+                cmd = [str(generate_events_exe), "-f", "--name", "run_build"]
+                logger.info(
+                    f"Running grid/envelope compilation via {" ".join(cmd)}"
+                )
+                subprocess.run(cmd, cwd=output_dir, check=True)
 
         # @TODO: madgraph might already be creating a tarball in amcatnlo.tar.gz
         logger.info("Packing output to %s", output)
