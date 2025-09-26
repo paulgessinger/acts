@@ -25,14 +25,13 @@ class SimHitReading(pydantic.BaseModel):
 
 
 class Config(TomlConfigBase):
-
     sim_hit_reading: SimHitReading = pydantic.Field(default_factory=SimHitReading)
 
 
 class CardCustomizations(pydantic.BaseModel):
-    run_card: dict[str, Any] = pydantic.Field(default_factory=dict)
-    shower_card: dict[str, Any] = pydantic.Field(default_factory=dict)
-    pythia8_card: dict[str, Any] = pydantic.Field(default_factory=dict)
+    run_card: dict[str, str] = pydantic.Field(default_factory=dict)
+    shower_card: dict[str, str] = pydantic.Field(default_factory=dict)
+    pythia8_card: dict[str, str] = pydantic.Field(default_factory=dict)
 
 
 class RunMode(StrEnum):

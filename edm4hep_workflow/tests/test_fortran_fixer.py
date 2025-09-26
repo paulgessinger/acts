@@ -90,9 +90,9 @@ class TestFortranFixer:
         # Check all variations were fixed
         expected_replacements = [
             "write(10,'(i5)',advance='no') num1",
-            "write(20,'(f10.3)',advance='no') real_val", 
+            "write(20,'(f10.3)',advance='no') real_val",
             "write(30,'(a10)',advance='no') text_val",
-            "write(40,'(e12.4)',advance='no') sci_val"
+            "write(40,'(e12.4)',advance='no') sci_val",
         ]
 
         for expected in expected_replacements:
@@ -118,6 +118,9 @@ class TestFortranFixer:
         fixed_content = test_file.read_text()
 
         # Check complex formats were handled correctly
-        assert "write(unit,'(i3,1x,f8.2,1x,a,)',advance='no') id, value, label, extra" in fixed_content
+        assert (
+            "write(unit,'(i3,1x,f8.2,1x,a,)',advance='no') id, value, label, extra"
+            in fixed_content
+        )
         assert "write(26,'(2i4,3f10.3)',advance='no') n1, n2, x, y, z" in fixed_content
         assert "$)'" not in fixed_content

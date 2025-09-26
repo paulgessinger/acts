@@ -17,7 +17,6 @@ import numpy as np
 
 
 def main(infile: Path):
-
     positions = []
 
     with infile.open() as fh:

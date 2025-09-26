@@ -1,1 +1,9 @@
-/scratch_*
++/scratch_*
++*tar.gz
+/*.hepmc
+/*.hepmc.gz
+/*.hepmc3.gz
+/*.hepmc.zst
+/*.hepmc3.zst
+/*.tar.gz
+*.pdf

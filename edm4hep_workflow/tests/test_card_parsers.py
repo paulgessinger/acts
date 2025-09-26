@@ -112,9 +112,9 @@ class TestPythia8CardParser:
     def test_parse_pythia8_card(self, test_data_dir):
         """Test parsing of real pythia8_card_default.dat file."""
         pythia8_card_path = test_data_dir / "pythia8_card_default.dat"
-        assert (
-            pythia8_card_path.exists()
-        ), "pythia8_card_default.dat test data not found"
+        assert pythia8_card_path.exists(), (
+            "pythia8_card_default.dat test data not found"
+        )
 
         parsed = parse_pythia8_card(pythia8_card_path)
 
@@ -152,6 +152,19 @@ PartonLevel:ISR = on  # initial state radiation
             assert key in parsed, f"Key '{key}' not found"
             assert parsed[key] == expected_val
 
+    def test_parse_pythia8_card_duplicate_keys(self):
+        """Test that duplicate keys raise an error."""
+        test_content = """
+# Pythia8 configuration
+Main:numberOfEvents = 1000  # number of events
+Beams:idA = 2212  # proton
+Main:numberOfEvents = 500  # duplicate!
+"""
+        with pytest.raises(
+            ValueError, match=r"Duplicate key 'Main:numberOfEvents' found on line 5"
+        ):
+            parse_pythia8_card(test_content)
+
 
 class TestPythia8CardUpdate:
     """Tests for Pythia8 card updating."""
@@ -160,45 +173,44 @@ class TestPythia8CardUpdate:
         """Test updating a pythia8 card with new values."""
         # Check if shower card exists (it should be pythia8 format)
         shower_card_path = test_data_dir / "shower_card.dat"
-        if not shower_card_path.exists():
-            pytest.skip("shower_card.dat test data not found")
+        assert shower_card_path.exists(), "shower_card.dat test data not found"
 
         # Copy to temp directory
         test_path = tmp_path / "shower_card.dat"
         shutil.copy(shower_card_path, test_path)
 
-        # Parse original
-        original_parsed = parse_pythia8_card(test_path)
-
         # Update with new values
         updates = {
-            "Beams:eCM": "14000",
-            "Main:numberOfEvents": "500",
-            # "JetMatching:qCut": "-1.0",
+            "some_additional_key": "14000",
+            "another_additional": "F",
+            "nevents": "500",
+            "b_stable": "T",
         }
 
         update_pythia8_card(test_path, updates, tmp_path)
 
-        # Parse updated
-        updated_parsed = parse_pythia8_card(test_path)
+        # Get the updated content and compare with expected
+        updated_content = test_path.read_text()
+        expected_path = test_data_dir / "shower_card.dat.expected"
+        assert expected_path.exists(), (
+            f"Expected reference file not found: {expected_path}"
+        )
 
-        expected = {**original_parsed, **updates}
-
-        # Check updates were applied
-        assert updated_parsed == expected
+        expected_content = expected_path.read_text()
+        assert updated_content == expected_content, (
+            f"File content mismatch.\nExpected:\n{expected_content}\n\nActual:\n{updated_content}"
+        )
 
     def test_update_pythia8_card_default(self, test_data_dir, tmp_path):
         """Test updating a pythia8_card_default.dat file."""
         pythia8_card_path = test_data_dir / "pythia8_card_default.dat"
-        if not pythia8_card_path.exists():
-            pytest.skip("pythia8_card_default.dat test data not found")
+        assert pythia8_card_path.exists(), (
+            "pythia8_card_default.dat test data not found"
+        )
 
         # Copy to temp directory
         test_path = tmp_path / "pythia8_card_default.dat"
         shutil.copy(pythia8_card_path, test_path)
-
-        # Parse original
-        original_parsed = parse_pythia8_card(test_path)
 
         # Update with new values - mix of existing and new parameters
         updates = {
@@ -211,22 +223,14 @@ class TestPythia8CardUpdate:
 
         update_pythia8_card(test_path, updates, tmp_path)
 
-        # Parse updated
-        updated_parsed = parse_pythia8_card(test_path)
+        # Get the updated content and compare with expected
+        updated_content = test_path.read_text()
+        expected_path = test_data_dir / "pythia8_card_default.dat.expected"
+        assert expected_path.exists(), (
+            f"Expected reference file not found: {expected_path}"
+        )
 
-        expected = {
-            "Main:numberOfEvents": "1000",
-            "HEPMCoutput:file": "hepmc.gz",
-            "JetMatching:qCut": "20.0",
-            "JetMatching:doShowerKt": "off",
-            "JetMatching:nJetMax": "-1",
-            "Merging:TMS": "-1.0",
-            "Merging:Process": "<set_by_user>",
-            "Merging:nJetMax": "-1",
-            "SysCalc:fullCutVariation": "off",
-            "Beams:idA": "2212",
-            "Beams:idB": "2212",
-            "Beams:eCM": "13000.0",
-        }
-
-        assert updated_parsed == expected
+        expected_content = expected_path.read_text()
+        assert updated_content == expected_content, (
+            f"File content mismatch.\nExpected:\n{expected_content}\n\nActual:\n{updated_content}"
+        )

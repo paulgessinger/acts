@@ -92,7 +92,7 @@ def main(
         outputSimVertices="simvertices",
         dd4hepDetector=detector,
         trackingGeometry=trackingGeometry,
-        **config.sim_hit_reading.model_dump()
+        **config.sim_hit_reading.model_dump(),
     )
     s.addAlgorithm(edm4hepConverter)
     s.addWhiteboardAlias("particles", "particles_input")

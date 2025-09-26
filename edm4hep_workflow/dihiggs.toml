@@ -12,24 +12,24 @@ add process p p > h h j j @2
 run_mode = "lo_mlm"
 
 [card_customizations.run_card]
-ebeam1 = 7000.0
-ebeam2 = 7000.0
-ickkw = 1
-xqcut = 20.0
+ebeam1 = "7000.0"
+ebeam2 = "7000.0"
+ickkw = "1"
+xqcut = "20.0"
 auto_ptj_mjj = "True"
-maxjetflavor = 5
+maxjetflavor = "5"
 use_syst = "False"
 systematics_program = "none"
 
 [card_customizations.pythia8_card] # pythia8 card present only in lo_mlm mode
 "JetMatching:merge" = "on"
-"JetMatching:scheme" = 1
-"JetMatching:jetAlgorithm" = 2
-"JetMatching:coneRadius" = 1.0
-"JetMatching:slowJetPower" = 1
-"JetMatching:nQmatch" = 5
-"JetMatching:nJetMax" = 2
-"JetMatching:qCut" = 30.0
+"JetMatching:scheme" = "1"
+"JetMatching:jetAlgorithm" = "2"
+"JetMatching:coneRadius" = "1.0"
+"JetMatching:slowJetPower" = "1"
+"JetMatching:nQmatch" = "5"
+"JetMatching:nJetMax" = "2"
+"JetMatching:qCut" = "30.0"
 "JetMatching:doShowerKt" = "off"
 "JetMatching:setMad" = "off"
 "UncertaintyBands:doVariations" = "off"

@@ -5,20 +5,22 @@ fitting_plots = expand("reswidth_{q}_vs_eta", q=["d0", "z0", "qop", "phi", "thet
 
 samples = []\
   + expand("pg_mu_pt{pt}", pt=[1, 10, 100])\
-  + ["mg_ttbar_test"]
+  + ["mg_ttbar", "mg_dihiggs"]
 
 rule all:
   input: 
-    expand("reco/{sample}.edm4hep.root", sample=samples),
-    expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
-    expand("reco/plots/{sample}/plots_{sample}.pdf", sample=samples),
-    "gen/ttbar_test.tar.gz"
+    #expand("reco/{sample}.edm4hep.root", sample=samples),
+    #expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
+    #expand("reco/plots/{sample}/plots_{sample}.pdf", sample=samples),
+    "gen/mg_ttbar.tar.gz",
+    "gen/mg_dihiggs.tar.gz",
 
 rule madgraph_init:
   output:
     "gen/mg_{sample}.tar.gz"
   input:
     "{sample}.toml"
+  threads: 1
   shell:
     "./with_env.sh colliderml -vv madgraph init {input} {output}"
 

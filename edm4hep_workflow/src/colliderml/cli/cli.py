@@ -11,7 +11,6 @@ app = typer.Typer()
 
 @app.callback()
 def main(verbose: Annotated[int, typer.Option("--verbose", "-v", count=True)] = 0):
-
     level = logging.INFO
     if verbose >= 2:
         level = logging.DEBUG

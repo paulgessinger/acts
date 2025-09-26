@@ -3,8 +3,8 @@ model = "sm-no_b_mass"
 
 generate_command = """
 generate p p > t t~ [QCD]
-#add process p p > t t~ j [QCD]
-#add process p p > t t~ j j [QCD]
+add process p p > t t~ j [QCD]
+add process p p > t t~ j j [QCD]
 """
 
 run_mode = "nlo_fxfx"
@@ -12,10 +12,10 @@ run_mode = "nlo_fxfx"
 [card_customizations.run_card]
 parton_shower = "PYTHIA8"
 # 14 TeV center of mass energy
-ebeam1 = 7000.0
-ebeam2 = 7000.0
-ptj = 20.0 # minimum jet pT
+ebeam1 = "7000.0"
+ebeam2 = "7000.0"
+ptj = "20.0" # minimum jet pT
 
 [card_customizations.shower_card] # shower card present only in nlo_fxfx mode
-Qcut = 40.0
+Qcut = "40.0"
 time_shower_me_corrections = "F"
