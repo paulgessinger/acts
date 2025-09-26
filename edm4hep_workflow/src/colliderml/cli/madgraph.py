@@ -34,6 +34,7 @@ class Madgraph:
                 ["which", "mg5_aMC"], capture_output=True, text=True, check=True
             ).stdout.strip()
         )
+        self._exe = self._exe.resolve()
         logger.debug("Found Madgraph executable at %s", self._exe)
 
     def run(self, script: Path, **kwargs):
@@ -174,6 +175,60 @@ def backup_file(file_path: Path, suffix: str, log_base: Path):
     shutil.copy(file_path, new_path)
 
 
+def fix_fortran_dollar_syntax(file_path: Path, log_base: Path):
+    """
+    Fix non-standard Fortran $ format descriptor with standard advance='no'.
+    
+    Replaces patterns like:
+    write(26,'(x,i1,a2$)') with write(26,'(x,i1,a2)',advance='no')
+    """
+    if not file_path.exists():
+        logger.warning("Fortran file not found: %s", file_path.relative_to(log_base))
+        return
+    
+    logger.info("Fixing Fortran syntax in [b]%s[/b]", file_path.relative_to(log_base))
+    
+    content = file_path.read_text()
+    original_content = content
+    
+    # Pattern to match write statements with $ format descriptor
+    # Matches: write(unit,'(format$)') args
+    pattern = r"write\(([^,]+),\s*'\(([^']*)\$\)'\)\s*([^\n]*)"
+    
+    def replace_dollar_format(match):
+        unit = match.group(1)
+        format_str = match.group(2)  # format without the $
+        args = match.group(3)
+        
+        # Construct the replacement with advance='no'
+        return f"write({unit},'({format_str})',advance='no') {args}"
+    
+    content = re.sub(pattern, replace_dollar_format, content)
+    
+    if content != original_content:
+        # Create backup before modifying
+        backup_file(file_path, ".orig", log_base)
+        file_path.write_text(content)
+        logger.debug("Fixed non-standard Fortran $ syntax in %s", file_path.name)
+    else:
+        logger.debug("No Fortran $ syntax found in %s", file_path.name)
+
+
+def fix_madgraph_fortran(output_dir: Path):
+    """Fix non-standard Fortran syntax in MadGraph generated files."""
+    logger.info("Fixing non-standard Fortran syntax in MadGraph files")
+    
+    # Files that need Fortran fixes
+    fortran_files = [
+        "SubProcesses/symmetry_fks_v3.f",
+        "SubProcesses/write_ajob.f",
+    ]
+    
+    for file_rel_path in fortran_files:
+        file_path = output_dir / file_rel_path
+        fix_fortran_dollar_syntax(file_path, output_dir)
+
+
 def apply_card_customizations(sample_config: SampleConfig, output_dir: Path):
     cards_dir = output_dir / "Cards"
     if not cards_dir.exists():
@@ -257,12 +312,15 @@ exit
         script_file.write_text(mg_script)
 
         logger.info("Running Madgraph...")
-        # mg.run(script_file, cwd=scratch_dir)
+        mg.run(script_file, cwd=scratch_dir)
         logger.info(
             "Applying run card and shower card customizations for run mode %s",
             sample_config.run_mode,
         )
         output_dir = scratch_dir / MG_OUTPUT_DIR
+
+        # Fix non-standard Fortran syntax
+        fix_madgraph_fortran(output_dir)
 
         apply_card_customizations(sample_config, output_dir)
 
