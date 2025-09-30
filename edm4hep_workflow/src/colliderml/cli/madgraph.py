@@ -477,10 +477,11 @@ SEED_DEFAULT = 42
 def generate(
     sample_file: Annotated[Path, typer.Argument(..., exists=True, dir_okay=False)],
     tarball: Annotated[Path, typer.Argument(..., exists=True, dir_okay=False)],
-    output_dir: Annotated[Path, typer.Argument(..., file_okay=False)] = Path.cwd(),
+    output: Path,
     scratch_dir: Path | None = None,
     events: Annotated[int, typer.Option("--events", "-n")] = 10,
     seed: int = SEED_DEFAULT,
+    force: bool = False,
 ):
     logger.info("Loading sample config from %s", sample_file)
     sample_config = SampleConfig.load(sample_file)
@@ -493,6 +494,21 @@ def generate(
         extra={"highlighter": False},
     )
     logger.info("Run mode: %s", sample_config.run_mode)
+
+    if not output.name.endswith(".hepmc.gz"):
+        logger.error("Output file must have .hepmc.gz extension")
+        raise typer.Exit(1)
+
+    if output.exists():
+        if force:
+            logger.warning(
+                "Output file %s already exists, overwriting due to --force", output
+            )
+            output.unlink()
+        else:
+            logger.error(
+                "Output file %s already exists, use --force to overwrite", output
+            )
 
     if seed == SEED_DEFAULT:
         logger.warning(
@@ -573,3 +589,47 @@ def generate(
                 script_file.flush()
 
                 mg.run(script_file_path, cwd=scratch_dir)
+
+                events_dir = process_dir / "Events"
+                if not events_dir.exists():
+                    logger.error("Could not find Events/ directory at %s", events_dir)
+                    raise typer.Exit(1)
+
+                event_run_dirs = list(events_dir.glob("run_*"))
+                if len(event_run_dirs) == 0:
+                    logger.error(
+                        "Could not find any run_*/ directories in %s", events_dir
+                    )
+                    raise typer.Exit(1)
+
+                if len(event_run_dirs) > 1:
+                    logger.warning(
+                        "Found multiple run_*/ directories in %s, using the first one: %s",
+                        events_dir,
+                        event_run_dirs,
+                    )
+
+                event_run_dir = event_run_dirs[0]
+
+                events_file = list(event_run_dir.glob("*.hepmc.gz"))
+
+                if len(events_file) == 0:
+                    logger.error(
+                        "Could not find any *.hepmc.gz files in %s", event_run_dir
+                    )
+                    raise typer.Exit(1)
+
+                if len(events_file) > 1:
+                    logger.warning(
+                        "Found multiple *.hepmc.gz files in %s, using the first one: %s",
+                        event_run_dir,
+                        events_file,
+                    )
+
+                logger.info(
+                    "Copying generated events file [bold]%s[/bold] to [bold]%s[/bold]",
+                    events_file[0],
+                    output,
+                    extra={"highlighter": False},
+                )
+                shutil.copy(events_file[0], output)
