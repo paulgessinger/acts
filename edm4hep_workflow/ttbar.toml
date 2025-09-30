@@ -3,8 +3,9 @@ model = "sm-no_b_mass"
 
 generate_command = """
 generate p p > t t~ [QCD]
-add process p p > t t~ j [QCD]
-add process p p > t t~ j j [QCD]
+# these additional jet processes are needed, but can be commented out for testing
+#add process p p > t t~ j [QCD]
+#add process p p > t t~ j j [QCD]
 """
 
 run_mode = "nlo_fxfx"

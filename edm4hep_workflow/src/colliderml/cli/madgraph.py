@@ -3,6 +3,7 @@
 import contextlib
 import os
 import logging
+import textwrap
 from pathlib import Path
 from typing import Annotated
 import subprocess
@@ -27,7 +28,9 @@ MG_OUTPUT_DIR = "proc_output_mg"
 
 def format_dict_for_logging(d: dict[str, str]) -> str:
     """Format dictionary for rich logging with bold keys and bold blue values."""
-    return ", ".join(f"[b]{k}[/b]=[bold blue]{v}[/bold blue]" for k, v in d.items())
+    return ", ".join(
+        f"[bold blue]{k}[/bold blue]=[bold green]{v}[/bold green]" for k, v in d.items()
+    )
 
 
 class Madgraph:
@@ -74,6 +77,7 @@ def update_madgraph_card(file_path: Path, updates: dict[str, str], log_base: Pat
         "Updating Madgraph card [b]%s[/b] with overrides %s",
         file_path.relative_to(log_base),
         format_dict_for_logging(updates),
+        extra={"highlighter": False},
     )
 
     raw = file_path.read_text()
@@ -157,6 +161,7 @@ def update_pythia8_card(file_path: Path, updates: dict[str, str], log_base: Path
         "Updating Pythia8 card [b]%s[/b] with overrides %s",
         file_path.relative_to(log_base),
         format_dict_for_logging(updates),
+        extra={"highlighter": False},
     )
 
     raw = file_path.read_text()
@@ -332,7 +337,8 @@ def apply_card_customizations(sample_config: SampleConfig, process_dir: Path):
 
 def apply_run_configuration(events: int, seed: int, process_dir: Path):
     logger.info(
-        "Setting up run configuration: [b]events=%d[/b], [b]seed=%d[/b]", events, seed
+        "Setting up run configuration: %s",
+        format_dict_for_logging({"events": str(events), "seed": str(seed)}),
     )
 
     cards_dir = process_dir / "Cards"
@@ -406,13 +412,15 @@ def init(
         logger.debug("Working in scratch directory %s", scratch_dir)
 
         tpl = Template(
-            """
-import model ${model}
-${definitions}
-${generate_command}
-output ${output_dir} -f
-exit
-                       """.strip()
+            textwrap.dedent(
+                """
+                import model ${model}
+                ${definitions}
+                ${generate_command}
+                output ${output_dir} -f
+                exit
+                """.strip()
+            )
         )
 
         mg_script = tpl.substitute(
@@ -479,7 +487,11 @@ def generate(
     print(sample_config)
     logger.info("Label: %s", sample_config.label)
     logger.info("Model: %s", sample_config.model)
-    logger.info("Process:\n%s", sample_config.generate_command)
+    logger.info(
+        "Process:\n[italic]%s[/italic]",
+        sample_config.generate_command,
+        extra={"highlighter": False},
+    )
     logger.info("Run mode: %s", sample_config.run_mode)
 
     if seed == SEED_DEFAULT:
@@ -532,4 +544,32 @@ def generate(
             subprocess.run(cmd, cwd=process_dir, check=True)
 
         elif sample_config.run_mode == RunMode.lo_mlm:
-            raise NotImplementedError("LO MLM event generation not implemented yet")
+            logger.info(
+                "Launching event generation for [b]lo_mlm[/b]",
+            )
+
+            script_lines = [
+                f"launch {process_dir}",
+                "shower=PYTHIA8",
+                f"set nevents {events}",
+                f"set iseed {seed}",
+            ]
+
+            script = "\n".join(script_lines)
+
+            mg = Madgraph()
+
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".mg5", dir=scratch_dir, delete=False
+            ) as script_file:
+                script_file_path = Path(script_file.name).resolve()
+                logger.debug(
+                    "Writing madgraph script %s to execute:\n%s",
+                    script_file.name,
+                    script,
+                )
+
+                script_file.write(script)
+                script_file.flush()
+
+                mg.run(script_file_path, cwd=scratch_dir)
