@@ -1,5 +1,5 @@
-+/scratch_*
-+*tar.gz
+/scratch_*
+*tar.gz
 /*.hepmc
 /*.hepmc.gz
 /*.hepmc3.gz

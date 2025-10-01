@@ -1,22 +1,28 @@
-#!/usr/bin/env python3
 from pathlib import Path
 import typer
-import acts
+import os
 from typing import Annotated
 
-from edm4hep_workflow.config import Config
+from colliderml.cli import args
+from colliderml.constants import SEED_DEFAULT
+from colliderml.config import Config
 
 
 def main(
     input: Path,
     output: Path,
-    jobs: int = -1,
-    seed: int = 998877,
+    jobs: args.JOBS = os.cpu_count() or 1,
+    seed: int = SEED_DEFAULT,
     logLevel: str = "INFO",
     skip: int = 0,
-    events: int | None = None,
+    events: Annotated[
+        int | None,
+        typer.Option(help="Number of events to process. (default = all input events)"),
+    ] = None,
+    # @TODO: Rethink this configuration here
     config_path: Annotated[Path | None, typer.Option("--config")] = None,
 ):
+    import acts
     from acts import UnitConstants as u
     import acts.examples
     from acts.examples import Sequencer
@@ -160,6 +166,3 @@ def main(
     s.addWriter(podioWriter)
 
     s.run()
-
-
-typer.run(main)

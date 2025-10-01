@@ -5,19 +5,21 @@ import os
 import logging
 import textwrap
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Generator
 import subprocess
 import tempfile
 from string import Template
 import tarfile
-from rich import print
 import shutil
 import re
+import collections
 
 import typer
 
 from colliderml.config import RunMode, SampleConfig
+from colliderml import constants
 import colliderml.logging
+import colliderml.util
 
 app = typer.Typer()
 
@@ -47,6 +49,11 @@ class Madgraph:
 
     def run(self, script: Path, **kwargs):
         subprocess.run([self._exe, script], check=True, **kwargs)
+
+    def run_iter(self, script: Path, **kwargs) -> Generator[str, None, None]:
+        yield from colliderml.util.stream_subprocess(
+            [str(self._exe), str(script)], **kwargs
+        )
 
 
 def parse_madgraph_card(path_or_string: Path | str) -> dict[str, str]:
@@ -335,7 +342,12 @@ def apply_card_customizations(sample_config: SampleConfig, process_dir: Path):
         )
 
 
-def apply_run_configuration(events: int, seed: int, process_dir: Path):
+def apply_run_configuration(
+    events: int,
+    seed: int,
+    process_dir: Path,
+    margin: float = constants.MG_GENERATION_REL_MARGIN,
+):
     logger.info(
         "Setting up run configuration: %s",
         format_dict_for_logging({"events": str(events), "seed": str(seed)}),
@@ -354,7 +366,7 @@ def apply_run_configuration(events: int, seed: int, process_dir: Path):
     backup_file(run_card_path, ".orig", log_base=process_dir)
     update_madgraph_card(
         run_card_path,
-        {"nevents": str(events), "iseed": str(seed)},
+        {"nevents": str(int(events * (1 + margin))), "iseed": str(seed)},
         log_base=process_dir,
     )
 
@@ -383,6 +395,91 @@ def apply_run_configuration(events: int, seed: int, process_dir: Path):
             {"nevents": str(events), "rnd_seed": str(seed)},
             log_base=process_dir,
         )
+
+
+def parse_number_of_merged_events(output: str) -> int:
+    m = re.search(r".*Nb of events after merging :  (\d+)", output)
+    if m is None:
+        logger.error(
+            "Could not determine number of events after merging from Madgraph output"
+        )
+        raise typer.Exit(1)
+
+    return int(m.group(1))
+
+
+def locate_single_output(process_dir: Path, name: str) -> Path:
+    events_dir = process_dir / "Events"
+    if not events_dir.exists():
+        logger.error("Could not find Events/ directory in %s", process_dir)
+        raise typer.Exit(1)
+
+    run_dir = events_dir / name
+    if not run_dir.exists():
+        logger.error("Could not find %s/ directory in Events/", name)
+        raise typer.Exit(1)
+
+    events_file = list(run_dir.glob("*.hepmc.gz"))
+
+    if len(events_file) == 0:
+        logger.error("Could not find any *.hepmc.gz files in %s", run_dir)
+        raise typer.Exit(1)
+
+    if len(events_file) > 1:
+        logger.error("Found multiple *.hepmc.gz files in %s", run_dir)
+        raise typer.Exit(1)
+
+    return events_file[0]
+
+
+def run_madgraph_via_script(
+    process_dir: Path,
+    events: int,
+    seed: int,
+    name: str,
+    jobs: int,
+    margin: float = constants.MG_GENERATION_REL_MARGIN,
+) -> tuple[int, Path]:
+    mg = Madgraph()
+
+    scratch_dir = process_dir.parent
+
+    apply_run_configuration(events=events, seed=seed, process_dir=process_dir)
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".mg5") as script_file:
+        script_file_path = Path(script_file.name).resolve()
+
+        script_lines = [
+            "help launch",
+            f"launch {process_dir} --name={name}",
+            "shower=PYTHIA8",
+            # f"set nb_cores {jobs}",
+            f"set nevents {int(events * (1+margin))}",
+            f"set iseed {seed}",
+        ]
+
+        script = "\n".join(script_lines)
+
+        logger.debug(
+            "Writing madgraph script %s to execute:\n%s",
+            script_file.name,
+            script,
+        )
+
+        script_file.write(script)
+        script_file.flush()
+
+        lines = collections.deque(maxlen=20)
+        for line in mg.run_iter(script_file_path, cwd=scratch_dir):
+            print(line, end="")
+            lines.append(line)
+
+        merged_events = parse_number_of_merged_events("".join(lines))
+        logger.info("Number of events after merging: %d", merged_events)
+
+        events_file = locate_single_output(process_dir, name)
+
+        return (merged_events, events_file)
 
 
 @app.command()
@@ -470,18 +567,18 @@ def init(
             tar.add(scratch_dir, arcname="")
 
 
-SEED_DEFAULT = 42
-
-
 @app.command()
 def generate(
     sample_file: Annotated[Path, typer.Argument(..., exists=True, dir_okay=False)],
     tarball: Annotated[Path, typer.Argument(..., exists=True, dir_okay=False)],
     output: Path,
+    events_per_file: int | None = None,
     scratch_dir: Path | None = None,
     events: Annotated[int, typer.Option("--events", "-n")] = 10,
-    seed: int = SEED_DEFAULT,
-    force: bool = False,
+    seed: int = constants.SEED_DEFAULT,
+    force: Annotated[bool, typer.Option("--force", "-f")] = False,
+    max_iterations: int = constants.GENERATION_ITER_MAX,
+    jobs: int = os.cpu_count() or 1,
 ):
     logger.info("Loading sample config from %s", sample_file)
     sample_config = SampleConfig.load(sample_file)
@@ -495,10 +592,6 @@ def generate(
     )
     logger.info("Run mode: %s", sample_config.run_mode)
 
-    if not output.name.endswith(".hepmc.gz"):
-        logger.error("Output file must have .hepmc.gz extension")
-        raise typer.Exit(1)
-
     if output.exists():
         if force:
             logger.warning(
@@ -509,10 +602,12 @@ def generate(
             logger.error(
                 "Output file %s already exists, use --force to overwrite", output
             )
+            raise typer.Exit(1)
 
-    if seed == SEED_DEFAULT:
+    if seed == constants.SEED_DEFAULT:
         logger.warning(
-            "Default seed %d given. You will likely use a different seed!", SEED_DEFAULT
+            "Default seed %d given. You will likely use a different seed!",
+            constants.SEED_DEFAULT,
         )
 
     with contextlib.ExitStack() as stack:
@@ -540,96 +635,122 @@ def generate(
 
         apply_card_customizations(sample_config, process_dir)
 
-        apply_run_configuration(events=events, seed=seed, process_dir=process_dir)
-
         if sample_config.run_mode == RunMode.nlo_fxfx:
             logger.info("Launching event generation for [b]nlo_fxfx[/b] (precompiled)")
+
+            apply_run_configuration(
+                events=events,
+                seed=seed,
+                process_dir=process_dir,
+                margin=0,  # we don't seem to need margin here
+            )
 
             generate_events_exe = (process_dir / "bin" / "generate_events").resolve()
             if not generate_events_exe.exists():
                 logger.error("Could not find executable %s", generate_events_exe)
                 raise typer.Exit(1)
 
+            run_name = "run_01"
             cmd = [
                 str(generate_events_exe),
                 "--only_generation",  # do not reproduce grids/envelopes
                 "--nocompile",  # do not recompile
                 "--force",
+                "--name",
+                run_name,
             ]
             logger.info("Running event generation with command %s", " ".join(cmd))
             subprocess.run(cmd, cwd=process_dir, check=True)
+
+            events_file = locate_single_output(process_dir, run_name)
+
+            logger.info("Normalizing output to %s", output)
+            colliderml.util.hepmc_normalize(
+                files=[events_file],
+                output=output,
+                max_events=events,
+                compression_level=9,
+            )
 
         elif sample_config.run_mode == RunMode.lo_mlm:
             logger.info(
                 "Launching event generation for [b]lo_mlm[/b]",
             )
 
-            script_lines = [
-                f"launch {process_dir}",
-                "shower=PYTHIA8",
-                f"set nevents {events}",
-                f"set iseed {seed}",
-            ]
+            requested_events = 0
+            produced_events = 0
 
-            script = "\n".join(script_lines)
+            events_collect_dir = process_dir / "Events_collect"
+            events_collect_dir.mkdir(exist_ok=True)
 
-            mg = Madgraph()
+            events_dir = process_dir / "Events"
 
-            with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".mg5", dir=scratch_dir, delete=False
-            ) as script_file:
-                script_file_path = Path(script_file.name).resolve()
-                logger.debug(
-                    "Writing madgraph script %s to execute:\n%s",
-                    script_file.name,
-                    script,
+            if events_dir.exists():
+                logger.debug("Cleaning existing Events/ directory at %s", events_dir)
+                shutil.rmtree(events_dir)
+                events_dir.mkdir()
+
+            run_files = []
+
+            for i in range(1, max_iterations + 1):
+                logger.info("Iteration %d to produce events", i)
+
+                run_name = f"run_iter_{i:02d}"
+
+                if i == 1:
+                    # first run, let's use the target event count
+                    if sample_config.nevents_scale_factor != 1.0:
+                        logger.info(
+                            "Using scale factor %f to speculatively generate more events in the first iteration",
+                            sample_config.nevents_scale_factor,
+                        )
+                    run_events = int(events * sample_config.nevents_scale_factor)
+                else:
+                    # subsequent runs, estimate veto rate from existing
+                    veto_pass_rate = produced_events / requested_events
+                    logger.info(
+                        f"Estimated veto pass rate: {veto_pass_rate * 100:.2f}%"
+                    )
+                    run_events = int(
+                        (events - produced_events)
+                        / veto_pass_rate
+                        * (1 + constants.GENERATED_EVENT_MARGIN_REL)
+                    )
+
+                logger.info("Requesting %d events in this iteration", run_events)
+
+                merged_events, output_file = run_madgraph_via_script(
+                    process_dir, run_events, seed * i, run_name, jobs
                 )
 
-                script_file.write(script)
-                script_file.flush()
+                run_files.append(output_file)
 
-                mg.run(script_file_path, cwd=scratch_dir)
-
-                events_dir = process_dir / "Events"
-                if not events_dir.exists():
-                    logger.error("Could not find Events/ directory at %s", events_dir)
-                    raise typer.Exit(1)
-
-                event_run_dirs = list(events_dir.glob("run_*"))
-                if len(event_run_dirs) == 0:
-                    logger.error(
-                        "Could not find any run_*/ directories in %s", events_dir
-                    )
-                    raise typer.Exit(1)
-
-                if len(event_run_dirs) > 1:
-                    logger.warning(
-                        "Found multiple run_*/ directories in %s, using the first one: %s",
-                        events_dir,
-                        event_run_dirs,
-                    )
-
-                event_run_dir = event_run_dirs[0]
-
-                events_file = list(event_run_dir.glob("*.hepmc.gz"))
-
-                if len(events_file) == 0:
-                    logger.error(
-                        "Could not find any *.hepmc.gz files in %s", event_run_dir
-                    )
-                    raise typer.Exit(1)
-
-                if len(events_file) > 1:
-                    logger.warning(
-                        "Found multiple *.hepmc.gz files in %s, using the first one: %s",
-                        event_run_dir,
-                        events_file,
-                    )
+                requested_events += run_events
+                produced_events += merged_events
 
                 logger.info(
-                    "Copying generated events file [bold]%s[/bold] to [bold]%s[/bold]",
-                    events_file[0],
-                    output,
-                    extra={"highlighter": False},
+                    "Have produced %d events so far (%d / %d)",
+                    produced_events,
+                    i,
+                    constants.GENERATION_ITER_MAX,
                 )
-                shutil.copy(events_file[0], output)
+
+                if produced_events >= events:
+                    logger.info("Have produced enough events, stopping")
+                    break
+
+            logger.info(
+                "Combining %d output files into %s (events per file: %s)",
+                len(run_files),
+                output,
+                events_per_file,
+            )
+            logger.debug("Files to combine:\n%s", "\n".join(map(str, run_files)))
+
+            colliderml.util.hepmc_normalize(
+                files=run_files,
+                output=output,
+                max_events=events,
+                events_per_file=events_per_file,
+                compression_level=9,
+            )

@@ -49,6 +49,9 @@ class SampleConfig(TomlConfigBase):
 
     generate_command: str
 
+    # Speculatively produce more events to counter vetoes etc.
+    nevents_scale_factor: float = 1.0
+
     card_customizations: CardCustomizations = pydantic.Field(
         default_factory=CardCustomizations
     )

@@ -34,5 +34,5 @@ class Logger:
         self._logger.error(*args, **self.patch_kwargs(kwargs))
 
 
-def get_logger(name: str) -> Logger:
-    return Logger(logging.getLogger(name))
+def get_logger(name: str) -> logging.Logger:
+    return logging.getLogger(name)

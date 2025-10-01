@@ -11,6 +11,9 @@ add process p p > h h j j @2
 
 run_mode = "lo_mlm"
 
+# About 20% veto acceptance rate, so generate about 5x times what we actually want
+nevents_scale_factor = 5.1
+
 [card_customizations.run_card]
 ebeam1 = "7000.0"
 ebeam2 = "7000.0"
