@@ -3,36 +3,42 @@ finding_plots = expand("trackeff_vs_{q}", q=["eta", "pT", "phi"])\
 
 fitting_plots = expand("reswidth_{q}_vs_eta", q=["d0", "z0", "qop", "phi", "theta", "t"])
 
+
+config_file = "config.toml"
+
 samples = \
     expand("pg_mu_pt{pt}", pt=[1, 10, 100])\
+    expand("pg_el_pt{pt}", pt=[1, 10, 100])\
+    expand("pg_pi_pt{pt}", pt=[1, 10, 100])\
   + ["mg_ttbar", "mg_dihiggs"]
 
 event_counts = {
-    "ttbar": 50,
-    "dihiggs": 50,
+    "ttbar": 1000,
+    "dihiggs": 1000,
 }
 
 def get_events(wildcards):
-    print("get events:", wildcards)
+    #print("get events:", wildcards)
     if hasattr(wildcards, "sample"):
         sample = wildcards.sample
         return event_counts[sample]
     
     if hasattr(wildcards, "particle"):
-        return 1000
+        return 10000
 
     raise ValueError("Cannot determine event count")
 
 rule all:
   input: 
-    #expand("reco/{sample}.edm4hep.root", sample=samples),
-    #expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
+    expand("reco/{sample}.edm4hep.root", sample=samples),
+    expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
     #expand("reco/plots/{sample}/plots_{sample}.pdf", sample=samples),
     #"gen/mg_ttbar.hepmc3.zst",
     #"gen/mg_dihiggs.hepmc3.zst",
     #expand("gen/{sample}.hepmc3.zst", sample=samples),
     #expand("sim/{sample}.edm4hep.root", sample=samples),
-    expand("digi/{sample}.edm4hep.root", sample=samples),
+    #expand("digi/{sample}.edm4hep.root", sample=samples),
+    #expand("reco/{sample}.edm4hep.root", sample=samples),
 
 rule madgraph_init:
   output:
@@ -71,33 +77,34 @@ rule sim:
   input:
     "gen/{sample}.hepmc3.zst",
     "gen/{sample}.hepmc3.zst.json",
+    config_file,
   output: 
     "sim/{sample}.edm4hep.root"
-  params:
-    minkin=0.001,
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --minimal-kinetic-energy {params.minkin} --processes {threads}"
+    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --config {input[2]}"
 
 rule digi:
   input:
-    "sim/{sample}.edm4hep.root"
+    "sim/{sample}.edm4hep.root",
+    config_file,
   output: 
     "digi/{sample}.edm4hep.root"
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml digitization {input} {output} --jobs {threads} --config config.toml"
+    "./with_env.sh colliderml digitization {input[0]} {output[0]} --jobs {threads} --config {input[1]}"
 
 rule reco:
   input:
-    "digi/{sample}.edm4hep.root"
+    "digi/{sample}.edm4hep.root",
+    config_file,
   output: 
     "reco/{sample}.edm4hep.root",
     "reco/performance_finding_ckf_{sample}.root",
     "reco/performance_fitting_ckf_{sample}.root"
   threads: workflow.cores
   shell:
-    "./with_env.sh python3 ./reconstruction.py {input} {output[0]} --jobs {threads} --loglevel INFO --config config.toml"
+    "./with_env.sh colliderml reconstruction {input[0]} {output[0]} --jobs {threads} --loglevel INFO --config {input[1]}"
 
 rule reco_plots:
   input:
@@ -110,4 +117,4 @@ rule reco_plots:
     finding_plots = ','.join(finding_plots),
     fitting_plots = ','.join(fitting_plots)
   shell:
-    "./with_env.sh python3 ./plot_basic_diagnostics.py {input} reco/plots/{wildcards.sample} --finding-plots {params.finding_plots} --fitting-plots {params.fitting_plots} --label {wildcards.sample}"
+    "./with_env.sh colliderml plot reco {input} reco/plots/{wildcards.sample} --finding-plots {params.finding_plots} --fitting-plots {params.fitting_plots} --label {wildcards.sample}"

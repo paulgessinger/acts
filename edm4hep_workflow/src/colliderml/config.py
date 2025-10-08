@@ -24,8 +24,14 @@ class SimHitReading(pydantic.BaseModel):
     particleZ: tuple[float | None, float | None] = (None, None)
 
 
+class SimulationConfig(pydantic.BaseModel):
+    minimal_kinetic_energy: float = 0.1  # GeV
+
+
 class Config(TomlConfigBase):
     sim_hit_reading: SimHitReading = pydantic.Field(default_factory=SimHitReading)
+
+    simulation: SimulationConfig = pydantic.Field(default_factory=SimulationConfig)
 
 
 class CardCustomizations(pydantic.BaseModel):

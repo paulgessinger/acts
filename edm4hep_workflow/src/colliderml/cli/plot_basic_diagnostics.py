@@ -46,7 +46,8 @@ def plot_from_file(
         canvas.Print(str(output_dir / f"{key}.pdf"))
 
 
-def main(
+@app.command()
+def reco(
     finding: Annotated[Path, typer.Argument(dir_okay=False, exists=True)],
     fitting: Annotated[Path, typer.Argument(dir_okay=False, exists=True)],
     output: Annotated[Path, typer.Argument(file_okay=False)],
@@ -73,7 +74,3 @@ def main(
     )
 
     canvas.Print(f"{outfile}]")  # close pdf
-
-
-if __name__ == "__main__":
-    app()

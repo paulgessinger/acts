@@ -7,6 +7,9 @@ import colliderml.cli.madgraph
 import colliderml.cli.particle_gun
 import colliderml.cli.simulation
 import colliderml.cli.digitization
+import colliderml.cli.reconstruction
+import colliderml.cli.tree_size
+import colliderml.cli.plot_basic_diagnostics
 from colliderml.logging import configure_logging
 
 app = typer.Typer()
@@ -26,3 +29,7 @@ app.add_typer(colliderml.cli.madgraph.app, name="madgraph")
 app.command("particle-gun")(colliderml.cli.particle_gun.main)
 app.command("simulation")(colliderml.cli.simulation.main)
 app.command("digitization")(colliderml.cli.digitization.main)
+app.command("tree-size")(colliderml.cli.tree_size.main)
+app.command("reconstruction")(colliderml.cli.reconstruction.main)
+
+app.add_typer(colliderml.cli.plot_basic_diagnostics.app, name="plot")

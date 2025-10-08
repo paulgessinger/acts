@@ -5,7 +5,8 @@ import typer
 import acts
 from typing import Annotated
 
-from edm4hep_workflow.config import Config
+
+from colliderml.config import Config
 
 
 def main(
@@ -238,6 +239,3 @@ def main(
             performance_target = performance_path.parent / f"{file}_{name_base}.root"
             print(performance_path, "->", performance_target)
             performance_path.rename(performance_target)
-
-
-typer.run(main)

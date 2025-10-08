@@ -11,6 +11,7 @@ import logging
 import tempfile
 import contextlib
 
+from colliderml.config import Config, SimulationConfig
 from colliderml.util import HepMC3Meta, hadd, hepmc_normalize, parse_hepmc3_file
 import typer
 
@@ -33,7 +34,7 @@ def do_simulation(
     output_file: Path,
     seed: int,
     events: int,
-    minimal_kinetic_energy: float,
+    config: SimulationConfig,
 ) -> int:
     colliderml.logging.configure_logging(logging.INFO)
     logger = colliderml.logging.get_logger(__name__)
@@ -59,10 +60,16 @@ def do_simulation(
     # @TODO: Deal with custom particle handler
     # https://github.com/OpenDataDetector/ColliderML/blob/75ad4313a7f2b1bf86ea140393d3fd9c348a0fba/scripts/simulation/ddsim_run.py#L175
     # ddsim.part.userParticleHandler = "Geant4TCUserParticleHandler"
+    # Geant4FullTruthParticleHandler that's the one Daniel wrote
+    ddsim.part.userParticleHandler = "Geant4FullTruthParticleHandler"
+    ddsim.part.keepAllParticles = False
+
+    # truncate calo particles ?
+    ddsim.enableDetailedShowerMode = False
 
     logger.info(f"Simulating all events from {len(input_files)} files to {output_file}")
 
-    ddsim.part.minimalKineticEnergy = minimal_kinetic_energy
+    ddsim.part.minimalKineticEnergy = config.minimal_kinetic_energy
 
     # ddsim.inputFiles = [str(input_file.resolve())]
     ddsim.inputFiles = [str(p.resolve()) for p in input_files]
@@ -93,9 +100,6 @@ def main(
     input_files: Annotated[list[Path], typer.Argument(metavar="INPUT")],
     output: Annotated[Path, typer.Option("--output", "-o")],
     seed: int = constants.SEED_DEFAULT,
-    minimalKineticEnergy: Annotated[
-        float, typer.Option("--minimal-kinetic-energy")
-    ] = 1.0,
     events: Annotated[
         int | None,
         typer.Option(
@@ -108,9 +112,19 @@ def main(
     resplit_files: bool = True,
     scratch_dir: Path | None = None,
     force: Annotated[bool, typer.Option("--force", "-f")] = False,
+    config_path: Annotated[Path | None, typer.Option("--config")] = None,
 ):
     logger = colliderml.logging.get_logger(__name__)
-    logger.info(f"Starting simulation with base seed {seed}")
+
+    if config_path is None:
+        logger.warning("Using default configuration")
+        config = Config()
+    else:
+        logger.info("Loading configuration from %s", config_path)
+        config = Config.load(config_path)
+
+    logger.info("Starting simulation with base seed %s", seed)
+    logger.info("Simulation config: %s", config.simulation)
 
     output.parent.mkdir(parents=True, exist_ok=True)
 
@@ -143,7 +157,7 @@ def main(
             output_file=output,
             seed=seed,
             events=events or total_events,
-            minimal_kinetic_energy=minimalKineticEnergy,
+            config=config.simulation,
         )
     else:
         total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
@@ -200,7 +214,7 @@ def main(
                         output_file=job_output,
                         seed=job_seed,
                         events=meta.num_events,
-                        minimal_kinetic_energy=minimalKineticEnergy,
+                        config=config.simulation,
                     )
                 )
 
@@ -221,3 +235,6 @@ def main(
 
             logger.info("Merging output files to %s", output)
             hadd(output_files, output)
+
+            file_size = output.stat().st_size / (1024**2)
+            logger.info(f"Wrote output file {output} ({file_size:.1f} MB)")

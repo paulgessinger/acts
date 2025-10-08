@@ -56,7 +56,8 @@ def main(
             acts.examples.EventGenerator.Generator(
                 multiplicity=acts.examples.FixedMultiplicityGenerator(n=1),
                 vertex=acts.examples.GaussianVertexGenerator(
-                    stddev=acts.Vector4(50 * u.um, 50 * u.um, 150 * u.mm, 20 * u.ns),
+                    # stddev=acts.Vector4(50 * u.um, 50 * u.um, 150 * u.mm, 20 * u.ns),
+                    stddev=acts.Vector4(0 * u.um, 0 * u.um, 0 * u.mm, 0 * u.ns),
                     mean=acts.Vector4(0, 0, 0, 0),
                 ),
                 particles=acts.examples.ParametricParticleGenerator(
