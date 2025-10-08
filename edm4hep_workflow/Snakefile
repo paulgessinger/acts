@@ -8,8 +8,8 @@ samples = \
   + ["mg_ttbar", "mg_dihiggs"]
 
 event_counts = {
-    "ttbar": 200,
-    "dihiggs": 200,
+    "ttbar": 50,
+    "dihiggs": 50,
 }
 
 def get_events(wildcards):
@@ -31,8 +31,8 @@ rule all:
     #"gen/mg_ttbar.hepmc3.zst",
     #"gen/mg_dihiggs.hepmc3.zst",
     #expand("gen/{sample}.hepmc3.zst", sample=samples),
-    expand("sim/{sample}.edm4hep.root", sample=samples),
-    #expand("digi/{sample}.edm4hep.root", sample=samples),
+    #expand("sim/{sample}.edm4hep.root", sample=samples),
+    expand("digi/{sample}.edm4hep.root", sample=samples),
 
 rule madgraph_init:
   output:
