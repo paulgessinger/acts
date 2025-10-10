@@ -8,13 +8,13 @@ config_file = "config.toml"
 
 samples = \
     expand("pg_mu_pt{pt}", pt=[1, 10, 100])\
-  + expand("pg_el_pt{pt}", pt=[1, 10, 100])\
+  + expand("pg_el_pt{pt}", pt=[1, 10])\
   + expand("pg_pi_pt{pt}", pt=[1, 10, 100])\
   + ["mg_ttbar", "mg_dihiggs"]
 
 event_counts = {
     "ttbar": 1000,
-    "dihiggs": 2000,
+    "dihiggs": 2000, # don't go too low otherwise pythia8 fails
 }
 
 def get_events(wildcards):
