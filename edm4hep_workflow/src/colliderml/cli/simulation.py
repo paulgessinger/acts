@@ -208,10 +208,10 @@ def main(
 
                     input_files = hepmc_normalize(
                         files=input_files,
-                        # write uncompressed so that we're quick
-                        output=tempdir / f"{parsed.prefix}.hepmc3",
+                        output=tempdir / f"{parsed.prefix}.hepmc3.gz",
                         max_events=events,
                         events_per_file=events_per_proc,
+                        compression_level=4,  # lower compression level to be fast
                     )
 
                     logger.debug(f"Resplit into {len(input_files)} files")
