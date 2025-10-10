@@ -90,10 +90,21 @@ def job_wrapper(*, output_file: Path, **kwargs):
     if job_out.exists():
         job_out.unlink()
 
+    logger = colliderml.logging.get_logger(__name__)
+
     with job_out.open("w") as log_file:
         os.dup2(log_file.fileno(), sys.stdout.fileno())
         os.dup2(log_file.fileno(), sys.stderr.fileno())
-        return do_simulation(output_file=output_file, **kwargs), output_file
+        ec = do_simulation(output_file=output_file, **kwargs)
+
+    if ec != 0:
+        full = job_out.read_text()
+        truncated = "".join(full.splitlines()[-100:])
+        logger.error(
+            "exit code of simulation was non-zero (%d)\noutput:\n", ec, truncated
+        )
+
+    return ec, output_file
 
 
 def main(
@@ -148,93 +159,117 @@ def main(
 
     logger.info("Split processing into %d processes", procs)
 
-    # special case single process case so we can get direct output
-    if procs == 1:
-        total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
+    with contextlib.ExitStack() as stack:
+        if scratch_dir is None:
+            tempdir = Path(stack.enter_context(tempfile.TemporaryDirectory()))
+        else:
+            scratch_dir.mkdir(parents=True, exist_ok=True)
+            tempdir = scratch_dir
 
-        do_simulation(
-            input_files=input_files,
-            output_file=output,
-            seed=seed,
-            events=events or total_events,
-            config=config.simulation,
-        )
-    else:
-        total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
+        # special case single process case so we can get direct output
+        if procs == 1:
+            total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
 
-        mp_context = multiprocessing.get_context("spawn")
+            parsed = parse_hepmc3_file(input_files[0])
 
-        with ProcessPoolExecutor(
-            max_workers=procs, mp_context=mp_context
-        ) as executor, contextlib.ExitStack() as stack:
-            if scratch_dir is None:
-                tempdir = Path(stack.enter_context(tempfile.TemporaryDirectory()))
-            else:
-                scratch_dir.mkdir(parents=True, exist_ok=True)
-                tempdir = scratch_dir
+            input_files = hepmc_normalize(
+                files=input_files,
+                # write uncompressed so that we're quick
+                output=tempdir / f"{parsed.prefix}.hepmc3",
+                max_events=events,
+                events_per_file=total_events,
+            )
 
-            logger.debug(f"Using temporary directory {tempdir}")
+            do_simulation(
+                input_files=input_files,
+                output_file=output,
+                seed=seed,
+                events=events or total_events,
+                config=config.simulation,
+            )
+        else:
+            total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
 
-            if len(input_files) != procs and resplit_files:
-                logger.info("Resplitting input files to match number of processes")
+            mp_context = multiprocessing.get_context("spawn")
 
-                effective_events = events or total_events
-                events_per_proc = math.ceil(effective_events / procs)
+            with ProcessPoolExecutor(
+                max_workers=procs, mp_context=mp_context
+            ) as executor:
 
-                input_files = hepmc_normalize(
-                    files=input_files,
-                    # write uncompressed so that we're quick
-                    output=tempdir / "split_input.hepmc3",
-                    max_events=events,
-                    events_per_file=events_per_proc,
-                )
+                logger.debug(f"Using temporary directory {tempdir}")
 
-                logger.debug(f"Resplit into {len(input_files)} files")
+                if len(input_files) != procs and resplit_files:
+                    logger.info("Resplitting input files to match number of processes")
 
-            futures = []
-            for i, file in enumerate(input_files):
-                file = file.resolve()
-                meta = HepMC3Meta.for_file(file)
-                parsed = parse_hepmc3_file(file)
-                job_output = tempdir / f"{parsed.prefix}.edm4hep.root"
-                job_seed = seed + i
+                    effective_events = events or total_events
+                    events_per_proc = math.ceil(effective_events / procs)
 
-                logger.debug(
-                    "%s -> %s (%d events, seed: %d)",
-                    file,
-                    job_output,
-                    meta.num_events,
-                    job_seed,
-                )
+                    parsed = parse_hepmc3_file(input_files[0])
 
-                futures.append(
-                    executor.submit(
-                        job_wrapper,
-                        input_files=[file],
-                        output_file=job_output,
-                        seed=job_seed,
-                        events=meta.num_events,
-                        config=config.simulation,
+                    input_files = hepmc_normalize(
+                        files=input_files,
+                        # write uncompressed so that we're quick
+                        output=tempdir / f"{parsed.prefix}.hepmc3",
+                        max_events=events,
+                        events_per_file=events_per_proc,
                     )
-                )
 
-            for f in as_completed(futures):
-                try:
-                    ec, out_file = f.result()
-                    if ec == 0:
-                        logger.info(f"Job completed successfully, output at {out_file}")
-                    else:
-                        logger.error(f"Job failed with exit code {ec}, see {out_file}")
-                except Exception as e:
-                    logger.exception("Job failed with exception: %s", e)
+                    logger.debug(f"Resplit into {len(input_files)} files")
 
-            output_files = []
-            for f in futures:
-                _, out_file = f.result()
-                output_files.append(out_file)
+                futures = []
+                for i, file in enumerate(input_files):
+                    file = file.resolve()
+                    meta = HepMC3Meta.for_file(file)
+                    parsed = parse_hepmc3_file(file)
+                    job_output = tempdir / f"{parsed.prefix}.edm4hep.root"
+                    job_seed = seed + i
 
-            logger.info("Merging output files to %s", output)
-            hadd(output_files, output)
+                    logger.debug(
+                        "%s -> %s (%d events, seed: %d)",
+                        file,
+                        job_output,
+                        meta.num_events,
+                        job_seed,
+                    )
 
-            file_size = output.stat().st_size / (1024**2)
-            logger.info(f"Wrote output file {output} ({file_size:.1f} MB)")
+                    futures.append(
+                        executor.submit(
+                            job_wrapper,
+                            input_files=[file],
+                            output_file=job_output,
+                            seed=job_seed,
+                            events=meta.num_events,
+                            config=config.simulation,
+                        )
+                    )
+
+                error = False
+                for f in as_completed(futures):
+                    try:
+                        ec, out_file = f.result()
+                        if ec == 0:
+                            logger.info(
+                                f"Job completed successfully, output at {out_file}"
+                            )
+                        else:
+                            logger.error(
+                                f"Job failed with exit code {ec}, see {out_file}"
+                            )
+                    except Exception as e:
+                        logger.error("Job failed with exception: %s", e)
+                        error = True
+
+                if error:
+                    logger.error("Errors during simulation, terminating")
+                    raise typer.Exit(1)
+
+                output_files = []
+                for f in futures:
+                    _, out_file = f.result()
+                    output_files.append(out_file)
+
+                logger.info("Merging output files to %s", output)
+                hadd(output_files, output)
+
+                file_size = output.stat().st_size / (1024**2)
+                logger.info(f"Wrote output file {output} ({file_size:.1f} MB)")
