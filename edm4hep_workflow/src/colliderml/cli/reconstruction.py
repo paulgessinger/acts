@@ -49,9 +49,7 @@ def main(
 
     logLevel = getattr(acts.logging, logLevel.upper(), acts.logging.INFO)
 
-    rnd = acts.examples.RandomNumbers(seed=seed)
-
-    s = Sequencer(numThreads=jobs)
+    s = Sequencer(numThreads=jobs, trackFpes=False)
     s.config.logLevel = acts.logging.DEBUG
 
     # Get detector and field

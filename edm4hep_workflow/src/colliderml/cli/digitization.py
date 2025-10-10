@@ -48,7 +48,12 @@ def main(
 
     rnd = acts.examples.RandomNumbers(seed=seed)
 
-    s = Sequencer(numThreads=jobs, skip=skip, events=events)
+    s = Sequencer(
+        numThreads=jobs,
+        skip=skip,
+        events=events,
+        trackFpes=False,
+    )
     s.config.logLevel = acts.logging.DEBUG
 
     # Get detector and field
