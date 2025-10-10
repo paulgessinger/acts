@@ -124,6 +124,8 @@ def parse_hepmc3_file(file: Path):
             compression = "zlib"
         elif comp_suffix == ".xz":
             compression = "lzma"
+        elif comp_suffix == ".zst":
+            compression = "zstd"
         else:
             raise ValueError(f"Unsupported compression suffix {comp_suffix}")
 
