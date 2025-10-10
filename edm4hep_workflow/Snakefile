@@ -8,13 +8,13 @@ config_file = "config.toml"
 
 samples = \
     expand("pg_mu_pt{pt}", pt=[1, 10, 100])\
-    expand("pg_el_pt{pt}", pt=[1, 10, 100])\
-    expand("pg_pi_pt{pt}", pt=[1, 10, 100])\
+  + expand("pg_el_pt{pt}", pt=[1, 10, 100])\
+  + expand("pg_pi_pt{pt}", pt=[1, 10, 100])\
   + ["mg_ttbar", "mg_dihiggs"]
 
 event_counts = {
     "ttbar": 1000,
-    "dihiggs": 1000,
+    "dihiggs": 2000,
 }
 
 def get_events(wildcards):
@@ -22,14 +22,14 @@ def get_events(wildcards):
     if hasattr(wildcards, "sample"):
         sample = wildcards.sample
         return event_counts[sample]
-    
+
     if hasattr(wildcards, "particle"):
         return 10000
 
     raise ValueError("Cannot determine event count")
 
 rule all:
-  input: 
+  input:
     expand("reco/{sample}.edm4hep.root", sample=samples),
     expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
     #expand("reco/plots/{sample}/plots_{sample}.pdf", sample=samples),
@@ -78,7 +78,7 @@ rule sim:
     "gen/{sample}.hepmc3.zst",
     "gen/{sample}.hepmc3.zst.json",
     config_file,
-  output: 
+  output:
     "sim/{sample}.edm4hep.root"
   threads: workflow.cores
   shell:
@@ -88,7 +88,7 @@ rule digi:
   input:
     "sim/{sample}.edm4hep.root",
     config_file,
-  output: 
+  output:
     "digi/{sample}.edm4hep.root"
   threads: workflow.cores
   shell:
@@ -98,7 +98,7 @@ rule reco:
   input:
     "digi/{sample}.edm4hep.root",
     config_file,
-  output: 
+  output:
     "reco/{sample}.edm4hep.root",
     "reco/performance_finding_ckf_{sample}.root",
     "reco/performance_fitting_ckf_{sample}.root"
@@ -110,7 +110,7 @@ rule reco_plots:
   input:
     "reco/performance_finding_ckf_{sample}.root",
     "reco/performance_fitting_ckf_{sample}.root"
-  output: 
+  output:
     [f"reco/plots/{{sample}}/{plot}.pdf" for plot in finding_plots+fitting_plots],
     "reco/plots/{sample}/plots_{sample}.pdf"
   params:
