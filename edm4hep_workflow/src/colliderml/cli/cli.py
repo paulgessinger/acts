@@ -5,6 +5,7 @@ import typer
 
 import colliderml.cli.madgraph
 import colliderml.cli.particle_gun
+import colliderml.cli.pythia8
 import colliderml.cli.simulation
 import colliderml.cli.digitization
 import colliderml.cli.reconstruction
@@ -27,6 +28,7 @@ def main(verbose: Annotated[int, typer.Option("--verbose", "-v", count=True)] = 
 
 app.add_typer(colliderml.cli.madgraph.app, name="madgraph")
 app.command("particle-gun")(colliderml.cli.particle_gun.main)
+app.command("pythia8")(colliderml.cli.pythia8.main)
 app.command("simulation")(colliderml.cli.simulation.main)
 app.command("digitization")(colliderml.cli.digitization.main)
 app.command("tree-size")(colliderml.cli.tree_size.main)

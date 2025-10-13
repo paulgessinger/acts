@@ -1,0 +1,10 @@
+label = "soft_qcd"
+
+# 14 TeV center of mass energy
+ebeam1 = 7000
+ebeam2 = 7000
+
+pdg_beam0 = "p"
+pdg_beam1 = 2212
+
+settings = ["SoftQCD:all = on"]

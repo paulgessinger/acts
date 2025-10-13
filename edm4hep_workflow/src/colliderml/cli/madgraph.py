@@ -16,7 +16,7 @@ import collections
 
 import typer
 
-from colliderml.config import RunMode, SampleConfig
+from colliderml.config import RunMode, MadgraphSampleConfig as SampleConfig
 from colliderml import constants
 import colliderml.logging
 import colliderml.util
@@ -294,7 +294,7 @@ def apply_card_customizations(sample_config: SampleConfig, process_dir: Path):
     backup_file(run_card_path, ".orig", log_base=process_dir)
     update_madgraph_card(
         run_card_path,
-        sample_config.card_customizations.run_card,
+        sample_config.run_card,
         log_base=process_dir,
     )
 

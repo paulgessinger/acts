@@ -148,52 +148,6 @@ class HepMC3Meta(pydantic.BaseModel):
             return cls.model_validate(meta)
 
 
-def hepmc_normalize(
-    files: list[Path],
-    output: Path,
-    max_events: int | None = None,
-    compression_level: int = 9,
-    events_per_file: int | None = None,
-):
-    hepmc_normalize_exe = which("hepmc_normalize")
-    compression_level = 9
-    cmd = [str(hepmc_normalize_exe), "--input"] + [str(f) for f in files]
-
-    if events_per_file is None:
-        cmd += ["--single-output", str(output)]
-    else:
-        parsed = parse_hepmc3_file(output)
-
-        cmd += [
-            "--output-prefix",
-            parsed.prefix,
-            "--output-dir",
-            output.parent,
-            "--compression",
-            parsed.compression,
-            f"--events-per-file={events_per_file}",
-        ]
-
-    cmd += [f"--compression-level={compression_level}"]
-
-    if max_events is not None:
-        cmd.append(f"--max-events={max_events}")
-    cmd += [
-        "--verbose",
-        "--json",
-    ]
-    res = subprocess.run(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=sys.stderr,
-        check=True,
-    )
-
-    res = json.loads(res.stdout)
-
-    return [Path(f["path"]) for f in res["files"]]
-
-
 def hadd(input_files: list[Path], output_file: Path):
     hadd_exe = which("hadd")
 

@@ -1,54 +1,41 @@
-import json
 from typing import Annotated
 from pathlib import Path
 import os
-import enum
+import json
 
+from colliderml.util import HepMC3Meta
 import typer
 
 from colliderml import logging
 from colliderml.constants import SEED_DEFAULT
 from colliderml.cli import args
-from colliderml.util import HepMC3Meta
 
-
-class ParticleType(enum.StrEnum):
-    mu = "mu"
-    pi = "pi"
-    el = "el"
-
-    @property
-    def pdg(self) -> "acts.PdgParticle":
-        import acts
-
-        return {
-            "mu": acts.PdgParticle.eMuon,
-            "pi": acts.PdgParticle.ePionPlus,
-            "el": acts.PdgParticle.eElectron,
-        }[self]
+from colliderml.config import Pythia8SampleConfig as SampleConfig
 
 
 def main(
+    sample_file: Annotated[Path, typer.Argument(..., exists=True, dir_okay=False)],
     output: Path,
-    particle_type: Annotated[ParticleType, typer.Option("--type")],
     events: args.EVENTS,
-    pt: Annotated[float, typer.Option(help="Transverse momentum in GeV")],
     jobs: args.JOBS = os.cpu_count() or 1,
     seed: int = SEED_DEFAULT,
 ):
+
+    config = SampleConfig.load(sample_file)
+    logger = logging.get_logger(__name__)
+    logger.info("Loaded sample configuration from %s", sample_file)
+    logger.info("Sample label: %s", config.label)
+    logger.info("Settings: %s", config.settings)
+    logger.info("Beam: %s -> 💥 <- %s", config.pdg_beam0, config.pdg_beam1)
 
     import acts
     import acts.examples
     import acts.examples.hepmc3
     from acts import UnitConstants as u
 
-    logger = logging.get_logger(__name__)
-
     s = acts.examples.Sequencer(numThreads=jobs, events=events)
 
     rng = acts.examples.RandomNumbers(seed=seed)
-
-    pdg = particle_type.pdg
 
     evGen = acts.examples.EventGenerator(
         level=acts.logging.INFO,
@@ -56,14 +43,14 @@ def main(
             acts.examples.EventGenerator.Generator(
                 multiplicity=acts.examples.FixedMultiplicityGenerator(n=1),
                 vertex=acts.examples.FixedVertexGenerator(),
-                particles=acts.examples.ParametricParticleGenerator(
-                    p=(pt * u.GeV, pt * u.GeV),
-                    pTransverse=True,
-                    pdg=pdg,
-                    eta=(-3, 3),
-                    phi=(0, 360 * u.degree),
-                    randomizeCharge=True,
-                    numParticles=1,
+                particles=acts.examples.pythia8.Pythia8Generator(
+                    level=acts.logging.INFO,
+                    pdgBeam0=config.pdg_beam0,
+                    pdgBeam1=config.pdg_beam1,
+                    cmsEnergy=config.cms_energy,
+                    settings=config.settings,
+                    # printLongEventListing=printLongEventListing,
+                    # printShortEventListing=printShortEventListing,
                 ),
             )
         ],
@@ -72,13 +59,15 @@ def main(
     )
     s.addReader(evGen)
 
-    # s.addAlgorithm(
-    #     acts.examples.hepmc3.HepMC3InputConverter(
-    #         level=acts.logging.INFO,
-    #         inputEvent=evGen.config.outputEvent,
-    #         outputParticles="particles_generated",
-    #         outputVertices="vertices_truth",
-    #     )
+    # should we do particle selection here? probably not?
+    # addGenParticleSelection(
+    #     s,
+    #     ParticleSelectorConfig(
+    #         rho=(0.0, 24 * u.mm),
+    #         absZ=(0.0, 1.0 * u.m),
+    #         eta=(-3.0, 3.0),
+    #         pt=(150 * u.MeV, None),
+    #     ),
     # )
 
     compression = acts.examples.hepmc3.compressionFromFilename(output)

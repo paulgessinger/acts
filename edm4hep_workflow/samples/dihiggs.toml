@@ -14,9 +14,10 @@ run_mode = "lo_mlm"
 # About 20% veto acceptance rate, so generate about 5x times what we actually want
 nevents_scale_factor = 5.1
 
+ebeam1 = 7000
+ebeam2 = 7000
+
 [card_customizations.run_card]
-ebeam1 = "7000.0"
-ebeam2 = "7000.0"
 ickkw = "1"
 xqcut = "20.0"
 auto_ptj_mjj = "True"

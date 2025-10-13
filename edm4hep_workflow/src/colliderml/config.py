@@ -1,8 +1,36 @@
 from enum import StrEnum
 from pathlib import Path
-from typing import Any, Self
+from typing import Annotated, Any, Self
 import pydantic
+from pydantic import BeforeValidator
 import tomllib
+import acts
+
+
+def _parse_pdg_particle(value: str | int) -> int:
+    """
+    Parse a PDG particle from either a string name or an integer PDG code.
+
+    Examples:
+        "mu-" -> 13
+        "e+" -> -11
+        2212 -> 2212
+    """
+    if isinstance(value, int):
+        return value
+
+    if isinstance(value, str):
+
+        pdg_particle = acts.parsePdgParticle(value)
+        return int(pdg_particle)
+
+    raise ValueError(
+        f"PDG particle must be a string name or integer, got {type(value)}"
+    )
+
+
+# Type annotation for PDG particle fields that accepts both string names and integers
+PdgParticle = Annotated[int, BeforeValidator(_parse_pdg_particle)]
 
 
 class TomlConfigBase(pydantic.BaseModel):
@@ -45,8 +73,14 @@ class RunMode(StrEnum):
     lo_mlm = "lo_mlm"
 
 
-class SampleConfig(TomlConfigBase):
+class SampleConfigBase(TomlConfigBase):
     label: str
+
+    ebeam1: float
+    ebeam2: float
+
+
+class MadgraphSampleConfig(SampleConfigBase):
 
     model: str
     run_mode: RunMode
@@ -61,3 +95,30 @@ class SampleConfig(TomlConfigBase):
     card_customizations: CardCustomizations = pydantic.Field(
         default_factory=CardCustomizations
     )
+
+    @property
+    def run_card(self) -> dict[str, str]:
+        return {
+            **self.card_customizations.run_card,
+            "ebeam1": str(self.ebeam1),
+            "ebeam2": str(self.ebeam2),
+        }
+
+
+class Pythia8SampleConfig(SampleConfigBase):
+    settings: list[str]
+
+    pdg_beam0_internal: PdgParticle = pydantic.Field(alias="pdg_beam0")
+    pdg_beam1_internal: PdgParticle = pydantic.Field(alias="pdg_beam1")
+
+    @property
+    def pdg_beam0(self) -> acts.PdgParticle:
+        return acts.PdgParticle(self.pdg_beam0_internal)
+
+    @property
+    def pdg_beam1(self) -> acts.PdgParticle:
+        return acts.PdgParticle(self.pdg_beam1_internal)
+
+    @property
+    def cms_energy(self) -> float:
+        return self.ebeam1 + self.ebeam2

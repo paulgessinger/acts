@@ -15,6 +15,7 @@ samples = \
 event_counts = {
     "ttbar": 1000,
     "dihiggs": 2000, # don't go too low otherwise pythia8 fails
+    "soft_qcd": 1000,
 }
 
 def get_events(wildcards):
@@ -39,6 +40,17 @@ rule all:
     #expand("sim/{sample}.edm4hep.root", sample=samples),
     #expand("digi/{sample}.edm4hep.root", sample=samples),
     #expand("reco/{sample}.edm4hep.root", sample=samples),
+
+rule pythia8_gen:
+  output:
+    "gen/py_{sample}.hepmc3.zst",
+    "gen/py_{sample}.hepmc3.zst.json",
+  input:
+    "samples/{sample}.toml"
+  params:
+    events=get_events
+  shell:
+    "./with_env.sh colliderml -vv pythia8 {input} {output[0]} --events {params.events}"
 
 rule madgraph_init:
   output:
