@@ -580,6 +580,8 @@ def generate(
     max_iterations: int = constants.GENERATION_ITER_MAX,
     jobs: int = os.cpu_count() or 1,
 ):
+    import acts.examples.hepmc3
+
     logger.info("Loading sample config from %s", sample_file)
     sample_config = SampleConfig.load(sample_file)
     print(sample_config)
@@ -665,11 +667,15 @@ def generate(
             events_file = locate_single_output(process_dir, run_name)
 
             logger.info("Normalizing output to %s", output)
-            colliderml.util.hepmc_normalize(
-                files=[events_file],
-                output=output,
-                max_events=events,
-                compression_level=9,
+
+            acts.examples.hepmc3.normalizeFiles(
+                inputFiles=[events_file],
+                singleOutputPath=output,
+                maxEvents=events,
+                format=acts.examples.hepmc3.formatFromFilename(output),
+                compression=acts.examples.hepmc3.compressionFromFilename(output),
+                compressionLevel=9,
+                verbose=True,
             )
 
         elif sample_config.run_mode == RunMode.lo_mlm:
@@ -747,10 +753,13 @@ def generate(
             )
             logger.debug("Files to combine:\n%s", "\n".join(map(str, run_files)))
 
-            colliderml.util.hepmc_normalize(
-                files=run_files,
-                output=output,
-                max_events=events,
-                events_per_file=events_per_file,
-                compression_level=9,
+            acts.examples.hepmc3.normalizeFiles(
+                inputFiles=run_files,
+                singleOutputPath=output,
+                maxEvents=events,
+                eventsPerFile=events_per_file,
+                format=acts.examples.hepmc3.formatFromFilename(output),
+                compression=acts.examples.hepmc3.compressionFromFilename(output),
+                compressionLevel=9,
+                verbose=True,
             )

@@ -12,7 +12,7 @@ import tempfile
 import contextlib
 
 from colliderml.config import Config, SimulationConfig
-from colliderml.util import HepMC3Meta, hadd, hepmc_normalize, parse_hepmc3_file
+from colliderml.util import HepMC3Meta, hadd, parse_hepmc3_file
 import typer
 
 from colliderml import constants
@@ -125,6 +125,9 @@ def main(
     force: Annotated[bool, typer.Option("--force", "-f")] = False,
     config_path: Annotated[Path | None, typer.Option("--config")] = None,
 ):
+
+    import acts.examples.hepmc3
+
     logger = colliderml.logging.get_logger(__name__)
 
     if config_path is None:
@@ -166,19 +169,25 @@ def main(
             scratch_dir.mkdir(parents=True, exist_ok=True)
             tempdir = scratch_dir
 
+        parsed = parse_hepmc3_file(input_files[0])
+        normalize_kwargs = dict(
+            inputFiles=input_files,
+            outputDir=tempdir,
+            maxEvents=events,
+            outputPrefix=parsed.prefix,
+            compression=acts.examples.hepmc3.Compression.zlib,
+            compressionLevel=3,
+            verbose=True,
+        )
+
         # special case single process case so we can get direct output
         if procs == 1:
             total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
 
-            parsed = parse_hepmc3_file(input_files[0])
-
-            input_files = hepmc_normalize(
-                files=input_files,
-                # write uncompressed so that we're quick
-                output=tempdir / f"{parsed.prefix}.hepmc3",
-                max_events=events,
-                events_per_file=total_events,
-            )
+            input_files = acts.examples.hepmc3.normalizeFiles(
+                eventsPerFile=total_events,
+                **normalize_kwargs,
+            ).outputFiles
 
             do_simulation(
                 input_files=input_files,
@@ -204,15 +213,10 @@ def main(
                     effective_events = events or total_events
                     events_per_proc = math.ceil(effective_events / procs)
 
-                    parsed = parse_hepmc3_file(input_files[0])
-
-                    input_files = hepmc_normalize(
-                        files=input_files,
-                        output=tempdir / f"{parsed.prefix}.hepmc3.gz",
-                        max_events=events,
-                        events_per_file=events_per_proc,
-                        compression_level=4,  # lower compression level to be fast
-                    )
+                    input_files = acts.examples.hepmc3.normalizeFiles(
+                        eventsPerFile=events_per_proc,
+                        **normalize_kwargs,
+                    ).outputFiles
 
                     logger.debug(f"Resplit into {len(input_files)} files")
 
