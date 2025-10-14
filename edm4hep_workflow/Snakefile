@@ -1,3 +1,5 @@
+import re
+
 finding_plots = expand("trackeff_vs_{q}", q=["eta", "pT", "phi"])\
             + ["nHoles_vs_eta", "nMeasurements_vs_eta", "nOutliers_vs_eta"]
 
@@ -18,18 +20,25 @@ event_counts = {
     "soft_qcd": 1000,
 }
 
+def get_events_single_particles(particle: str) -> int:
+    return 10000
+
+def get_events_madgraph(sample: str) -> int:
+    return event_counts[sample]
+
 def get_events(wildcards):
-    #print("get events:", wildcards)
+    print("get events:", wildcards)
     if hasattr(wildcards, "sample"):
         sample = wildcards.sample
-        return event_counts[sample]
+        return get_events_madgraph(sample)
 
     if hasattr(wildcards, "particle"):
-        return 10000
+        return get_events_single_particles(wildcards.particle)
 
     raise ValueError("Cannot determine event count")
 
 def get_events_pileup(wildcards):
+    print("get events PILEUP:", wildcards)
     import math
 
     def poisson_percentile(N, L):
@@ -49,12 +58,27 @@ def get_events_pileup(wildcards):
         
         return k
 
-    events = get_events(wildcards)
+    # We need to figure out what the original sample name is!
+    if wildcards.sample.startswith("pg_"):
+        m = re.match(r"pg_([a-z]+)_pt(\d+)", wildcards.sample)
+        if m is None: 
+            raise ValueError("Cannot parse particle gun sample name")
+        particle = m.group(1)
+        events = get_events_single_particles(particle)
+    elif wildcards.sample.startswith("mg_"):
+        m = re.match(r"mg_(\w+)", wildcards.sample)
+        if m is None:
+            raise ValueError("Cannot parse madgraph sample name")
+        sample = m.group(1)
+        events = get_events_madgraph(sample)
+    else:
+        raise ValueError("Cannot determine sample type for pileup event count")
 
-    perc = poisson_percentile(95, int(wildcards.pileup))
-    print(perc)
+    perc = 95 
+    multiplier = poisson_percentile(perc, int(wildcards.pileup))
+    print(f"{perc}% percentile for {wildcards.pileup} is {multiplier}, so generating {events*multiplier} soft QCD events")
 
-    return event
+    return events*multiplier
 
 def get_sim_inputs(wildcards):
     if wildcards.pileup == '0':
@@ -88,8 +112,8 @@ rule all:
 
 rule pileup_gen:
   output:
-    "gen/pu_{sample}.hepmc3.zst",
-    "gen/pu_{sample}.hepmc3.zst.json",
+    "gen/pu_{sample}_pu{pileup}.hepmc3.zst",
+    "gen/pu_{sample}_pu{pileup}.hepmc3.zst.json",
   input:
     "samples/soft_qcd.toml"
   params:
@@ -124,6 +148,19 @@ rule hepmc_smear:
     "gen/smeared/{sample}.hepmc3.zst.json",
   shell:
     "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --config {input[2]} {output[0]}"
+
+rule hepmc_smear_merge:
+  input:
+    "gen/{sample}.hepmc3.zst",
+    "gen/{sample}.hepmc3.zst.json",
+    "gen/pu_{sample}_pu{pileup}.hepmc3.zst",
+    "gen/pu_{sample}_pu{pileup}.hepmc3.zst.json",
+    "pileup.toml",
+  output:
+    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst",
+    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst.json",
+  shell:
+    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --pileup {input[2]} --npileup {wildcards.pileup} --config {input[4]} {output[0]}"
 
 
 rule madgraph_init:
@@ -162,8 +199,6 @@ rule particle_gun:
 rule sim:
   input:
     get_sim_inputs,
-    # "gen/{sample}.hepmc3.zst",
-    # "gen/{sample}.hepmc3.zst.json",
     config_file,
   output:
     "sim/{sample}_pu{pileup}.edm4hep.root"
