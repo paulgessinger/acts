@@ -1,0 +1,15 @@
+vertex_stddev = [
+  {value=12.5, unit="um"},
+  {value=12.5, unit="um"},
+  {value=55.5, unit="mm"},
+  {value=5, unit="ns"},
+]
+
+vertex_mean = [
+  {value=0.0, unit="um"},
+  {value=0.0, unit="um"},
+  {value=0.0, unit="um"},
+  {value=0.0, unit="um"},
+]
+
+strategy = "fixed"

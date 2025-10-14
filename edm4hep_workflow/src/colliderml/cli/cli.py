@@ -10,7 +10,8 @@ import colliderml.cli.simulation
 import colliderml.cli.digitization
 import colliderml.cli.reconstruction
 import colliderml.cli.tree_size
-import colliderml.cli.plot_basic_diagnostics
+import colliderml.cli.plot
+import colliderml.cli.hepmc
 from colliderml.logging import configure_logging
 
 app = typer.Typer()
@@ -34,4 +35,5 @@ app.command("digitization")(colliderml.cli.digitization.main)
 app.command("tree-size")(colliderml.cli.tree_size.main)
 app.command("reconstruction")(colliderml.cli.reconstruction.main)
 
-app.add_typer(colliderml.cli.plot_basic_diagnostics.app, name="plot")
+app.add_typer(colliderml.cli.plot.app, name="plot")
+app.add_typer(colliderml.cli.hepmc.app, name="hepmc")

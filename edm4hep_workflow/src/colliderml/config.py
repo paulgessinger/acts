@@ -1,6 +1,6 @@
 from enum import StrEnum
 from pathlib import Path
-from typing import Annotated, Any, Self
+from typing import Annotated, Any, Literal, Self
 import pydantic
 from pydantic import BeforeValidator
 import tomllib
@@ -122,3 +122,56 @@ class Pythia8SampleConfig(SampleConfigBase):
     @property
     def cms_energy(self) -> float:
         return self.ebeam1 + self.ebeam2
+
+
+class PileupStrategy(StrEnum):
+    fixed = "fixed"
+    poisson = "poisson"
+
+
+Unit = Literal["mm", "um", "m", "cm", "ns", "s", "ps"]
+
+
+class ValueWithUnit(pydantic.BaseModel):
+    value: float
+    unit: Unit
+
+    def to_acts(self) -> float:
+        return self.value * getattr(acts.UnitConstants, self.unit)
+
+    def __str__(self) -> str:
+        return f"{self.value} {self.unit}"
+
+
+class Vector4WithUnit(
+    pydantic.RootModel[
+        tuple[ValueWithUnit, ValueWithUnit, ValueWithUnit, ValueWithUnit]
+    ]
+):
+
+    def to_acts(self) -> acts.Vector4:
+        return acts.Vector4(*map(lambda v: v.to_acts(), self.root))
+
+    @staticmethod
+    def zeros():
+        return Vector4WithUnit(
+            ValueWithUnit(value=0.0, unit="mm"),
+            ValueWithUnit(value=0.0, unit="mm"),
+            ValueWithUnit(value=0.0, unit="mm"),
+            ValueWithUnit(value=0.0, unit="ns"),
+        )
+
+    def __str__(self) -> str:
+        x, y, z, t = self.root
+        return f"[{x}, {y}, {z}, {t}]"
+
+
+class PileupConfig(TomlConfigBase):
+    # vertex_units: tuple[str, str, str, str] = ("mm", "mm", "mm", "ns")
+    # vertex_mean: tuple[float, float, float, float] = (0.0, 0.0, 0.0, 0.0)
+    vertex_mean: Vector4WithUnit = pydantic.Field(default_factory=Vector4WithUnit.zeros)
+    vertex_stddev: Vector4WithUnit = pydantic.Field(
+        default_factory=Vector4WithUnit.zeros
+    )
+
+    strategy: PileupStrategy = PileupStrategy.poisson
