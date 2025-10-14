@@ -29,6 +29,51 @@ def get_events(wildcards):
 
     raise ValueError("Cannot determine event count")
 
+def get_events_pileup(wildcards):
+    import math
+
+    def poisson_percentile(N, L):
+        """Calculate N-th percentile of Poisson distribution"""
+        target = N / 100
+        
+        # Start with k=0
+        k = 0
+        pmf = math.exp(-L)  # P(X = 0) = e^(-λ)
+        cumulative = pmf
+        
+        while cumulative < target:
+            k += 1
+            # Use recurrence: P(X = k) = P(X = k-1) * λ / k
+            pmf *= L / k
+            cumulative += pmf
+        
+        return k
+
+    events = get_events(wildcards)
+
+    perc = poisson_percentile(95, int(wildcards.pileup))
+    print(perc)
+
+    return event
+
+def get_sim_inputs(wildcards):
+    if wildcards.pileup == '0':
+      # no pileup case means we don't need pileup, but we need to still produce smeared inputs
+      print("NO PILEUP")
+      return [
+        f"gen/smeared/{wildcards.sample}.hepmc3.zst",
+        f"gen/smeared/{wildcards.sample}.hepmc3.zst.json",
+      ]
+    else:
+      print(wildcards.pileup, "PILEUP")
+      # we need to schedule pileup generation + smearing & merging
+      return [
+        f"gen/smeared/{wildcards.sample}_pu{wildcards.pileup}.hepmc3.zst",
+        f"gen/smeared/{wildcards.sample}_pu{wildcards.pileup}.hepmc3.zst.json",
+      ]
+
+    raise ValueError("Cannot determine sim inputs")
+
 rule all:
   input:
     expand("reco/{sample}.edm4hep.root", sample=samples),
@@ -41,16 +86,45 @@ rule all:
     #expand("digi/{sample}.edm4hep.root", sample=samples),
     #expand("reco/{sample}.edm4hep.root", sample=samples),
 
-rule pythia8_gen:
+rule pileup_gen:
   output:
-    "gen/py_{sample}.hepmc3.zst",
-    "gen/py_{sample}.hepmc3.zst.json",
+    "gen/pu_{sample}.hepmc3.zst",
+    "gen/pu_{sample}.hepmc3.zst.json",
   input:
-    "samples/{sample}.toml"
+    "samples/soft_qcd.toml"
   params:
-    events=get_events
+    events=get_events_pileup
   shell:
     "./with_env.sh colliderml -vv pythia8 {input} {output[0]} --events {params.events}"
+
+# def get_smear_inputs(wildcards):
+#   if hasattr(wildcards, "pileup") and wildcards.pileup != '0':
+#     # need to generate pileup
+#     return [
+#       f"gen/pu_{wildcards.sample}.hepmc3.zst",
+#       f"gen/pu_{wildcards.sample}.hepmc3.zst.json",
+#       f"gen/{wildcards.sample}.hepmc3.zst",
+#       f"gen/{wildcards.sample}.hepmc3.zst.json",
+#     ]
+#   else:
+#     # no pileup case
+#     return [
+#       f"gen/{wildcards.sample}.hepmc3.zst",
+#       f"gen/{wildcards.sample}.hepmc3.zst.json",
+#     ]
+#
+
+rule hepmc_smear:
+  input:
+    "gen/{sample}.hepmc3.zst",
+    "gen/{sample}.hepmc3.zst.json",
+    "pileup.toml",
+  output:
+    "gen/smeared/{sample}.hepmc3.zst",
+    "gen/smeared/{sample}.hepmc3.zst.json",
+  shell:
+    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --config {input[2]} {output[0]}"
+
 
 rule madgraph_init:
   output:
@@ -87,11 +161,12 @@ rule particle_gun:
 
 rule sim:
   input:
-    "gen/{sample}.hepmc3.zst",
-    "gen/{sample}.hepmc3.zst.json",
+    get_sim_inputs,
+    # "gen/{sample}.hepmc3.zst",
+    # "gen/{sample}.hepmc3.zst.json",
     config_file,
   output:
-    "sim/{sample}.edm4hep.root"
+    "sim/{sample}_pu{pileup}.edm4hep.root"
   threads: workflow.cores
   shell:
     "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --config {input[2]}"

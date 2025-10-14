@@ -91,6 +91,11 @@ def merge(
         )
     )
 
+    if compression is not acts.examples.hepmc3.Compression.none:
+        output = output.parent / output.stem
+
+    print("OUTPUT", output)
+
     s.addWriter(
         acts.examples.hepmc3.HepMC3Writer(
             inputEvent="hepmc3_event",
