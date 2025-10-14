@@ -8,6 +8,7 @@ import enum
 
 import colliderml.logging
 from colliderml.config import PileupConfig, PileupStrategy
+from colliderml.util import human_readable_size
 
 app = typer.Typer()
 
@@ -104,4 +105,15 @@ def merge(
 
     s.run()
 
-    logger.info("Wrote output to %s", output)
+    # Get output file size and report
+    if not output.exists():
+        logger.error("Output file %s does not exist", output)
+        raise typer.Exit(1)
+
+    output_size = output.stat().st_size
+    logger.info("Wrote output to %s (%s)", output, human_readable_size(output_size))
+
+    # Also check for sidecar metadata file
+    sidecar_path = Path(str(output) + ".json")
+    if sidecar_path.exists():
+        logger.info("Sidecar metadata file: %s", sidecar_path)

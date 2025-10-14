@@ -12,7 +12,7 @@ import tempfile
 import contextlib
 
 from colliderml.config import Config, SimulationConfig
-from colliderml.util import HepMC3Meta, hadd, parse_hepmc3_file
+from colliderml.util import HepMC3Meta, hadd, human_readable_size, parse_hepmc3_file
 import typer
 
 from colliderml import constants
@@ -275,5 +275,7 @@ def main(
                 logger.info("Merging output files to %s", output)
                 hadd(output_files, output)
 
-                file_size = output.stat().st_size / (1024**2)
-                logger.info(f"Wrote output file {output} ({file_size:.1f} MB)")
+                file_size = output.stat().st_size
+                logger.info(
+                    "Wrote output file %s (%s)", output, human_readable_size(file_size)
+                )

@@ -154,3 +154,12 @@ def hadd(input_files: list[Path], output_file: Path):
     subprocess.run(
         [hadd_exe, str(output_file)] + [str(f) for f in input_files], check=True
     )
+
+
+def human_readable_size(size_bytes: int) -> str:
+    """Convert bytes to human-readable format."""
+    for unit in ["B", "KB", "MB", "GB", "TB"]:
+        if size_bytes < 1024.0:
+            return f"{size_bytes:.1f} {unit}"
+        size_bytes /= 1024.0
+    return f"{size_bytes:.1f} PB"

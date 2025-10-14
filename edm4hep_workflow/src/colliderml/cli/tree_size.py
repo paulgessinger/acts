@@ -27,6 +27,8 @@ except ImportError:
 from rich.console import Console
 from rich.table import Table
 
+from colliderml.util import human_readable_size
+
 
 class SortBy(str, Enum):
     """Sort options for branch display."""
@@ -66,15 +68,6 @@ def parse_entries(entries_str: str) -> int:
     """Parse entries count from string like 'Entries :      100'."""
     match = re.search(r"Entries\s*:\s*(\d+)", entries_str)
     return int(match.group(1)) if match else 0
-
-
-def human_readable_size(size_bytes: int) -> str:
-    """Convert bytes to human-readable format."""
-    for unit in ["B", "KB", "MB", "GB", "TB"]:
-        if size_bytes < 1024.0:
-            return f"{size_bytes:.1f} {unit}"
-        size_bytes /= 1024.0
-    return f"{size_bytes:.1f} PB"
 
 
 def human_readable_size_float(size_bytes: float) -> str:
