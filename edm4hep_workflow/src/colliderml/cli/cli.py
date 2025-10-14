@@ -22,8 +22,9 @@ def main(verbose: Annotated[int, typer.Option("--verbose", "-v", count=True)] = 
     level = logging.INFO
     if verbose >= 2:
         level = logging.DEBUG
-    configure_logging(level)
+    configure_logging(logging.INFO)
     logger = logging.getLogger(__name__)
+    logger.setLevel(level)
     logger.debug("Logging configured, level=%s", level)
 
 

@@ -61,6 +61,7 @@ def main(
                     pTransverse=True,
                     pdg=pdg,
                     eta=(-3, 3),
+                    etaUniform=True,
                     phi=(0, 360 * u.degree),
                     randomizeCharge=True,
                     numParticles=1,

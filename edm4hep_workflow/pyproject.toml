@@ -5,13 +5,17 @@ description = "EDM4hep workflow package for ACTS simulation and reconstruction"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "hist>=2.9.0",
     "jinja2>=3.1.6",
     "matplotlib>=3.10.6",
+    "mplhep>=0.4.1",
     "numpy>=2.3.2",
     "pandas>=2.3.2",
     "pydantic>=2.11.7",
-    "pyhepmc>=2.14.0",
+    # "pyhepmc>=2.14.0",
+    "pyhepmc",
     "rich>=14.1.0",
+    "scipy>=1.16.2",
     "typer>=0.17.3",
 ]
 
@@ -29,6 +33,9 @@ build-backend = "uv_build"
 
 [tool.setuptools.packages.find]
 include = ["edm4hep_workflow*"]
+
+[tool.uv.sources]
+pyhepmc = { git = "https://github.com/paulgessinger/pyhepmc.git", rev = "2c8d06e7348144f1062630b2941bbe656a9b5fb5" }
 
 [dependency-groups]
 dev = [

@@ -8,11 +8,15 @@ fitting_plots = expand("reswidth_{q}_vs_eta", q=["d0", "z0", "qop", "phi", "thet
 
 config_file = "config.toml"
 
-samples = \
-    expand("pg_mu_pt{pt}", pt=[1, 10, 100])\
+particle_gun_samples = []\
+  + expand("pg_mu_pt{pt}", pt=[1, 10, 100])\
   + expand("pg_el_pt{pt}", pt=[1, 10])\
-  + expand("pg_pi_pt{pt}", pt=[1, 10, 100])\
-  + ["mg_ttbar", "mg_dihiggs"]
+  + expand("pg_pi_pt{pt}", pt=[1, 10, 100])
+
+madgraph_samples = ["mg_ttbar", "mg_dihiggs"]
+
+
+samples = particle_gun_samples + madgraph_samples
 
 event_counts = {
     "ttbar": 1000,
@@ -28,12 +32,13 @@ def get_events_madgraph(sample: str) -> int:
 
 def get_events(wildcards):
     print("get events:", wildcards)
+    if hasattr(wildcards, "particle"):
+        return get_events_single_particles(wildcards.particle)
+
     if hasattr(wildcards, "sample"):
         sample = wildcards.sample
         return get_events_madgraph(sample)
 
-    if hasattr(wildcards, "particle"):
-        return get_events_single_particles(wildcards.particle)
 
     raise ValueError("Cannot determine event count")
 
@@ -82,8 +87,8 @@ def get_events_pileup(wildcards):
 
 rule all:
   input:
-    expand("reco/{sample}.edm4hep.root", sample=samples),
-    expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
+    # expand("reco/{sample}.edm4hep.root", sample=samples),
+    # expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
     #expand("reco/plots/{sample}/plots_{sample}.pdf", sample=samples),
     #"gen/mg_ttbar.hepmc3.zst",
     #"gen/mg_dihiggs.hepmc3.zst",
@@ -92,6 +97,42 @@ rule all:
     #expand("digi/{sample}.edm4hep.root", sample=samples),
     #expand("reco/{sample}.edm4hep.root", sample=samples),
 
+def pg_gen_inputs(wildcards):
+    return sum([
+        expand("gen/smeared/{sample}/{sample}.hepmc3.zst", sample=particle_gun_samples),
+        expand("gen/smeared/{sample}/{sample}.pdf", sample=particle_gun_samples),
+        expand("gen/{sample}/{sample}.hepmc3.zst", sample=particle_gun_samples),
+        expand("gen/{sample}/{sample}.pdf", sample=particle_gun_samples),
+    ], [])
+
+rule pg_gen:
+  input:
+    pg_gen_inputs,
+
+def mg_gen_inputs(wildcards):
+    samples = [] 
+    exts = ["hepmc3.zst", "pdf"]
+
+    samples += expand(
+        "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.{ext}", 
+        sample=madgraph_samples, pileup=[10], ext=exts,
+    )
+
+    samples += expand(
+        "gen/{smeared}{sample}/{sample}.{ext}", 
+        sample=madgraph_samples, ext=exts, smeared=["smeared/", ""]
+    )
+
+    return samples
+
+rule mg_gen:
+  input:
+    mg_gen_inputs,
+
+rule gen:
+  input:
+    mg_gen_inputs,
+    pg_gen_inputs,
 
 
 rule madgraph_init:
@@ -109,8 +150,8 @@ rule madgraph_gen:
     "samples/{sample}.toml",
     "samples/mg_{sample}.tar.gz"
   output:
-    "gen/mg_{sample}.hepmc3.zst",
-    "gen/mg_{sample}.hepmc3.zst.json"
+    "gen/mg_{sample}/mg_{sample}.hepmc3.zst",
+    "gen/mg_{sample}/mg_{sample}.hepmc3.zst.json"
   params:
     events=get_events
   threads: workflow.cores
@@ -119,13 +160,23 @@ rule madgraph_gen:
 
 rule particle_gun:
   output:
-    "gen/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst",
-    "gen/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst.json"
+    "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst",
+    "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst.json",
   params:
     events=get_events
   threads: workflow.cores
   shell:
     "./with_env.sh colliderml particle-gun --jobs {threads} {output[0]} --type {wildcards.particle} --pt {wildcards.pt} --events {params.events}"
+
+rule hepmc_plots:
+  input:
+    "gen/{whatever}.hepmc3.zst",
+  output:
+    "gen/{whatever}.pdf"
+  threads: 1
+  shell:
+    "./with_env.sh colliderml plot hepmc {input} --output {output} --max-events 1000"
+
 
 rule pileup_gen:
   output:
@@ -140,47 +191,43 @@ rule pileup_gen:
 
 rule hepmc_smear:
   input:
-    "gen/{sample}.hepmc3.zst",
-    "gen/{sample}.hepmc3.zst.json",
+    "gen/{sample}/{sample}.hepmc3.zst",
+    "gen/{sample}/{sample}.hepmc3.zst.json",
     "pileup.toml",
   output:
-    "gen/smeared/{sample}.hepmc3.zst",
-    "gen/smeared/{sample}.hepmc3.zst.json",
+    "gen/smeared/{sample}/{sample}.hepmc3.zst",
+    "gen/smeared/{sample}/{sample}.hepmc3.zst.json",
   shell:
     "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --config {input[2]} {output[0]}"
 
 rule hepmc_smear_merge:
   input:
-    "gen/{sample}.hepmc3.zst",
-    "gen/{sample}.hepmc3.zst.json",
+    "gen/{sample}/{sample}.hepmc3.zst",
+    "gen/{sample}/{sample}.hepmc3.zst.json",
     "gen/pu_{sample}_pu{pileup}.hepmc3.zst",
     "gen/pu_{sample}_pu{pileup}.hepmc3.zst.json",
     "pileup.toml",
   output:
-    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst",
-    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst.json",
+    "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.hepmc3.zst",
+    "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.hepmc3.zst.json",
   shell:
     "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --pileup {input[2]} --npileup {wildcards.pileup} --config {input[4]} {output[0]}"
 
-def get_sim_inputs(wildcards):
-    if wildcards.pileup == '0':
-      # no pileup case means we don't need pileup, but we need to still produce smeared inputs
-      return [
-        f"gen/smeared/{wildcards.sample}.hepmc3.zst",
-        f"gen/smeared/{wildcards.sample}.hepmc3.zst.json",
-      ]
-    else:
-      # we need to schedule pileup generation + smearing & merging
-      return [
-        f"gen/smeared/{wildcards.sample}_pu{wildcards.pileup}.hepmc3.zst",
-        f"gen/smeared/{wildcards.sample}_pu{wildcards.pileup}.hepmc3.zst.json",
-      ]
-
-    raise ValueError("Cannot determine sim inputs")
-
 rule sim:
   input:
-    get_sim_inputs,
+    "gen/smeared/{sample}/{sample}.hepmc3.zst",
+    "gen/smeared/{sample}/{sample}.hepmc3.zst.json",
+    config_file,
+  output:
+    "sim/{sample}.edm4hep.root"
+  threads: workflow.cores
+  shell:
+    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --config {input[2]}"
+
+rule sim_pu:
+  input:
+    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst",
+    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst.json",
     config_file,
   output:
     "sim/{sample}_pu{pileup}.edm4hep.root"
