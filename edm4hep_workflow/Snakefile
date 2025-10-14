@@ -38,7 +38,6 @@ def get_events(wildcards):
     raise ValueError("Cannot determine event count")
 
 def get_events_pileup(wildcards):
-    print("get events PILEUP:", wildcards)
     import math
 
     def poisson_percentile(N, L):
@@ -80,23 +79,6 @@ def get_events_pileup(wildcards):
 
     return events*multiplier
 
-def get_sim_inputs(wildcards):
-    if wildcards.pileup == '0':
-      # no pileup case means we don't need pileup, but we need to still produce smeared inputs
-      print("NO PILEUP")
-      return [
-        f"gen/smeared/{wildcards.sample}.hepmc3.zst",
-        f"gen/smeared/{wildcards.sample}.hepmc3.zst.json",
-      ]
-    else:
-      print(wildcards.pileup, "PILEUP")
-      # we need to schedule pileup generation + smearing & merging
-      return [
-        f"gen/smeared/{wildcards.sample}_pu{wildcards.pileup}.hepmc3.zst",
-        f"gen/smeared/{wildcards.sample}_pu{wildcards.pileup}.hepmc3.zst.json",
-      ]
-
-    raise ValueError("Cannot determine sim inputs")
 
 rule all:
   input:
@@ -110,57 +92,6 @@ rule all:
     #expand("digi/{sample}.edm4hep.root", sample=samples),
     #expand("reco/{sample}.edm4hep.root", sample=samples),
 
-rule pileup_gen:
-  output:
-    "gen/pu_{sample}_pu{pileup}.hepmc3.zst",
-    "gen/pu_{sample}_pu{pileup}.hepmc3.zst.json",
-  input:
-    "samples/soft_qcd.toml"
-  params:
-    events=get_events_pileup
-  shell:
-    "./with_env.sh colliderml -vv pythia8 {input} {output[0]} --events {params.events}"
-
-# def get_smear_inputs(wildcards):
-#   if hasattr(wildcards, "pileup") and wildcards.pileup != '0':
-#     # need to generate pileup
-#     return [
-#       f"gen/pu_{wildcards.sample}.hepmc3.zst",
-#       f"gen/pu_{wildcards.sample}.hepmc3.zst.json",
-#       f"gen/{wildcards.sample}.hepmc3.zst",
-#       f"gen/{wildcards.sample}.hepmc3.zst.json",
-#     ]
-#   else:
-#     # no pileup case
-#     return [
-#       f"gen/{wildcards.sample}.hepmc3.zst",
-#       f"gen/{wildcards.sample}.hepmc3.zst.json",
-#     ]
-#
-
-rule hepmc_smear:
-  input:
-    "gen/{sample}.hepmc3.zst",
-    "gen/{sample}.hepmc3.zst.json",
-    "pileup.toml",
-  output:
-    "gen/smeared/{sample}.hepmc3.zst",
-    "gen/smeared/{sample}.hepmc3.zst.json",
-  shell:
-    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --config {input[2]} {output[0]}"
-
-rule hepmc_smear_merge:
-  input:
-    "gen/{sample}.hepmc3.zst",
-    "gen/{sample}.hepmc3.zst.json",
-    "gen/pu_{sample}_pu{pileup}.hepmc3.zst",
-    "gen/pu_{sample}_pu{pileup}.hepmc3.zst.json",
-    "pileup.toml",
-  output:
-    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst",
-    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst.json",
-  shell:
-    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --pileup {input[2]} --npileup {wildcards.pileup} --config {input[4]} {output[0]}"
 
 
 rule madgraph_init:
@@ -195,6 +126,57 @@ rule particle_gun:
   threads: workflow.cores
   shell:
     "./with_env.sh colliderml particle-gun --jobs {threads} {output[0]} --type {wildcards.particle} --pt {wildcards.pt} --events {params.events}"
+
+rule pileup_gen:
+  output:
+    "gen/pu_{sample}_pu{pileup}.hepmc3.zst",
+    "gen/pu_{sample}_pu{pileup}.hepmc3.zst.json",
+  input:
+    "samples/soft_qcd.toml"
+  params:
+    events=get_events_pileup
+  shell:
+    "./with_env.sh colliderml -vv pythia8 {input} {output[0]} --events {params.events}"
+
+rule hepmc_smear:
+  input:
+    "gen/{sample}.hepmc3.zst",
+    "gen/{sample}.hepmc3.zst.json",
+    "pileup.toml",
+  output:
+    "gen/smeared/{sample}.hepmc3.zst",
+    "gen/smeared/{sample}.hepmc3.zst.json",
+  shell:
+    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --config {input[2]} {output[0]}"
+
+rule hepmc_smear_merge:
+  input:
+    "gen/{sample}.hepmc3.zst",
+    "gen/{sample}.hepmc3.zst.json",
+    "gen/pu_{sample}_pu{pileup}.hepmc3.zst",
+    "gen/pu_{sample}_pu{pileup}.hepmc3.zst.json",
+    "pileup.toml",
+  output:
+    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst",
+    "gen/smeared/{sample}_pu{pileup}.hepmc3.zst.json",
+  shell:
+    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --pileup {input[2]} --npileup {wildcards.pileup} --config {input[4]} {output[0]}"
+
+def get_sim_inputs(wildcards):
+    if wildcards.pileup == '0':
+      # no pileup case means we don't need pileup, but we need to still produce smeared inputs
+      return [
+        f"gen/smeared/{wildcards.sample}.hepmc3.zst",
+        f"gen/smeared/{wildcards.sample}.hepmc3.zst.json",
+      ]
+    else:
+      # we need to schedule pileup generation + smearing & merging
+      return [
+        f"gen/smeared/{wildcards.sample}_pu{wildcards.pileup}.hepmc3.zst",
+        f"gen/smeared/{wildcards.sample}_pu{wildcards.pileup}.hepmc3.zst.json",
+      ]
+
+    raise ValueError("Cannot determine sim inputs")
 
 rule sim:
   input:

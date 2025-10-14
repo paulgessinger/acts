@@ -12,4 +12,4 @@ vertex_mean = [
   {value=0.0, unit="um"},
 ]
 
-strategy = "fixed"
+strategy = "poisson"
