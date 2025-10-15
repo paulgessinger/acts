@@ -11,7 +11,7 @@ config_file = "config.toml"
 particle_gun_samples = []\
   + expand("pg_mu_pt{pt}", pt=[1, 10, 100])\
   + expand("pg_el_pt{pt}", pt=[1, 10])\
-  + expand("pg_pi_pt{pt}", pt=[1, 10, 100])
+  + expand("pg_pi_pt{pt}", pt=[1, 10])
 
 madgraph_samples = ["mg_ttbar", "mg_dihiggs"]
 
@@ -48,24 +48,24 @@ def get_events_pileup(wildcards):
     def poisson_percentile(N, L):
         """Calculate N-th percentile of Poisson distribution"""
         target = N / 100
-        
+
         # Start with k=0
         k = 0
         pmf = math.exp(-L)  # P(X = 0) = e^(-λ)
         cumulative = pmf
-        
+
         while cumulative < target:
             k += 1
             # Use recurrence: P(X = k) = P(X = k-1) * λ / k
             pmf *= L / k
             cumulative += pmf
-        
+
         return k
 
     # We need to figure out what the original sample name is!
     if wildcards.sample.startswith("pg_"):
         m = re.match(r"pg_([a-z]+)_pt(\d+)", wildcards.sample)
-        if m is None: 
+        if m is None:
             raise ValueError("Cannot parse particle gun sample name")
         particle = m.group(1)
         events = get_events_single_particles(particle)
@@ -78,7 +78,7 @@ def get_events_pileup(wildcards):
     else:
         raise ValueError("Cannot determine sample type for pileup event count")
 
-    perc = 95 
+    perc = 95
     multiplier = poisson_percentile(perc, int(wildcards.pileup))
     print(f"{perc}% percentile for {wildcards.pileup} is {multiplier}, so generating {events*multiplier} soft QCD events")
 
@@ -110,16 +110,16 @@ rule pg_gen:
     pg_gen_inputs,
 
 def mg_gen_inputs(wildcards):
-    samples = [] 
+    samples = []
     exts = ["hepmc3.zst", "pdf"]
 
     samples += expand(
-        "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.{ext}", 
+        "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.{ext}",
         sample=madgraph_samples, pileup=[10], ext=exts,
     )
 
     samples += expand(
-        "gen/{smeared}{sample}/{sample}.{ext}", 
+        "gen/{smeared}{sample}/{sample}.{ext}",
         sample=madgraph_samples, ext=exts, smeared=["smeared/", ""]
     )
 
