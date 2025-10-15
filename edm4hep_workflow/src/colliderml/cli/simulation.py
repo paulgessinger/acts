@@ -180,9 +180,10 @@ def main(
             verbose=True,
         )
 
+        total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
+
         # special case single process case so we can get direct output
         if procs == 1:
-            total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
 
             input_files = acts.examples.hepmc3.normalizeFiles(
                 eventsPerFile=total_events,
@@ -197,7 +198,6 @@ def main(
                 config=config.simulation,
             )
         else:
-            total_events = sum(HepMC3Meta.for_file(f).num_events for f in input_files)
 
             mp_context = multiprocessing.get_context("spawn")
 
@@ -276,6 +276,10 @@ def main(
                 hadd(output_files, output)
 
                 file_size = output.stat().st_size
+                per_event_size = int(file_size / total_events)
                 logger.info(
-                    "Wrote output file %s (%s)", output, human_readable_size(file_size)
+                    "Wrote output file %s (%s, %s per event)",
+                    output,
+                    human_readable_size(file_size),
+                    human_readable_size(per_event_size),
                 )
