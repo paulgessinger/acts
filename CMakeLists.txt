@@ -116,6 +116,9 @@ option(ACTS_BUILD_ANALYSIS_APPS "Build Analysis applications in the examples" OF
 option(ACTS_BUILD_BENCHMARKS "Build benchmarks" OFF)
 option(ACTS_BUILD_INTEGRATIONTESTS "Build integration tests" OFF)
 option(ACTS_BUILD_UNITTESTS "Build unit tests" OFF)
+option(ACTS_BUILD_FUZZTESTS "Build fuzz tests with LibFuzzer" OFF)
+option(ACTS_ENABLE_ASAN "Enable AddressSanitizer" OFF)
+option(ACTS_ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" OFF)
 if(ACTS_BUILD_UNITTESTS AND ACTS_BUILD_EXAMPLES)
   set(_default_examples_unit_tests ON)
 else()
@@ -602,7 +605,7 @@ add_subdirectory_if(Python ACTS_BUILD_EXAMPLES_PYTHON_BINDINGS)
 add_subdirectory_if(Examples ACTS_BUILD_EXAMPLES)
 
 # automated tests and benchmarks
-if(ACTS_BUILD_BENCHMARKS OR ACTS_BUILD_INTEGRATIONTESTS OR ACTS_BUILD_UNITTESTS)
+if(ACTS_BUILD_BENCHMARKS OR ACTS_BUILD_INTEGRATIONTESTS OR ACTS_BUILD_UNITTESTS OR ACTS_BUILD_FUZZTESTS)
     enable_testing() # must be set in the main CMakeLists.txt
     add_subdirectory(Tests)
 endif()

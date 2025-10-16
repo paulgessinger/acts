@@ -58,6 +58,22 @@ endif()
 
 # assign to global CXX flags
 set(CMAKE_CXX_FLAGS "${cxx_flags} ${CMAKE_CXX_FLAGS}")
+
+# Add sanitizer flags if enabled
+if(ACTS_ENABLE_ASAN)
+    message(STATUS "Enabling AddressSanitizer")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address")
+endif()
+
+if(ACTS_ENABLE_UBSAN)
+    message(STATUS "Enabling UndefinedBehaviorSanitizer")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=undefined")
+endif()
+
 message(STATUS "Using compiler flags: ${CMAKE_CXX_FLAGS}")
 
 # do not scan for C++ modules
