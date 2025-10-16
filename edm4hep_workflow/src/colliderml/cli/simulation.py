@@ -35,6 +35,7 @@ def do_simulation(
     seed: int,
     events: int,
     config: SimulationConfig,
+    threads: int = 1,
 ) -> int:
     colliderml.logging.configure_logging(logging.INFO)
     logger = colliderml.logging.get_logger(__name__)
@@ -75,6 +76,7 @@ def do_simulation(
     ddsim.inputFiles = [str(p.resolve()) for p in input_files]
     ddsim.numberOfEvents = events
     # ddsim.skipNEvents = skip
+    ddsim.numberOfThreads = threads
 
     ddsim.outputFile = str(output_file.resolve())
 
@@ -120,6 +122,7 @@ def main(
         ),
     ] = None,
     procs: Annotated[int, typer.Option("--processes", "-p")] = 1,
+    threads: Annotated[int, typer.Option("--threads", "-t")] = 1,
     resplit_files: bool = True,
     scratch_dir: Path | None = None,
     force: Annotated[bool, typer.Option("--force", "-f")] = False,
@@ -139,6 +142,7 @@ def main(
 
     logger.info("Starting simulation with base seed %s", seed)
     logger.info("Simulation config: %s", config.simulation)
+    logger.info("Running %d processes with %d threads each", procs, threads)
 
     output.parent.mkdir(parents=True, exist_ok=True)
 
@@ -196,6 +200,7 @@ def main(
                 seed=seed,
                 events=events or total_events,
                 config=config.simulation,
+                threads=threads,
             )
         else:
 
@@ -244,6 +249,7 @@ def main(
                             seed=job_seed,
                             events=meta.num_events,
                             config=config.simulation,
+                            threads=threads,
                         )
                     )
 

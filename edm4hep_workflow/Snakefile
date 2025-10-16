@@ -263,9 +263,9 @@ rule ddsim_sim:
     "sim/{sample}.edm4hep.root"
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("ddsim_sim")),
-  threads: workflow.cores
+  threads: workflow.cores/8
   shell:
-    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --config {input[2]}"
+    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --threads 8 --config {input[2]}"
 
 rule sim_pu:
   input:
@@ -276,9 +276,9 @@ rule sim_pu:
     "sim/{sample}_pu{pileup}.edm4hep.root"
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("sim_pu")),
-  threads: workflow.cores
+  threads: workflow.cores/8
   shell:
-    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --config {input[2]}"
+    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --threads 8 --config {input[2]}"
 
 rule digi:
   input:
