@@ -574,8 +574,15 @@ def generate(
     output: Path,
     events_per_file: int | None = None,
     scratch_dir: Path | None = None,
-    events: Annotated[int, typer.Option("--events", "-n")] = 10,
-    seed: int = constants.SEED_DEFAULT,
+    events: Annotated[int, typer.Option("--events", "-n", min=1)] = 10,
+    seed: Annotated[
+        int,
+        typer.Option(
+            min=0,
+            max=813744135,
+            help="Random seed. Maximum was determined empirically since madgraph starts failing",
+        ),
+    ] = constants.SEED_DEFAULT,
     force: Annotated[bool, typer.Option("--force", "-f")] = False,
     max_iterations: int = constants.GENERATION_ITER_MAX,
     jobs: int = os.cpu_count() or 1,

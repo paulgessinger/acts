@@ -24,6 +24,38 @@ event_counts = {
     "soft_qcd": 1000,
 }
 
+def hstr(s: str, bits: int = 32) -> int:
+    import hashlib
+
+    def stable_hash_bits(data: bytes, bits: int) -> int:
+        digest = hashlib.sha256(data).digest()
+        nbytes = (bits + 7) // 8
+        val = int.from_bytes(digest[:nbytes], "little")
+        return val & ((1 << bits) - 1)
+
+    # deterministic per string across runs
+    return stable_hash_bits(s.encode("utf-8"), bits)
+
+def combine_hashes(*hashes: int, bits: int = 32) -> int:
+    """
+    Combine multiple integer hashes into a single hash
+    of the given bit width (e.g. 32 or 64 bits).
+    """
+    if bits <= 0 or bits > 128:
+        raise ValueError("bits must be between 1 and 128")
+
+    mask = (1 << bits) - 1
+    mix_const = {
+        32: 0x9e3779b9,
+        64: 0x9e3779b97f4a7c15,
+    }.get(bits, (1 << (bits - 1)) + (1 << (bits - 3)))  # reasonable fallback
+
+    h = 0
+    for x in hashes:
+        x &= mask
+        h ^= (x + mix_const + ((h << 6) & mask) + (h >> 2)) & mask
+    return h & mask
+
 def get_events_single_particles(particle: str) -> int:
     return 10000
 
@@ -85,6 +117,8 @@ def get_events_pileup(wildcards):
     return events*multiplier
 
 
+configfile: "snakemake_config.yml"
+
 rule all:
   input:
     # expand("reco/{sample}.edm4hep.root", sample=samples),
@@ -93,7 +127,7 @@ rule all:
     #"gen/mg_ttbar.hepmc3.zst",
     #"gen/mg_dihiggs.hepmc3.zst",
     #expand("gen/{sample}.hepmc3.zst", sample=samples),
-    #expand("sim/{sample}.edm4hep.root", sample=samples),
+    expand("sim/{sample}.edm4hep.root", sample=samples),
     #expand("digi/{sample}.edm4hep.root", sample=samples),
     #expand("reco/{sample}.edm4hep.root", sample=samples),
 
@@ -153,20 +187,22 @@ rule madgraph_gen:
     "gen/mg_{sample}/mg_{sample}.hepmc3.zst",
     "gen/mg_{sample}/mg_{sample}.hepmc3.zst.json"
   params:
-    events=get_events
+    events=get_events,
+     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("madgraph_gen"), bits=29)
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml -vv madgraph generate {input} --events {params.events} {output[0]}"
+    "./with_env.sh colliderml -vv madgraph generate {input} --events {params.events} {output[0]} --seed {params.seed}"
 
 rule particle_gun:
   output:
     "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst",
     "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst.json",
   params:
-    events=get_events
+    events=get_events,
+    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("particle_gun")),
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml particle-gun --jobs {threads} {output[0]} --type {wildcards.particle} --pt {wildcards.pt} --events {params.events}"
+    "./with_env.sh colliderml particle-gun --jobs {threads} {output[0]} --type {wildcards.particle} --pt {wildcards.pt} --events {params.events} --seed {params.seed}"
 
 rule hepmc_plots:
   input:
@@ -185,9 +221,10 @@ rule pileup_gen:
   input:
     "samples/soft_qcd.toml"
   params:
-    events=get_events_pileup
+    events=get_events_pileup,
+    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("pileup_gen")),
   shell:
-    "./with_env.sh colliderml -vv pythia8 {input} {output[0]} --events {params.events}"
+    "./with_env.sh colliderml -vv pythia8 {input} {output[0]} --events {params.events} --seed {params.seed}"
 
 rule hepmc_smear:
   input:
@@ -197,8 +234,10 @@ rule hepmc_smear:
   output:
     "gen/smeared/{sample}/{sample}.hepmc3.zst",
     "gen/smeared/{sample}/{sample}.hepmc3.zst.json",
+  params:
+    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("hepmc_smear")),
   shell:
-    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --config {input[2]} {output[0]}"
+    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --config {input[2]} {output[0]} --seed {params.seed}"
 
 rule hepmc_smear_merge:
   input:
@@ -210,16 +249,20 @@ rule hepmc_smear_merge:
   output:
     "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.hepmc3.zst",
     "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.hepmc3.zst.json",
+  params:
+    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("hepmc_smear_merge")),
   shell:
-    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --pileup {input[2]} --npileup {wildcards.pileup} --config {input[4]} {output[0]}"
+    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --pileup {input[2]} --npileup {wildcards.pileup} --config {input[4]} {output[0]} --seed {params.seed}"
 
-rule sim:
+rule ddsim_sim:
   input:
     "gen/smeared/{sample}/{sample}.hepmc3.zst",
     "gen/smeared/{sample}/{sample}.hepmc3.zst.json",
     config_file,
   output:
     "sim/{sample}.edm4hep.root"
+  params:
+    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("ddsim_sim")),
   threads: workflow.cores
   shell:
     "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --config {input[2]}"
@@ -231,6 +274,8 @@ rule sim_pu:
     config_file,
   output:
     "sim/{sample}_pu{pileup}.edm4hep.root"
+  params:
+    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("sim_pu")),
   threads: workflow.cores
   shell:
     "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --config {input[2]}"
@@ -241,6 +286,8 @@ rule digi:
     config_file,
   output:
     "digi/{sample}.edm4hep.root"
+  params:
+    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("digi")),
   threads: workflow.cores
   shell:
     "./with_env.sh colliderml digitization {input[0]} {output[0]} --jobs {threads} --config {input[1]}"
