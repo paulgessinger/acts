@@ -16,6 +16,8 @@ class ParticleType(enum.StrEnum):
     mu = "mu"
     pi = "pi"
     el = "el"
+    g = "g"
+    k = "k"
 
     @property
     def pdg(self) -> "acts.PdgParticle":
@@ -25,6 +27,8 @@ class ParticleType(enum.StrEnum):
             "mu": acts.PdgParticle.eMuon,
             "pi": acts.PdgParticle.ePionPlus,
             "el": acts.PdgParticle.eElectron,
+            "g": acts.PdgParticle.eGamma,
+            "k": acts.PdgParticle.eKaonPlus,
         }[self]
 
 

@@ -11,7 +11,7 @@ import logging
 import tempfile
 import contextlib
 
-from colliderml.config import Config, SimulationConfig
+from colliderml.config import Config, ParticleHandlerType, SimulationConfig
 from colliderml.util import HepMC3Meta, hadd, human_readable_size, parse_hepmc3_file
 import typer
 
@@ -62,7 +62,10 @@ def do_simulation(
     # https://github.com/OpenDataDetector/ColliderML/blob/75ad4313a7f2b1bf86ea140393d3fd9c348a0fba/scripts/simulation/ddsim_run.py#L175
     # ddsim.part.userParticleHandler = "Geant4TCUserParticleHandler"
     # Geant4FullTruthParticleHandler that's the one Daniel wrote
-    ddsim.part.userParticleHandler = "Geant4FullTruthParticleHandler"
+
+    logger.info("Using user particle handler %s", config.user_particle_handler)
+    if config.user_particle_handler != ParticleHandlerType.default:
+        ddsim.part.userParticleHandler = config.user_particle_handler
     ddsim.part.keepAllParticles = False
 
     # truncate calo particles ?

@@ -52,8 +52,16 @@ class SimHitReading(pydantic.BaseModel):
     particleZ: tuple[float | None, float | None] = (None, None)
 
 
+class ParticleHandlerType(StrEnum):
+    default = "default"
+    full_truth = "Geant4FullTruthParticleHandler"
+    tracking_cylinder = "Geant4TCUserParticleHandler"
+
+
 class SimulationConfig(pydantic.BaseModel):
     minimal_kinetic_energy: float = 0.1  # GeV
+
+    user_particle_handler: ParticleHandlerType = ParticleHandlerType.full_truth
 
 
 class Config(TomlConfigBase):

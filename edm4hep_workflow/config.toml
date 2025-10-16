@@ -5,3 +5,4 @@ particleR = [0, 1150]
 [simulation]
 
 minimal_kinetic_energy = 0.1
+user_particle_handler = "default"

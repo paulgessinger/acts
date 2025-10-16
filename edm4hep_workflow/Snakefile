@@ -11,7 +11,9 @@ config_file = "config.toml"
 particle_gun_samples = []\
   + expand("pg_mu_pt{pt}", pt=[1, 10, 100])\
   + expand("pg_el_pt{pt}", pt=[1, 10])\
-  + expand("pg_pi_pt{pt}", pt=[1, 10])
+  + expand("pg_pi_pt{pt}", pt=[1, 10])\
+  + expand("pg_g_pt{pt}", pt=[1, 10])\
+  + expand("pg_k_pt{pt}", pt=[1, 10])
 
 madgraph_samples = ["mg_ttbar", "mg_dihiggs"]
 
@@ -110,7 +112,7 @@ def get_events_pileup(wildcards):
     else:
         raise ValueError("Cannot determine sample type for pileup event count")
 
-    perc = 95
+    perc = 66
     multiplier = poisson_percentile(perc, int(wildcards.pileup))
     print(f"{perc}% percentile for {wildcards.pileup} is {multiplier}, so generating {events*multiplier} soft QCD events")
 
@@ -226,33 +228,41 @@ rule pileup_gen:
   shell:
     "./with_env.sh colliderml -vv pythia8 {input} {output[0]} --events {params.events} --seed {params.seed}"
 
-rule hepmc_smear:
+def hepmc_merge_input(wildcards):
+  sample = wildcards.sample
+
+  m = re.match(r"(\w*)_pu(\d+)", sample)
+  if m is None:
+    raise ValueError("Cannot parse sample name for hepmc merge")
+
+  act_sample, pileup = m.groups()
+
+  inputs = {"hs": f"gen/{act_sample}/{act_sample}.hepmc3.zst", "pu": []}
+
+  if pileup != "0":
+    inputs["pu"] = f"gen/pu_{act_sample}_pu{pileup}.hepmc3.zst"
+
+  return inputs
+
+def parse_pileup(wildcards):
+  m = re.match(r".*_pu(\d+)", wildcards.sample)
+  if m is None:
+    return 0
+  return int(m.group(1))
+
+rule hepmc_merge_smear:
   input:
-    "gen/{sample}/{sample}.hepmc3.zst",
-    "gen/{sample}/{sample}.hepmc3.zst.json",
-    "pileup.toml",
+    unpack(hepmc_merge_input),
+    config="pileup.toml",
   output:
     "gen/smeared/{sample}/{sample}.hepmc3.zst",
     "gen/smeared/{sample}/{sample}.hepmc3.zst.json",
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("hepmc_smear")),
+    npileup=lambda w: f"--npileup={parse_pileup(w)}" if parse_pileup(w) > 0 else "",
+    pileup=lambda w: "--pileup" if parse_pileup(w) > 0 else "",
   shell:
-    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --config {input[2]} {output[0]} --seed {params.seed}"
-
-rule hepmc_smear_merge:
-  input:
-    "gen/{sample}/{sample}.hepmc3.zst",
-    "gen/{sample}/{sample}.hepmc3.zst.json",
-    "gen/pu_{sample}_pu{pileup}.hepmc3.zst",
-    "gen/pu_{sample}_pu{pileup}.hepmc3.zst.json",
-    "pileup.toml",
-  output:
-    "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.hepmc3.zst",
-    "gen/smeared/{sample}_pu{pileup}/{sample}_pu{pileup}.hepmc3.zst.json",
-  params:
-    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("hepmc_smear_merge")),
-  shell:
-    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input[0]} --pileup {input[2]} --npileup {wildcards.pileup} --config {input[4]} {output[0]} --seed {params.seed}"
+    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input.hs} {params.pileup} {input.pu} {params.npileup} --config {input.config} {output[0]} --seed {params.seed}"
 
 rule ddsim_sim:
   input:

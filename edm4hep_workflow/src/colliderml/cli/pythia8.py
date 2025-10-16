@@ -27,6 +27,7 @@ def main(
     logger.info("Sample label: %s", config.label)
     logger.info("Settings: %s", config.settings)
     logger.info("Beam: %s -> 💥 <- %s", config.pdg_beam0, config.pdg_beam1)
+    logger.info("Jobs: %d", jobs)
 
     import acts
     import acts.examples
