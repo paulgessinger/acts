@@ -59,6 +59,8 @@ def combine_hashes(*hashes: int, bits: int = 32) -> int:
     return h & mask
 
 def get_events_single_particles(particle: str) -> int:
+    if particle == "mu":
+        return 100000
     return 10000
 
 def get_events_madgraph(sample: str) -> int:
@@ -129,9 +131,11 @@ rule all:
     #"gen/mg_ttbar.hepmc3.zst",
     #"gen/mg_dihiggs.hepmc3.zst",
     #expand("gen/{sample}.hepmc3.zst", sample=samples),
-    expand("sim/{sample}.edm4hep.root", sample=samples),
+    # expand("sim/{sample}.edm4hep.root", sample=samples),
     #expand("digi/{sample}.edm4hep.root", sample=samples),
-    #expand("reco/{sample}.edm4hep.root", sample=samples),
+    expand("reco/{sample}/{sample}.edm4hep.root", sample=particle_gun_samples),
+    # expand("reco/plots/{sample}/plots_{sample}.pdf", sample=particle_gun_samples),
+    
 
 def pg_gen_inputs(wildcards):
     return sum([
@@ -231,15 +235,15 @@ rule pileup_gen:
 def hepmc_merge_input(wildcards):
   sample = wildcards.sample
 
-  m = re.match(r"(\w*)_pu(\d+)", sample)
+  m = re.match(r"(\w*)(?:_pu(\d+))?", sample)
   if m is None:
-    raise ValueError("Cannot parse sample name for hepmc merge")
+    raise ValueError(f"Cannot parse sample name for hepmc merge {sample}")
 
   act_sample, pileup = m.groups()
 
   inputs = {"hs": f"gen/{act_sample}/{act_sample}.hepmc3.zst", "pu": []}
 
-  if pileup != "0":
+  if pileup is not None and pileup != "0":
     inputs["pu"] = f"gen/pu_{act_sample}_pu{pileup}.hepmc3.zst"
 
   return inputs
@@ -273,9 +277,9 @@ rule ddsim_sim:
     "sim/{sample}.edm4hep.root"
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("ddsim_sim")),
-  threads: workflow.cores/8
+  threads: workflow.cores
   shell:
-    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --threads 8 --config {input[2]}"
+    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes 1 --threads {threads} --config {input[2]}"
 
 rule sim_pu:
   input:
@@ -307,22 +311,41 @@ rule reco:
     "digi/{sample}.edm4hep.root",
     config_file,
   output:
-    "reco/{sample}.edm4hep.root",
-    "reco/performance_finding_ckf_{sample}.root",
-    "reco/performance_fitting_ckf_{sample}.root"
+    "reco/{sample}/{sample}.edm4hep.root",
+    "reco/{sample}/performance_finding_ckf.root",
+    "reco/{sample}/performance_fitting_ckf.root"
   threads: workflow.cores
   shell:
     "./with_env.sh colliderml reconstruction {input[0]} {output[0]} --jobs {threads} --loglevel INFO --config {input[1]}"
 
-rule reco_plots:
+rule single_muon_plots:
   input:
-    "reco/performance_finding_ckf_{sample}.root",
-    "reco/performance_fitting_ckf_{sample}.root"
+    finding=expand("reco/pg_mu_pt{pt}/performance_finding_ckf.root", pt=[1,10,100]),
+    fitting=expand("reco/pg_mu_pt{pt}/performance_fitting_ckf.root", pt=[1,10,100]),
   output:
-    [f"reco/plots/{{sample}}/{plot}.pdf" for plot in finding_plots+fitting_plots],
-    "reco/plots/{sample}/plots_{sample}.pdf"
+    finding="reco/single_muon_efficiency.pdf",
+    fitting="reco/single_muon_fitting.pdf"
+  threads: 1
   params:
-    finding_plots = ','.join(finding_plots),
-    fitting_plots = ','.join(fitting_plots)
-  shell:
-    "./with_env.sh colliderml plot reco {input} reco/plots/{wildcards.sample} --finding-plots {params.finding_plots} --fitting-plots {params.fitting_plots} --label {wildcards.sample}"
+    labels = expand("--label='{pt} GeV'", pt=[1,10,100])
+  run:
+    shell("./with_env.sh colliderml plot reco comparison-finding {input.finding} {params.labels} --output {output.finding} --title 'single muons'")
+    shell("./with_env.sh colliderml plot reco comparison-fitting {input.fitting} {params.labels} --output {output.fitting} --title 'single muons'")
+
+  # shell:
+  #   "./with_env.sh colliderml plot reco comparison_finding {input} {params.labels} --output {output} --title 'single muons'"
+
+# rule reco_plots:
+#   input:
+#     "reco/performance_finding_ckf_{sample}.root",
+#     "reco/performance_fitting_ckf_{sample}.root"
+#   output:
+#     [f"reco/plots/{{sample}}/{plot}.pdf" for plot in finding_plots+fitting_plots],
+#     "reco/plots/{sample}/plots_{sample}.pdf"
+#   params:
+#     finding_plots = ','.join(finding_plots),
+#     fitting_plots = ','.join(fitting_plots)
+#   threads: 1
+#   shell:
+    # "./with_env.sh colliderml plot reco {input} reco/plots/{wildcards.sample} --finding-plots {params.finding_plots} --fitting-plots {params.fitting_plots} --label {wildcards.sample}"
+    # "./with_env.sh colliderml plot reco {input} "

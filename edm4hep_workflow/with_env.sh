@@ -9,4 +9,4 @@ source "$SCRIPT_DIR/../build/this_acts_withdeps.sh"
 
 source "$SCRIPT_DIR/.venv/bin/activate"
 
-exec $@
+exec "$@"

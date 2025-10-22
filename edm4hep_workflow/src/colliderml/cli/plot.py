@@ -8,7 +8,7 @@ import typer
 import ROOT
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import mplhep as hep
+import mplhep
 import numpy as np
 import pandas as pd
 import pyhepmc
@@ -23,6 +23,68 @@ from rich.progress import (
     TimeElapsedColumn,
     TimeRemainingColumn,
 )
+import atlasify
+
+from colliderml.root import TH1
+
+
+def get_colors():
+    """
+    Returns a list of colors for plotting.
+    """
+    colors = [
+        "C0",  # blue
+        "C1",  # orange
+        "C2",  # green
+        "C3",  # red
+        "C4",  # purple
+        "C5",  # brown
+        "C6",  # pink
+        "C7",  # gray
+        "C8",  # olive
+        "C9",  # cyan
+    ]
+    return colors
+
+
+def get_color(i):
+    """
+    Returns a color for plotting based on the index.
+    """
+    colors = get_colors()
+    if i < 0 or i >= len(colors):
+        raise ValueError(f"Index {i} is out of range for colors list.")
+    return colors[i]
+
+
+def get_markers():
+    """
+    Returns a list of markers for plotting.
+    """
+    markers = [
+        "o",  # circle
+        "s",  # square
+        "^",  # triangle_up
+        "v",  # triangle_down
+        "D",  # diamond
+        "*",  # star
+        "X",  # x
+        "+",  # plus
+        "x",  # x
+        "|",  # vertical line
+        "_",  # horizontal line
+    ]
+    return markers
+
+
+def get_marker(i):
+    """
+    Returns a marker for plotting based on the index.
+    """
+    markers = get_markers()
+    if i < 0 or i >= len(markers):
+        raise ValueError(f"Index {i} is out of range for markers list.")
+    return markers[i]
 
 
 app = typer.Typer()
@@ -235,3 +297,137 @@ def hepmc(
             plt.close(fig)
 
     logger.info("Wrote output to %s", output)
+
+
+reco_app = typer.Typer()
+
+
+def common_label(**kwargs):
+    kwargs.setdefault("loc", 1)
+    kwargs.setdefault("italic", (True, False, False))
+    kwargs.setdefault("exp", "ColliderML")
+    mplhep.label.exp_text(**kwargs)
+
+
+def enlarge_top(ax, factor: float = 1.2):
+    """
+    Enlarge the top of the y-axis by a given factor.
+    """
+    ymin, ymax = ax.get_ylim()
+    delta = ymax - ymin
+    ymax = ymin + delta * factor
+    ax.set_ylim(ymin, ymax)
+
+
+@reco_app.command()
+def comparison_finding(
+    finding_perf: list[Path],
+    labels: Annotated[list[str], typer.Option("-l", "--label")],
+    output: Path | None = None,
+    show: bool = False,
+    title: str | None = None,
+):
+
+    if len(finding_perf) != len(labels):
+        raise ValueError("Number of finding_perf files must match number of labels")
+
+    finding_perf = [ROOT.TFile.Open(str(p.absolute())) for p in finding_perf]
+
+    mplhep.style.use("ATLAS")
+
+    fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+
+    ax.set_xlabel(r"true $\eta$")
+    ax.set_ylabel("Technical efficiency")
+
+    ax.set_xlim(-3, 3)
+
+    ax.hlines(1, -3, 3, linestyles="--", color="gray")
+
+    for i, (label, perf) in enumerate(zip(labels, finding_perf)):
+        eff_vs_eta = TH1(perf.Get("trackeff_vs_eta"), xrange=(-3, 3))
+        eff_vs_eta.errorbar(
+            ax,
+            label=label,
+            marker=get_marker(i),
+            linestyle="",
+            color=get_color(i),
+        )
+
+    ax.legend(loc="upper right")
+
+    enlarge_top(ax=ax, factor=1.15)
+    common_label(ax=ax, text="Simulation", supp=title)
+
+    fig.tight_layout()
+
+    if output is not None:
+        fig.savefig(output)
+
+    if output is None or show:
+        plt.show()
+
+
+@reco_app.command()
+def comparison_fitting(
+    fitting_perf: list[Path],
+    labels: Annotated[list[str], typer.Option("-l", "--label")],
+    output: Path | None = None,
+    show: bool = False,
+    title: str | None = None,
+):
+
+    if len(fitting_perf) != len(labels):
+        raise ValueError("Number of fitting_perf files must match number of labels")
+
+    fitting_perf = [ROOT.TFile.Open(str(p.absolute())) for p in fitting_perf]
+
+    mplhep.style.use("ATLAS")
+
+    params = ["d0", "z0", "phi", "theta", "qop", "t"]
+    ylabels = ["$d_0$", "$z_0$", r"$\phi$", r"$\theta$", "$q/p$", "$t$"]
+
+    fig, axs = plt.subplots(6, 1, figsize=(8, 8), sharex=True)
+
+    for i, (ax, param, ylabel) in enumerate(zip(axs, params, ylabels)):
+        ax.hlines(0, -3, 3, linestyles="--", color="gray")
+
+        ax.set_xlim(-3, 3)
+
+        if i == 5:
+            ax.set_xlabel(r"true $\eta$")
+        ax.set_ylabel(ylabel)
+
+        for j, (label, perf) in enumerate(zip(labels, fitting_perf)):
+            pull_mean = TH1(perf.Get(f"pullmean_{param}_vs_eta"), xrange=(-3, 3))
+
+            pull_mean.errorbar(
+                ax,
+                label=label,
+                marker=get_marker(j),
+                linestyle="",
+                color=get_color(j),
+            )
+
+        low, high = ax.get_ylim()
+        bound = max(abs(low), abs(high))
+        ax.set_ylim(-bound, bound)
+
+        if i == 0:
+            ax.legend(bbox_to_anchor=(1.0, 2.0), loc="upper right", ncol=2)
+            common_label(ax=ax, text="Simulation", supp=title, loc=0)
+
+        else:
+            atlasify.atlasify(axes=ax, outside=True, atlas=False, offset=0)
+            ax.get_legend().remove()
+
+    fig.tight_layout(h_pad=-0.01)
+
+    if output is not None:
+        fig.savefig(output)
+
+    if output is None or show:
+        plt.show()
+
+
+app.add_typer(reco_app, name="reco")

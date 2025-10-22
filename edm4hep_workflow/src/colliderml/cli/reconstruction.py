@@ -229,11 +229,10 @@ def main(
     s.run()
 
     performance_files = ["performance_finding_ckf", "performance_fitting_ckf"]
-    name_base = re.sub(r"\.edm4hep\.root$", "", str(output.name))
 
     for file in performance_files:
         performance_path = output.parent / f"{file}.root"
         if performance_path.exists():
-            performance_target = performance_path.parent / f"{file}_{name_base}.root"
+            performance_target = performance_path.parent / f"{file}.root"
             print(performance_path, "->", performance_target)
             performance_path.rename(performance_target)
