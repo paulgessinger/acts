@@ -1,3 +1,5 @@
+configfile: "snakemake_config.yml"
+
 import re
 
 finding_plots = expand("trackeff_vs_{q}", q=["eta", "pT", "phi"])\
@@ -120,8 +122,12 @@ def get_events_pileup(wildcards):
 
     return events*multiplier
 
+quantities=["eta", "pT", "phi", "prodR"]
+reco_diag_plots = expand("reco/{{sample}}/{{sample}}_{key}_vs_{qty}."+config['format'], qty=quantities, key="trackeff")\
+                 +expand("reco/{{sample}}/{{sample}}_{key}_vs_{qty}."+config['format'], qty=["eta", "pT"], key=["nStates", "nMeasurements", "nHoles", "nOutliers", "nSharedHits"])
 
-configfile: "snakemake_config.yml"
+
+single_particles = ["mu", "pi", "el"]
 
 rule all:
   input:
@@ -130,11 +136,17 @@ rule all:
     #expand("reco/plots/{sample}/plots_{sample}.pdf", sample=samples),
     #"gen/mg_ttbar.hepmc3.zst",
     #"gen/mg_dihiggs.hepmc3.zst",
-    #expand("gen/{sample}.hepmc3.zst", sample=samples),
+    expand("gen/{sample}/{sample}.hepmc3.zst", sample=particle_gun_samples),
     # expand("sim/{sample}.edm4hep.root", sample=samples),
     #expand("digi/{sample}.edm4hep.root", sample=samples),
     expand("reco/{sample}/{sample}.edm4hep.root", sample=particle_gun_samples),
-    # expand("reco/plots/{sample}/plots_{sample}.pdf", sample=particle_gun_samples),
+
+    # Single muon plots
+    expand("reco/pg_{ptcl}/pg_{ptcl}_efficiency."+config["format"], ptcl=single_particles),
+    expand("reco/pg_{ptcl}/pg_{ptcl}_{mtr}."+config["format"], mtr=["pullwidth", "pullmean"], ptcl=single_particles),
+    expand("reco/pg_{ptcl}/pg_{ptcl}_res_{qty}."+config["format"], qty=["d0", "z0", "phi", "theta", "qop", "t"], ptcl=single_particles),
+    # expand("reco/{sample}/{sample}_eff_vs_eta."+config["format"], sample=particle_gun_samples),
+    expand(reco_diag_plots, sample=particle_gun_samples),
     
 
 def pg_gen_inputs(wildcards):
@@ -177,7 +189,7 @@ rule gen:
 
 rule madgraph_init:
   output:
-    "samples/mg_{sample}.tar.gz"
+    protected("samples/mg_{sample}.tar.gz")
   input:
     "samples/{sample}.toml"
   # largely single thread but compilation goes up
@@ -185,10 +197,25 @@ rule madgraph_init:
   shell:
     "./with_env.sh colliderml -vv madgraph init {input} {output}"
 
+def mg_sample_inputs(wildcards):
+  # parse "true" sample name and pileup (ignore pileup)
+  sample = wildcards.sample
+  # print(sample)
+  m = re.match(r"([a-z]+)(?:_pu(\d+))?", sample)
+  if m is None:
+    raise ValueError(f"Cannot parse sample name for madgraph gen {sample}")
+  act_sample, pileup = m.groups()
+  res = [
+    f"samples/{act_sample}.toml",
+    f"samples/mg_{act_sample}.tar.gz"
+  ]
+  # print("mg sample inputs:", res)
+  return res
+
+
 rule madgraph_gen:
   input:
-    "samples/{sample}.toml",
-    "samples/mg_{sample}.tar.gz"
+    mg_sample_inputs,
   output:
     "gen/mg_{sample}/mg_{sample}.hepmc3.zst",
     "gen/mg_{sample}/mg_{sample}.hepmc3.zst.json"
@@ -274,7 +301,7 @@ rule ddsim_sim:
     "gen/smeared/{sample}/{sample}.hepmc3.zst.json",
     config_file,
   output:
-    "sim/{sample}.edm4hep.root"
+    protected("sim/{sample}.edm4hep.root")
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("ddsim_sim")),
   threads: workflow.cores
@@ -318,19 +345,104 @@ rule reco:
   shell:
     "./with_env.sh colliderml reconstruction {input[0]} {output[0]} --jobs {threads} --loglevel INFO --config {input[1]}"
 
-rule single_muon_plots:
-  input:
-    finding=expand("reco/pg_mu_pt{pt}/performance_finding_ckf.root", pt=[1,10,100]),
-    fitting=expand("reco/pg_mu_pt{pt}/performance_fitting_ckf.root", pt=[1,10,100]),
+params=["d0", "z0", "phi", "theta", "qop", "t"]
+
+rule comparison_plots:
+  pathvars:
+    ptcl="",
   output:
-    finding="reco/single_muon_efficiency.pdf",
-    fitting="reco/single_muon_fitting.pdf"
+    finding=expand("reco/pg_<ptcl>/pg_<ptcl>_efficiency.{format}", format=config['format']),
+    fitting=expand("reco/pg_<ptcl>/pg_<ptcl>_{mtr}.{format}", mtr=["pullwidth", "pullmean"], format=config['format'])\
+           +expand("reco/pg_<ptcl>/pg_<ptcl>_res_{qty}.{format}", qty=params, format=config['format']),
+  threads: 1
+  run:
+    shell("./with_env.sh colliderml plot reco comparison-finding {input.finding} {params.labels} --output {output.finding} --title '{params.title}'")
+    shell("./with_env.sh colliderml plot reco comparison-fitting {input.fitting} {params.labels} --output-base reco/pg_{params.particle}/pg_{params.particle}.{params.format} --title '{params.title}'")
+
+use rule comparison_plots as single_muon_plots with:
+  pathvars:
+    ptcl="mu",
+  input:
+    finding=expand("reco/pg_<ptcl>_pt{pt}/performance_finding_ckf.root", pt=[1,10, 100]),
+    fitting=expand("reco/pg_<ptcl>_pt{pt}/performance_fitting_ckf.root", pt=[1,10, 100]),
+  params:
+    labels=expand("--label='{pt} GeV'", pt=[1,10,100]),
+    format=config['format'],
+    title="Single Muons",
+    particle="mu",
+
+use rule comparison_plots as single_pion_plots with:
+  pathvars:
+    ptcl="pi",
+  input:
+    finding=expand("reco/pg_<ptcl>_pt{pt}/performance_finding_ckf.root", pt=[1,10]),
+    fitting=expand("reco/pg_<ptcl>_pt{pt}/performance_fitting_ckf.root", pt=[1,10]),
+  params:
+    labels=expand("--label='{pt} GeV'", pt=[1,10]),
+    format=config['format'],
+    title="Single Pions",
+    particle="pi",
+
+use rule comparison_plots as single_electron_plots with:
+  pathvars:
+    ptcl="el",
+  input:
+    finding=expand("reco/pg_<ptcl>_pt{pt}/performance_finding_ckf.root", pt=[1,10]),
+    fitting=expand("reco/pg_<ptcl>_pt{pt}/performance_fitting_ckf.root", pt=[1,10]),
+  params:
+    labels=expand("--label='{pt} GeV'", pt=[1,10]),
+    format=config['format'],
+    title="Single Electrons",
+    particle="el",
+
+
+def get_reco_diag_labels(wildcards):
+    sample = wildcards.sample
+    
+    if sample.startswith("pg_"):
+        m = re.match(r"pg_([a-z]+)_pt(\d+)", sample)
+        if m is None:
+            raise ValueError("Cannot parse particle gun sample name")
+        particle, pt = m.groups()
+        return f"--label='{pt} GeV'"
+
+    raise ValueError("Cannot determine labels for reco diag plots")
+
+def get_reco_diag_title(wildcards):
+    sample = wildcards.sample
+    
+    if sample.startswith("pg_"):
+        m = re.match(r"pg_([a-z]+)_pt(\d+)", sample)
+        if m is None:
+            raise ValueError("Cannot parse particle gun sample name")
+        particle, pt = m.groups()
+
+        particle_names = {
+            "mu": "Single Muons",
+            "el": "Single Electrons",
+            "pi": "Single Pions",
+            "k": "Single Kaons",
+            "g": "Single Photons",
+        }
+
+        return f"{particle_names[particle]}, $p_T=${pt} GeV"
+
+    raise ValueError("Cannot determine title for reco diag plots")
+
+
+rule reco_diag_plots:
+  input:
+    "reco/{sample}/performance_fitting_ckf.root",
+  output:
+    reco_diag_plots,
   threads: 1
   params:
-    labels = expand("--label='{pt} GeV'", pt=[1,10,100])
-  run:
-    shell("./with_env.sh colliderml plot reco comparison-finding {input.finding} {params.labels} --output {output.finding} --title 'single muons'")
-    shell("./with_env.sh colliderml plot reco comparison-fitting {input.fitting} {params.labels} --output {output.fitting} --title 'single muons'")
+    # labels=expand("--label='{sample}'", pt=wildcards.sample),
+    labels=get_reco_diag_labels,
+    format=config['format'],
+    title=get_reco_diag_title,
+  shell:
+    "./with_env.sh colliderml plot reco diagnostics {input} {params.labels} --output-base reco/{wildcards.sample}/{wildcards.sample}.{params.format} --title '{params.title}'"
 
   # shell:
   #   "./with_env.sh colliderml plot reco comparison_finding {input} {params.labels} --output {output} --title 'single muons'"

@@ -1,12 +1,18 @@
 import numpy
+import cppyy
 
 
 class TH1:
     def __init__(self, th1_tefficiency, xrange=None):
         import ROOT
 
+        if th1_tefficiency == cppyy.nullptr:
+            raise ValueError("th1_tefficiency cannot be nullptr")
+
         if isinstance(th1_tefficiency, ROOT.TEfficiency):
             th1 = th1_tefficiency.GetTotalHistogram()
+        elif isinstance(th1_tefficiency, ROOT.TProfile):
+            th1 = th1_tefficiency.ProjectionX()
         else:
             th1 = th1_tefficiency
 

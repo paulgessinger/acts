@@ -1,0 +1,3 @@
+clean-plots:
+  find reco -type f \( -name "*.pdf" -or -name "*.png" \) -delete
+

@@ -372,7 +372,7 @@ def comparison_finding(
 def comparison_fitting(
     fitting_perf: list[Path],
     labels: Annotated[list[str], typer.Option("-l", "--label")],
-    output: Path | None = None,
+    output_base: Annotated[Path, typer.Option()],
     show: bool = False,
     title: str | None = None,
 ):
@@ -385,49 +385,169 @@ def comparison_fitting(
     mplhep.style.use("ATLAS")
 
     params = ["d0", "z0", "phi", "theta", "qop", "t"]
-    ylabels = ["$d_0$", "$z_0$", r"$\phi$", r"$\theta$", "$q/p$", "$t$"]
+    ylabels = ["d_0", "z_0", r"\phi", r"\theta", "q/p", "t"]
+    units = ["[mm]", "[mm]", "", "", "[1/GeV]", "[ns]"]
 
-    fig, axs = plt.subplots(6, 1, figsize=(8, 8), sharex=True)
+    for metric in ["pullmean", "pullwidth"]:
 
-    for i, (ax, param, ylabel) in enumerate(zip(axs, params, ylabels)):
-        ax.hlines(0, -3, 3, linestyles="--", color="gray")
+        fig, axs = plt.subplots(6, 1, figsize=(8, 8), sharex=True)
+
+        for i, (ax, param, ylabel) in enumerate(zip(axs, params, ylabels)):
+            if metric == "pullmean":
+                ax.hlines(0, -3, 3, linestyles="--", color="gray")
+            elif metric == "pullwidth":
+                ax.hlines(1, -3, 3, linestyles="--", color="gray")
+
+            ax.set_xlim(-3, 3)
+
+            if i == 5:
+                ax.set_xlabel(r"true $\eta$")
+            ax.set_ylabel(f"${ylabel}$")
+
+            for j, (label, perf) in enumerate(zip(labels, fitting_perf)):
+                pull_mean = TH1(perf.Get(f"{metric}_{param}_vs_eta"), xrange=(-3, 3))
+
+                pull_mean.errorbar(
+                    ax,
+                    label=label,
+                    marker=get_marker(j),
+                    linestyle="",
+                    color=get_color(j),
+                )
+
+            if metric == "pullmean":
+                low, high = ax.get_ylim()
+                bound = max(abs(low), abs(high))
+                ax.set_ylim(-bound, bound)
+
+            if i == 0:
+                ax.legend(bbox_to_anchor=(1.0, 2.0), loc="upper right", ncol=2)
+                common_label(ax=ax, text="Simulation", supp=title, loc=0)
+
+            else:
+                atlasify.atlasify(axes=ax, outside=True, atlas=False, offset=0)
+                ax.get_legend().remove()
+
+        fig.tight_layout(h_pad=-0.01)
+
+        output_file = (
+            output_base.parent / f"{output_base.stem}_{metric}{output_base.suffix}"
+        )
+        print("Saving to", output_file)
+
+        fig.savefig(output_file)
+
+        if show:
+            plt.show()
+
+    for param, label, unit in zip(params, ylabels, units):
+
+        fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+
+        ax.set_xlabel(r"true $\eta$")
+        ax.set_ylabel(rf"$\sigma_{{{label}}}$ {unit}")
 
         ax.set_xlim(-3, 3)
 
-        if i == 5:
-            ax.set_xlabel(r"true $\eta$")
-        ax.set_ylabel(ylabel)
-
-        for j, (label, perf) in enumerate(zip(labels, fitting_perf)):
-            pull_mean = TH1(perf.Get(f"pullmean_{param}_vs_eta"), xrange=(-3, 3))
-
-            pull_mean.errorbar(
+        for i, (label, perf) in enumerate(zip(labels, fitting_perf)):
+            res_vs_eta = TH1(perf.Get(f"reswidth_{param}_vs_eta"), xrange=(-3, 3))
+            res_vs_eta.errorbar(
                 ax,
                 label=label,
-                marker=get_marker(j),
+                marker=get_marker(i),
                 linestyle="",
-                color=get_color(j),
+                color=get_color(i),
             )
 
-        low, high = ax.get_ylim()
-        bound = max(abs(low), abs(high))
-        ax.set_ylim(-bound, bound)
+        common_label(ax=ax, text="Simulation", supp=title)
+        enlarge_top(ax=ax, factor=1.15)
+        ax.legend()
 
-        if i == 0:
-            ax.legend(bbox_to_anchor=(1.0, 2.0), loc="upper right", ncol=2)
-            common_label(ax=ax, text="Simulation", supp=title, loc=0)
+        fig.tight_layout()
 
-        else:
-            atlasify.atlasify(axes=ax, outside=True, atlas=False, offset=0)
-            ax.get_legend().remove()
+        output_file = (
+            output_base.parent / f"{output_base.stem}_res_{param}{output_base.suffix}"
+        )
 
-    fig.tight_layout(h_pad=-0.01)
+        fig.savefig(output_file)
 
-    if output is not None:
-        fig.savefig(output)
 
-    if output is None or show:
-        plt.show()
+@reco_app.command()
+def diagnostics(
+    fitting_perf: list[Path],
+    labels: Annotated[list[str], typer.Option("-l", "--label")],
+    output_base: Annotated[Path, typer.Option()],
+    show: bool = False,
+    title: str | None = None,
+):
+    if len(fitting_perf) != len(labels):
+        raise ValueError("Number of fitting_perf files must match number of labels")
+
+    fitting_perf = [ROOT.TFile.Open(str(p.absolute())) for p in fitting_perf]
+
+    mplhep.style.use("ATLAS")
+
+    xlabels = {"eta": r"$\eta$", "pT": r"$p_T$", "phi": r"$\phi$", "prodR": "$R$"}
+    xranges = {"eta": (-3, 3), "phi": (-numpy.pi, numpy.pi)}
+
+    keys = {"trackeff": ["eta", "pT", "phi", "prodR"], "nStates": ["eta", "pT"]}
+    for k in ["nHoles", "nOutliers", "nSharedHits", "nMeasurements"]:
+        keys[k] = keys["nStates"]
+
+    ylabels = {
+        "trackeff": "Technical efficiency",
+        "nStates": "Number of states",
+        "nHoles": "Number of holes",
+        "nOutliers": "Number of outliers",
+        "nSharedHits": "Number of shared hits",
+        "nMeasurements": "Number of measurements",
+    }
+
+    for key, quantities in keys.items():
+        ylabel = ylabels[key]
+
+        for qty in quantities:
+
+            xlabel = xlabels[qty]
+            xrange = xranges.get(qty)
+
+            fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+
+            ax.set_xlabel(xlabel)
+            ax.set_ylabel(ylabel)
+
+            if xrange is not None:
+                ax.set_xlim(*xrange)
+
+            for i, (label, perf) in enumerate(zip(labels, fitting_perf)):
+                res_vs_eta = TH1(perf.Get(f"{key}_vs_{qty}"), xrange=xrange)
+                res_vs_eta.errorbar(
+                    ax,
+                    label=label,
+                    marker=get_marker(i),
+                    linestyle="",
+                    color=get_color(i),
+                )
+
+            common_label(ax=ax, text="Simulation", supp=title)
+            enlarge_top(ax=ax, factor=1.2)
+
+            if len(fitting_perf) > 1:
+                # don't need a legend for single sample
+                ax.legend()
+
+            fig.tight_layout()
+
+            output_file = (
+                output_base.parent
+                / f"{output_base.stem}_{key}_vs_{qty}{output_base.suffix}"
+            )
+
+            print("Saving to", output_file)
+            fig.savefig(output_file)
+
+            if show:
+                plt.show()
 
 
 app.add_typer(reco_app, name="reco")
