@@ -65,11 +65,6 @@ sample_name_map = {
     "dihiggs": "MadGraph di-Higgs",
 }
 
-event_counts = {
-    "ttbar": 100,
-    "dihiggs": 100, 
-}
-
 def hstr(s: str, bits: int = 32) -> int:
     import hashlib
 
@@ -103,16 +98,14 @@ def combine_hashes(*hashes: int, bits: int = 32) -> int:
     return h & mask
 
 def get_events_single_particles(particle: str) -> int:
-    if particle == "mu":
-        return 100000
-    return 10000
+    return config["event_counts"]["pg"].get(particle, config["event_counts"]["pg"]["default"])
 
 def get_events_madgraph(sample: str, generate: bool) -> int:
     # Never generate less than 2000 events to avoid pythia8 issues
     if generate:
-      return max(2000, event_counts[sample])
+      return max(2000, config["event_counts"]["mg"][sample])
     else:
-      return event_counts[sample]
+      return config["event_counts"]["mg"][sample]
 
 def get_events_gen(wildcards):
     print("get events:", *[f"{k}={v}" for k,v in wildcards.items()])
@@ -250,7 +243,7 @@ rule gen:
 
 rule madgraph_init:
   output:
-    update("samples/mg_{sample}.tar.gz")
+    protected(update("samples/mg_{sample}.tar.gz"))
   input:
     "samples/{sample}.toml"
   # largely single thread but compilation goes up
@@ -358,7 +351,7 @@ rule ddsim_sim:
     "gen/smeared/{sample}/{sample}.hepmc3.zst.json",
     config_file,
   output:
-    protected("sim/{sample}.edm4hep.root")
+    update("sim/{sample}.edm4hep.root")
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("ddsim_sim")),
     events=get_events,
@@ -515,27 +508,8 @@ rule reco_diag_plots:
     update(reco_diag_plots),
   threads: 1
   params:
-    # labels=expand("--label='{sample}'", pt=wildcards.sample),
     labels=get_reco_diag_labels,
     format=config['format'],
     title=get_reco_diag_title,
   shell:
     "./with_env.sh colliderml plot reco diagnostics {input.fitting_output} {params.labels} --output-base reco/{wildcards.sample}/plots/{wildcards.sample}.{params.format} --title '{params.title}'"
-
-  # shell:
-  #   "./with_env.sh colliderml plot reco comparison_finding {input} {params.labels} --output {output} --title 'single muons'"
-
-# rule reco_plots:
-#   input:
-#     "reco/performance_finding_ckf_{sample}.root",
-#     "reco/performance_fitting_ckf_{sample}.root"
-#   output:
-#     [f"reco/plots/{{sample}}/{plot}.pdf" for plot in finding_plots+fitting_plots],
-#     "reco/plots/{sample}/plots_{sample}.pdf"
-#   params:
-#     finding_plots = ','.join(finding_plots),
-#     fitting_plots = ','.join(fitting_plots)
-#   threads: 1
-#   shell:
-    # "./with_env.sh colliderml plot reco {input} reco/plots/{wildcards.sample} --finding-plots {params.finding_plots} --fitting-plots {params.fitting_plots} --label {wildcards.sample}"
-    # "./with_env.sh colliderml plot reco {input} "

@@ -1,2 +1,10 @@
 seed: 1234
 format: pdf
+
+event_counts:
+  mg:
+    ttbar: 2000
+    dihiggs: 2000
+  pg:
+    default: 10000
+    mu: 100000

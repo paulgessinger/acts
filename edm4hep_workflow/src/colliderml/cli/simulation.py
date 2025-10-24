@@ -146,6 +146,7 @@ def main(
     logger.info("Starting simulation with base seed %s", seed)
     logger.info("Simulation config: %s", config.simulation)
     logger.info("Running %d processes with %d threads each", procs, threads)
+    logger.info("Max events: %s", events or "all")
 
     output.parent.mkdir(parents=True, exist_ok=True)
 
