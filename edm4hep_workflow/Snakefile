@@ -61,8 +61,8 @@ gen_samples = particle_gun_samples + madgraph_samples
 samples = particle_gun_samples + expand("{sample}_pu{pu}", sample=madgraph_samples, pu=[0, 10])
 
 sample_name_map = {
-    "ttbar": "MadGraph ttbar",
-    "dihiggs": "MadGraph di-Higgs",
+    "ttbar": r"$pp\to{}t\bar{t}$",
+    "dihiggs": r"$pp\to{}hh$",
 }
 
 def hstr(s: str, bits: int = 32) -> int:
@@ -213,7 +213,7 @@ def pg_gen_inputs(wildcards):
 
 rule pg_gen:
   input:
-    pg_gen_inputs,
+    pg_gen_inputs
 
 def mg_gen_inputs(wildcards):
     samples = []
@@ -351,7 +351,7 @@ rule ddsim_sim:
     "gen/smeared/{sample}/{sample}.hepmc3.zst.json",
     config_file,
   output:
-    update("sim/{sample}.edm4hep.root")
+    protected("sim/{sample}.edm4hep.root")
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("ddsim_sim")),
     events=get_events,
@@ -365,7 +365,7 @@ rule sim_pu:
     "gen/smeared/{sample}_pu{pileup}.hepmc3.zst.json",
     config_file,
   output:
-    "sim/{sample}_pu{pileup}.edm4hep.root"
+    protected("sim/{sample}_pu{pileup}.edm4hep.root")
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("sim_pu")),
   threads: workflow.cores/8
