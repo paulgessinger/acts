@@ -202,12 +202,12 @@ rule all:
     expand("sim/{sample}.edm4hep.root", sample=samples),
     # expand("digi/{sample}.edm4hep.root", sample=samples),
     expand("reco/{sample}/{sample}.edm4hep.root", sample=samples),
-    # # Single muon plots
-    # expand("reco/pg_{ptcl}/pg_{ptcl}_efficiency."+config["format"], ptcl=single_particles),
-    # expand("reco/pg_{ptcl}/pg_{ptcl}_{mtr}."+config["format"], mtr=["pullwidth", "pullmean"], ptcl=single_particles),
-    # expand("reco/pg_{ptcl}/pg_{ptcl}_res_{qty}."+config["format"], qty=["d0", "z0", "phi", "theta", "qop", "t"], ptcl=single_particles),
-    # # expand("reco/{sample}/{sample}_eff_vs_eta."+config["format"], sample=particle_gun_samples),
-    # expand(reco_diag_plots, sample=samples),
+    # Single muon plots
+    expand("reco/pg_{ptcl}/pg_{ptcl}_efficiency."+config["format"], ptcl=single_particles),
+    expand("reco/pg_{ptcl}/pg_{ptcl}_{mtr}."+config["format"], mtr=["pullwidth", "pullmean"], ptcl=single_particles),
+    expand("reco/pg_{ptcl}/pg_{ptcl}_res_{qty}."+config["format"], qty=["d0", "z0", "phi", "theta", "qop", "t"], ptcl=single_particles),
+    # Diagnostic plots for all samples
+    expand(reco_diag_plots, sample=samples),
     
 
 def pg_gen_inputs(wildcards):
@@ -393,14 +393,16 @@ rule digi:
 
 rule reco:
   input:
-    digi="digi/{sample}.edm4hep.root",
+    # digi="digi/{sample}.edm4hep.root",
+    sim="sim/{sample}.edm4hep.root",
     config=config_file,
   output:
     reco="reco/{sample}/{sample}.edm4hep.root",
     diag=["reco/{sample}/performance_finding_ckf.root", "reco/{sample}/performance_fitting_ckf.root"],
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml reconstruction {input.digi} {output.reco} --jobs {threads} --loglevel INFO --config {input.config}"
+    # "./with_env.sh colliderml reconstruction {input.digi} {output.reco} --jobs {threads} --loglevel INFO --config {input.config}"
+    "./with_env.sh colliderml reconstruction {input.sim} --do-digitization {output.reco} --jobs {threads} --loglevel INFO --config {input.config}"
 
 
 params=["d0", "z0", "phi", "theta", "qop", "t"]

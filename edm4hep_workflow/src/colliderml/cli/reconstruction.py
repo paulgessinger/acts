@@ -285,5 +285,5 @@ def main(
         performance_path = output.parent / f"{file}.root"
         if performance_path.exists():
             performance_target = performance_path.parent / f"{file}.root"
-            print(performance_path, "->", performance_target)
+            logger.debug("%s -> %s", performance_path, performance_target)
             performance_path.rename(performance_target)
