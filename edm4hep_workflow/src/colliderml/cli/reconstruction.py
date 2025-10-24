@@ -59,7 +59,7 @@ def main(
         SeedFinderConfigArg,
     )
 
-    print(input, "->", output)
+    logger.info("%s -> %s", input, output)
 
     config = Config.load(config_path)
 
@@ -129,7 +129,8 @@ def main(
         addSimParticleSelection(
             s,
             ParticleSelectorConfig(
-                rho=(0.0, 24 * u.mm),
+                # @TODO: Figure out a way to get this directly from the xml
+                rho=(0.0, 23.5 * u.mm),
                 absZ=(0.0, 1.0 * u.m),
                 eta=(-4.0, 4.0),
                 pt=(150 * u.MeV, None),
@@ -193,13 +194,25 @@ def main(
             )
             s.addAlgorithm(measConv)
 
+        measurementCounter = acts.examples.ParticleSelector.MeasurementCounter()
+        # At least 3 hits in the pixels
+        measurementCounter.addCounter(
+            [
+                acts.GeometryIdentifier(volume=16),
+                acts.GeometryIdentifier(volume=17),
+                acts.GeometryIdentifier(volume=18),
+            ],
+            3,
+        )
+
         # Add digi particle selection (filters particles with sufficient measurements)
         addDigiParticleSelection(
             s,
             ParticleSelectorConfig(
                 # we are only interested in the hard scatter vertex
                 # primaryVertexId=(1, 2),
-                rho=(0.0, 24 * u.mm),
+                # @TODO: Figure out a way to get this directly from the xml
+                rho=(0.0, 23.5 * u.mm),
                 absZ=(0.0, 1.0 * u.m),
                 eta=(-3.0, 3.0),
                 # using something close to 1 to include for sure
@@ -207,7 +220,7 @@ def main(
                 measurements=(6, None),
                 removeNeutral=True,
                 removeSecondaries=False,
-                # nMeasurementsGroupMin=measurementCounter,
+                nMeasurementsGroupMin=measurementCounter,
             ),
             logLevel=logLevel,
         )
@@ -222,7 +235,7 @@ def main(
             seedFinderConfigArg=SeedFinderConfigArg(
                 r=(33 * u.mm, 200 * u.mm),
                 # kills efficiency at |eta|~2
-                deltaR=(1 * u.mm, 300 * u.mm),
+                deltaR=(10 * u.mm, 300 * u.mm),
                 collisionRegion=(-250 * u.mm, 250 * u.mm),
                 z=(-2000 * u.mm, 2000 * u.mm),
                 maxSeedsPerSpM=40,
@@ -237,7 +250,8 @@ def main(
                 1 * u.mm,
                 1 * u.degree,
                 1 * u.degree,
-                0.1 / u.GeV,
+                # Is overridden below in any case
+                0 / u.GeV,
                 1 * u.ns,
             ],
             initialSigmaQoverPt=0.1 * u.e / u.GeV,
