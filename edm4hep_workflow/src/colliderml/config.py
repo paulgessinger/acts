@@ -64,10 +64,18 @@ class SimulationConfig(pydantic.BaseModel):
     user_particle_handler: ParticleHandlerType = ParticleHandlerType.full_truth
 
 
+class DigitizationConfig(pydantic.BaseModel):
+    config_file: str
+
+
 class Config(TomlConfigBase):
     sim_hit_reading: SimHitReading = pydantic.Field(default_factory=SimHitReading)
 
     simulation: SimulationConfig = pydantic.Field(default_factory=SimulationConfig)
+
+    digitization: DigitizationConfig = pydantic.Field(
+        default_factory=DigitizationConfig
+    )
 
 
 class CardCustomizations(pydantic.BaseModel):

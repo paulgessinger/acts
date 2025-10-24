@@ -487,7 +487,21 @@ def init(
     sample_file: Annotated[Path, typer.Argument(..., exists=True, dir_okay=False)],
     output: Path,
     scratch_dir: Path | None = None,
+    force: Annotated[bool, typer.Option("--force", "-f")] = False,
 ):
+
+    if output.exists():
+        if not force:
+            logger.error(
+                "Output file %s already exists, use --force to overwrite", output
+            )
+            raise typer.Exit(1)
+        else:
+            logger.info(
+                "Output file %s already exists, overwriting due to --force", output
+            )
+            output.unlink()
+
     mg = Madgraph()
     logger.info("Loading sample config from %s", sample_file)
     sample_config = SampleConfig.load(sample_file)

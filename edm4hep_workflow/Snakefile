@@ -1,11 +1,16 @@
+import re
+import functools
+import dataclasses
+
 configfile: "snakemake_config.yml"
 
-import re
 
 finding_plots = expand("trackeff_vs_{q}", q=["eta", "pT", "phi"])\
             + ["nHoles_vs_eta", "nMeasurements_vs_eta", "nOutliers_vs_eta"]
 
-fitting_plots = expand("reswidth_{q}_vs_eta", q=["d0", "z0", "qop", "phi", "theta", "t"])
+params = ["d0", "z0", "qop", "phi", "theta", "t"]
+
+fitting_plots = expand("reswidth_{q}_vs_eta", q=params)
 
 
 config_file = "config.toml"
@@ -19,13 +24,50 @@ particle_gun_samples = []\
 
 madgraph_samples = ["mg_ttbar", "mg_dihiggs"]
 
+@dataclasses.dataclass
+class Sample:
+  prefix: str|None
+  sample: str
+  pileup: int|None
 
-samples = particle_gun_samples + madgraph_samples
+  @property
+  def full_name(self) -> str:
+    name = ""
+    if self.prefix is not None:
+      name += self.prefix
+    name += self.sample
+    if self.pileup is not None:
+      name += f"_pu{self.pileup}"
+    return name
+
+  @property
+  def hs_only_name(self) -> str:
+    name = ""
+    if self.prefix is not None:
+      name += self.prefix
+    name += self.sample
+    return name
+
+def parse_madgraph_sample(sample: str) -> Sample:
+  m = re.match(r"(mg_|pg_)?([a-z]+)(?:_pu(\d+))?", sample)
+  if m is None:
+    raise ValueError(f"Cannot parse sample name for madgraph gen {sample}")
+  prefix, act_sample, pileup = m.groups()
+
+  return Sample(prefix=prefix, sample=act_sample, pileup=int(pileup) if pileup is not None else None)
+
+
+gen_samples = particle_gun_samples + madgraph_samples
+samples = particle_gun_samples + expand("{sample}_pu{pu}", sample=madgraph_samples, pu=[0, 10])
+
+sample_name_map = {
+    "ttbar": "MadGraph ttbar",
+    "dihiggs": "MadGraph di-Higgs",
+}
 
 event_counts = {
-    "ttbar": 1000,
-    "dihiggs": 2000, # don't go too low otherwise pythia8 fails
-    "soft_qcd": 1000,
+    "ttbar": 100,
+    "dihiggs": 100, 
 }
 
 def hstr(s: str, bits: int = 32) -> int:
@@ -65,22 +107,45 @@ def get_events_single_particles(particle: str) -> int:
         return 100000
     return 10000
 
-def get_events_madgraph(sample: str) -> int:
-    return event_counts[sample]
+def get_events_madgraph(sample: str, generate: bool) -> int:
+    # Never generate less than 2000 events to avoid pythia8 issues
+    if generate:
+      return max(2000, event_counts[sample])
+    else:
+      return event_counts[sample]
 
-def get_events(wildcards):
-    print("get events:", wildcards)
+def get_events_gen(wildcards):
+    print("get events:", *[f"{k}={v}" for k,v in wildcards.items()])
     if hasattr(wildcards, "particle"):
         return get_events_single_particles(wildcards.particle)
 
     if hasattr(wildcards, "sample"):
         sample = wildcards.sample
-        return get_events_madgraph(sample)
-
+        parsed = parse_madgraph_sample(sample)
+        return get_events_madgraph(parsed.sample, generate=True)
 
     raise ValueError("Cannot determine event count")
 
+def get_events(wildcards):
+    print("get_events non gen", *[f"{k}={v}" for k,v in wildcards.items()])
+    sample = wildcards.sample
+
+    if sample.startswith("pg_"):
+        m = re.match(r"pg_([a-z]+)_pt(\d+)", sample)
+        if m is None:
+            raise ValueError("Cannot parse particle gun sample name")
+        particle = m.group(1)
+        return get_events_single_particles(particle)
+    elif sample.startswith("mg_"):
+        parsed = parse_madgraph_sample(sample)
+        print(sample, parsed)
+        return get_events_madgraph(parsed.sample, generate=False)
+    else:
+      raise ValueError("Cannot determine sample type for event count")
+
+
 def get_events_pileup(wildcards):
+    print("get_events_pileup", *[f"{k}={v}" for k,v in wildcards.items()])
     import math
 
     def poisson_percentile(N, L):
@@ -108,11 +173,10 @@ def get_events_pileup(wildcards):
         particle = m.group(1)
         events = get_events_single_particles(particle)
     elif wildcards.sample.startswith("mg_"):
-        m = re.match(r"mg_(\w+)", wildcards.sample)
-        if m is None:
-            raise ValueError("Cannot parse madgraph sample name")
-        sample = m.group(1)
-        events = get_events_madgraph(sample)
+        parsed = parse_madgraph_sample(wildcards.sample)
+        print(wildcards.sample, parsed)
+
+        events = get_events_madgraph(parsed.sample, generate=True)
     else:
         raise ValueError("Cannot determine sample type for pileup event count")
 
@@ -123,30 +187,27 @@ def get_events_pileup(wildcards):
     return events*multiplier
 
 quantities=["eta", "pT", "phi", "prodR"]
-reco_diag_plots = expand("reco/{{sample}}/{{sample}}_{key}_vs_{qty}."+config['format'], qty=quantities, key="trackeff")\
-                 +expand("reco/{{sample}}/{{sample}}_{key}_vs_{qty}."+config['format'], qty=["eta", "pT"], key=["nStates", "nMeasurements", "nHoles", "nOutliers", "nSharedHits"])
+reco_diag_plots = expand("reco/{{sample}}/plots/finding/{{sample}}_{key}_vs_{qty}."+config['format'], qty=quantities, key="trackeff")\
+                 +expand("reco/{{sample}}/plots/finding/{{sample}}_{key}_vs_{qty}."+config['format'], qty=["eta", "pT"], key=["nStates", "nMeasurements", "nHoles", "nOutliers", "nSharedHits"])\
+                 +expand("reco/{{sample}}/plots/pulls/width/{{sample}}_pullwidth_{param}_vs_{qty}."+config['format'], qty=["eta", "pT"], param=params)\
+                 +expand("reco/{{sample}}/plots/pulls/mean/{{sample}}_pullmean_{param}_vs_{qty}."+config['format'], qty=["eta", "pT"], param=params)
 
 
 single_particles = ["mu", "pi", "el"]
 
 rule all:
   input:
-    # expand("reco/{sample}.edm4hep.root", sample=samples),
-    # expand("reco/plots/{sample}/{plot}.pdf", sample=samples, plot=finding_plots+fitting_plots),
-    #expand("reco/plots/{sample}/plots_{sample}.pdf", sample=samples),
-    #"gen/mg_ttbar.hepmc3.zst",
-    #"gen/mg_dihiggs.hepmc3.zst",
-    expand("gen/{sample}/{sample}.hepmc3.zst", sample=particle_gun_samples),
-    # expand("sim/{sample}.edm4hep.root", sample=samples),
-    #expand("digi/{sample}.edm4hep.root", sample=samples),
-    expand("reco/{sample}/{sample}.edm4hep.root", sample=particle_gun_samples),
-
-    # Single muon plots
-    expand("reco/pg_{ptcl}/pg_{ptcl}_efficiency."+config["format"], ptcl=single_particles),
-    expand("reco/pg_{ptcl}/pg_{ptcl}_{mtr}."+config["format"], mtr=["pullwidth", "pullmean"], ptcl=single_particles),
-    expand("reco/pg_{ptcl}/pg_{ptcl}_res_{qty}."+config["format"], qty=["d0", "z0", "phi", "theta", "qop", "t"], ptcl=single_particles),
-    # expand("reco/{sample}/{sample}_eff_vs_eta."+config["format"], sample=particle_gun_samples),
-    expand(reco_diag_plots, sample=particle_gun_samples),
+    expand("gen/{sample}/{sample}.{ext}", sample=gen_samples, ext=["hepmc3.zst", "pdf"]),
+    expand("gen/smeared/{sample}/{sample}.{ext}", sample=samples, ext=["hepmc3.zst", "pdf"]),
+    expand("sim/{sample}.edm4hep.root", sample=samples),
+    # expand("digi/{sample}.edm4hep.root", sample=samples),
+    expand("reco/{sample}/{sample}.edm4hep.root", sample=samples),
+    # # Single muon plots
+    # expand("reco/pg_{ptcl}/pg_{ptcl}_efficiency."+config["format"], ptcl=single_particles),
+    # expand("reco/pg_{ptcl}/pg_{ptcl}_{mtr}."+config["format"], mtr=["pullwidth", "pullmean"], ptcl=single_particles),
+    # expand("reco/pg_{ptcl}/pg_{ptcl}_res_{qty}."+config["format"], qty=["d0", "z0", "phi", "theta", "qop", "t"], ptcl=single_particles),
+    # # expand("reco/{sample}/{sample}_eff_vs_eta."+config["format"], sample=particle_gun_samples),
+    # expand(reco_diag_plots, sample=samples),
     
 
 def pg_gen_inputs(wildcards):
@@ -189,7 +250,7 @@ rule gen:
 
 rule madgraph_init:
   output:
-    protected("samples/mg_{sample}.tar.gz")
+    update("samples/mg_{sample}.tar.gz")
   input:
     "samples/{sample}.toml"
   # largely single thread but compilation goes up
@@ -197,17 +258,15 @@ rule madgraph_init:
   shell:
     "./with_env.sh colliderml -vv madgraph init {input} {output}"
 
+
 def mg_sample_inputs(wildcards):
   # parse "true" sample name and pileup (ignore pileup)
   sample = wildcards.sample
   # print(sample)
-  m = re.match(r"([a-z]+)(?:_pu(\d+))?", sample)
-  if m is None:
-    raise ValueError(f"Cannot parse sample name for madgraph gen {sample}")
-  act_sample, pileup = m.groups()
+  parsed = parse_madgraph_sample(sample)
   res = [
-    f"samples/{act_sample}.toml",
-    f"samples/mg_{act_sample}.tar.gz"
+    f"samples/{parsed.sample}.toml",
+    f"samples/mg_{parsed.sample}.tar.gz"
   ]
   # print("mg sample inputs:", res)
   return res
@@ -217,11 +276,11 @@ rule madgraph_gen:
   input:
     mg_sample_inputs,
   output:
-    "gen/mg_{sample}/mg_{sample}.hepmc3.zst",
-    "gen/mg_{sample}/mg_{sample}.hepmc3.zst.json"
+    update("gen/mg_{sample}/mg_{sample}.hepmc3.zst"),
+    update("gen/mg_{sample}/mg_{sample}.hepmc3.zst.json"),
   params:
-    events=get_events,
-     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("madgraph_gen"), bits=29)
+    events=get_events_gen,
+    seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("madgraph_gen"), bits=29)
   threads: workflow.cores
   shell:
     "./with_env.sh colliderml -vv madgraph generate {input} --events {params.events} {output[0]} --seed {params.seed}"
@@ -231,7 +290,7 @@ rule particle_gun:
     "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst",
     "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst.json",
   params:
-    events=get_events,
+    events=get_events_gen,
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("particle_gun")),
   threads: workflow.cores
   shell:
@@ -262,16 +321,13 @@ rule pileup_gen:
 def hepmc_merge_input(wildcards):
   sample = wildcards.sample
 
-  m = re.match(r"(\w*)(?:_pu(\d+))?", sample)
-  if m is None:
-    raise ValueError(f"Cannot parse sample name for hepmc merge {sample}")
+  print("hemmc merge input for sample:", sample)
+  parsed = parse_madgraph_sample(sample)
 
-  act_sample, pileup = m.groups()
+  inputs = {"hs": f"gen/{parsed.hs_only_name}/{parsed.hs_only_name}.hepmc3.zst", "pu": []}
 
-  inputs = {"hs": f"gen/{act_sample}/{act_sample}.hepmc3.zst", "pu": []}
-
-  if pileup is not None and pileup != "0":
-    inputs["pu"] = f"gen/pu_{act_sample}_pu{pileup}.hepmc3.zst"
+  if parsed.pileup is not None and parsed.pileup != 0:
+    inputs["pu"] = f"gen/pu_{parsed.hs_only_name}_pu{parsed.pileup}.hepmc3.zst"
 
   return inputs
 
@@ -292,8 +348,9 @@ rule hepmc_merge_smear:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("hepmc_smear")),
     npileup=lambda w: f"--npileup={parse_pileup(w)}" if parse_pileup(w) > 0 else "",
     pileup=lambda w: "--pileup" if parse_pileup(w) > 0 else "",
+    events=get_events_gen,
   shell:
-    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input.hs} {params.pileup} {input.pu} {params.npileup} --config {input.config} {output[0]} --seed {params.seed}"
+    "./with_env.sh colliderml -vv hepmc merge --hard-scatter {input.hs} {params.pileup} {input.pu} {params.npileup} --config {input.config} {output[0]} --seed {params.seed} --max-events {params.events}"
 
 rule ddsim_sim:
   input:
@@ -304,9 +361,10 @@ rule ddsim_sim:
     protected("sim/{sample}.edm4hep.root")
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("ddsim_sim")),
+    events=get_events,
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes 1 --threads {threads} --config {input[2]}"
+    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes 1 --threads {threads} --config {input[2]} --events {params.events}"
 
 rule sim_pu:
   input:
@@ -323,27 +381,27 @@ rule sim_pu:
 
 rule digi:
   input:
-    "sim/{sample}.edm4hep.root",
-    config_file,
+    sim="sim/{sample}.edm4hep.root",
+    config=config_file,
   output:
     "digi/{sample}.edm4hep.root"
   params:
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("digi")),
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml digitization {input[0]} {output[0]} --jobs {threads} --config {input[1]}"
+    "./with_env.sh colliderml digitization {input.sim} {output} --jobs {threads} --config {input.config}"
 
 rule reco:
   input:
-    "digi/{sample}.edm4hep.root",
-    config_file,
+    digi="digi/{sample}.edm4hep.root",
+    config=config_file,
   output:
-    "reco/{sample}/{sample}.edm4hep.root",
-    "reco/{sample}/performance_finding_ckf.root",
-    "reco/{sample}/performance_fitting_ckf.root"
+    reco="reco/{sample}/{sample}.edm4hep.root",
+    diag=["reco/{sample}/performance_finding_ckf.root", "reco/{sample}/performance_fitting_ckf.root"],
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml reconstruction {input[0]} {output[0]} --jobs {threads} --loglevel INFO --config {input[1]}"
+    "./with_env.sh colliderml reconstruction {input.digi} {output.reco} --jobs {threads} --loglevel INFO --config {input.config}"
+
 
 params=["d0", "z0", "phi", "theta", "qop", "t"]
 
@@ -405,11 +463,21 @@ def get_reco_diag_labels(wildcards):
             raise ValueError("Cannot parse particle gun sample name")
         particle, pt = m.groups()
         return f"--label='{pt} GeV'"
+  
+    if sample.startswith("mg_"):
+        m = re.match(r"mg_([a-z]+)", sample)
+        if m is None:
+            raise ValueError("Cannot parse madgraph sample name")
+        act_sample = m.group(1)
+
+        friendly_name = sample_name_map.get(act_sample, None)
+        return f"--label='{friendly_name}'" if friendly_name is not None else ""
 
     raise ValueError("Cannot determine labels for reco diag plots")
 
 def get_reco_diag_title(wildcards):
-    sample = wildcards.sample
+    sample = wildcards.sample 
+    print("get reco diag title:", sample)
     
     if sample.startswith("pg_"):
         m = re.match(r"pg_([a-z]+)_pt(\d+)", sample)
@@ -427,14 +495,22 @@ def get_reco_diag_title(wildcards):
 
         return f"{particle_names[particle]}, $p_T=${pt} GeV"
 
+    if sample.startswith("mg_"):
+        m = re.match(r"mg_([a-z]+)", sample)
+        if m is None:
+            raise ValueError("Cannot parse madgraph sample name")
+        act_sample = m.group(1)
+        return sample_name_map.get(act_sample, act_sample)
+
     raise ValueError("Cannot determine title for reco diag plots")
 
 
 rule reco_diag_plots:
   input:
-    "reco/{sample}/performance_fitting_ckf.root",
+    fitting_output="reco/{sample}/performance_fitting_ckf.root",
+    script="src/colliderml/cli/plot.py",
   output:
-    reco_diag_plots,
+    update(reco_diag_plots),
   threads: 1
   params:
     # labels=expand("--label='{sample}'", pt=wildcards.sample),
@@ -442,7 +518,7 @@ rule reco_diag_plots:
     format=config['format'],
     title=get_reco_diag_title,
   shell:
-    "./with_env.sh colliderml plot reco diagnostics {input} {params.labels} --output-base reco/{wildcards.sample}/{wildcards.sample}.{params.format} --title '{params.title}'"
+    "./with_env.sh colliderml plot reco diagnostics {input.fitting_output} {params.labels} --output-base reco/{wildcards.sample}/plots/{wildcards.sample}.{params.format} --title '{params.title}'"
 
   # shell:
   #   "./with_env.sh colliderml plot reco comparison_finding {input} {params.labels} --output {output} --title 'single muons'"

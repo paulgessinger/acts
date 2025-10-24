@@ -165,6 +165,7 @@ def main(
             logger.error(f"Output file {output} exists, use --force to overwrite")
             raise typer.Exit(1)
 
+        logger.info(f"Removing existing output file {output}")
         output.unlink()
 
     logger.info("Split processing into %d processes", procs)

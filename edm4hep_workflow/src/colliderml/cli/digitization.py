@@ -6,6 +6,7 @@ from typing import Annotated
 from colliderml.cli import args
 from colliderml.constants import SEED_DEFAULT
 from colliderml.config import Config
+import colliderml.logging
 
 
 def main(
@@ -22,6 +23,16 @@ def main(
     # @TODO: Rethink this configuration here
     config_path: Annotated[Path | None, typer.Option("--config")] = None,
 ):
+    logger = colliderml.logging.get_logger(__name__)
+    logger.info("Digitization workflow")
+    logger.info("Using configuration: %s", config_path)
+    logger.debug("Seed: %d", seed)
+    logger.debug("Number of jobs: %d", jobs)
+    logger.debug("Input file: %s", input)
+    logger.debug("Output file: %s", output)
+    logger.debug("Skip events: %d", skip)
+    logger.debug("Number of events: %s", events)
+
     import acts
     from acts import UnitConstants as u
     import acts.examples
@@ -41,8 +52,9 @@ def main(
     )
 
     config = Config.load(config_path)
+    logger.debug("Config: %s", config)
 
-    print(input, "->", output)
+    logger.debug("%s -> %s", input, output)
 
     logLevel = getattr(acts.logging, logLevel.upper(), acts.logging.INFO)
 
@@ -65,7 +77,10 @@ def main(
     # Load material map
     oddMaterialMap = geoDir / "data/odd-material-maps.root"
 
-    oddDigiConfig = geoDir / "config/odd-digi-smearing-config.json"
+    oddDigiConfig = geoDir / config.digitization.config_file
+    if not oddDigiConfig.exists():
+        logger.error("Digitization config file %s does not exist", oddDigiConfig)
+        raise typer.Exit(1)
 
     oddMaterialDeco = acts.IMaterialDecorator.fromFile(oddMaterialMap)
 
@@ -108,19 +123,6 @@ def main(
     s.addAlgorithm(edm4hepConverter)
     s.addWhiteboardAlias("particles", "particles_input")
 
-    # Do we digitize all particles? Otherwise, we don't need this yet
-    # addSimParticleSelection(
-    #     s,
-    #     ParticleSelectorConfig(
-    #         rho=(0.0, 24 * u.mm),
-    #         absZ=(0.0, 1.0 * u.m),
-    #         eta=(-4.0, 4.0),
-    #         pt=(150 * u.MeV, None),
-    #         removeNeutral=True,
-    #     ),
-    #     logLevel=logLevel,
-    # )
-
     # Add digitization if enabled
     addDigitization(
         s,
@@ -132,25 +134,6 @@ def main(
         rnd=rnd,
         logLevel=logLevel,
     )
-
-    # Removed since reconstruction is done later
-    # addDigiParticleSelection(
-    #     s,
-    #     ParticleSelectorConfig(
-    #         # we are only interested in the hard scatter vertex
-    #         # primaryVertexId=(1, 2),
-    #         rho=(0.0, 24 * u.mm),
-    #         absZ=(0.0, 1.0 * u.m),
-    #         eta=(-3.0, 3.0),
-    #         # using something close to 1 to include for sure
-    #         pt=(0.999 * u.GeV, None),
-    #         measurements=(6, None),
-    #         removeNeutral=True,
-    #         removeSecondaries=False,
-    #         # nMeasurementsGroupMin=measurementCounter,
-    #     ),
-    #     logLevel=logLevel,
-    # )
 
     measConv = PodioMeasurementOutputConverter(
         level=logLevel,

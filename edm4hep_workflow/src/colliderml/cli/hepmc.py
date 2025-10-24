@@ -28,6 +28,7 @@ def merge(
     seed: int = constants.SEED_DEFAULT,
     jobs: args.JOBS = 1,
     config_path: Annotated[Path | None, typer.Option("--config")] = None,
+    max_events: int | None = None,
 ):
     import acts
     import acts.examples
@@ -61,7 +62,9 @@ def merge(
     if jobs > 1:
         logger.info("With >1 jobs events may be written out of order")
 
-    s = acts.examples.Sequencer(numThreads=jobs, logLevel=acts.logging.INFO)
+    s = acts.examples.Sequencer(
+        numThreads=jobs, logLevel=acts.logging.INFO, events=max_events
+    )
 
     rng = acts.examples.RandomNumbers(seed=seed)
 

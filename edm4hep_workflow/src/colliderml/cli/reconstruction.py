@@ -7,16 +7,29 @@ from typing import Annotated
 
 
 from colliderml.config import Config
+import colliderml.logging
+from colliderml.constants import SEED_DEFAULT
 
 
 def main(
     input: Path,
     output: Path,
     jobs: int = -1,
-    seed: int = 998877,
+    seed: int = SEED_DEFAULT,
     logLevel: str = "INFO",
     config_path: Annotated[Path | None, typer.Option("--config")] = None,
+    do_digitization: bool = False,
 ):
+    logger = colliderml.logging.get_logger(__name__)
+
+    logger.info("Reconstruction workflow")
+    logger.info("Using configuration: %s", config_path)
+    logger.debug("Seed: %d", seed)
+    logger.debug("Number of jobs: %d", jobs)
+    logger.debug("Digitization: %s", do_digitization)
+    logger.debug("Input file: %s", input)
+    logger.debug("Output file: %s", output)
+
     from acts import UnitConstants as u
     import acts.examples
     from acts.examples import Sequencer
@@ -25,6 +38,7 @@ def main(
         PodioReader,
         PodioWriter,
         PodioMeasurementInputConverter,
+        PodioMeasurementOutputConverter,
     )
     from acts.examples.odd import getOpenDataDetectorDirectory, getOpenDataDetector
     from acts.examples.simulation import (
@@ -118,19 +132,58 @@ def main(
         logLevel=logLevel,
     )
 
-    measConv = PodioMeasurementInputConverter(
-        level=logLevel,
-        inputFrame=podioReader.config.outputFrame,
-        inputMeasurements="ActsMeasurements",
-        outputMeasurements="measurements",
-        outputMeasurementParticlesMap="measurement_particles_map",
-        outputMeasurementSimHitsMap="measurement_simhits_map",
-        outputParticleMeasurementsMap="particle_measurements_map",
-        outputSimHitMeasurementsMap="simhit_measurements_map",
-        inputSimHits=edm4hepConverter.config.outputSimHits,
-        inputSimHitAssociation=edm4hepConverter.config.outputSimHitAssociation,
-    )
-    s.addAlgorithm(measConv)
+    if do_digitization:
+        logger.info("Running inline digitization")
+
+        if input.parent.name == "digi":
+            logger.warning("The input file seems to be a digitization file")
+
+        rnd = acts.examples.RandomNumbers(seed=seed)
+
+        oddDigiConfig = geoDir / config.digitization.config_file
+        if not oddDigiConfig.exists():
+            logger.error("Digitization config file %s does not exist", oddDigiConfig)
+            raise typer.Exit(1)
+
+        addDigitization(
+            s,
+            trackingGeometry,
+            field,
+            digiConfigFile=oddDigiConfig,
+            # outputDirRoot=perf_output if getattr(config, "output_root", True) else None,
+            outputDirCsv=None,
+            rnd=rnd,
+            logLevel=logLevel,
+        )
+
+        # schedule writing of clusters with reco output
+        measConv = PodioMeasurementOutputConverter(
+            level=logLevel,
+            inputMeasurements="measurements",
+            outputMeasurements="ActsMeasurements",
+            inputMeasurementSimHitsMap="measurement_simhits_map",
+            inputSimHitAssociation=edm4hepConverter.config.outputSimHitAssociation,
+        )
+        s.addAlgorithm(measConv)
+
+    else:
+        logger.info("Reading digitization from input file (%s)", input)
+        if input.parent.name != "digi":
+            logger.warning("The input file does not seem to be a digitization file")
+
+        measConv = PodioMeasurementInputConverter(
+            level=logLevel,
+            inputFrame=podioReader.config.outputFrame,
+            inputMeasurements="ActsMeasurements",
+            outputMeasurements="measurements",
+            outputMeasurementParticlesMap="measurement_particles_map",
+            outputMeasurementSimHitsMap="measurement_simhits_map",
+            outputParticleMeasurementsMap="particle_measurements_map",
+            outputSimHitMeasurementsMap="simhit_measurements_map",
+            inputSimHits=edm4hepConverter.config.outputSimHits,
+            inputSimHitAssociation=edm4hepConverter.config.outputSimHitAssociation,
+        )
+        s.addAlgorithm(measConv)
 
     # Add digi particle selection (filters particles with sufficient measurements)
     addDigiParticleSelection(
@@ -150,8 +203,6 @@ def main(
         ),
         logLevel=logLevel,
     )
-
-    # @TODO: Add track finding etc here
 
     # Add seeding
     addSeeding(

@@ -487,7 +487,26 @@ def diagnostics(
 
     mplhep.style.use("ATLAS")
 
-    xlabels = {"eta": r"$\eta$", "pT": r"$p_T$", "phi": r"$\phi$", "prodR": "$R$"}
+    latex = {
+        "eta": r"$\eta$",
+        "pT": r"$p_T$",
+        "phi": r"$\phi$",
+        "prodR": "$R$",
+        "d0": "$d_0$",
+        "z0": "$z_0$",
+        "theta": r"$\theta$",
+        "qop": "$q/p$",
+        "t": "$t$",
+    }
+
+    units = {
+        "pT": "GeV",
+        "prodR": "mm",
+        "d0": "mm",
+        "z0": "mm",
+        "qop": "1/GeV",
+        "t": "ns",
+    }
     xranges = {"eta": (-3, 3), "phi": (-numpy.pi, numpy.pi)}
 
     keys = {"trackeff": ["eta", "pT", "phi", "prodR"], "nStates": ["eta", "pT"]}
@@ -503,12 +522,42 @@ def diagnostics(
         "nMeasurements": "Number of measurements",
     }
 
+    categories = {
+        m: "finding"
+        for m in [
+            "trackeff",
+            "nStates",
+            "nHoles",
+            "nOutliers",
+            "nSharedHits",
+            "nMeasurements",
+        ]
+    }
+
+    for param in ["d0", "z0", "phi", "theta", "qop", "t"]:
+        keys[f"pullmean_{param}"] = keys["nStates"]
+        ylabel = f"Pull mean of {latex[param]}"
+        if unit := units.get(param):
+            ylabel = f"{ylabel} [{unit}]"
+        ylabels[f"pullmean_{param}"] = ylabel
+        categories[f"pullmean_{param}"] = "pulls/mean"
+
+        keys[f"pullwidth_{param}"] = keys["nStates"]
+        ylabel = f"Pull width of {latex[param]}"
+        if unit := units.get(param):
+            ylabel = f"{ylabel} [{unit}]"
+        ylabels[f"pullwidth_{param}"] = ylabel
+        categories[f"pullwidth_{param}"] = "pulls/width"
+
     for key, quantities in keys.items():
         ylabel = ylabels[key]
 
         for qty in quantities:
 
-            xlabel = xlabels[qty]
+            xlabel = latex[qty]
+            if unit := units.get(qty):
+                xlabel = f"{xlabel} [{unit}]"
+
             xrange = xranges.get(qty)
 
             fig, ax = plt.subplots(1, 1, figsize=(8, 4))
@@ -529,6 +578,9 @@ def diagnostics(
                     color=get_color(i),
                 )
 
+            if key.startswith("pull"):
+                ax.axhline(1 if "width" in key else 0, ls="--", color="gray")
+
             common_label(ax=ax, text="Simulation", supp=title)
             enlarge_top(ax=ax, factor=1.2)
 
@@ -538,9 +590,11 @@ def diagnostics(
 
             fig.tight_layout()
 
+            output_dir = output_base.parent / categories[key]
+            output_dir.mkdir(parents=True, exist_ok=True)
+
             output_file = (
-                output_base.parent
-                / f"{output_base.stem}_{key}_vs_{qty}{output_base.suffix}"
+                output_dir / f"{output_base.stem}_{key}_vs_{qty}{output_base.suffix}"
             )
 
             print("Saving to", output_file)
@@ -548,6 +602,7 @@ def diagnostics(
 
             if show:
                 plt.show()
+            plt.close(fig)
 
 
 app.add_typer(reco_app, name="reco")
