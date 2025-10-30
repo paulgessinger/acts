@@ -1,3 +1,7 @@
 clean-plots:
   find reco -type f \( -name "*.pdf" -or -name "*.png" \) -delete
 
+touch +FILES:
+  chmod +w {{FILES}}
+  snakemake --cores 1 --touch {{FILES}}
+  chmod -w {{FILES}}

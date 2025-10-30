@@ -3,8 +3,12 @@ format: pdf
 
 event_counts:
   mg:
-    ttbar: 2000
-    dihiggs: 2000
+    ttbar:
+      pu0: 5000
+      pu200: 1000
+    dihiggs:
+      pu0: 5000
+      pu200: 1000
   pg:
-    default: 10000
+    default: 100000
     mu: 100000

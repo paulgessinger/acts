@@ -9,14 +9,19 @@
 
 """Display ROOT TTree branch sizes in a sorted, human-readable table."""
 
+import os
 import re
 import sys
 import tempfile
 from dataclasses import dataclass
 from enum import Enum
 from typing import Annotated
+from tabulate import tabulate
 
 import typer
+import numpy
+
+import colliderml.logging
 
 try:
     import ROOT
@@ -165,10 +170,14 @@ def compute_average_sizes(tree, branches: list[BranchInfo]) -> None:
                 total_bytes += branch.GetEntry(entry)
 
             # Calculate average
-            branch_info.avg_size_per_entry = total_bytes / num_entries if num_entries > 0 else 0.0
+            branch_info.avg_size_per_entry = (
+                total_bytes / num_entries if num_entries > 0 else 0.0
+            )
 
 
-def display_branch_table(branches: list[BranchInfo], sort_by: str = "file_size", show_avg_size: bool = False):
+def display_branch_table(
+    branches: list[BranchInfo], sort_by: str = "file_size", show_avg_size: bool = False
+):
     """Display branch information in a rich table."""
     # Sort branches
     if sort_by == "file_size":
@@ -246,11 +255,13 @@ app = typer.Typer(
 
 
 @app.command()
-def main(
+def size(
     file: Annotated[str, typer.Argument(help="ROOT file path")],
     tree: Annotated[str, typer.Argument(help="TTree name")],
     sort: Annotated[SortBy, typer.Option(help="Sort by")] = SortBy.file_size,
-    avg_size: Annotated[bool, typer.Option("--avg-size", help="Compute average size per entry (slow)")] = False,
+    avg_size: Annotated[
+        bool, typer.Option("--avg-size", help="Compute average size per entry (slow)")
+    ] = False,
 ):
     """Display ROOT TTree branch sizes in a sorted, human-readable table."""
     # Open ROOT file and get tree
@@ -274,3 +285,62 @@ def main(
     display_branch_table(branches, sort_by=sort.value, show_avg_size=avg_size)
 
     root_file.Close()
+
+
+@app.command()
+def entries(
+    files: Annotated[list[str], typer.Argument(help="ROOT file path")],
+    markdown: bool = False,
+):
+    logger = colliderml.logging.get_logger(__name__)
+
+    # figure out tree if not given
+    first_file = ROOT.TFile.Open(files[0])
+    keys = [k.GetName() for k in first_file.GetListOfKeys()]
+    logger.info("Found keys: %s", keys)
+    first_file.Close()
+
+    table = Table(title="ROOT File Entries")
+    table.add_column("File", style="yellow", no_wrap=False)
+    for key in keys:
+        table.add_column(key, style="cyan", no_wrap=False)
+    table.add_column("file size", style="red", no_wrap=False)
+    table.add_column("size / entry", style="red", no_wrap=False)
+
+    column_names = ["File"] + keys + ["file size", "size / entry"]
+
+    rows = []
+    for file in files:
+        # Open ROOT file and get tree
+        root_file = ROOT.TFile.Open(file)
+        if not root_file or root_file.IsZombie():
+            typer.echo(f"Error: Cannot open file {file}", err=True)
+            raise typer.Exit(1)
+
+        row = []
+        for tree in keys:
+            ttree = root_file.Get(tree)
+            if not ttree:
+                typer.echo(f"Error: Cannot find tree {tree} in {file}", err=True)
+                raise typer.Exit(1)
+
+            row.append(ttree.GetEntries())
+
+        max_entries = max(row)
+        max_tree = keys[numpy.argmax(row)]
+        file_size = os.path.getsize(file)
+        size_per_entry = file_size / max_entries if max_entries > 0 else 0
+        row = [f"{c:,}" for c in row]
+        row.append(human_readable_size(file_size))
+        row.append(f"{human_readable_size(size_per_entry)} ({max_tree})")
+
+        table.add_row(file, *row)
+        rows.append([file, *row])
+
+        root_file.Close()
+
+    if markdown:
+        print(tabulate(rows, headers=column_names, tablefmt="github"))
+        return
+    console = Console()
+    console.print(table)

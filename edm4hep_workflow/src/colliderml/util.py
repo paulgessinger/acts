@@ -148,12 +148,16 @@ class HepMC3Meta(pydantic.BaseModel):
             return cls.model_validate(meta)
 
 
-def hadd(input_files: list[Path], output_file: Path):
+def hadd(input_files: list[Path], output_file: Path, force: bool = False):
     hadd_exe = which("hadd")
 
-    subprocess.run(
-        [hadd_exe, str(output_file)] + [str(f) for f in input_files], check=True
-    )
+    cmd = [str(hadd_exe)]
+    if force:
+        cmd.append("-f")
+    cmd += [str(output_file)]
+    cmd += [str(f) for f in input_files]
+
+    subprocess.run(cmd, check=True)
 
 
 def human_readable_size(size_bytes: int) -> str:

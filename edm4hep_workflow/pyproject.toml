@@ -5,7 +5,6 @@ description = "EDM4hep workflow package for ACTS simulation and reconstruction"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "atlasify>=0.8.0",
     "hist>=2.9.0",
     "jinja2>=3.1.6",
     "matplotlib>=3.10.6",
@@ -17,6 +16,7 @@ dependencies = [
     "pyhepmc",
     "rich>=14.1.0",
     "scipy>=1.16.2",
+    "tabulate>=0.9.0",
     "typer>=0.17.3",
 ]
 

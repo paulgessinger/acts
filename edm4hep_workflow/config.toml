@@ -8,5 +8,6 @@ minimal_kinetic_energy = 0.1
 user_particle_handler = "default"
 
 [digitization]
+# config_file = "config/odd-digi-smearing-config-notime.json"
 # config_file = "config/odd-digi-smearing-config.json"
 config_file = "config/odd-digi-geometric-config.json"

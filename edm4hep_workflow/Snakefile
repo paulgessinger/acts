@@ -1,6 +1,7 @@
 import re
 import functools
 import dataclasses
+import os
 
 configfile: "snakemake_config.yml"
 
@@ -49,7 +50,9 @@ class Sample:
     return name
 
 def parse_madgraph_sample(sample: str) -> Sample:
-  m = re.match(r"(mg_|pg_)?([a-z]+)(?:_pu(\d+))?", sample)
+  #ex = r"(mg_|pg_)?([a-z]+)(?:_pu(\d+))?"
+  ex = r"^(?:(mg_|pg_))?([^_]+(?:_(?!pu\d+$)[^_]+)*)(?:_pu(\d+))?$"
+  m = re.match(ex, sample)
   if m is None:
     raise ValueError(f"Cannot parse sample name for madgraph gen {sample}")
   prefix, act_sample, pileup = m.groups()
@@ -58,7 +61,7 @@ def parse_madgraph_sample(sample: str) -> Sample:
 
 
 gen_samples = particle_gun_samples + madgraph_samples
-samples = particle_gun_samples + expand("{sample}_pu{pu}", sample=madgraph_samples, pu=[0, 10])
+samples = particle_gun_samples + expand("{sample}_pu{pu}", sample=madgraph_samples, pu=[0, 200])
 
 sample_name_map = {
     "ttbar": r"$pp\to{}t\bar{t}$",
@@ -100,12 +103,13 @@ def combine_hashes(*hashes: int, bits: int = 32) -> int:
 def get_events_single_particles(particle: str) -> int:
     return config["event_counts"]["pg"].get(particle, config["event_counts"]["pg"]["default"])
 
-def get_events_madgraph(sample: str, generate: bool) -> int:
-    # Never generate less than 2000 events to avoid pythia8 issues
+def get_events_madgraph(sample: str, generate: bool, pileup: int) -> int:
+    # Never generate less than NCPU*150 events to avoid pythia8 issues
+    base_count = config["event_counts"]["mg"][sample][f"pu{pileup}"]
     if generate:
-      return max(2000, config["event_counts"]["mg"][sample])
+      return max(os.cpu_count() * 150, base_count)
     else:
-      return config["event_counts"]["mg"][sample]
+      return base_count
 
 def get_events_gen(wildcards):
     print("get events:", *[f"{k}={v}" for k,v in wildcards.items()])
@@ -115,7 +119,15 @@ def get_events_gen(wildcards):
     if hasattr(wildcards, "sample"):
         sample = wildcards.sample
         parsed = parse_madgraph_sample(sample)
-        return get_events_madgraph(parsed.sample, generate=True)
+        lookup = parsed.sample
+
+        if parsed.prefix == "pg_":
+          print(lookup.split("_", 1))
+          lookup, _ = lookup.split("_", 1)
+          print(lookup)
+          return get_events_single_particles(lookup)
+        return get_events_madgraph(lookup, generate=True, pileup=parsed.pileup or 0)
+
 
     raise ValueError("Cannot determine event count")
 
@@ -132,7 +144,7 @@ def get_events(wildcards):
     elif sample.startswith("mg_"):
         parsed = parse_madgraph_sample(sample)
         print(sample, parsed)
-        return get_events_madgraph(parsed.sample, generate=False)
+        return get_events_madgraph(parsed.sample, generate=False, pileup=parsed.pileup or 0)
     else:
       raise ValueError("Cannot determine sample type for event count")
 
@@ -169,7 +181,7 @@ def get_events_pileup(wildcards):
         parsed = parse_madgraph_sample(wildcards.sample)
         print(wildcards.sample, parsed)
 
-        events = get_events_madgraph(parsed.sample, generate=True)
+        events = get_events_madgraph(parsed.sample, generate=True, pileup=parsed.pileup or 0)
     else:
         raise ValueError("Cannot determine sample type for pileup event count")
 
@@ -201,7 +213,7 @@ rule all:
     expand("reco/pg_{ptcl}/pg_{ptcl}_res_{qty}."+config["format"], qty=["d0", "z0", "phi", "theta", "qop", "t"], ptcl=single_particles),
     # Diagnostic plots for all samples
     expand(reco_diag_plots, sample=samples),
-    
+
 
 def pg_gen_inputs(wildcards):
     return sum([
@@ -243,7 +255,7 @@ rule gen:
 
 rule madgraph_init:
   output:
-    protected(update("samples/mg_{sample}.tar.gz"))
+    protected("samples/mg_{sample}.tar.gz")
   input:
     "samples/{sample}.toml"
   # largely single thread but compilation goes up
@@ -269,8 +281,8 @@ rule madgraph_gen:
   input:
     mg_sample_inputs,
   output:
-    update("gen/mg_{sample}/mg_{sample}.hepmc3.zst"),
-    update("gen/mg_{sample}/mg_{sample}.hepmc3.zst.json"),
+    protected("gen/mg_{sample}/mg_{sample}.hepmc3.zst"),
+    protected("gen/mg_{sample}/mg_{sample}.hepmc3.zst.json"),
   params:
     events=get_events_gen,
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("madgraph_gen"), bits=29)
@@ -278,16 +290,35 @@ rule madgraph_gen:
   shell:
     "./with_env.sh colliderml -vv madgraph generate {input} --events {params.events} {output[0]} --seed {params.seed}"
 
+def parse_float(value: str) -> float:
+  value = value.replace("p", ".")
+  return float(value)
+
+def parse_pt_range(wildcards) -> tuple[float, float]:
+  pt = wildcards.pt
+  if pt.isdigit():
+    pt = parse_float(pt)
+    print(f"parsed pt: {pt}")
+    return f"{pt},{pt}"
+
+  if "_" in pt:
+    s, e = pt.split("_", 1)
+    s = parse_float(s)
+    e = parse_float(e)
+    print(f"parsed pt range: {s} to {e}")
+    return f"{s},{e}"
+
 rule particle_gun:
   output:
-    "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst",
-    "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,\\d+}.hepmc3.zst.json",
+    "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,.+}.hepmc3.zst",
+    "gen/pg_{sample}/pg_{particle, [a-z]+}_pt{pt,.+}.hepmc3.zst.json",
   params:
     events=get_events_gen,
     seed=lambda w: combine_hashes(config["seed"], hstr(w.sample), hstr("particle_gun")),
+    pt=parse_pt_range
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml particle-gun --jobs {threads} {output[0]} --type {wildcards.particle} --pt {wildcards.pt} --events {params.events} --seed {params.seed}"
+    "./with_env.sh colliderml particle-gun --jobs {threads} {output[0]} --type {wildcards.particle} --pt {params.pt} --events {params.events} --seed {params.seed}"
 
 rule hepmc_plots:
   input:
@@ -296,7 +327,7 @@ rule hepmc_plots:
     "gen/{whatever}.pdf"
   threads: 1
   shell:
-    "./with_env.sh colliderml plot hepmc {input} --output {output} --max-events 1000"
+    "./with_env.sh colliderml plot hepmc {input} --output {output} --max-events 10000"
 
 
 rule pileup_gen:
@@ -316,6 +347,7 @@ def hepmc_merge_input(wildcards):
 
   print("hemmc merge input for sample:", sample)
   parsed = parse_madgraph_sample(sample)
+  print(parsed)
 
   inputs = {"hs": f"gen/{parsed.hs_only_name}/{parsed.hs_only_name}.hepmc3.zst", "pu": []}
 
@@ -357,7 +389,7 @@ rule ddsim_sim:
     events=get_events,
   threads: workflow.cores
   shell:
-    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes 1 --threads {threads} --config {input[2]} --events {params.events}"
+    "./with_env.sh colliderml -vv simulation {input[0]} --output {output[0]} --processes {threads} --threads 2 --config {input[2]} --events {params.events} --seed {params.seed}"
 
 rule sim_pu:
   input:
@@ -451,14 +483,14 @@ use rule comparison_plots as single_electron_plots with:
 
 def get_reco_diag_labels(wildcards):
     sample = wildcards.sample
-    
+
     if sample.startswith("pg_"):
         m = re.match(r"pg_([a-z]+)_pt(\d+)", sample)
         if m is None:
             raise ValueError("Cannot parse particle gun sample name")
         particle, pt = m.groups()
         return f"--label='{pt} GeV'"
-  
+
     if sample.startswith("mg_"):
         m = re.match(r"mg_([a-z]+)", sample)
         if m is None:
@@ -471,9 +503,9 @@ def get_reco_diag_labels(wildcards):
     raise ValueError("Cannot determine labels for reco diag plots")
 
 def get_reco_diag_title(wildcards):
-    sample = wildcards.sample 
+    sample = wildcards.sample
     print("get reco diag title:", sample)
-    
+
     if sample.startswith("pg_"):
         m = re.match(r"pg_([a-z]+)_pt(\d+)", sample)
         if m is None:

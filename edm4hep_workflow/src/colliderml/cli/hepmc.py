@@ -1,14 +1,21 @@
+from logging import info
 import os
-from colliderml import constants
-from colliderml.cli import args
 import typer
 from pathlib import Path
 from typing import Annotated
 import enum
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import subprocess
 
 import colliderml.logging
 from colliderml.config import PileupConfig, PileupStrategy
-from colliderml.util import human_readable_size
+from colliderml.util import HepMC3Meta, human_readable_size
+from colliderml import constants
+from colliderml.cli import args
+
+from rich.table import Table
+from rich.console import Console
+from rich.progress import Progress, MofNCompleteColumn, SpinnerColumn
 
 app = typer.Typer()
 
@@ -120,3 +127,65 @@ def merge(
     sidecar_path = Path(str(output) + ".json")
     if sidecar_path.exists():
         logger.info("Sidecar metadata file: %s", sidecar_path)
+
+
+@app.command()
+def check(files: list[Path]):
+
+    rows = []
+
+    table = Table(title="HepMC3 Event Counts")
+    table.add_column("File", style="cyan", no_wrap=True)
+    table.add_column("Counted Events", justify="right", style="green")
+    table.add_column("Metadata Events", justify="right", style="magenta")
+    table.add_column("Status", style="bold")
+
+    def count(file: Path) -> tuple[Path, int]:
+        out = (
+            subprocess.run(
+                ["zstdgrep", "^E", str(file)],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            .stdout.strip()
+            .splitlines()
+        )
+        return file, len(out)
+
+    with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
+        futures = []
+
+        prog = Progress(
+            SpinnerColumn(), MofNCompleteColumn(), *Progress.get_default_columns()
+        )
+        with prog:
+            tasks = {}
+            for file in files:
+                tasks[file] = prog.add_task(f"Counting {file.name}", total=1)
+
+                futures.append(executor.submit(count, file))
+
+            for f in prog.track(
+                as_completed(futures),
+                total=len(futures),
+                description="Counting events",
+            ):
+                file, _ = f.result()
+                task = tasks[file]
+                prog.update(task, advance=1)
+
+        for file, f in zip(files, futures):
+            _, n_events = f.result()
+            meta = HepMC3Meta.for_file(file)
+            row = [
+                str(file),
+                f"{n_events:,}",
+                f"{meta.num_events:,}",
+                "✅" if n_events == meta.num_events else "❌",
+            ]
+            rows.append(row)
+            table.add_row(*row)
+
+        console = Console()
+        console.print(table)

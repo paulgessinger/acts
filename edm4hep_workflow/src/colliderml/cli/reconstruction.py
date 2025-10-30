@@ -21,6 +21,9 @@ def main(
     logLevel: str = "INFO",
     config_path: Annotated[Path | None, typer.Option("--config")] = None,
     do_digitization: bool = False,
+    skip: int = 0,
+    events: int | None = None,
+    force: bool = False,
 ):
     logger = colliderml.logging.get_logger(__name__)
 
@@ -67,7 +70,7 @@ def main(
 
     with tempfile.TemporaryDirectory() as temp_dir:
 
-        s = Sequencer(numThreads=jobs, trackFpes=False)
+        s = Sequencer(numThreads=jobs, trackFpes=False, skip=skip, events=events)
         s.config.logLevel = acts.logging.DEBUG
 
         # Get detector and field
@@ -309,7 +312,7 @@ def main(
         logger.info("Merging %d output files", len(output_files))
         logger.debug("Output files: %s", output_files)
 
-        hadd(output_files, output)
+        hadd(output_files, output, force=force)
 
         size = output.stat().st_size
         logger.info(

@@ -84,7 +84,7 @@ def update_madgraph_card(file_path: Path, updates: dict[str, str], log_base: Pat
         "Updating Madgraph card [b]%s[/b] with overrides %s",
         file_path.relative_to(log_base),
         format_dict_for_logging(updates),
-        extra={"highlighter": False},
+        extra={"highlighter": False, "markup": True},
     )
 
     raw = file_path.read_text()
@@ -116,6 +116,7 @@ def with_madgraph_card_customization(
     logger.info(
         "Applying temporary Madgraph card customizations to [b]%s[/b]",
         file_path.relative_to(log_base),
+        {"markup": True},
     )
     original = file_path.read_text()
     update_madgraph_card(file_path, updates, log_base)
@@ -126,6 +127,7 @@ def with_madgraph_card_customization(
         logger.info(
             "Restoring original Madgraph card [b]%s[/b]",
             file_path.relative_to(log_base),
+            {"markup": True},
         )
         file_path.write_text(original)
 
@@ -168,7 +170,7 @@ def update_pythia8_card(file_path: Path, updates: dict[str, str], log_base: Path
         "Updating Pythia8 card [b]%s[/b] with overrides %s",
         file_path.relative_to(log_base),
         format_dict_for_logging(updates),
-        extra={"highlighter": False},
+        extra={"highlighter": False, "markup": True},
     )
 
     raw = file_path.read_text()
@@ -220,7 +222,7 @@ def backup_file(file_path: Path, suffix: str, log_base: Path):
         "Backing up [i]%s[/i] to [i]%s[/i]",
         file_path.relative_to(log_base),
         new_path.relative_to(log_base),
-        extra={"highlighter": False},
+        extra={"highlighter": False, "markup": True},
     )
     shutil.copy(file_path, new_path)
 
@@ -301,8 +303,8 @@ def apply_card_customizations(sample_config: SampleConfig, process_dir: Path):
     if sample_config.run_mode == RunMode.nlo_fxfx:
         shower_card_path = cards_dir / "shower_card.dat"
         logger.info(
-            "Applying shower card customizations for run mode [b]%s[/b]",
-            sample_config.run_mode,
+            f"Applying shower card customizations for run mode [b]{sample_config.run_mode}[/b]",
+            {"markup": True},
         )
         if not shower_card_path.exists():
             raise FileNotFoundError(f"Could not find shower card at {shower_card_path}")
@@ -611,7 +613,7 @@ def generate(
     logger.info(
         "Process:\n[italic]%s[/italic]",
         sample_config.generate_command,
-        extra={"highlighter": False},
+        extra={"highlighter": False, "markup": True},
     )
     logger.info("Run mode: %s", sample_config.run_mode)
 
@@ -656,10 +658,61 @@ def generate(
             )
             raise typer.Exit(1)
 
+        # we need to make sure that we're running against the correct versions of pythia8, madgraph5 and syscalc
+        mg5_aMC = colliderml.util.which("mg5_aMC").resolve()
+        mg_base = mg5_aMC.parent.parent
+        sys_calc = colliderml.util.which("sys_calc").resolve()
+        syscalc_base = sys_calc.parent.parent
+        pythia8_config = colliderml.util.which("pythia8-config").resolve()
+        pythia8_base = pythia8_config.parent.parent
+
+        logger.info("Ensuring Madgraph uses correct dependencies")
+        logger.info("Madgraph: %s", mg_base)
+        logger.info("SysCalc: %s", syscalc_base)
+        logger.info("Pythia8: %s", pythia8_base)
+
+        cards_dir = process_dir / "Cards"
+        config_card_names = ["amcatnlo_configuration.txt", "me5_configuration.txt"]
+        config_card_path: Path | None = None
+
+        for name in config_card_names:
+            test_path = cards_dir / name
+            if test_path.exists():
+                config_card_path = test_path
+                break
+
+        if config_card_path is None:
+            logger.error(
+                "Could not find configuration.txt in any of %s",
+                config_card_names,
+            )
+            raise typer.Exit(1)
+
+        update_pythia8_card(
+            config_card_path,
+            {
+                "pythia8_path": str(pythia8_base),
+                "syscalc_path": str(syscalc_base),
+                "mg5_path": str(mg_base),
+            },
+            log_base=process_dir,
+        )
+
         apply_card_customizations(sample_config, process_dir)
 
         if sample_config.run_mode == RunMode.nlo_fxfx:
-            logger.info("Launching event generation for [b]nlo_fxfx[/b] (precompiled)")
+            logger.info(
+                "Launching event generation for [b]nlo_fxfx[/b] (precompiled)",
+                extra={"markup": True},
+            )
+
+            if sample_config.nevents_scale_factor != 1.0:
+                logger.info(
+                    "Using scale factor %f to speculatively generate more events in the first iteration",
+                    sample_config.nevents_scale_factor,
+                )
+                # @TODO: Do this properly
+                events = int(events * sample_config.nevents_scale_factor)
 
             apply_run_configuration(
                 events=events,

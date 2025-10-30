@@ -23,7 +23,6 @@ from rich.progress import (
     TimeElapsedColumn,
     TimeRemainingColumn,
 )
-import atlasify
 
 from colliderml.root import TH1
 
