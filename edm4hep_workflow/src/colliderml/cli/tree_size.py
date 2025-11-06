@@ -294,11 +294,19 @@ def entries(
 ):
     logger = colliderml.logging.get_logger(__name__)
 
-    # figure out tree if not given
-    first_file = ROOT.TFile.Open(files[0])
-    keys = [k.GetName() for k in first_file.GetListOfKeys()]
+    rfiles = [ROOT.TFile.Open(f) for f in files]
+
+    for file, root_file in zip(files, rfiles):
+        if not root_file or root_file.IsZombie():
+            typer.echo(f"Error: Cannot open file {file}", err=True)
+            raise typer.Exit(1)
+
+    keys = set()
+    for rf in rfiles:
+        keys.update({k.GetName() for k in rf.GetListOfKeys()})
+
+    keys = list(sorted(keys))
     logger.info("Found keys: %s", keys)
-    first_file.Close()
 
     table = Table(title="ROOT File Entries")
     table.add_column("File", style="yellow", no_wrap=False)
@@ -310,27 +318,24 @@ def entries(
     column_names = ["File"] + keys + ["file size", "size / entry"]
 
     rows = []
-    for file in files:
+    for file, root_file in zip(files, rfiles):
         # Open ROOT file and get tree
-        root_file = ROOT.TFile.Open(file)
-        if not root_file or root_file.IsZombie():
-            typer.echo(f"Error: Cannot open file {file}", err=True)
-            raise typer.Exit(1)
 
         row = []
         for tree in keys:
             ttree = root_file.Get(tree)
+            entries = None
             if not ttree:
-                typer.echo(f"Error: Cannot find tree {tree} in {file}", err=True)
-                raise typer.Exit(1)
+                logger.warning("Cannot find tree %s in %s", tree, file)
+            else:
+                entries = ttree.GetEntries()
+            row.append(entries)
 
-            row.append(ttree.GetEntries())
-
-        max_entries = max(row)
-        max_tree = keys[numpy.argmax(row)]
+        max_entries = max([r or 0 for r in row])
+        max_tree = keys[numpy.argmax([r or 0 for r in row])]
         file_size = os.path.getsize(file)
         size_per_entry = file_size / max_entries if max_entries > 0 else 0
-        row = [f"{c:,}" for c in row]
+        row = [f"{c:,}" if c is not None else "-" for c in row]
         row.append(human_readable_size(file_size))
         row.append(f"{human_readable_size(size_per_entry)} ({max_tree})")
 

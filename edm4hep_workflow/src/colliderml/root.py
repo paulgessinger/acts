@@ -1,5 +1,6 @@
 import numpy
 import cppyy
+from pathlib import Path
 
 
 class TH1:
@@ -63,3 +64,17 @@ class TH1:
     def bar(self, ax, **bar_kwargs):
         ax.bar(self.x, height=self.y, yerr=(self.y_err_lo, self.y_err_hi), **bar_kwargs)
         return ax
+
+
+def root_get_entries(file: Path, tree: str) -> int:
+    import ROOT
+
+    root_file = ROOT.TFile.Open(str(file))
+    if not root_file or root_file.IsZombie():
+        raise ValueError(f"Cannot open ROOT file {file}")
+
+    ttree = root_file.Get(tree)
+    if not ttree:
+        raise ValueError(f"Cannot find tree {tree} in {file}")
+
+    return ttree.GetEntries()

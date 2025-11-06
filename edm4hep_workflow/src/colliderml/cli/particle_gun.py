@@ -36,7 +36,9 @@ def main(
     output: Path,
     particle_type: Annotated[ParticleType, typer.Option("--type")],
     events: args.EVENTS,
-    pt: Annotated[float, typer.Option(help="Transverse momentum in GeV")],
+    pt: Annotated[
+        str, typer.Option(help="Transverse momentum in GeV or range min,max")
+    ],
     jobs: args.JOBS = os.cpu_count() or 1,
     seed: int = SEED_DEFAULT,
 ):
@@ -54,6 +56,19 @@ def main(
 
     pdg = particle_type.pdg
 
+    ptvals = pt.split(",")
+    if len(ptvals) == 1:
+        ptmin = float(ptvals[0])
+        ptmax = ptmin
+    elif len(ptvals) == 2:
+        ptmin = float(ptvals[0])
+        ptmax = float(ptvals[1])
+    else:
+        logger.error("Invalid pt specification: %s", pt)
+        raise typer.Exit(1)
+
+    logger.info("Transverse momentum range: %.2f - %.2f GeV", ptmin, ptmax)
+
     evGen = acts.examples.EventGenerator(
         level=acts.logging.INFO,
         generators=[
@@ -61,7 +76,7 @@ def main(
                 multiplicity=acts.examples.FixedMultiplicityGenerator(n=1),
                 vertex=acts.examples.FixedVertexGenerator(),
                 particles=acts.examples.ParametricParticleGenerator(
-                    p=(pt * u.GeV, pt * u.GeV),
+                    p=(ptmin * u.GeV, ptmax * u.GeV),
                     pTransverse=True,
                     pdg=pdg,
                     eta=(-3, 3),

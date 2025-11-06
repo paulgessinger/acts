@@ -17,6 +17,7 @@
 #include "ActsExamples/Io/EDM4hep/EDM4hepTrackInputConverter.hpp"
 #include "ActsExamples/Io/EDM4hep/EDM4hepTrackOutputConverter.hpp"
 #include "ActsExamples/Io/Podio/PodioMeasurementInputConverter.hpp"
+#include "ActsExamples/Io/Podio/PodioMeasurementOutputConverter.hpp"
 #include "ActsExamples/Io/Podio/PodioOutputConverter.hpp"
 #include "ActsExamples/Io/Podio/PodioReader.hpp"
 #include "ActsExamples/Io/Podio/PodioWriter.hpp"
@@ -60,6 +61,14 @@ PYBIND11_MODULE(ActsExamplesPythonBindingsEDM4hep, m) {
         outputMeasurementParticlesMap, outputMeasurementSimHitsMap,
         outputParticleMeasurementsMap, outputSimHitMeasurementsMap,
         inputSimHits, inputSimHitAssociation);
+  }
+
+  {
+    auto [alg, config] =
+        declareAlgorithm<PodioMeasurementOutputConverter, PodioOutputConverter>(
+            m, "PodioMeasurementOutputConverter");
+    ACTS_PYTHON_STRUCT(config, inputMeasurements, outputMeasurements,
+                       inputSimHitAssociation, inputMeasurementSimHitsMap);
   }
 
   {

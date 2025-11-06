@@ -658,17 +658,14 @@ def generate(
             )
             raise typer.Exit(1)
 
-        # we need to make sure that we're running against the correct versions of pythia8, madgraph5 and syscalc
+        # we need to make sure that we're running against the correct versions of pythia8 and madgraph5
         mg5_aMC = colliderml.util.which("mg5_aMC").resolve()
         mg_base = mg5_aMC.parent.parent
-        sys_calc = colliderml.util.which("sys_calc").resolve()
-        syscalc_base = sys_calc.parent.parent
         pythia8_config = colliderml.util.which("pythia8-config").resolve()
         pythia8_base = pythia8_config.parent.parent
 
         logger.info("Ensuring Madgraph uses correct dependencies")
         logger.info("Madgraph: %s", mg_base)
-        logger.info("SysCalc: %s", syscalc_base)
         logger.info("Pythia8: %s", pythia8_base)
 
         cards_dir = process_dir / "Cards"
@@ -692,7 +689,6 @@ def generate(
             config_card_path,
             {
                 "pythia8_path": str(pythia8_base),
-                "syscalc_path": str(syscalc_base),
                 "mg5_path": str(mg_base),
             },
             log_base=process_dir,

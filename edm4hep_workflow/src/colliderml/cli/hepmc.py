@@ -141,9 +141,16 @@ def check(files: list[Path]):
     table.add_column("Status", style="bold")
 
     def count(file: Path) -> tuple[Path, int]:
+
+        grep = "grep"
+        if file.suffix == ".gz":
+            grep = "zgrep"
+        elif file.suffix == ".zst":
+            grep = "zstdgrep"
+
         out = (
             subprocess.run(
-                ["zstdgrep", "^E", str(file)],
+                [grep, "^E", str(file)],
                 check=True,
                 capture_output=True,
                 text=True,

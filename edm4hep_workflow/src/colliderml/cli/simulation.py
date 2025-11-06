@@ -12,6 +12,7 @@ import tempfile
 import contextlib
 
 from colliderml.config import Config, ParticleHandlerType, SimulationConfig
+from colliderml.root import root_get_entries
 from colliderml.util import HepMC3Meta, hadd, human_readable_size, parse_hepmc3_file
 import typer
 
@@ -90,7 +91,7 @@ def do_simulation(
     return ec
 
 
-def job_wrapper(*, output_file: Path, **kwargs):
+def job_wrapper(*, input_files: list[Path], output_file: Path, **kwargs):
     job_out = output_file.parent / f"{output_file.name}.log"
     if job_out.exists():
         job_out.unlink()
@@ -100,7 +101,7 @@ def job_wrapper(*, output_file: Path, **kwargs):
     with job_out.open("w") as log_file:
         os.dup2(log_file.fileno(), sys.stdout.fileno())
         os.dup2(log_file.fileno(), sys.stderr.fileno())
-        ec = do_simulation(output_file=output_file, **kwargs)
+        ec = do_simulation(input_files=input_files, output_file=output_file, **kwargs)
 
     if ec != 0:
         full = job_out.read_text()
@@ -109,7 +110,26 @@ def job_wrapper(*, output_file: Path, **kwargs):
             "exit code of simulation was non-zero (%d)\noutput:\n", ec, truncated
         )
 
-    return ec, output_file
+    return ec, input_files, output_file
+
+
+def check_consistency(
+    logger: logging.Logger, input_files: list[Path], output_file: Path
+):
+    if len(input_files) != 1:
+        logger.error("Unexpected multiple input files for consistency check")
+        raise typer.Exit(1)
+
+    input_entries = HepMC3Meta.for_file(input_files[0]).num_events
+    output_entries = root_get_entries(output_file, "events")
+
+    if input_entries != output_entries:
+        logger.error(
+            "Consistency check failed: input had %d events, output has %d events",
+            input_entries,
+            output_entries,
+        )
+        raise typer.Exit(1)
 
 
 def main(
@@ -207,6 +227,8 @@ def main(
                 config=config.simulation,
                 threads=threads,
             )
+
+            check_consistency(logger, input_files, output)
         else:
 
             mp_context = multiprocessing.get_context("spawn")
@@ -261,11 +283,12 @@ def main(
                 error = False
                 for f in as_completed(futures):
                     try:
-                        ec, out_file = f.result()
+                        ec, _, out_file = f.result()
                         if ec == 0:
                             logger.info(
                                 f"Job completed successfully, output at {out_file}"
                             )
+
                         else:
                             logger.error(
                                 f"Job failed with exit code {ec}, see {out_file}"
@@ -280,7 +303,8 @@ def main(
 
                 output_files = []
                 for f in futures:
-                    _, out_file = f.result()
+                    _, input_files, out_file = f.result()
+                    check_consistency(logger, input_files, out_file)
                     output_files.append(out_file)
 
                 logger.info("Merging output files to %s", output)
