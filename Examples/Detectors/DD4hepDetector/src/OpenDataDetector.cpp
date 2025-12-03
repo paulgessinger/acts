@@ -9,6 +9,7 @@
 #include "ActsExamples/DD4hepDetector/OpenDataDetector.hpp"
 
 #include "Acts/Geometry/LayerBlueprintNode.hpp"
+#include "Acts/Geometry/VolumeAttachmentStrategy.hpp"
 #include "ActsPlugins/DD4hep/BlueprintBuilder.hpp"
 #include "ActsPlugins/DD4hep/DD4hepDetectorElement.hpp"
 #include <Acts/Geometry/Blueprint.hpp>
@@ -97,6 +98,7 @@ void OpenDataDetector::construct(const Acts::GeometryContext& gctx) {
   Blueprint root{cfg};
 
   auto& outer = root.addCylinderContainer("OpenDataDetector", AxisR);
+  outer.setAttachmentStrategy(VolumeAttachmentStrategy::Gap);
 
   outer.addChild(builder.makeBeampipe());
 
@@ -110,15 +112,16 @@ void OpenDataDetector::construct(const Acts::GeometryContext& gctx) {
   auto makeCustomizer = [&](const std::string& det,
                             const std::regex& layerPattern)
       -> ActsPlugins::DD4hep::LayerHelper::Customizer {
-    return [&, det](const auto& elem,
-                    Acts::Experimental::LayerBlueprintNode& layer) {
+    return [&, det](const auto& elem, auto layer) {
       int n = parseLayerNumber(elem, layerPattern);
 
       std::string name = elem.name();
       using enum SrfArrayNavPol::LayerType;
       SrfArrayNavPol::Config cfg;
 
-      if (name.find("Endcap") != std::string::npos) {
+      bool isEndcap = name.find("Endcap") != std::string::npos;
+
+      if (isEndcap) {
         cfg.bins = {constant(std::format("{}_e_sf_b_r", det)),
                     constant(std::format("{}_e_sf_b_phi", det))};
         cfg.layerType = Disc;
@@ -128,12 +131,12 @@ void OpenDataDetector::construct(const Acts::GeometryContext& gctx) {
         cfg.layerType = Cylinder;
       }
 
-      layer.setNavigationPolicyFactory(NavigationPolicyFactory{}
-                                           .add<CylinderNavigationPolicy>()
-                                           .add<SrfArrayNavPol>(cfg)
-                                           .asUniquePtr());
+      layer->setNavigationPolicyFactory(NavigationPolicyFactory{}
+                                            .add<CylinderNavigationPolicy>()
+                                            .add<SrfArrayNavPol>(cfg)
+                                            .asUniquePtr());
 
-      // @TODO: This needs to set the material as well
+      return layer;
     };
   };
 
@@ -141,32 +144,30 @@ void OpenDataDetector::construct(const Acts::GeometryContext& gctx) {
   std::regex pixelLayerPattern{"(?:PixelLayer|PixelEndcap[NP])(\\d)"};
   builder.barrelEndcapAssemblyHelper()
       .setAssembly(pixelAssembly)
-      .setBarrelAxes("XYZ")
-      .setEndcapAxes("XZY")
+      .setAxes("XYZ", "XZY")
       .setLayerPattern(pixelLayerPattern)
-      .setCustomizer(makeCustomizer("pix", pixelLayerPattern))
+      .setAttachmentStrategies(AttachmentStrategy::Gap, AttachmentStrategy::Gap)
+      .customize(makeCustomizer("pix", pixelLayerPattern))
       .addTo(outer);
 
-  auto sstripAssembly = builder.findDetElementByName("ShortStrips").value();
-  std::regex sstripLayerPattern{
-      "(?:ShortStripLayer|ShortStripEndcap[NP])(\\d)"};
-  builder.barrelEndcapAssemblyHelper()
-      .setAssembly(sstripAssembly)
-      .setBarrelAxes("XYZ")
-      .setEndcapAxes("XZY")
-      .setLayerPattern(sstripLayerPattern)
-      .setCustomizer(makeCustomizer("ss", sstripLayerPattern))
-      .addTo(outer);
-
-  auto lstripAssembly = builder.findDetElementByName("LongStrips").value();
-  std::regex lstripLayerPattern{"(?:LongStripLayer|LongStripEndcap[NP])(\\d)"};
-  builder.barrelEndcapAssemblyHelper()
-      .setAssembly(lstripAssembly)
-      .setBarrelAxes("XYZ")
-      .setEndcapAxes("XZY")
-      .setLayerPattern(lstripLayerPattern)
-      .setCustomizer(makeCustomizer("ls", lstripLayerPattern))
-      .addTo(outer);
+  // auto sstripAssembly = builder.findDetElementByName("ShortStrips").value();
+  // std::regex sstripLayerPattern{
+  //     "(?:ShortStripLayer|ShortStripEndcap[NP])(\\d)"};
+  // builder.barrelEndcapAssemblyHelper()
+  //     .setAssembly(sstripAssembly)
+  //     .setAxes("XYZ", "XZY")
+  //     .setLayerPattern(sstripLayerPattern)
+  //     .customize(makeCustomizer("ss", sstripLayerPattern))
+  //     .addTo(outer);
+  //
+  // auto lstripAssembly = builder.findDetElementByName("LongStrips").value();
+  // std::regex lstripLayerPattern{"(?:LongStripLayer|LongStripEndcap[NP])(\\d)"};
+  // builder.barrelEndcapAssemblyHelper()
+  //     .setAssembly(lstripAssembly)
+  //     .setAxes("XYZ", "XZY")
+  //     .setLayerPattern(lstripLayerPattern)
+  //     .customize(makeCustomizer("ls", lstripLayerPattern))
+  //     .addTo(outer);
 
   BlueprintOptions options;
 
