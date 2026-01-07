@@ -100,6 +100,14 @@ jobs:
           token: ${{ secrets.DOCS_DEPLOY_TOKEN }}
           repository: acts-project/acts-project.github.io
           event-type: deploy_docs
+          client-payload: >
+            {
+              "source_repo": "${{ github.repository }}",
+              "run_id": "${{ github.run_id }}",
+              "artifact_id": "${{ steps.artifact-upload-step.outputs.artifact-id }}",
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}"
+            }
 
   # docs-deploy:
   #   runs-on: ubuntu-slim
