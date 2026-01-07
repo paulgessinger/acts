@@ -5,8 +5,8 @@ on:
   pull_request:
     branches:
       - main
-      - 'release/**'
-      - 'develop/**'
+      - "release/**"
+      - "develop/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -49,7 +49,6 @@ jobs:
           -b linkcheck
           . _build/html/
 
-
       - uses: actions/upload-artifact@v6
         with:
           name: acts-docs-old
@@ -72,7 +71,7 @@ jobs:
           tar xf doxygen-${{ env.DOXYGEN_VERSION }}.linux.bin.tar.gz
           mv doxygen-${{ env.DOXYGEN_VERSION }}/bin/doxygen /usr/local/bin/doxygen
 
-      - name: Install APT packages 
+      - name: Install APT packages
         run: |
           sudo apt-get update
           sudo apt-get install -y graphviz texlive-bibtex-extra libeigen3-dev libboost-dev cmake
@@ -97,7 +96,7 @@ jobs:
   docs-deploy:
     runs-on: ubuntu-slim
     needs: [docs]
-    permissions: 
+    permissions:
       contents: write
     if: github.ref == 'refs/heads/main'
 
@@ -119,3 +118,4 @@ jobs:
           folder: html
           repository-name: acts-project/acts-project.github.io
           ssh-key: ${{ secrets.DOCS_DEPLOY_KEY }}
+          target-folder: public
