@@ -95,3 +95,16 @@ jobs:
         with:
           name: acts-docs
           path: build/docs/html
+
+  docs-deploy:
+    runs-on: ubuntu-slim
+    needs: [docs]
+    permissions: 
+      contents: write
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/docs/html
