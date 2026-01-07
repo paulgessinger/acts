@@ -106,7 +106,10 @@ jobs:
         with:
           name: acts-docs
 
+      # debug
+      - run: ls -al
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build/docs/html
+          folder: html
