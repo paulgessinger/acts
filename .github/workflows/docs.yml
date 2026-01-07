@@ -105,6 +105,7 @@ jobs:
       - uses: actions/download-artifact@v7
         with:
           name: acts-docs
+          path: html
 
       # debug
       - run: ls -al
@@ -113,3 +114,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: html
+          repository-name: acts-project/acts-project.github.io
+          ssh-key: ${{ secrets.DOCS_DEPLOY_KEY }}
