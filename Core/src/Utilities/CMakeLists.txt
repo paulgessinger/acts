@@ -3,13 +3,14 @@ target_sources(
     PRIVATE
         AnnealingUtility.cpp
         AxisDefinitions.cpp
-        Logger.cpp
-        SpacePointUtility.cpp
-        TrackHelpers.cpp
-        Intersection.cpp
-        IAxis.cpp
         GraphViz.cpp
+        Histogram.cpp
+        IAxis.cpp
+        Intersection.cpp
+        Logger.cpp
         ProtoAxis.cpp
         ScopedTimer.cpp
+        SpacePointUtility.cpp
+        TrackHelpers.cpp
         TransformComparator.cpp
 )
