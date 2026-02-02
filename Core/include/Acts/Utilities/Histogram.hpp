@@ -24,9 +24,9 @@ using BoostRegularAxis =
                                     std::string>;
 
 /// @brief Boost axis variant supporting both variable and regular axes with metadata
-/// NOTE: It seems not to be possible to combine compile-time fixed number of
-/// axes with boost::histogram::axis::variant. Therefore we use
-/// std::vector<AxisVariant> internally.
+/// @note It seems not to be possible to combine compile-time fixed number of
+///       axes with `boost::histogram::axis::variant`. Therefore we use
+///       `std::vector<AxisVariant>` internally.
 using AxisVariant =
     boost::histogram::axis::variant<BoostVariableAxis, BoostRegularAxis>;
 
