@@ -13,6 +13,7 @@
 #include "Acts/Surfaces/Surface.hpp"
 #include "Acts/Utilities/Logger.hpp"
 #include "Acts/Utilities/ProtoAxis.hpp"
+#include "ActsPlugins/Root/TGeoAxes.hpp"
 
 #include <tuple>
 #include <vector>
@@ -48,7 +49,7 @@ class [[deprecated(
  public:
   /// DD4hepDetectorElement construction factory
   using ElementFactory = std::function<std::shared_ptr<DD4hepDetectorElement>(
-      const dd4hep::DetElement&, const std::string&, double, bool,
+      const dd4hep::DetElement&, TGeoAxes, double,
       std::shared_ptr<const Acts::ISurfaceMaterial>)>;
 
   /// Collect the sensitive surface & detector element
@@ -64,11 +65,10 @@ class [[deprecated(
   struct Config {
     /// The factory to create the DD4hepDetectorElement
     ElementFactory detectorElementFactory =
-        [](const dd4hep::DetElement& detElem, const std::string& axes,
-           double scalor, bool isDisc,
+        [](const dd4hep::DetElement& detElem, TGeoAxes axes, double scalor,
            const std::shared_ptr<const Acts::ISurfaceMaterial>& material) {
           return std::make_shared<DD4hepDetectorElement>(detElem, axes, scalor,
-                                                         isDisc, material);
+                                                         material);
         };
   };
 
