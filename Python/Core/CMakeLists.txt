@@ -62,3 +62,8 @@ foreach(f ${py_files})
         DESTINATION ${_acts_python_install_dir}/${_rel}
     )
 endforeach()
+
+acts_python_add_stubgen_post_build(
+    TARGET ActsPythonBindings
+    MODULES acts.ActsPythonBindings
+)

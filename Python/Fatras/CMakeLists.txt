@@ -21,7 +21,9 @@ target_link_libraries(
     ActsFatrasPythonBindings
     PUBLIC Acts::Core Acts::Fatras Acts::PythonUtilities
 )
-add_dependencies(ActsPythonBindings ActsFatrasPythonBindings)
+if(NOT ACTS_BUILD_PYTHON_STUBS)
+    add_dependencies(ActsPythonBindings ActsFatrasPythonBindings)
+endif()
 
 set(_target ${_python_dir}/acts/fatras.py)
 file(
@@ -52,3 +54,9 @@ foreach(f ${py_files})
         DESTINATION ${_acts_python_install_dir}/${_rel}
     )
 endforeach()
+
+acts_python_add_stubgen_post_build(
+    TARGET ActsFatrasPythonBindings
+    MODULES acts.ActsFatrasPythonBindings
+    DEPENDS ActsPythonBindings
+)

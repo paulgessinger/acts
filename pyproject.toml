@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core"]
+requires = ["pybind11-stubgen", "scikit-build-core", "numpy"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -13,7 +13,7 @@ Homepage = "https://acts-project.github.io"
 Repository = "https://github.com/acts-project/acts"
 
 [tool.scikit-build]
-wheel.packages = [] # Manage installation with cmake
+wheel.packages = []                                     # Manage installation with cmake
 wheel.exclude = ["**.a", "**.sh", "**.cmake", "**.hpp"]
 build-dir = "build/{wheel_tag}"
 build.verbose = true

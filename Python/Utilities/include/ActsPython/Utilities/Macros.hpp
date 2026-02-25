@@ -12,8 +12,12 @@
 
 #include <concepts>
 #include <memory>
+#include <type_traits>
 
+#include <boost/preprocessor/control/if.hpp>
+#include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/seq/for_each_i.hpp>
 #include <boost/preprocessor/variadic/to_seq.hpp>
 #include <pybind11/pybind11.h>
 
@@ -45,6 +49,22 @@ concept DeclarableAlgorithm =
 #define ACTS_PYTHON_MEMBER(name) \
   _binding_instance.def_readwrite(#name, &_struct_type::name)
 
+#define ACTS_PYTHON_KW_CTOR_PARAM_LOOP(r, data, i, elem)                  \
+  BOOST_PP_COMMA_IF(i)                                                    \
+  std::optional<std::remove_cvref_t<decltype(_struct_type::elem)>> elem = \
+      std::nullopt
+
+#define ACTS_PYTHON_KW_CTOR_ASSIGN(r, data, elem) \
+  if (elem.has_value()) {                         \
+    cfg.elem = *elem;                             \
+  }
+
+#define ACTS_PYTHON_KW_CTOR_ARG_NAME(name) \
+  pybind11::arg(#name) = pybind11::none()
+
+#define ACTS_PYTHON_KW_CTOR_ARG(r, data, elem) \
+  , ACTS_PYTHON_KW_CTOR_ARG_NAME(elem)
+
 #define ACTS_PYTHON_STRUCT_BEGIN(object)               \
   {                                                    \
     [[maybe_unused]] auto& _binding_instance = object; \
@@ -62,12 +82,26 @@ concept DeclarableAlgorithm =
 
 /// Macro that accepts a variadic set of member names that are to be registered
 /// into an object as read-write fields
-#define ACTS_PYTHON_STRUCT(object, ...)                          \
-  do {                                                           \
-    ACTS_PYTHON_STRUCT_BEGIN(object);                            \
-    BOOST_PP_SEQ_FOR_EACH(ACTS_PYTHON_MEMBER_LOOP, _,            \
-                          BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__)) \
-    ACTS_PYTHON_STRUCT_END();                                    \
+#define ACTS_PYTHON_STRUCT(object, ...)                                      \
+  do {                                                                       \
+    ACTS_PYTHON_STRUCT_BEGIN(object);                                        \
+    BOOST_PP_SEQ_FOR_EACH(ACTS_PYTHON_MEMBER_LOOP, _,                        \
+                          BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__));            \
+    if constexpr (std::is_default_constructible_v<_struct_type>) {           \
+      _binding_instance.def(                                                 \
+          pybind11::init([](BOOST_PP_SEQ_FOR_EACH_I(                         \
+                             ACTS_PYTHON_KW_CTOR_PARAM_LOOP, _,              \
+                             BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))) {       \
+            _struct_type cfg{};                                              \
+            BOOST_PP_SEQ_FOR_EACH(ACTS_PYTHON_KW_CTOR_ASSIGN, _,             \
+                                  BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))     \
+            return cfg;                                                      \
+          }),                                                                \
+          pybind11::kw_only()                                                \
+              BOOST_PP_SEQ_FOR_EACH(ACTS_PYTHON_KW_CTOR_ARG, _,              \
+                                    BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))); \
+    }                                                                        \
+    ACTS_PYTHON_STRUCT_END();                                                \
   } while (0)
 
 template <ActsPython::Concepts::DeclarableAlgorithm A, typename B>

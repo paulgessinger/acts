@@ -29,6 +29,10 @@ using namespace ActsExamples;
 using namespace ActsPython;
 
 PYBIND11_MODULE(ActsExamplesPythonBindingsDD4hep, m) {
+  // Ensure the base DD4hepDetectorElement binding is registered before
+  // exposing AlignedDD4hepDetectorElement (which derives from it).
+  py::module_::import("acts.dd4hep");
+
   {
     py::class_<AlignedDD4hepDetectorElement, DD4hepDetectorElement,
                std::shared_ptr<AlignedDD4hepDetectorElement>>(

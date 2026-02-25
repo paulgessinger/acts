@@ -404,6 +404,7 @@ def test_python_space_point_access(generic_detector_config, tmp_path):
         s.addAlgorithm(spConverter)
 
         class SpacePointAccess(acts.examples.IAlgorithm):
+            spacePoints: acts.examples.ReadDataHandle[acts.SpacePointContainer2]
 
             def __init__(self):
                 super().__init__("SpacePointAccess", acts.logging.INFO)
@@ -415,9 +416,7 @@ def test_python_space_point_access(generic_detector_config, tmp_path):
 
             def execute(self, context: acts.examples.AlgorithmContext):
                 self.logger.info("Space point access")
-                spacePoints: acts.SpacePointContainer2 = self.spacePoints(
-                    context.eventStore
-                )
+                spacePoints = self.spacePoints(context.eventStore)
 
                 for sp in spacePoints:
                     self.logger.info("Space point: {}", sp.x)

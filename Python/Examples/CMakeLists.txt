@@ -43,7 +43,15 @@ macro(add_examples_binding_if _name _link_libraries _flag _plugin_import)
             PUBLIC Acts::Core Acts::PythonUtilities ${_link_libraries}
         )
         # Add the dependencies
-        add_dependencies(ActsPythonBindings ${_target})
+        if(NOT ACTS_BUILD_PYTHON_STUBS)
+            add_dependencies(ActsPythonBindings ${_target})
+        endif()
+
+        acts_python_add_stubgen_post_build(
+            TARGET ${_target}
+            MODULES acts.examples.${_target}
+            DEPENDS ActsPythonBindings
+        )
     endif()
 
     set(EXAMPLE_NAME "${_name}")
@@ -79,7 +87,9 @@ endmacro()
 # Add the examples python binding
 pybind11_add_module(ActsExamplesPythonBindings src/ExamplesModuleEntry.cpp)
 
-add_dependencies(ActsPythonBindings ActsExamplesPythonBindings)
+if(NOT ACTS_BUILD_PYTHON_STUBS)
+    add_dependencies(ActsPythonBindings ActsExamplesPythonBindings)
+endif()
 
 # The PythonBindings for the examples
 target_sources(
@@ -147,6 +157,14 @@ target_link_libraries(
         Acts::PythonUtilities
 )
 
+acts_python_add_stubgen_post_build(
+    TARGET ActsExamplesPythonBindings
+    MODULES
+        acts.examples
+        acts.examples.ActsExamplesPythonBindings
+    DEPENDS ActsPythonBindings
+)
+
 # Add all plugin related examples bindings conditionally to their build flag
 add_examples_binding_if(Alignment "Acts::ExamplesAlignment;Acts::ExamplesDetectorsCommon" ACTS_BUILD_ALIGNMENT FALSE)
 add_examples_binding_if(AlignmentMillePede Acts::ExamplesAlignmentMillePede ACTS_BUILD_PLUGIN_MILLE FALSE)
@@ -191,7 +209,14 @@ target_link_libraries(
     ActsExamplesPythonBindingsHepMC3
     PUBLIC Acts::Core Acts::PythonUtilities Acts::ExamplesIoHepMC3
 )
-add_dependencies(ActsPythonBindings ActsExamplesPythonBindingsHepMC3)
+if(NOT ACTS_BUILD_PYTHON_STUBS)
+    add_dependencies(ActsPythonBindings ActsExamplesPythonBindingsHepMC3)
+endif()
+acts_python_add_stubgen_post_build(
+    TARGET ActsExamplesPythonBindingsHepMC3
+    MODULES acts.examples.ActsExamplesPythonBindingsHepMC3
+    DEPENDS ActsPythonBindings
+)
 list(APPEND py_files hepmc3/__init__.py)
 list(APPEND py_files hepmc3/__main__.py)
 

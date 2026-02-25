@@ -80,51 +80,71 @@ std::optional<bool> parseBoolEnv(const char* envName) {
 
 }  // namespace
 
-Sequencer::Sequencer(const Sequencer::Config& cfg)
+Sequencer::Sequencer(const Sequencer::Config& cfg,
+                     std::unique_ptr<const Acts::Logger> logger)
     : m_cfg(cfg),
       m_taskArena((m_cfg.numThreads < 0) ? tbb::task_arena::automatic
                                          : m_cfg.numThreads),
-      m_logger(Acts::getDefaultLogger("Sequencer", m_cfg.logLevel)) {
+      m_logger(logger != nullptr
+                   ? std::move(logger)
+                   : Acts::getDefaultLogger("Sequencer", Acts::Logging::INFO)) {
   if (m_cfg.numThreads < -1 || m_cfg.numThreads == 0) {
-    ACTS_ERROR("Number of threads must be -1 (automatic) or positive");
+    ACTS_LOG_WITH_LOGGER(
+        this->logger(), Acts::Logging::ERROR,
+        "Number of threads must be -1 (automatic) or positive");
     throw std::invalid_argument(
         "Number of threads must be -1 (automatic) or positive");
   }
 
   if (m_cfg.numThreads == 1) {
-    ACTS_INFO("Create Sequencer (single-threaded)");
+    ACTS_LOG_WITH_LOGGER(this->logger(), Acts::Logging::INFO,
+                         "Create Sequencer (single-threaded)");
   } else {
 #ifdef ACTS_BUILD_EXAMPLES_ROOT
     ROOT::EnableThreadSafety();
 #endif
-    ACTS_INFO("Create Sequencer with " << m_cfg.numThreads << " threads");
+    ACTS_LOG_WITH_LOGGER(
+        this->logger(), Acts::Logging::INFO,
+        "Create Sequencer with " << m_cfg.numThreads << " threads");
   }
 
   if (auto disableFpeEnv = parseBoolEnv("ACTS_SEQUENCER_DISABLE_FPEMON");
       disableFpeEnv.has_value()) {
     m_cfg.trackFpes = !disableFpeEnv.value();
-    ACTS_INFO(
+    ACTS_LOG_WITH_LOGGER(
+        this->logger(), Acts::Logging::INFO,
         "FPE tracking is "
-        << (m_cfg.trackFpes ? "enabled" : "disabled")
-        << " based on environment variable ACTS_SEQUENCER_DISABLE_FPEMON");
+            << (m_cfg.trackFpes ? "enabled" : "disabled")
+            << " based on environment variable ACTS_SEQUENCER_DISABLE_FPEMON");
   }
 
   if (auto failUnmaskedEnv =
           parseBoolEnv("ACTS_SEQUENCER_FAIL_ON_UNMASKED_FPE");
       failUnmaskedEnv.has_value()) {
     m_cfg.failOnUnmaskedFpe = failUnmaskedEnv.value();
-    ACTS_INFO("Sequencer failOnUnmaskedFpe is "
-              << (m_cfg.failOnUnmaskedFpe ? "enabled" : "disabled")
-              << " based on environment variable "
-                 "ACTS_SEQUENCER_FAIL_ON_UNMASKED_FPE");
+    ACTS_LOG_WITH_LOGGER(
+        this->logger(), Acts::Logging::INFO,
+        "Sequencer failOnUnmaskedFpe is "
+            << (m_cfg.failOnUnmaskedFpe ? "enabled" : "disabled")
+            << " based on environment variable "
+               "ACTS_SEQUENCER_FAIL_ON_UNMASKED_FPE");
   }
 
   if (m_cfg.trackFpes && !m_cfg.fpeMasks.empty() &&
       !ActsPlugins::FpeMonitor::canSymbolize()) {
-    ACTS_ERROR("FPE monitoring is enabled but symbolization is not available");
+    ACTS_LOG_WITH_LOGGER(
+        this->logger(), Acts::Logging::ERROR,
+        "FPE monitoring is enabled but symbolization is not available");
     throw std::runtime_error(
         "FPE monitoring is enabled but symbolization is not available");
   }
+}
+
+const Acts::Logger& Sequencer::logger() const {
+  if (m_logger == nullptr) {
+    throw std::runtime_error("Logger is not set");
+  }
+  return *m_logger;
 }
 
 void Sequencer::addContextDecorator(
@@ -493,8 +513,7 @@ int Sequencer::run() {
             m_cfg.iterationCallback();
             // Use per-event store
             WhiteBoard eventStore(
-                Acts::getDefaultLogger("EventStore#" + std::to_string(event),
-                                       m_cfg.logLevel),
+                logger().cloneWithSuffix(std::format("EventStore#{}", event)),
                 m_whiteboardObjectAliases);
             // If we ever wanted to run algorithms in parallel, this needs to
             // be changed to Algorithm context copies

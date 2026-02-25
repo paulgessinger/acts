@@ -98,6 +98,7 @@ option(ACTS_SETUP_ANNOY "Explicitly set up Annoy for the project" OFF)
 # python related options
 option(ACTS_BUILD_PYTHON_WHEEL "Settings to build for python deployment with scikit-build-core" OFF)
 option(ACTS_BUILD_PYTHON_BINDINGS "Build python bindings for all enabled components" OFF)
+option(ACTS_BUILD_PYTHON_STUBS "Generate .pyi stubs for python bindings during build and install" ON)
 # fatras related options
 option(ACTS_BUILD_FATRAS "Build FAst TRAcking Simulation package" OFF)
 option(ACTS_BUILD_FATRAS_GEANT4 "Build Geant4 Fatras package" OFF)

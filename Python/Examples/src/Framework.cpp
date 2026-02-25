@@ -351,15 +351,17 @@ void addFramework(py::module& mex) {
   using Config = Sequencer::Config;
   auto sequencer =
       py::class_<Sequencer>(mex, "_Sequencer")
-          .def(py::init([](Config cfg) {
-            cfg.iterationCallback = []() {
-              py::gil_scoped_acquire gil;
-              if (PyErr_CheckSignals() != 0) {
-                throw py::error_already_set{};
-              }
-            };
-            return std::make_unique<Sequencer>(cfg);
-          }))
+          .def(py::init(
+                   [](Config cfg, std::unique_ptr<const Acts::Logger> logger) {
+                     cfg.iterationCallback = []() {
+                       py::gil_scoped_acquire gil;
+                       if (PyErr_CheckSignals() != 0) {
+                         throw py::error_already_set{};
+                       }
+                     };
+                     return std::make_unique<Sequencer>(cfg, std::move(logger));
+                   }),
+               py::arg("config"), py::arg("logger"))
           .def("run",
                [](Sequencer& self) {
                  py::gil_scoped_release gil;
@@ -375,15 +377,16 @@ void addFramework(py::module& mex) {
           .def("addWhiteboardAlias", &Sequencer::addWhiteboardAlias)
           .def_property_readonly("config", &Sequencer::config)
           .def_property_readonly("fpeResult", &Sequencer::fpeResult)
+          .def_property_readonly("logger", &Sequencer::logger)
           .def_property_readonly_static(
               "_sourceLocation",
               [](const py::object& /*self*/) { return std::string{__FILE__}; });
 
   auto c = py::class_<Config>(sequencer, "Config").def(py::init<>());
 
-  ACTS_PYTHON_STRUCT(c, skip, events, logLevel, numThreads, outputDir,
-                     outputTimingFile, trackFpes, fpeMasks, failOnFirstFpe,
-                     failOnUnmaskedFpe, fpeStackTraceLength);
+  ACTS_PYTHON_STRUCT(c, skip, events, numThreads, outputDir, outputTimingFile,
+                     trackFpes, fpeMasks, failOnFirstFpe, failOnUnmaskedFpe,
+                     fpeStackTraceLength);
 
   auto fpem =
       py::class_<Sequencer::FpeMask>(sequencer, "_FpeMask")

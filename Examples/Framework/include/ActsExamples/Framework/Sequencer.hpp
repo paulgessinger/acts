@@ -64,8 +64,9 @@ class Sequencer {
     /// number of events to process, std::numeric_limits<std::size_t>::max() to
     /// process all available events
     std::optional<std::size_t> events = std::nullopt;
-    /// logging level
-    Acts::Logging::Level logLevel = Acts::Logging::INFO;
+    // /// logging level
+    // [[deprecated("Use logger instead")]]
+    // Acts::Logging::Level logLevel = Acts::Logging::INFO;
     /// number of parallel threads to run, negative for automatic
     /// determination
     int numThreads = -1;
@@ -90,7 +91,8 @@ class Sequencer {
     std::size_t fpeStackTraceLength = 8;
   };
 
-  explicit Sequencer(const Config &cfg);
+  explicit Sequencer(const Config &cfg,
+                     std::unique_ptr<const Acts::Logger> logger = nullptr);
 
   /// Add a context decorator to the set of context decorators.
   ///
@@ -154,6 +156,9 @@ class Sequencer {
   /// Get const access to the config
   const Config &config() const { return m_cfg; }
 
+  /// Get const access to the logger
+  const Acts::Logger &logger() const;
+
  private:
   /// List of all configured algorithm names.
   std::vector<std::string> listAlgorithmNames() const;
@@ -189,8 +194,6 @@ class Sequencer {
 
   std::atomic<std::size_t> m_nSkippedEvents = 0;
   std::atomic<std::size_t> m_nUnmaskedFpe = 0;
-
-  const Acts::Logger &logger() const { return *m_logger; }
 };
 
 std::ostream &operator<<(std::ostream &os, const Sequencer::FpeMask &m);

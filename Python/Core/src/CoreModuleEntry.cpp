@@ -58,9 +58,9 @@ PYBIND11_MODULE(ActsPythonBindings, m) {
   }
 
   addDefinitions(m);
+  addUtilities(m);
   addMagneticField(m);
   addMaterial(m);
-  addUtilities(m);
   addVisualization(m);
 
   addSurfaces(m);

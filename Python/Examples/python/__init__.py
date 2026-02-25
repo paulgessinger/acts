@@ -294,7 +294,7 @@ def defaultLogging(
         minLevel: acts.logging.Level = acts.logging.VERBOSE,
         maxLevel: acts.logging.Level = acts.logging.FATAL,
     ) -> acts.logging.Level:
-        l = logLevel if logLevel is not None else s.config.logLevel
+        l = logLevel if logLevel is not None else s.logger.level
         return acts.logging.Level(min(maxLevel.value, max(minLevel.value, l.value)))
 
     return customLogLevel
@@ -317,26 +317,27 @@ class Sequencer(ActsExamplesPythonBindings._Sequencer):
 
         kwargs["fpeMasks"] = kwargs.get("fpeMasks", []) + self._getAutoFpeMasks()
 
-        if self.config.logLevel >= acts.logging.DEBUG:
+        logger = kwargs.pop("logger", None)
+
+        if logger is not None and logger.level >= acts.logging.DEBUG:
             self._printFpeSummary(kwargs["fpeMasks"])
 
-        cfg = self.Config()
         if len(args) == 1 and isinstance(args[0], self.Config):
             cfg = args[0]
-        if "config" in kwargs:
-            cfg = kwargs.pop("config")
+        else:
+            cfg = kwargs.pop("config", self.Config())
+
+        if "logLevel" in kwargs:
+            logger = acts.getDefaultLogger("Sequencer", kwargs.pop("logLevel"))
 
         for k, v in kwargs.items():
             if not hasattr(cfg, k):
                 raise ValueError(f"Sequencer.Config does not have field {k}")
-            if isinstance(v, Path):
-                v = str(v)
-
             setattr(cfg, k, v)
 
         if hasattr(ActsExamplesPythonBindings._Sequencer, "__wrapped__"):
             dump_func_args(Sequencer, cfg)
-        super().__init__(cfg)
+        super().__init__(cfg, logger=logger)
 
     class FpeMask(ActsExamplesPythonBindings._Sequencer._FpeMask):
         @classmethod

@@ -48,7 +48,7 @@ def runDigitization(
     else:
         # Read input from input collection (e.g. Pythia8 output)
         evGen = RootParticleReader(
-            level=s.config.logLevel,
+            level=s.logger.level,
             filePath=str(particlesInput),
             outputParticles="particles_generated",
         )

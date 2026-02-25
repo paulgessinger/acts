@@ -42,8 +42,11 @@ def runGeant4(
     )
     from pathlib import Path
 
-    s = s or acts.examples.Sequencer(events=events, numThreads=1)
-    s.config.logLevel = acts.logging.INFO
+    s = s or acts.examples.Sequencer(
+        events=events,
+        numThreads=1,
+        logger=acts.getDefaultLogger("Geant4 Example", acts.logging.INFO),
+    )
     rnd = acts.examples.RandomNumbers(acts.examples.RandomNumbers.Config(seed=seed))
     u = acts.UnitConstants
     outputDir = Path(outputDir)
