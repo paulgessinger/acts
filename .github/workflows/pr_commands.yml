@@ -1,0 +1,13 @@
+on: issue_comment
+
+jobs:
+  pr_commented:
+    # This job only runs for pull request comments
+    name: PR comment
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install prerequisites
+        run: pip install -r CI/commands/requirements.txt
+      - name: Run command
+        run: CI/commands/pr_commands.py --pr ${{ github.event.issue.number }} --body ${{ github.event.comment.body }}
