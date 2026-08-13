@@ -58,6 +58,13 @@ as-is.
 Consequently the minimum viable baseline is roughly: **one 3D seeder + one selection/merging layer**,
 both bolted onto the existing `IVertexFinder` interface. The fitting machinery needs no changes.
 
+**Adopted architecture (Part E):** secondary vertexing is delivered as `IVertexFinder`
+implementations paired with an existing vertex fitter. `IVertexFinder` is already the composition
+point for both finders and seeders, so this needs no new abstraction on the finder side. On the
+fitter side there is a caveat — ACTS has no `IVertexFitter`, fitters are hard-wired concrete types,
+and the two existing ones have incompatible shapes (one-shot vs. stateful multi-vertex). Pairing is
+therefore free within a fitter family and structurally impossible across families; see E.2–E.3.
+
 ---
 
 ## 2. Part A — the Athena landscape
@@ -344,7 +351,7 @@ matrix.
 
 ### B.3 Correction: the AMVF-based tool is not in a production chain
 
-Worth stating plainly because it changes the weight of the recommendation in Part E.
+Worth stating plainly because it changes the weight of the recommendation in Part F.
 `InDetAdaptiveMultiSecVtxFinderTool` is reachable only through `InDetSecVtxFinderAlgCfg`, whose sole
 caller in the entire repository is
 `InnerDetector/InDetRecAlgs/InDetSecVtxFinder/share/runInDetSecVtxFinder.py` — a standalone runner
@@ -435,7 +442,100 @@ way to propose a candidate at `r > 0`**.
 
 ---
 
-## 6. Part E — candidate baselines
+## 6. Part E — adopted architecture
+
+**Direction:** implement secondary vertexing as **`IVertexFinder` implementations**, composed with
+one of the existing vertex fitters. This section records that decision and the friction it meets.
+
+### E.1 Why this is the right seam
+
+`Core/include/Acts/Vertexing/IVertexFinder.hpp` describes itself as "Common interface for both vertex
+finders and vertex seed finders", and `AdaptiveMultiVertexFinder::Config` already holds its seeder as
+`std::shared_ptr<const IVertexFinder> seedFinder`. So the interface is *already* the composition
+point, and it is runtime-polymorphic rather than templated.
+
+Three things follow for free:
+
+- **A 3D SV seeder and a full SV finder are the same type of object.** The cross-distances seeder
+  (D.3) is an `IVertexFinder`; so is the SV finder that consumes it. No new abstraction is needed to
+  wire them together, and the seeder is independently testable and independently useful.
+- **Finders nest.** Any SV finder can be dropped in as the `seedFinder` of another finder, which is
+  how the Athena AMVF-for-SV tool is structured (A.4).
+- **`setTracksToRemove(State&, tracks)`** is already on the interface, which is precisely the
+  iterative-removal hook the VKal-family and AMVF-family loops both need.
+
+The Examples layer also benefits: an SV algorithm looks like
+`AdaptiveMultiVertexFinderAlgorithm` with a different finder plugged in, rather than a new parallel
+structure.
+
+### E.2 The snag — there is no `IVertexFitter`
+
+The finder half composes cleanly. The fitter half does not, and this is worth knowing before
+committing to a design.
+
+There is **no vertex fitter interface in ACTS**. Fitters are concrete types, hard-wired into each
+finder by a type alias and held *by value* in the config:
+
+```cpp
+// IterativeVertexFinder.hpp:57,74
+using VertexFitter = FullBilloirVertexFitter;
+VertexFitter vertexFitter;
+
+// AdaptiveMultiVertexFinder.hpp:25,50
+using VertexFitter = AdaptiveMultiVertexFitter;
+VertexFitter vertexFitter;
+```
+
+`DummyVertexFitter` is not a counter-example — it is a stub "only to be used for ensuring interfaces
+where a vertex fitter type is required but no fitter is actually needed", and its constructor is
+`= delete`d. It is a relic of the older templated design.
+
+Worse, the two real fitters are not trivially unifiable, because they have different *shapes*:
+
+| | `FullBilloirVertexFitter` | `AdaptiveMultiVertexFitter` |
+|---|---|---|
+| Call | `fit(tracks, …) -> Result<Vertex>` | `addVtxToFit(State&, …) -> Result<void>`, `fit(State&, …) -> Result<void>` |
+| State | stateless, one-shot | stateful, mutates a shared multi-vertex `State` |
+| Scope | one vertex | *all* vertices simultaneously |
+
+An `IVertexFitter` that spans both would have to abstract over "returns a vertex" versus "mutates a
+shared collection of vertices", which is not a thin adapter.
+
+### E.3 What "pair with a fitter" can and cannot mean
+
+Consequently the pairing is free *within* a family and structurally impossible *across* families:
+
+- **One-shot family** (VKal-style clique finders, V0/conversion finders, anything that fits one
+  candidate at a time): genuinely fitter-agnostic. Template the finder on the fitter type and erase
+  it behind `IVertexFinder` — the template parameter never escapes the interface, so callers still
+  see a plain `IVertexFinder`. This is the recommended mechanism.
+- **Simultaneous multi-vertex family** (AMVF-style): structurally bound to
+  `AdaptiveMultiVertexFitter`, because the finder drives the fitter's shared state directly
+  (`addVtxToFit`, `removeVertexFromCollection`). Swapping the fitter here is not a configuration
+  change, it is a different algorithm.
+
+Three ways to implement the pairing, in increasing order of blast radius:
+
+| | Approach | Cost | Verdict |
+|---|---|---|---|
+| (a) | Hard-wire per finder, as the two existing finders do | zero | consistent with current ACTS style, but "pair with a fitter" becomes an authoring-time choice |
+| (b) | Template the SV finder on the fitter type, erase behind `IVertexFinder` | small | **recommended** — keeps the flexibility, adds no new public interface |
+| (c) | Introduce a real `IVertexFitter` | large, touches existing Core API | probably not justified by this work alone; revisit if a third fitter appears |
+
+### E.4 Open EDM question
+
+`Acts::Vertex` carries position, seed position, covariance, track list and fit quality — and nothing
+else. There is no vertex type, charge, invariant mass, or extensible decoration. Athena's SV tools
+decorate heavily (`wgtBDT`, `nTracks`, `vCharge`, `VxType::SecVtx`, and per-track `chi2_toSV`), and
+the two-track chains additionally need a mass-hypothesis label.
+
+So a decision is needed on how SV-specific output is carried: extend `Vertex`, return a parallel
+structure from the SV finders, or push it to the Examples EDM. This does not block a prototype but
+it does shape the public API, so it is better settled early than retrofitted.
+
+---
+
+## 7. Part F — candidate baselines
 
 Three options, in increasing order of new code.
 
@@ -488,7 +588,7 @@ Option 2, and the extra cost is the clique layer plus the overlap/merging utilit
 
 ---
 
-## 7. Part F — validation surface
+## 8. Part G — validation surface
 
 What exists in ACTS today: `Examples/Io/Root/src/RootVertexNTupleWriter.cpp`,
 `RootVertexWriter.cpp`, `RootVertexReader.cpp`; `Examples/Scripts/Python/vertex_fitting.py`;
@@ -513,7 +613,7 @@ LLP-style studies, but is fine for K⁰ₛ and for geometric efficiency.
 
 ---
 
-## 8. Part G — open questions for the planning phase
+## 9. Part H — open questions for the planning phase
 
 1. **Physics target.** Inclusive displaced vertices (LLP-style), b-tagging SV in jets, or V0
    reconstruction? These have materially different track selections and cut tunings. The Athena code
