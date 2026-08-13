@@ -1,6 +1,7 @@
 # Secondary vertex finding in Athena — survey, and what it implies for ACTS
 
-**Status:** survey / pre-design. No code changes proposed yet.
+**Status:** survey + agreed architecture + phased plan. One concrete refactor is proposed (E.5, Phase 0);
+no code has been written yet.
 **Athena source surveyed:** `/scratch/pagessin/dev/acts-in-athena/athena` (nightly checkout, ~1.9 GB).
 **ACTS reference:** this repository, `Core/{include/Acts,src}/Vertexing`, `Examples/Algorithms/Vertexing`.
 
@@ -60,10 +61,21 @@ both bolted onto the existing `IVertexFinder` interface. The fitting machinery n
 
 **Adopted architecture (Part E):** secondary vertexing is delivered as `IVertexFinder`
 implementations paired with an existing vertex fitter. `IVertexFinder` is already the composition
-point for both finders and seeders, so this needs no new abstraction on the finder side. On the
-fitter side there is a caveat — ACTS has no `IVertexFitter`, fitters are hard-wired concrete types,
-and the two existing ones have incompatible shapes (one-shot vs. stateful multi-vertex). Pairing is
-therefore free within a fitter family and structurally impossible across families; see E.2–E.3.
+point for both finders and seeders, so no new abstraction is needed on the finder side. The fitter
+side needs one: ACTS has no `IVertexFitter`, and the two existing fitters have different shapes
+(one-shot stateless vs. stateful multi-vertex).
+
+**They can nonetheless be unified, and this has been verified (E.5).**
+`AdaptiveMultiVertexFitter::State` turns out to be mostly *problem* rather than *state* — and the
+finder touches only the problem-level members, with **zero** accesses to `annealingState`, `ipState`
+or `fieldCache`. Factoring a `VertexFitProblem` out of the fitter therefore lets both fitters speak
+one vocabulary, with the single-vertex case falling out as a convenience overload. This refactor is
+**Phase 0 and blocks all SV work**; it is a pure refactor whose gate is "no behaviour change".
+
+**Sequencing (Part H):** Phase 0 refactor → 1 primitives → 2 3D seeder → 3 two-track feasibility
+spike → 4 validation infrastructure → 5 baseline finder → 6 presets. Phases 2 and 3 are the
+project-killing gates (seeds near truth SVs; a K⁰ₛ mass peak) and are deliberately reached early and
+cheaply. Validation tooling lands before the baseline, because tuning without it is tuning blind.
 
 ---
 
@@ -533,6 +545,94 @@ So a decision is needed on how SV-specific output is carried: extend `Vertex`, r
 structure from the SV finders, or push it to the Examples EDM. This does not block a prototype but
 it does shape the public API, so it is better settled early than retrofitted.
 
+### E.5 Prerequisite refactor — split the fitter state (verified)
+
+**This is Phase 0 of the plan (Part H) and blocks all SV work.** The verification below was done
+against the current sources; it is the reason the refactor is believed to be cheap.
+
+**The observation.** `AdaptiveMultiVertexFitter::State` is not really fitter state. Of its six
+members, four describe *the problem being solved* and three are scratch:
+
+| Member | Nature |
+|---|---|
+| `vertexCollection` | **problem** |
+| `vtxInfoMap` | **problem** (partly — see below) |
+| `trackToVerticesMultiMap` | **problem** |
+| `tracksAtVerticesMap` | **problem** |
+| `annealingState` | fitter scratch |
+| `ipState` | fitter scratch |
+| `fieldCache` | fitter scratch |
+
+`VertexInfo` (`Core/include/Acts/Vertexing/AMVFInfo.hpp`) splits the same way — `constraint`,
+`seedPosition` and `trackLinks` are problem; `linPoint`, `oldPosition`, `relinearize` and
+`impactParams3D` are per-iteration fitter scratch.
+
+**The verification.** Every access to the fitter state from `AdaptiveMultiVertexFinder` was
+enumerated (`Core/src/Vertexing/AdaptiveMultiVertexFinder.cpp`, ~27 sites at lines 92, 268–338,
+364–476, 601–646). Results:
+
+- All of them touch only `vertexCollection`, `vtxInfoMap[...].trackLinks`, `tracksAtVerticesMap`,
+  or the multimap helpers (`addVertexToMultiMap`, `removeVertexFromMultiMap`,
+  `removeVertexFromCollection`).
+- **There is not a single access to `annealingState`, `ipState` or `fieldCache`.**
+- The only whole-`VertexInfo` writes are `vtxInfoMap[&vtx] = VertexInfo(currentConstraint,
+  vtx.fullPosition())` at lines 306 and 338 — i.e. the finder only ever supplies *(constraint, seed
+  position)*, never the linearization scratch.
+
+So the finder already speaks exclusively in problem-level terms. The seam holds.
+
+**The refactor.**
+
+```cpp
+// Per-event, caller-owned, fitter-agnostic.
+struct VertexFitProblem {
+  std::vector<Vertex*> vertices;
+  std::map<Vertex*, VertexConstraintAndTracks> trackLinks;  // constraint, seedPos, tracks
+  std::multimap<InputTrack, Vertex*> trackToVertices;
+  std::map<std::pair<InputTrack, Vertex*>, TrackAtVertex> tracksAtVertices;
+};
+
+class IVertexFitter {
+ public:
+  using Cache = Acts::AnyBase<N>;   // same type-erasure as IVertexFinder::State
+  virtual Cache makeCache(const MagneticFieldContext&) const = 0;
+  virtual Result<void> fit(VertexFitProblem&, const VertexingOptions&, Cache&) const = 0;
+  virtual Result<void> addVertices(VertexFitProblem&, std::span<Vertex* const>,
+                                   const VertexingOptions&, Cache&) const = 0;
+
+  /// Convenience for the single-vertex case; non-virtual, defined in terms of fit().
+  Result<Vertex> fitSingle(const std::vector<InputTrack>&, const VertexingOptions&, Cache&) const;
+};
+```
+
+- **`AdaptiveMultiVertexFitter`**: `fit` and `addVertices` *are* the existing `fit` and
+  `addVtxToFit`. Four `State` members move to `VertexFitProblem`, three become the `Cache`;
+  `VertexInfo` splits along the line above, with the scratch half living in the `Cache` keyed by
+  `Vertex*`.
+- **`FullBilloirVertexFitter`**: an adapter of roughly 40 lines. `fit` loops the problem's vertices,
+  calls the existing one-shot `fit(trackLinks, options, cache.fieldCache)`, writes results back with
+  weight 1. `addVertices` appends and fits only the new ones. Note it *already* takes a
+  `MagneticFieldProvider::Cache&`, so the caller-owns-scratch shape is not new to it.
+
+**Direction of the abstraction.** The single-vertex case is not a subtype of the multi-vertex case;
+rather, once the problem is factored out, both fitters speak one vocabulary and the difference
+demotes to a documented semantic property: *does this fitter couple vertices that share tracks?*
+Billoir: no. AMVF: yes. `fitSingle` then falls out as a convenience overload rather than a second
+interface.
+
+**The residual hazard, and the chosen mitigation.** A common interface would let
+`AdaptiveMultiVertexFinder` be constructed with a Billoir-backed fitter; it would compile, run, and
+silently not be AMVF, because the coupling is the algorithm rather than an optimisation.
+**Mitigation: leave `AdaptiveMultiVertexFinder` bound to the concrete `AdaptiveMultiVertexFitter`
+(as it is today), and let only the new SV finders take `IVertexFitter`.** This keeps the full benefit
+with none of the risk. The alternatives — a `couplesSharedTracks()` capability predicate, or an
+`IMultiVertexFitter : IVertexFitter` split — are recorded as fallbacks if a case appears that needs
+genuine substitutability.
+
+**Side benefits:** removes the `/// @todo Does this have to be a mutable pointer?` in AMVF's state,
+and cleanly separates per-event data (the problem) from per-thread scratch (the cache), improving
+the const-correctness and reentrancy story.
+
 ---
 
 ## 7. Part F — candidate baselines
@@ -613,31 +713,142 @@ LLP-style studies, but is fine for K⁰ₛ and for geometric efficiency.
 
 ---
 
-## 9. Part H — open questions for the planning phase
+## 9. Part H — sequencing, feasibility gates and validation
 
-1. **Physics target.** Inclusive displaced vertices (LLP-style), b-tagging SV in jets, or V0
+The ordering below is chosen so that **the cheapest question that can kill the project is asked
+first**, and so that no tuning happens before there is something to tune against. Each phase states
+what it proves, what would falsify it, and what has to be true to proceed.
+
+Phases 0–3 are deliberately small. If the project is going to fail, it should fail by the end of
+Phase 3, having consumed a few weeks rather than a few months.
+
+### Phase 0 — fitter-state refactor *(prerequisite, blocks everything)*
+
+Split `AdaptiveMultiVertexFitter::State` into `VertexFitProblem` + `Cache`, split `VertexInfo`,
+introduce `IVertexFitter`, add the Billoir adapter. Spec and verification in E.5.
+
+- **Proves:** that SV finders can be written against a fitter interface at all.
+- **Feasibility:** already established (E.5) — the finder touches no fitter-private state.
+- **Gate:** *pure refactor, no behaviour change.* All `Tests/UnitTests/Core/Vertexing/` tests pass
+  unchanged; AMVF and Iterative finder outputs identical (ideally bit-level) on a reference sample.
+- **Falsified if:** the refactor cannot preserve AMVF results, which would mean the state coupling is
+  deeper than the access analysis suggests.
+- **Reversible:** yes, and independently valuable regardless of the SV outcome.
+
+### Phase 1 — shared primitives
+
+Two-circle crude 2-track vertex (`vkvFastV` analogue, returning the track–track Δz), exact
+track–track 3D DCA, 3D FSMW mode on top of the existing `FsmwMode1dFinder`.
+
+- **Proves:** the geometric building blocks are correct.
+- **Feasibility:** low risk — all three are self-contained and analytically checkable.
+- **Gate:** unit tests against straight-line and known-helix configurations where the answer is known
+  in closed form; crude-estimate-vs-full-fit agreement on toy events.
+- **Needed by:** every option in Part F, so this work is not wasted whichever baseline is chosen.
+
+### Phase 2 — 3D seeder as an `IVertexFinder`
+
+`CrossDistancesSeedFinder`: pairwise DCA midpoints, distance and constraint weighting, 3D mode.
+
+- **Proves:** *that ACTS can propose a candidate at r > 0 at all* — the blocker identified in D.2.
+- **Gate (first real feasibility gate):** on a sample with truth-displaced vertices, the seeder
+  returns a position within a few mm of the truth SV for a useful fraction of *reconstructable*
+  vertices (A.8 definition). The exact threshold should be set from the sample before running, not
+  after.
+- **Falsified if:** seeds cluster at the beamline or the mode is dominated by combinatorial pairs —
+  which would push toward the pairwise/clique approach (Option 2) instead, where seeding is per-pair
+  and does not rely on a global mode.
+
+### Phase 3 — feasibility spike: minimal end-to-end SV finder
+
+Deliberately the smallest thing that can work: **2-track vertices only, no clustering, no merging.**
+Charge-split or all-pairs, analytic seed, one fit through the Phase-0 interface, mass-window tagging.
+
+- **Proves:** the whole chain runs and produces vertices at r > 0 with sane covariances.
+- **Gate (go / no-go):** a visible K⁰ₛ → π⁺π⁻ mass peak at the right position with plausible width.
+  This is unambiguous, needs no truth matching, and is cheap.
+- **Explicitly disposable:** this is a spike. It may be thrown away in Phase 5, and that is fine —
+  its job is to retire risk, not to be the deliverable.
+- **Falsified if:** no peak, or vertices with pathological covariances — indicating a problem in the
+  fitter pairing or the seed quality that must be fixed before any N-track work.
+
+### Phase 4 — validation infrastructure *(before any tuning)*
+
+Truth matching following `InDetSecVtxTruthMatchTool` (A.8): the
+`Reconstructable → Accepted → Seeded → Reconstructed → ReconstructedSplit` ladder for truth
+vertices, and `Matched / Merged / Split / Fake / Other` for reco vertices. Plus a performance writer
+producing efficiency and fake rate **binned in radius**, and the origin breakdown (K⁰ₛ, Λ, γ
+conversion, hadronic interaction, b/c decay, pileup).
+
+- **Proves:** that we can measure whether the thing is good, not merely that it runs.
+- **Why here:** after the spike (which needs only a mass peak) but **before** the full baseline.
+  Tuning cuts without this is tuning blind, and the seven Athena presets (B.2) are only usable as a
+  target if efficiency and fake rate can be measured per preset.
+- **Gate:** metrics reproduce sensible values for a *known* case — e.g. the Phase-3 two-track finder
+  should show high efficiency for K⁰ₛ and a fake rate that rises with radius.
+
+### Phase 5 — the baseline finder
+
+Option 1 or Option 2 per the decision in Part F, now with N-track candidates: clustering and
+overlap/merging (Option 2) or seed-attach-fit-remove (Option 1).
+
+- **Proves:** the actual deliverable.
+- **Gate:** efficiency and fake rate vs radius measured with Phase-4 tooling; no regression in
+  primary vertex finding; unit tests for the merging and overlap-resolution logic specifically,
+  since that is where the subtle bugs live.
+- **Note:** the Part F decision (Option 1 vs 2) should be made *after* Phase 2, because the Phase-2
+  gate result is direct evidence about which seeding style works on our samples.
+
+### Phase 6 — presets and tuning
+
+Expose the configuration surface (B.2) and tune preset points against the Phase-4 metrics.
+
+- **Gate:** at least two presets with materially different operating points (e.g. a soft-b-like
+  tight/near preset and a DV-like loose/far preset) both behaving as intended.
+
+### Sequencing summary
+
+| Phase | Deliverable | Kills the project if it fails? | Gate |
+|---|---|---|---|
+| 0 | fitter-state refactor + `IVertexFitter` | no (but blocks) | no behaviour change |
+| 1 | geometric primitives | no | closed-form unit tests |
+| 2 | 3D seeder | **yes** | seeds near truth SVs |
+| 3 | 2-track spike | **yes** | K⁰ₛ peak |
+| 4 | truth matching + metrics | no | reproduces known case |
+| 5 | baseline finder | — | eff/fake vs radius |
+| 6 | presets | — | two distinct working points |
+
+**Decision points on the critical path:** Part F Option 1-vs-2 after Phase 2; the EDM question (E.4)
+before Phase 5; preset-mechanism scope (Part I, Q7) before Phase 5 since it shapes the `Config`
+structs.
+
+---
+
+## 10. Part I — open questions for the planning phase
+
+1. **Physics target.** *(needed by Phase 5.)* Inclusive displaced vertices (LLP-style), b-tagging SV in jets, or V0
    reconstruction? These have materially different track selections and cut tunings. The Athena code
    splits along exactly this axis (Part B). *This is the decision that gates everything else.*
    Note that Part B also shows the target may be less binding than it looks: one algorithm with a
    preset mechanism covers soft-b, inclusive-b, material, K⁰ₛ and DV in Athena. Choosing "which
    preset first" is a lighter decision than choosing "which algorithm".
-2. **Core or Examples?** A `CrossDistancesSeedFinder` belongs in `Core/Vertexing`. A jet-directed
+2. **Core or Examples?** *(needed by Phase 2.)* A `CrossDistancesSeedFinder` belongs in `Core/Vertexing`. A jet-directed
    finder arguably does not (it needs jets).
-3. **Boost.Graph.** Option 2 needs clique enumeration. Is a Boost.Graph dependency in Core
+3. **Boost.Graph.** *(needed by Phase 5, only if Option 2.)* Option 2 needs clique enumeration. Is a Boost.Graph dependency in Core
    acceptable, or do we vendor ~150 lines of Bron–Kerbosch?
-4. **Does `AdaptiveMultiVertexFinder` survive off-axis use?** Needs an audit of `tracksMaxZinterval`,
+4. **Does `AdaptiveMultiVertexFinder` survive off-axis use?** *(needed by Phase 5, only if Option 1 — but the audit is cheap and worth doing during Phase 2.)* Needs an audit of `tracksMaxZinterval`,
    `doFullSplitting`, `maxMergeVertexSignificance` and the seed-constraint covariance handling before
    committing to Option 1.
-5. **PV as input.** Every Athena SV finder consumes a primary vertex (for IP significance, for the
+5. **PV as input.** *(needed by Phase 3.)* Every Athena SV finder consumes a primary vertex (for IP significance, for the
    momentum-projection sign, for the seeder reference point). The ACTS algorithm needs the same
    input contract — this affects the `Examples` wiring and the `IVertexFinder` usage.
-6. **Multi-track vs two-track scope for v1.** Restricting the baseline to 2-track vertices removes
+6. **Multi-track vs two-track scope for v1.** *(needed by Phase 5; Phase 3 delivers the two-track case regardless.)* Restricting the baseline to 2-track vertices removes
    stages 4–6 entirely and makes the first version dramatically smaller. Worth considering as a
    deliberate scope cut.
-7. **Is a preset mechanism in scope for v1?** B.2 argues the configuration surface is half the
+7. **Is a preset mechanism in scope for v1?** *(needed by Phase 5.)* B.2 argues the configuration surface is half the
    deliverable. Deciding early whether presets are a v1 feature or a later addition affects how the
    `Config` structs are shaped, and retrofitting that is more painful than designing for it.
-8. **Do we care about decay chains at all?** JetFitter (A.6) is a genuinely different output
+8. **Do we care about decay chains at all?** *(can be deferred, but declare it.)* JetFitter (A.6) is a genuinely different output
    topology — several vertices constrained to one flight axis — and nothing in the proposed baseline
    moves toward it. Fine to declare out of scope, but it should be declared rather than overlooked.
 
