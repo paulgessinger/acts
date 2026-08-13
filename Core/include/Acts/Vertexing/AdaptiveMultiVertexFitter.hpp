@@ -13,6 +13,7 @@
 #include "Acts/Utilities/Logger.hpp"
 #include "Acts/Utilities/Result.hpp"
 #include "Acts/Vertexing/AMVFInfo.hpp"
+#include "Acts/Vertexing/IVertexFitter.hpp"
 #include "Acts/Vertexing/ImpactPointEstimator.hpp"
 #include "Acts/Vertexing/TrackAtVertex.hpp"
 #include "Acts/Vertexing/TrackLinearizer.hpp"
@@ -32,7 +33,7 @@ namespace Acts {
 ///   `Identification of b-jets and investigation of the discovery potential
 ///   of a Higgs boson in the WH−−>lvbb¯ channel with the ATLAS experiment`
 ///
-class AdaptiveMultiVertexFitter {
+class AdaptiveMultiVertexFitter final : public IVertexFitter {
  public:
   /// @brief The fitter-private cache
   ///
@@ -170,6 +171,34 @@ class AdaptiveMultiVertexFitter {
   Result<void> fit(VertexFitProblem& problem,
                    const VertexingOptions& vertexingOptions,
                    Cache& cache) const;
+
+  /// @copydoc IVertexFitter::makeCache
+  IVertexFitter::Cache makeCache(
+      const MagneticFieldContext& mctx) const override {
+    return IVertexFitter::Cache{std::in_place_type<Cache>,
+                                *m_cfg.ipEst.config().bField, mctx};
+  }
+
+  /// @copydoc IVertexFitter::fit
+  Result<void> fit(VertexFitProblem& problem,
+                   const VertexingOptions& vertexingOptions,
+                   IVertexFitter::Cache& cache) const override {
+    return fit(problem, vertexingOptions, cache.as<Cache>());
+  }
+
+  /// @copydoc IVertexFitter::addVertices
+  Result<void> addVertices(VertexFitProblem& problem,
+                           const std::vector<Vertex*>& newVertices,
+                           const VertexingOptions& vertexingOptions,
+                           IVertexFitter::Cache& cache) const override {
+    return addVtxToFit(problem, newVertices, vertexingOptions,
+                       cache.as<Cache>());
+  }
+
+  /// @copydoc IVertexFitter::fitSingle
+  Result<Vertex> fitSingle(const std::vector<InputTrack>& trackVector,
+                           const VertexingOptions& vertexingOptions,
+                           IVertexFitter::Cache& cache) const override;
 
   // Backwards compatibility: the pre-split fitter state and the entry points
   // taking it. Both are adapters on top of the interface above, which they

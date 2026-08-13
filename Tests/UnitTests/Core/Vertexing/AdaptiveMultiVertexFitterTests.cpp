@@ -27,6 +27,7 @@
 #include "Acts/Vertexing/AMVFInfo.hpp"
 #include "Acts/Vertexing/AdaptiveMultiVertexFitter.hpp"
 #include "Acts/Vertexing/HelicalTrackLinearizer.hpp"
+#include "Acts/Vertexing/IVertexFitter.hpp"
 #include "Acts/Vertexing/ImpactPointEstimator.hpp"
 #include "Acts/Vertexing/TrackAtVertex.hpp"
 #include "Acts/Vertexing/Vertex.hpp"
@@ -451,6 +452,35 @@ BOOST_AUTO_TEST_CASE(time_fitting) {
 
   // Check that the covariance matrix is approximately symmetric
   CHECK_CLOSE_ABS(vtxCov - vtxCov.transpose(), SquareMatrix4::Zero(), 1e-5);
+
+  // Fit the same tracks again, this time through the abstract IVertexFitter
+  // interface, and check that the result agrees with the direct call above.
+  {
+    const IVertexFitter& iface = fitter;
+    auto ifaceCache = iface.makeCache(magFieldContext);
+
+    std::vector<InputTrack> inputTracks;
+    inputTracks.reserve(trks.size());
+    for (const auto& trk : trks) {
+      inputTracks.emplace_back(&trk);
+    }
+
+    VertexingOptions singleOptions(geoContext, magFieldContext);
+    singleOptions.useConstraintInFit = false;
+
+    auto ifaceRes = iface.fitSingle(inputTracks, singleOptions, ifaceCache);
+    BOOST_REQUIRE(ifaceRes.ok());
+
+    const Vertex& ifaceVtx = *ifaceRes;
+    ACTS_DEBUG("Vertex position via IVertexFitter: "
+               << ifaceVtx.position().transpose());
+
+    CHECK_CLOSE_ABS(trueVtxPos, ifaceVtx.position(), 60_um);
+    BOOST_CHECK_EQUAL(ifaceVtx.tracks().size(), trks.size());
+    for (std::size_t i = 0; i <= 3; i++) {
+      BOOST_CHECK_GT(ifaceVtx.fullCovariance()(i, i), 0.);
+    }
+  }
 }
 
 /// @brief Unit test for AdaptiveMultiVertexFitter
