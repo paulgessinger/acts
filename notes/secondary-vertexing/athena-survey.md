@@ -10,17 +10,18 @@ All Athena paths below are relative to the Athena source root. All ACTS paths ar
 
 ## 1. Executive summary
 
-Athena has **five** distinct production secondary-vertex (SV) reconstruction chains. They fall into
-two structurally different families:
+Athena has **six** distinct secondary-vertex (SV) reconstruction chains, in four structurally
+different families:
 
-| Family | Members | Seeding principle | Multiplicity |
+| Family | Members | Seeding principle | Output topology |
 |---|---|---|---|
-| **Pairwise + graph clustering** | `NewVrtSecInclusiveTool`, `VrtSecInclusive`, `InDetVKalVxInJetTool` | fit *every* track pair, build a compatibility graph, extract cliques | N-track |
-| **Iterative seed + adaptive fit** | `InDetAdaptiveMultiSecVtxFinderTool` | 3D mode of pairwise DCA midpoints, then AMVF | N-track |
-| **Exclusive two-track** | `InDetV0Finder`, `InDetConversionFinderTools` | charge-signed pairing + analytic circle intersection | 2-track only |
+| **Pairwise + graph clustering** | `NewVrtSecInclusiveTool`, `VrtSecInclusive`, `InDetVKalVxInJetTool` | fit *every* track pair, build a compatibility graph, extract cliques | N-track, unconstrained |
+| **Iterative seed + adaptive fit** | `InDetAdaptiveMultiSecVtxFinderTool` | 3D mode of pairwise DCA midpoints, then AMVF | N-track, unconstrained |
+| **Decay chain on an axis** | `InDetSecVxFinderTool` (JetFitter) | tracks assigned to vertices constrained to lie on the jet axis | **multiple vertices on a common flight line** |
+| **Exclusive two-track** | `InDetV0Finder`, `InDetConversionFinderTools` | charge-signed pairing + analytic circle intersection | single 2-track vertex, mass-hypothesis tagged |
 
 The dominant, most-developed pattern by far is **pairwise + graph clustering** (Kostyukhin's VKal
-family). Three of the five chains are that pattern with different track pre-selection and
+family). Three of the six chains are that pattern with different track pre-selection and
 post-selection; the algorithmic core is essentially identical between them.
 
 **Provenance** (from Athena git history — first commit adding each package):
@@ -29,6 +30,7 @@ post-selection; the algorithmic core is essentially identical between them.
 |---|---|---|---|
 | `InDetV0Finder` | 2013-12-29 | 19 | 2026-07-13 |
 | `VrtSecInclusive` | 2014-04-22 | 41 | 2026-07-23 |
+| `InDetSecVxFinderTool` (JetFitter) | 2014-07-19 | 9 | 2026-07-15 |
 | `InDetVKalVxInJetTool` | 2014-08-13 | 31 | 2026-07-16 |
 | `InDetConversionFinderTools` | 2014-09-03 | 14 | 2026-07-14 |
 | **`NewVrtSecInclusiveTool`** | **2020-05-29** | 35 | 2026-06-15 |
@@ -76,7 +78,7 @@ point `findAllVertices()` → `getVrtSecMulti()` in `src/VrtSecMulti.cxx`.
    - per-track 3D IP significance w.r.t. the PV, and a `dR/dZ` significance-ratio cut to kill pileup
      (`src/Sel2TrkVertices.cxx:99-101`);
    - for each surviving pair: **fast crude vertex estimate** (`VKalVrtFitFast`, two-circle
-     intersection — see A.4) which also returns the track–track Δz; pairs with large Δz are dropped
+     intersection — see A.7) which also returns the track–track Δz; pairs with large Δz are dropped
      *before* the expensive fit (`:117-118`);
    - full 2-track fit with pion mass hypotheses, χ² < 20 for 1 d.o.f.;
    - a BDT selector (`TwoTrackVrtBDTSelector`) does the real discrimination;
@@ -230,7 +232,26 @@ point from `VertexPointEstimator::getCirclesIntersectionPoint`, does an unconstr
 Both are *exclusive* finders: they answer "is this pair a K⁰ₛ / a photon conversion", not "where are
 the displaced vertices". They are a natural **second** deliverable, not the baseline.
 
-### A.6 Shared low-level primitives
+### A.6 `InDetSecVxFinderTool` — JetFitter (decay chain on the jet axis)
+
+`InnerDetector/InDetRecTools/InDetSecVxFinderTool/` (~3.2 kLOC) plus the fitter in
+`Tracking/TrkVertexFitter/TrkJetVxFitter/` (~3.3 kLOC).
+
+Topologically distinct from everything above, and the reason the family count is six rather than
+five. Instead of finding independent vertices, JetFitter fits **a set of vertices constrained to lie
+on a common flight axis** (the jet axis through the PV), which is the natural description of a
+b → c → light decay chain. Components: `JetFitterTrackSelectorTool`, `JetFitterTwoTrackVtxFinderTool`,
+`JetFitterV0FinderTool`, `JetFitterMultiStageFit`, `InDetImprovedJetFitterVxFinder`; EDM in
+`Tracking/TrkEvent/VxJetVertex/`.
+
+It is in production b-tagging (`PhysicsAnalysis/JetTagging/JetTagAlgs/BTagging/python/JetSecVtxFindingAlgConfig.py`,
+`BTagLightSecVertexingConfig.py`, `JetFitterSequentialVertexFitterConfig.py`).
+
+**Out of scope for a baseline** — it needs jets, a flight-axis constraint in the fitter, and an
+EDM for multi-vertex chains, none of which ACTS has. Recorded here so the taxonomy is complete and
+so that "secondary vertexing" is not silently equated with "one displaced vertex at a time".
+
+### A.7 Shared low-level primitives
 
 These are the reusable atoms. Sizes are small; all are portable.
 
@@ -247,7 +268,7 @@ These are the reusable atoms. Sizes are small; all are portable.
 `Core/include/Acts/Vertexing/FsmwMode1dFinder.hpp` (`getMode(std::vector<std::pair<double,double>>)`).
 It is currently used only inside `ZScanVertexFinder`.
 
-### A.7 EDM and truth matching
+### A.8 EDM and truth matching
 
 - **`Tracking/TrkEvent/VxSecVertex/`** — `VxSecVertexInfo` and derivatives (`VxSecVKalVertexInfo`,
   `VxJetFitterVertexInfo`). The SV finders return a *container of vertices plus metadata*, not a bare
@@ -270,7 +291,74 @@ It is currently used only inside `ZScanVertexFinder`.
 
 ---
 
-## 3. Part B — the pattern, distilled
+## 3. Part B — purpose topology
+
+Six chains exist not because Athena is disorganised but because "secondary vertex" is six different
+physics objects. This section maps **purpose → algorithm → consumer**, established from the
+configuration layer rather than from the source comments.
+
+### B.1 Purpose → algorithm → consumer
+
+| Physics purpose | Algorithm | Configured in |
+|---|---|---|
+| **b/c-hadron decay vertices in jets** (b-tagging) | `InDetVKalVxInJetTool` | `JetTagAlgs/BTagging/python/JetSecVtxFindingAlgConfig.py`, `BTagLightSecVertexingConfig.py` |
+| **b→c decay chain on the jet axis** (b-tagging) | JetFitter (`InDetSecVxFinderTool`) | `JetSecVtxFindingAlgConfig.py`, `JetFitterSequentialVertexFitterConfig.py` |
+| **Soft secondary vertices away from jets** (SSV, pileup/b-content weights) | `NewVrtSecInclusiveTool`, WPs `NVSI_SecVrt_{Tight,Medium,Loose}` | `FTagAnalysisAlgorithms/python/SSVWeightsAlgConfig.py` |
+| **Long-lived particles / displaced vertices** | `VrtSecInclusive` (×6 tunings) + `NewVrtSecInclusiveTool` | `DerivationFrameworkLLP/python/LLP1.py`, `DerivationFrameworkSUSY/python/SUSY20.py` |
+| **Tracking/material studies, V0 & DV in ID** | `NewVrtSecInclusiveTool` (3 presets) + `InDetV0Finder` | `DerivationFrameworkInDet/python/IDTR2.py` |
+| **K⁰ₛ / Λ reconstruction** (B-physics) | `InDetV0Finder` + `TrkV0Fitter` | `DerivationFrameworkBPhys/python/V0ToolConfig.py`, `BPHY24.py` |
+| **Photon conversions** | `InDetConversionFinderTools` | `egammaAlgs/python/EMVertexBuilderConfig.py` |
+| **B-physics trigger** (J/ψ, Bmumux…) | `InDetConversionFinderTools` primitives | `TrigBphysHypo/python/Trig*ComboHypoConfig.py` |
+| **LLP trigger** | `VrtSecInclusive` | `TrigTools/TrigVrtSecInclusive/` |
+| **ID standalone SV reco** | `InDetAdaptiveMultiSecVtxFinderTool` | `InDetConfig/python/InDetSecVtxFinderConfig.py` — **see B.3** |
+
+### B.2 One algorithm, many purpose presets
+
+This is the most transferable observation in the whole survey. The *algorithm* is generic; the
+*purpose* lives entirely in the cut tuning. `NewVrtSecInclusiveTool` ships **seven named presets** in
+`Reconstruction/VKalVrt/NewVrtSecInclusiveTool/python/NewVrtSecInclusiveConfig.py`:
+
+| Preset | `CutPt` | `SelVrtSigCut` | `MaxSVRadiusCut` | `VrtMassLimit` | Purpose |
+|---|---|---|---|---|---|
+| `SoftBFinderTool` | 500 | 2.5 | 50 mm | — | soft b/c vertices |
+| `InclusiveBFinderTool` | 500 | 3.0 | 140 mm (default) | — | inclusive b/c |
+| `HighPtBFinderTool` | 1000 | 3.0 | 140 mm (default) | — | high-pT b/c |
+| `MaterialSVFinderTool` | 500 | 10.0 | 140 mm (default) | 8 000 | material interactions |
+| `KsFinderTool` | 1000 | 8.0 | 350 mm | 800 000 | K⁰ₛ |
+| `DVFinderTool` | 1000 | 8.0 | 350 mm | 1 000 000 | displaced vertices / LLP |
+| `V2TCalibrationTool` | 400 | 2.0 | 140 mm | 5 500 | 2-track BDT calibration |
+
+The pattern is legible: **displacement significance and radius acceptance scale with lifetime**
+(2.5σ / 50 mm for soft-b, 8σ / 350 mm for K⁰ₛ and DV), and the mass limit is effectively disabled
+for the "find anything displaced" presets.
+
+`VrtSecInclusive` is used the same way — LLP1 instantiates it **six times** in one job
+(`DerivationFrameworkLLP/python/LLP1.py:348-431`): nominal, short-lifetime, short-lifetime-no-d0
+(for the LRSM dHNL analysis), disappearing-track + large-radius-tracking, plus two track-systematics
+variants. IDTR2 instantiates `NewVrtSecInclusiveTool` three times as `_Material`, `_DV`, `_Ks`.
+
+**Implication for ACTS:** the deliverable is not "a secondary vertex finder" but "a finder plus a
+presets mechanism". Getting the configuration surface right — which cuts are exposed and in what
+units — matters as much as the algorithm, and the seven presets above are a ready-made validation
+matrix.
+
+### B.3 Correction: the AMVF-based tool is not in a production chain
+
+Worth stating plainly because it changes the weight of the recommendation in Part E.
+`InDetAdaptiveMultiSecVtxFinderTool` is reachable only through `InDetSecVtxFinderAlgCfg`, whose sole
+caller in the entire repository is
+`InnerDetector/InDetRecAlgs/InDetSecVtxFinder/share/runInDetSecVtxFinder.py` — a standalone runner
+script. It appears in no derivation, no reconstruction chain, and no trigger configuration. It is
+also marked `ATLAS_NOT_THREAD_SAFE`.
+
+So it is best read as **a well-formed reference implementation of the AMVF-for-SV idea, not a
+validated production algorithm**. It remains the closest structural match to ACTS and the cheapest
+path to a baseline, but "mirrors a production Athena algorithm" is not an argument that can be made
+for it — that argument belongs to the VKal family.
+
+---
+
+## 4. Part C — the pattern, distilled
 
 Stripping framework noise, every Athena inclusive SV finder is the same seven-stage pipeline:
 
@@ -295,9 +383,9 @@ algorithms.
 
 ---
 
-## 4. Part C — ACTS current state and gap analysis
+## 5. Part D — ACTS current state and gap analysis
 
-### C.1 What already exists and is directly reusable
+### D.1 What already exists and is directly reusable
 
 `Core/include/Acts/Vertexing/`:
 
@@ -312,10 +400,10 @@ algorithms.
 | `AnnealingUtility` | yes, unchanged | |
 | `FsmwMode1dFinder` | yes | the 1D building block for a 3D mode finder |
 | `Vertex`, `TrackAtVertex`, `InputTrack`, `VertexingOptions`, `IVertexFinder` | yes | EDM/interfaces are geometry-agnostic |
-| `ZScan` / `TrackDensity` / `GridDensity` / `AdaptiveGridDensity` VertexFinder | **no** | all 1D-in-z; see C.2 |
+| `ZScan` / `TrackDensity` / `GridDensity` / `AdaptiveGridDensity` VertexFinder | **no** | all 1D-in-z; see D.2 |
 | `HoughVertexFinder` | partially | 3D-ish but designed for a single primary vertex in heavy-ion events |
 
-### C.2 The blocker
+### D.2 The blocker
 
 `Core/src/Vertexing/ZScanVertexFinder.cpp:104-107`:
 
@@ -330,7 +418,7 @@ The same holds for the grid/density seeders: they histogram `z0` (and optionally
 beam-line `x`,`y`. Every ACTS vertex seed therefore lies on the beam axis. There is currently **no
 way to propose a candidate at `r > 0`**.
 
-### C.3 Gap table
+### D.3 Gap table
 
 | Needed | Athena reference | ACTS status | Rough size |
 |---|---|---|---|
@@ -347,7 +435,7 @@ way to propose a candidate at `r > 0`**.
 
 ---
 
-## 5. Part D — candidate baselines
+## 6. Part E — candidate baselines
 
 Three options, in increasing order of new code.
 
@@ -358,9 +446,12 @@ Add a `CrossDistancesSeedFinder` implementing `Acts::IVertexFinder`, plus the tw
 SV-appropriate configuration (no beam constraint, `useSeedConstraint`, loose
 `tracksMaxZinterval`). Add a thin `SecondaryVertexSelector` applying the stage-7 cuts.
 
-- Mirrors a real, in-production Athena algorithm (A.4) — defensible provenance.
+- Structurally identical to an existing Athena tool (A.4), so the design is not speculative.
 - Touches no existing ACTS code paths; purely additive.
 - Reuses the fitter, updater, IP estimator, annealing entirely.
+- **Provenance caveat (B.3):** that Athena tool is *not* part of any production chain — it is a
+  standalone reference implementation. So this option inherits a sound structure but no physics
+  validation record. The tuning has to be established by us, not inherited.
 - Biggest risk: `AdaptiveMultiVertexFinder`'s internals assume beamline-ish geometry in places
   (`tracksMaxZinterval`, the merge-significance logic when `doFullSplitting == false` is z-only).
   Needs auditing, and `doFullSplitting = true` is probably mandatory.
@@ -369,8 +460,10 @@ SV-appropriate configuration (no beam constraint, `useSeedConstraint`, loose
 
 Port stage 2–7 of `NewVrtSecInclusiveTool` on top of `FullBilloirVertexFitter`.
 
-- Closest to what ATLAS actually uses for inclusive/LLP SV, and to what b-tagging expects.
+- Closest to what ATLAS actually uses for inclusive/LLP SV, and to what b-tagging expects — and,
+  unlike Option 1, it carries a real production validation record (B.1).
 - Highest fidelity for low-multiplicity displaced vertices.
+- Comes with a ready-made preset matrix (B.2) to validate against.
 - More new code, and O(N²) pair fits — needs a cheap pre-filter (that is precisely what `vkvFastV`
   is for).
 - Requires a clique enumerator decision (vendor a small Bron–Kerbosch, or take Boost.Graph).
@@ -387,9 +480,15 @@ mode) first — they are needed by all three options — then Option 1 as the ba
 the validation vehicle because it gives an unambiguous physics metric early. Option 2 becomes the
 follow-up once the primitives are proven.
 
+The B.3 finding weakens the case for Option 1 somewhat but does not overturn it: it is still the
+cheapest route to *something that runs*, and the primitives it needs are shared with Option 2
+regardless. But if the goal is a baseline that can be defended as "this is what ATLAS does", that is
+Option 2, and the extra cost is the clique layer plus the overlap/merging utilities — call it
++400 LOC over Option 1. Worth an explicit decision rather than defaulting to the cheaper one.
+
 ---
 
-## 6. Part E — validation surface
+## 7. Part F — validation surface
 
 What exists in ACTS today: `Examples/Io/Root/src/RootVertexNTupleWriter.cpp`,
 `RootVertexWriter.cpp`, `RootVertexReader.cpp`; `Examples/Scripts/Python/vertex_fitting.py`;
@@ -401,7 +500,7 @@ What a baseline needs:
 1. **Unit tests for the new primitives.** The two-circle intersection and the track–track DCA are
    analytically checkable against straight-line and known-helix configurations — high-value,
    low-cost tests.
-2. **A truth-matching layer** following the `InDetSecVtxTruthMatchTool` definitions (A.7). The
+2. **A truth-matching layer** following the `InDetSecVtxTruthMatchTool` definitions (A.8). The
    `Reconstructable → Accepted → Seeded → Reconstructed` chain is the right efficiency
    denominator ladder; without it, "efficiency" is meaningless for displaced vertices.
 3. **A physics metric.** K⁰ₛ → π⁺π⁻ invariant-mass peak position and width from ttbar or minimum-bias
@@ -414,11 +513,14 @@ LLP-style studies, but is fine for K⁰ₛ and for geometric efficiency.
 
 ---
 
-## 7. Part F — open questions for the planning phase
+## 8. Part G — open questions for the planning phase
 
 1. **Physics target.** Inclusive displaced vertices (LLP-style), b-tagging SV in jets, or V0
    reconstruction? These have materially different track selections and cut tunings. The Athena code
-   splits along exactly this axis. *This is the decision that gates everything else.*
+   splits along exactly this axis (Part B). *This is the decision that gates everything else.*
+   Note that Part B also shows the target may be less binding than it looks: one algorithm with a
+   preset mechanism covers soft-b, inclusive-b, material, K⁰ₛ and DV in Athena. Choosing "which
+   preset first" is a lighter decision than choosing "which algorithm".
 2. **Core or Examples?** A `CrossDistancesSeedFinder` belongs in `Core/Vertexing`. A jet-directed
    finder arguably does not (it needs jets).
 3. **Boost.Graph.** Option 2 needs clique enumeration. Is a Boost.Graph dependency in Core
@@ -432,6 +534,12 @@ LLP-style studies, but is fine for K⁰ₛ and for geometric efficiency.
 6. **Multi-track vs two-track scope for v1.** Restricting the baseline to 2-track vertices removes
    stages 4–6 entirely and makes the first version dramatically smaller. Worth considering as a
    deliberate scope cut.
+7. **Is a preset mechanism in scope for v1?** B.2 argues the configuration surface is half the
+   deliverable. Deciding early whether presets are a v1 feature or a later addition affects how the
+   `Config` structs are shaped, and retrofitting that is more painful than designing for it.
+8. **Do we care about decay chains at all?** JetFitter (A.6) is a genuinely different output
+   topology — several vertices constrained to one flight axis — and nothing in the proposed baseline
+   moves toward it. Fine to declare out of scope, but it should be declared rather than overlooked.
 
 ---
 
@@ -455,12 +563,15 @@ InnerDetector/InDetRecAlgs/InDetV0Finder/                V0                     
     src/InDetV0FinderTool.cxx
 InnerDetector/InDetRecTools/InDetConversionFinderTools/  conversions                       (A.5)
     src/VertexPointEstimator.cxx                        circle-intersection seed
-Tracking/TrkVertexFitter/TrkVKalVrtCore/src/VKvFast.cxx  crude 2-track vertex              (A.6)
-Tracking/TrkVertexFitter/TrkVertexSeedFinderTools/src/CrossDistancesSeedFinder.cxx          (A.6)
-Tracking/TrkVertexFitter/TrkVertexSeedFinderUtils/src/Mode3dTo1dFinder.cxx                  (A.6)
-Tracking/TrkVertexFitter/TrkVertexSeedFinderUtils/src/NewtonTrkDistanceFinder.cxx           (A.6)
-Tracking/TrkEvent/VxSecVertex/                           SV EDM                            (A.7)
-InnerDetector/InDetRecTools/InDetSecVtxTruthMatchTool/   validation definitions            (A.7)
+InnerDetector/InDetRecTools/InDetSecVxFinderTool/        JetFitter decay chain             (A.6)
+Tracking/TrkVertexFitter/TrkJetVxFitter/                 JetFitter fitter + EDM helpers    (A.6)
+Tracking/TrkEvent/VxJetVertex/                           JetFitter EDM                     (A.6)
+Tracking/TrkVertexFitter/TrkVKalVrtCore/src/VKvFast.cxx  crude 2-track vertex              (A.7)
+Tracking/TrkVertexFitter/TrkVertexSeedFinderTools/src/CrossDistancesSeedFinder.cxx          (A.7)
+Tracking/TrkVertexFitter/TrkVertexSeedFinderUtils/src/Mode3dTo1dFinder.cxx                  (A.7)
+Tracking/TrkVertexFitter/TrkVertexSeedFinderUtils/src/NewtonTrkDistanceFinder.cxx           (A.7)
+Tracking/TrkEvent/VxSecVertex/                           SV EDM                            (A.8)
+InnerDetector/InDetRecTools/InDetSecVtxTruthMatchTool/   validation definitions            (A.8)
 Tracking/Acts/ActsVertexReconstruction/                  existing ACTS-in-Athena PV tools
 ```
 
