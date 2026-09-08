@@ -39,19 +39,6 @@ typename grid_type::point_t castPosition(const Vector3& position,
   }(std::make_integer_sequence<std::size_t, grid_type::DIM>{});
 }
 
-/// Unroll the local position loop
-///
-/// @param lposition is the local position
-/// @param laccess the local accessors
-/// @param ra is the array to be filled
-///
-/// @note void function that fills the provided array
-template <typename Array, typename local_indices, std::size_t... idx>
-void fillLocal(const Vector2& lposition, const local_indices& laccess,
-               Array& ra, std::index_sequence<idx...> /*indices*/) {
-  ((ra[idx] = lposition[laccess[idx]]), ...);
-}
-
 /// Access local parameters for a propriate lookup position
 ///
 /// This method allows to transform a local position into a
@@ -69,11 +56,11 @@ typename grid_type::point_t accessLocal(const Vector2& lposition,
         "GridAccessHelper: only 1-D and 2-D grids are possible for local "
         "access.");
   }
-  // Fill the grid point from local according to the accessors
-  typename grid_type::point_t accessed{};
-  fillLocal(lposition, laccess, accessed,
-            std::make_integer_sequence<std::size_t, grid_type::DIM>{});
-  return accessed;
+  // Fill the grid point from local according to the accessors, unrolling
+  // the local position loop
+  return [&]<std::size_t... idx>(std::index_sequence<idx...> /*indices*/) {
+    return typename grid_type::point_t{lposition[laccess[idx]]...};
+  }(std::make_integer_sequence<std::size_t, grid_type::DIM>{});
 }
 
 }  // namespace Acts::GridAccessHelpers

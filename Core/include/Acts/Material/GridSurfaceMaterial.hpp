@@ -94,26 +94,6 @@ class GridSurfaceMaterial final : public ISurfaceMaterial {
       const IAxis& axis0, const IAxis& axis1,
       const std::vector<std::vector<MaterialSlab>>& payload);
 
-  /// Create a @c GridSurfaceMaterial with direct storage by resolving a
-  /// multi-axis spec against a surface
-  ///
-  /// This follows the same pattern as @c ProtoGridSurfaceMaterial: the
-  /// (possibly deferred) axis specs are resolved against @p surface via
-  /// @c resolveMultiAxis, exactly as is done for a @c ProtoGridSurfaceMaterial
-  /// in @c BinnedSurfaceMaterialAccumulator. Binning restricted to a single
-  /// local direction is expressed by a single-bin spec in the other
-  /// direction.
-  ///
-  /// @param binning the 2D multi-axis binning spec (deferred axes are
-  ///        resolved against @p surface)
-  /// @param surface the surface to resolve the deferred axes against
-  /// @param payload the material payload, one slab per regular bin, column
-  ///        major, i.e. [i0][i1]
-  /// @return a unique pointer to the created surface material
-  static std::unique_ptr<GridSurfaceMaterial> createDirect(
-      const MultiAxisSpec2D& binning, const Surface& surface,
-      const std::vector<std::vector<MaterialSlab>>& payload);
-
   /// Create a @c GridSurfaceMaterial with locally indexed storage from two
   /// axes
   ///
@@ -129,22 +109,6 @@ class GridSurfaceMaterial final : public ISurfaceMaterial {
       std::vector<MaterialSlab> material,
       const std::vector<std::vector<std::size_t>>& payload);
 
-  /// Create a @c GridSurfaceMaterial with locally indexed storage from a
-  /// multi-axis spec resolved against a surface
-  ///
-  /// @param binning the 2D multi-axis binning spec (deferred axes are
-  ///        resolved against @p surface)
-  /// @param surface the surface to resolve the deferred axes against
-  /// @param material the locally owned material vector, addressed by
-  ///        @p payload
-  /// @param payload the index payload, one index per regular bin, column
-  ///        major, i.e. [i0][i1]
-  /// @return a unique pointer to the created surface material
-  static std::unique_ptr<GridSurfaceMaterial> createIndexed(
-      const MultiAxisSpec2D& binning, const Surface& surface,
-      std::vector<MaterialSlab> material,
-      const std::vector<std::vector<std::size_t>>& payload);
-
   /// Create a @c GridSurfaceMaterial with globally indexed storage from two
   /// axes
   ///
@@ -157,21 +121,6 @@ class GridSurfaceMaterial final : public ISurfaceMaterial {
   /// @return a unique pointer to the created surface material
   static std::unique_ptr<GridSurfaceMaterial> createGloballyIndexed(
       const IAxis& axis0, const IAxis& axis1,
-      std::shared_ptr<std::vector<MaterialSlab>> material,
-      const std::vector<std::vector<std::size_t>>& payload);
-
-  /// Create a @c GridSurfaceMaterial with globally indexed storage from a
-  /// multi-axis spec resolved against a surface
-  ///
-  /// @param binning the binning specification for the grid
-  /// @param surface the surface to which the material is applied
-  /// @param material the (possibly shared) globally owned material vector,
-  ///        addressed by @p payload
-  /// @param payload the index payload, one index per regular bin, column
-  ///        major, i.e. [i0][i1]
-  /// @return a unique pointer to the created surface material
-  static std::unique_ptr<GridSurfaceMaterial> createGloballyIndexed(
-      const MultiAxisSpec2D& binning, const Surface& surface,
       std::shared_ptr<std::vector<MaterialSlab>> material,
       const std::vector<std::vector<std::size_t>>& payload);
 
@@ -192,13 +141,12 @@ class GridSurfaceMaterial final : public ISurfaceMaterial {
 
   /// @copydoc ISurfaceMaterial::localAxisDirections() const
   ///
-  /// Returns the directions of both axes of @c binning() if both carry a
-  /// direction (as is always the case when built by resolving against a
-  /// @c Surface, see the @c createDirect / @c createIndexed /
-  /// @c createGloballyIndexed factory methods), or an empty vector if
-  /// either does not - this lets @c Surface::assignSurfaceMaterial detect
-  /// whether the grid's axis order needs swapping to match the surface's
-  /// canonical local axes.
+  /// Returns the directions of both axes of the binning spec if both carry a
+  /// direction (as is always the case when the axes come from
+  /// @c resolveMultiAxis against a @c Surface), or an empty vector if either
+  /// does not - this lets @c Surface::assignSurfaceMaterial detect whether
+  /// the grid's axis order needs swapping to match the surface's canonical
+  /// local axes.
   std::vector<AxisDirection> localAxisDirections() const override;
 
   /// @copydoc ISurfaceMaterial::scale(double)
@@ -210,10 +158,6 @@ class GridSurfaceMaterial final : public ISurfaceMaterial {
 
   /// @copydoc ISurfaceMaterial::toStream(std::ostream&) const
   std::ostream& toStream(std::ostream& sl) const override;
-
-  /// Return the 2D multi-axis binning spec
-  /// @return const reference to the binning spec
-  const MultiAxisSpec2D& binning() const { return m_binning; }
 
   /// Return the multi-axis used for local position lookup
   /// @return const reference to the resolved multi-axis

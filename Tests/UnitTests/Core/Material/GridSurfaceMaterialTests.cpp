@@ -101,7 +101,9 @@ BOOST_AUTO_TEST_CASE(GridMaterialDirectFromMultiAxisSpec) {
        MaterialSlab(Material::fromMolarDensity(31.0, 32.0, 33.0, 34.0, 35.0),
                     4.0)}};
 
-  auto ism = GridSurfaceMaterial::createDirect(binning, *cylinder, payload);
+  auto axes = resolveMultiAxis(binning, *cylinder);
+  auto ism = GridSurfaceMaterial::createDirect(axes->getAxis(0),
+                                               axes->getAxis(1), payload);
   BOOST_REQUIRE(ism != nullptr);
 
   // loc0 (rPhi) is irrelevant - near, far and out-of-range values all land
@@ -147,8 +149,9 @@ BOOST_AUTO_TEST_CASE(GridMaterialLocalAxisDirections) {
   std::vector<std::vector<MaterialSlab>> payload1x4 = {
       {MaterialSlab::Nothing(), MaterialSlab::Nothing(),
        MaterialSlab::Nothing(), MaterialSlab::Nothing()}};
-  auto ismDirected =
-      GridSurfaceMaterial::createDirect(binning, *cylinder, payload1x4);
+  auto axes = resolveMultiAxis(binning, *cylinder);
+  auto ismDirected = GridSurfaceMaterial::createDirect(
+      axes->getAxis(0), axes->getAxis(1), payload1x4);
 
   std::vector<AxisDirection> localDirs = ismDirected->localAxisDirections();
   BOOST_REQUIRE_EQUAL(localDirs.size(), 2u);

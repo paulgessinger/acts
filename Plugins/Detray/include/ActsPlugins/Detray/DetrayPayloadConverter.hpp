@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Acts/Material/BinnedSurfaceMaterial.hpp"
-#include "Acts/Material/GridSurfaceMaterial.hpp"
 #include "Acts/Material/HomogeneousSurfaceMaterial.hpp"
 #include "Acts/Material/ProtoSurfaceMaterial.hpp"
 #include "Acts/Navigation/CylinderNavigationPolicy.hpp"

@@ -86,13 +86,6 @@ std::unique_ptr<GridSurfaceMaterial> GridSurfaceMaterial::createDirect(
                                                std::move(storage));
 }
 
-std::unique_ptr<GridSurfaceMaterial> GridSurfaceMaterial::createDirect(
-    const MultiAxisSpec2D& binning, const Surface& surface,
-    const std::vector<std::vector<MaterialSlab>>& payload) {
-  auto axes = resolveMultiAxis(binning, surface);
-  return createDirect(axes->getAxis(0), axes->getAxis(1), payload);
-}
-
 std::unique_ptr<GridSurfaceMaterial> GridSurfaceMaterial::createIndexed(
     const IAxis& axis0, const IAxis& axis1, std::vector<MaterialSlab> material,
     const std::vector<std::vector<std::size_t>>& payload) {
@@ -101,15 +94,6 @@ std::unique_ptr<GridSurfaceMaterial> GridSurfaceMaterial::createIndexed(
   Indexed storage{flattenPayload2D(*multiAxis, payload), std::move(material)};
   return std::make_unique<GridSurfaceMaterial>(std::move(binning),
                                                std::move(storage));
-}
-
-std::unique_ptr<GridSurfaceMaterial> GridSurfaceMaterial::createIndexed(
-    const MultiAxisSpec2D& binning, const Surface& surface,
-    std::vector<MaterialSlab> material,
-    const std::vector<std::vector<std::size_t>>& payload) {
-  auto axes = resolveMultiAxis(binning, surface);
-  return createIndexed(axes->getAxis(0), axes->getAxis(1), std::move(material),
-                       payload);
 }
 
 std::unique_ptr<GridSurfaceMaterial> GridSurfaceMaterial::createGloballyIndexed(
@@ -122,15 +106,6 @@ std::unique_ptr<GridSurfaceMaterial> GridSurfaceMaterial::createGloballyIndexed(
                           std::move(material)};
   return std::make_unique<GridSurfaceMaterial>(std::move(binning),
                                                std::move(storage));
-}
-
-std::unique_ptr<GridSurfaceMaterial> GridSurfaceMaterial::createGloballyIndexed(
-    const MultiAxisSpec2D& binning, const Surface& surface,
-    std::shared_ptr<std::vector<MaterialSlab>> material,
-    const std::vector<std::vector<std::size_t>>& payload) {
-  auto axes = resolveMultiAxis(binning, surface);
-  return createGloballyIndexed(axes->getAxis(0), axes->getAxis(1),
-                               std::move(material), payload);
 }
 
 std::vector<AxisDirection> GridSurfaceMaterial::localAxisDirections() const {

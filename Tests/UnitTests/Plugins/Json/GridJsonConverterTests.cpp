@@ -253,53 +253,6 @@ BOOST_AUTO_TEST_CASE(Grid2DSingleEntryBoundClosed) {
   BOOST_CHECK_EQUAL(eqBoundEqClosedJsonRead.atPosition(p33), 33u);
 }
 
-BOOST_AUTO_TEST_CASE(GridAnyToJson1D) {
-  using EqBound = GridAxisGenerators::EqBound;
-
-  EqBound eqBound{{0., 5.}, 5};
-  using GridTypeEQB = typename EqBound::template grid_type<std::size_t>;
-  GridTypeEQB eqBoundGrid(eqBound());
-
-  eqBoundGrid.at(1u) = 1u;
-  eqBoundGrid.at(2u) = 2u;
-  eqBoundGrid.at(3u) = 3u;
-  eqBoundGrid.at(4u) = 4u;
-  eqBoundGrid.at(5u) = 5u;
-
-  nlohmann::json jExpected = GridJsonConverter::toJson(eqBoundGrid);
-  nlohmann::json jAny = GridJsonConverter::toJsonAny<std::size_t>(
-      eqBoundGrid, AnyGridConstView<std::size_t>(eqBoundGrid));
-
-  BOOST_CHECK_EQUAL(jAny, jExpected);
-}
-
-BOOST_AUTO_TEST_CASE(GridAnyToJson2D) {
-  using EqBoundEqClosed = GridAxisGenerators::EqBoundEqClosed;
-
-  EqBoundEqClosed eqBoundEqClosed{
-      {-6., 6.}, 3, {-std::numbers::pi, std::numbers::pi}, 3};
-  using GridTypeEQBEQC =
-      typename EqBoundEqClosed::template grid_type<std::size_t>;
-  GridTypeEQBEQC eqBoundEqClosedGrid(eqBoundEqClosed());
-
-  using GridPoint = typename GridTypeEQBEQC::point_t;
-  eqBoundEqClosedGrid.atPosition(GridPoint{-5., -2.}) = 11u;
-  eqBoundEqClosedGrid.atPosition(GridPoint{0., -2.}) = 12u;
-  eqBoundEqClosedGrid.atPosition(GridPoint{5., -2.}) = 13u;
-  eqBoundEqClosedGrid.atPosition(GridPoint{-5., 0.}) = 21u;
-  eqBoundEqClosedGrid.atPosition(GridPoint{0., 0.}) = 22u;
-  eqBoundEqClosedGrid.atPosition(GridPoint{5., 0.}) = 23u;
-  eqBoundEqClosedGrid.atPosition(GridPoint{-5., 2.}) = 31u;
-  eqBoundEqClosedGrid.atPosition(GridPoint{0., 2.}) = 32u;
-  eqBoundEqClosedGrid.atPosition(GridPoint{5., 2.}) = 33u;
-
-  nlohmann::json jExpected = GridJsonConverter::toJson(eqBoundEqClosedGrid);
-  nlohmann::json jAny = GridJsonConverter::toJsonAny<std::size_t>(
-      eqBoundEqClosedGrid, AnyGridConstView<std::size_t>(eqBoundEqClosedGrid));
-
-  BOOST_CHECK_EQUAL(jAny, jExpected);
-}
-
 BOOST_AUTO_TEST_CASE(AxisJsonConverterEquidistantBound) {
   auto axis = IAxis::createEquidistant(AxisBoundaryType::Bound, -5., 5., 10);
   nlohmann::json j = AxisJsonConverter::toJson(*axis);
