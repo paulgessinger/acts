@@ -10,8 +10,8 @@
 
 #include "Acts/Definitions/Algebra.hpp"
 #include "Acts/Utilities/Grid.hpp"
-#include "Acts/Utilities/GridAccessHelpers.hpp"
 #include "Acts/Utilities/GridAxisGenerators.hpp"
+#include "Acts/Utilities/detail/GridAccessHelpers.hpp"
 
 using namespace Acts;
 
@@ -35,9 +35,9 @@ BOOST_AUTO_TEST_CASE(Grid1DAccess) {
 
   Vector2 lPosition{3.5, 6.5};
   auto flAccess =
-      GridAccessHelpers::accessLocal<GridType>(lPosition, fAccessor);
+      detail::GridAccessHelpers::accessLocal<GridType>(lPosition, fAccessor);
   auto slAccess =
-      GridAccessHelpers::accessLocal<GridType>(lPosition, sAccessor);
+      detail::GridAccessHelpers::accessLocal<GridType>(lPosition, sAccessor);
 
   // This should take out local 1D either first or second
   BOOST_CHECK_EQUAL(grid.atPosition(flAccess), 3u);
@@ -49,9 +49,12 @@ BOOST_AUTO_TEST_CASE(Grid1DAccess) {
   std::vector<AxisDirection> sCast = {AxisDirection::AxisY};
   std::vector<AxisDirection> tCast = {AxisDirection::AxisZ};
 
-  auto fgAccess = GridAccessHelpers::castPosition<GridType>(gPosition, fCast);
-  auto sgAccess = GridAccessHelpers::castPosition<GridType>(gPosition, sCast);
-  auto tgAccess = GridAccessHelpers::castPosition<GridType>(gPosition, tCast);
+  auto fgAccess =
+      detail::GridAccessHelpers::castPosition<GridType>(gPosition, fCast);
+  auto sgAccess =
+      detail::GridAccessHelpers::castPosition<GridType>(gPosition, sCast);
+  auto tgAccess =
+      detail::GridAccessHelpers::castPosition<GridType>(gPosition, tCast);
   BOOST_CHECK_EQUAL(grid.atPosition(fgAccess), 0u);
   BOOST_CHECK_EQUAL(grid.atPosition(sgAccess), 3u);
   BOOST_CHECK_EQUAL(grid.atPosition(tgAccess), 6u);
@@ -72,14 +75,15 @@ BOOST_AUTO_TEST_CASE(Grid2DAccess) {
   std::vector<std::size_t> fAccessor = {0u, 1u};
   Vector2 lPosition{3.5, 6.5};
   auto flAccess =
-      GridAccessHelpers::accessLocal<GridType>(lPosition, fAccessor);
+      detail::GridAccessHelpers::accessLocal<GridType>(lPosition, fAccessor);
   BOOST_CHECK_EQUAL(grid.atPosition(flAccess), 603u);
 
   // Global access
   Vector3 gPosition{0.5, 3.5, 6.5};
   std::vector<AxisDirection> fCast = {AxisDirection::AxisX,
                                       AxisDirection::AxisY};
-  auto fgAccess = GridAccessHelpers::castPosition<GridType>(gPosition, fCast);
+  auto fgAccess =
+      detail::GridAccessHelpers::castPosition<GridType>(gPosition, fCast);
   BOOST_CHECK_EQUAL(grid.atPosition(fgAccess), 300u);
 }
 

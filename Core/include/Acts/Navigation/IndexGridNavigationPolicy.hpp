@@ -15,7 +15,7 @@
 #include "Acts/Navigation/NavigationStream.hpp"
 #include "Acts/Surfaces/BoundaryTolerance.hpp"
 #include "Acts/Utilities/Grid.hpp"
-#include "Acts/Utilities/GridAccessHelpers.hpp"
+#include "Acts/Utilities/detail/GridAccessHelpers.hpp"
 
 namespace Acts {
 
@@ -102,8 +102,8 @@ class IndexGridNavigationPolicy : public INavigationPolicy {
 
     // The indexing is guaranteed
     const auto& surfaces = m_volume.surfaces();
-    const auto& indices =
-        m_indexGrid.grid.atPosition(GridAccessHelpers::castPosition<GridType>(
+    const auto& indices = m_indexGrid.grid.atPosition(
+        detail::GridAccessHelpers::castPosition<GridType>(
             m_indexGrid.toLocalFrame(gctx) * position, m_indexGrid.casts));
     // Fill the navigation stream with the container
     for (const auto& idx : indices) {

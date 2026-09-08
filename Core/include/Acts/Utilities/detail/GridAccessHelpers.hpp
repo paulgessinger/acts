@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace Acts::GridAccessHelpers {
+namespace Acts::detail::GridAccessHelpers {
 
 /// Cast into a lookup position
 ///
@@ -63,4 +63,4 @@ typename grid_type::point_t accessLocal(const Vector2& lposition,
   }(std::make_integer_sequence<std::size_t, grid_type::DIM>{});
 }
 
-}  // namespace Acts::GridAccessHelpers
+}  // namespace Acts::detail::GridAccessHelpers

@@ -13,10 +13,10 @@
 #include "Acts/Geometry/GeometryContext.hpp"
 #include "Acts/Geometry/Polyhedron.hpp"
 #include "Acts/Utilities/Enumerate.hpp"
-#include "Acts/Utilities/GridAccessHelpers.hpp"
 #include "Acts/Utilities/Helpers.hpp"
 #include "Acts/Utilities/IAxis.hpp"
 #include "Acts/Utilities/Logger.hpp"
+#include "Acts/Utilities/detail/GridAccessHelpers.hpp"
 
 #include <algorithm>
 #include <array>
@@ -320,7 +320,7 @@ struct IndexGridFiller {
       for (const auto& ref : refs) {
         // Cast the transform according to the grid binning
         gridQueries.push_back(
-            GridAccessHelpers::castPosition<decltype(iGrid.grid)>(
+            detail::GridAccessHelpers::castPosition<decltype(iGrid.grid)>(
                 iGrid.toLocalFrame(gctx) * ref, iGrid.casts));
       }
       ACTS_DEBUG(gridQueries.size() << " reference points generated.");

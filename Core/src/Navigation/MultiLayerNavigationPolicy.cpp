@@ -11,8 +11,8 @@
 #include "Acts/Geometry/ReferenceGenerators.hpp"
 #include "Acts/Geometry/VolumeBounds.hpp"
 #include "Acts/Surfaces/detail/IntersectionHelper2D.hpp"
-#include "Acts/Utilities/GridAccessHelpers.hpp"
 #include "Acts/Utilities/StringHelpers.hpp"
+#include "Acts/Utilities/detail/GridAccessHelpers.hpp"
 namespace {
 std::string printCandidates(const std::vector<const Acts::Surface*>& surfaces) {
   std::stringstream sstr{};
@@ -74,7 +74,7 @@ void MultiLayerNavigationPolicy::initializeCandidates(
 
     std::vector<std::size_t> fAccessor = {0u, 1u};
     const auto& indices = m_indexedGrid.grid.atPosition(
-        GridAccessHelpers::accessLocal<GridType>(pos, fAccessor));
+        detail::GridAccessHelpers::accessLocal<GridType>(pos, fAccessor));
     ACTS_VERBOSE("MultiLayerNavigationPolicy() - Fetch "
                  << indices.size() << " candidates for point "
                  << toString(pos));

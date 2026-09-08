@@ -49,7 +49,7 @@ void writeSurfacesAndProjections(
               indexGrid.casts[0] == Acts::AxisDirection::AxisPhi) {
             std::array<Acts::AxisDirection, 2u> rphi = {
                 Acts::AxisDirection::AxisR, Acts::AxisDirection::AxisPhi};
-            auto pVertex = Acts::GridAccessHelpers::castPosition<
+            auto pVertex = Acts::detail::GridAccessHelpers::castPosition<
                 Acts::RegularDiscIndexGrid>(
                 indexGrid.toLocalFrame(gctx) * vertex, rphi);
             // Update reference range
@@ -61,7 +61,8 @@ void writeSurfacesAndProjections(
           } else {
             // Write the projected vertices
             jProjectedSurface.push_back(
-                Acts::GridAccessHelpers::castPosition<decltype(indexGrid.grid)>(
+                Acts::detail::GridAccessHelpers::castPosition<
+                    decltype(indexGrid.grid)>(
                     indexGrid.toLocalFrame(gctx) * vertex, indexGrid.casts));
           }
         }
