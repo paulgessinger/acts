@@ -65,9 +65,6 @@ void calculateUpdate(const Vertex& vtx, TrackAtVertex& track,
   // A_k
   const Matrix<nBoundParams, nDimVertex> posJac =
       linTrack.positionJacobian.block<nBoundParams, nDimVertex>(0, 0);
-  // B_k
-  const Matrix<nBoundParams, 3> momJac =
-      linTrack.momentumJacobian.block<nBoundParams, 3>(0, 0);
   // p_k
   const ParameterVector trkParams =
       linTrack.parametersAtPCA.head<nBoundParams>();
@@ -82,8 +79,9 @@ void calculateUpdate(const Vertex& vtx, TrackAtVertex& track,
   // with the track weight from the AMVF formalism. Here, we choose to
   // consider these two multiplicative factors directly in the updates of
   // newVertexWeight and newVertexPos.
-  cache.trkParamWeight = track.template parameterWeight<nBoundParams>();
-  const ParameterMatrix& trkParamWeight = cache.trkParamWeight;
+  ParameterMatrix gBMat;
+  track.template updateMatrices<nBoundParams>(cache.trkParamWeight, cache.wMat,
+                                              gBMat);
 
   // Retrieve current position of the vertex and its current weight matrix
   const Vector<nDimVertex> oldVtxPos =
@@ -92,14 +90,6 @@ void calculateUpdate(const Vertex& vtx, TrackAtVertex& track,
   cache.oldVertexWeight =
       (vtx.fullCovariance().template block<nDimVertex, nDimVertex>(0, 0))
           .inverse();
-
-  // W_k
-  cache.wMat = (momJac.transpose() * (trkParamWeight * momJac)).inverse();
-
-  // G_k^B = G_k - G_k*B_k*W_k*B_k^(T)*G_k
-  ParameterMatrix gBMat = trkParamWeight - trkParamWeight * momJac *
-                                               cache.wMat * momJac.transpose() *
-                                               trkParamWeight;
 
   // C_k^-1
   cache.newVertexWeight = cache.oldVertexWeight + sign * trackWeight *

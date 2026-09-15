@@ -362,6 +362,54 @@ BOOST_AUTO_TEST_CASE(track_weight_cache_invalidation) {
   check(track);
 }
 
+BOOST_AUTO_TEST_CASE(track_projection_cache_invalidation) {
+  auto surface = Surface::makeShared<PerigeeSurface>(Vector3::Zero());
+  BoundVector pars = BoundVector::Zero();
+  pars[eBoundTheta] = 1.;
+  pars[eBoundQOverP] = 0.01;
+  BoundTrackParameters bound(surface, pars, BoundMatrix::Identity(),
+                             ParticleHypothesis::pion());
+  TrackAtVertex track(bound, InputTrack{&bound});
+  track.linearizedState.covarianceAtPCA = BoundMatrix::Identity();
+  track.linearizedState.covarianceAtPCA(0, 5) = 0.3;
+  track.linearizedState.covarianceAtPCA(5, 0) = 0.3;
+  track.linearizedState.momentumJacobian.block<3, 3>(2, 0) =
+      SquareMatrix3::Identity();
+  track.linearizedState.momentumJacobian(5, 2) = 0.1;
+  auto check = []<unsigned int nParams>(TrackAtVertex& candidate) {
+    const auto& linearized = candidate.linearizedState;
+    const SquareMatrix<nParams> expectedWeight =
+        linearized.covarianceAtPCA.template block<nParams, nParams>(0, 0)
+            .inverse();
+    const Matrix<nParams, 3> mom =
+        linearized.momentumJacobian.template block<nParams, 3>(0, 0);
+    const SquareMatrix3 expectedMomentum =
+        (mom.transpose() * (expectedWeight * mom)).inverse();
+    const SquareMatrix<nParams> expectedProjected =
+        expectedWeight - expectedWeight * mom * expectedMomentum *
+                             mom.transpose() * expectedWeight;
+    SquareMatrix<nParams> weight, projected;
+    SquareMatrix3 momentum;
+    for (int i = 0; i < 2; ++i) {
+      candidate.updateMatrices<nParams>(weight, momentum, projected);
+      BOOST_CHECK((weight.array() == expectedWeight.array()).all());
+      BOOST_CHECK((momentum.array() == expectedMomentum.array()).all());
+      BOOST_CHECK((projected.array() == expectedProjected.array()).all());
+    }
+  };
+  check.operator()<5>(track);
+  check.operator()<6>(track);
+  track.linearizedState.momentumJacobian(0, 0) = 0.2;
+  check.operator()<6>(track);
+  auto copy = track;
+  copy.linearizedState.momentumJacobian(1, 1) = 0.4;
+  check.operator()<6>(copy);
+  check.operator()<6>(track);
+  track.linearizedState.covarianceAtPCA(3, 3) = 2.;
+  check.operator()<6>(track);
+  check.operator()<5>(track);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }  // namespace ActsTests

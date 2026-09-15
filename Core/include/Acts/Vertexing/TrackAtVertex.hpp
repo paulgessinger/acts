@@ -166,8 +166,43 @@ struct TrackAtVertex {
       m_weightCache->covariance = covariance;
       m_weightCache->weight.template block<nParams, nParams>(0, 0) = weight;
       m_weightCache->dimension = nParams;
+      m_weightCache->projectionValid = false;
     }
     return m_weightCache->weight.template block<nParams, nParams>(0, 0);
+  }
+
+  /// Retrieve track-only matrices for a Kalman vertex update.
+  /// @tparam nParams Number of fitted parameters (5 spatial or 6 spacetime)
+  /// @param[out] weight Inverse covariance block
+  /// @param[out] momentumWeight Inverse momentum normal matrix
+  /// @param[out] projectedWeight Weight after eliminating momentum coordinates
+  template <unsigned int nParams>
+  void updateMatrices(SquareMatrix<nParams>& weight,
+                      SquareMatrix3& momentumWeight,
+                      SquareMatrix<nParams>& projectedWeight) {
+    weight = parameterWeight<nParams>();
+    const auto& jacobian = linearizedState.momentumJacobian;
+    if (!m_weightCache->projectionValid ||
+        std::memcmp(jacobian.data(), m_weightCache->momentumJacobian.data(),
+                    eBoundSize * 3 * sizeof(double)) != 0) {
+      if (!m_weightCache.unique()) {
+        m_weightCache = std::make_shared<WeightCache>(*m_weightCache);
+      }
+      const Matrix<nParams, 3> momJac =
+          jacobian.template block<nParams, 3>(0, 0);
+      const SquareMatrix3 wMat =
+          (momJac.transpose() * (weight * momJac)).inverse();
+      const SquareMatrix<nParams> gBMat =
+          weight - weight * momJac * wMat * momJac.transpose() * weight;
+      m_weightCache->momentumJacobian = jacobian;
+      m_weightCache->momentumWeight = wMat;
+      m_weightCache->projectedWeight.template block<nParams, nParams>(0, 0) =
+          gBMat;
+      m_weightCache->projectionValid = true;
+    }
+    momentumWeight = m_weightCache->momentumWeight;
+    projectedWeight =
+        m_weightCache->projectedWeight.template block<nParams, nParams>(0, 0);
   }
 
  private:
@@ -175,6 +210,10 @@ struct TrackAtVertex {
     BoundMatrix covariance = BoundMatrix::Zero();
     BoundMatrix weight = BoundMatrix::Zero();
     unsigned int dimension = 0;
+    Matrix<eBoundSize, 3> momentumJacobian = Matrix<eBoundSize, 3>::Zero();
+    SquareMatrix3 momentumWeight = SquareMatrix3::Zero();
+    BoundMatrix projectedWeight = BoundMatrix::Zero();
+    bool projectionValid = false;
   };
   std::shared_ptr<WeightCache> m_weightCache;
 };
