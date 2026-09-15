@@ -17,21 +17,44 @@
 #include <limits>
 #include <memory_resource>
 #include <numbers>
+#include <numeric>
 
 namespace Acts {
 
-// Keep the per-candidate calculation visible to the compiler in the hot loop.
-inline void
-Acts::GaussianTrackDensity::GaussianTrackDensityStore::addTrackToDensity(
+// Keep per-candidate arithmetic visible to the compiler in the hot loop.
+inline void GaussianTrackDensity::GaussianTrackDensityStore::addContribution(
+    const TrackEntry& entry, double delta) {
+  double qPrime = entry.c1 + 2. * m_z * entry.c2;
+  double deltaPrime = delta * qPrime;
+  m_density += delta;
+  m_firstDerivative += deltaPrime;
+  m_secondDerivative += 2. * entry.c2 * delta + qPrime * deltaPrime;
+}
+
+inline void GaussianTrackDensity::GaussianTrackDensityStore::addTrackToDensity(
     const TrackEntry& entry) {
-  // Take track only if it's within bounds
   if (entry.lowerBound < m_z && m_z < entry.upperBound) {
     double delta = std::exp(entry.c0 + m_z * (entry.c1 + m_z * entry.c2));
-    double qPrime = entry.c1 + 2. * m_z * entry.c2;
-    double deltaPrime = delta * qPrime;
-    m_density += delta;
-    m_firstDerivative += deltaPrime;
-    m_secondDerivative += 2. * entry.c2 * delta + qPrime * deltaPrime;
+    addContribution(entry, delta);
+  }
+}
+
+inline double
+GaussianTrackDensity::GaussianTrackDensityStore::addTrackAndReturnDensity(
+    const TrackEntry& entry) {
+  if (entry.lowerBound < m_z && m_z < entry.upperBound) {
+    double delta = std::exp(entry.c0 + m_z * (entry.c1 + m_z * entry.c2));
+    addContribution(entry, delta);
+    return delta;
+  }
+  return 0.;
+}
+
+inline void
+GaussianTrackDensity::GaussianTrackDensityStore::addCachedTrackToDensity(
+    const TrackEntry& entry, double delta) {
+  if (entry.lowerBound < m_z && m_z < entry.upperBound) {
+    addContribution(entry, delta);
   }
 }
 
@@ -42,12 +65,18 @@ struct GaussianTrackDensity::EvaluationCache {
   std::vector<TrackEntry> previous;
   std::pmr::map<double, Value> values;
   std::size_t capacity = 0;
+  std::size_t originSize = 0;
+  std::vector<std::size_t> origins;
+  std::map<double, std::vector<double>> contributions;
 
   EvaluationCache() : values(&pool) {}
   EvaluationCache(const EvaluationCache& other)
       : previous(other.previous),
         values(other.values, &pool),
-        capacity(other.capacity) {}
+        capacity(other.capacity),
+        originSize(other.originSize),
+        origins(other.origins),
+        contributions(other.contributions) {}
 
   static bool same(const TrackEntry& a, const TrackEntry& b) {
     const auto bits = [](double x) { return std::bit_cast<std::uint64_t>(x); };
@@ -61,8 +90,12 @@ struct GaussianTrackDensity::EvaluationCache {
     // Only a subsequence preserves the accumulation order. Any addition,
     // coefficient change or reordering conservatively resets the cache.
     std::size_t next = 0;
-    for (const auto& old : previous) {
+    std::vector<std::size_t> nextOrigins;
+    nextOrigins.reserve(entries.size());
+    for (std::size_t oldIndex = 0; oldIndex < previous.size(); ++oldIndex) {
+      const auto& old = previous[oldIndex];
       if (next < entries.size() && same(old, entries[next])) {
+        nextOrigins.push_back(origins[oldIndex]);
         ++next;
       } else if (old.lowerBound < old.upperBound) {
         values.erase(values.upper_bound(old.lowerBound),
@@ -73,6 +106,25 @@ struct GaussianTrackDensity::EvaluationCache {
     if (next != entries.size() || values.size() > capacity) {
       values.clear();
     }
+    if (next != entries.size()) {
+      originSize = entries.size();
+      nextOrigins.resize(originSize);
+      std::iota(nextOrigins.begin(), nextOrigins.end(), 0);
+      contributions.clear();
+      // Bound retained scalar exponentials to 8 MiB, with at most 1024 rows.
+      const std::size_t maxRows =
+          originSize < 32
+              ? 0
+              : std::min<std::size_t>(1024, (1024 * 1024) / originSize);
+      for (const auto& entry : entries) {
+        if (contributions.size() >= maxRows)
+          break;
+        if (std::isfinite(entry.z) && entry.z != 0.) {
+          contributions.try_emplace(entry.z);
+        }
+      }
+    }
+    origins = std::move(nextOrigins);
     previous = entries;
   }
 };
@@ -267,17 +319,9 @@ Result<void> Acts::GaussianTrackDensity::addTracks(
 }
 
 std::tuple<double, double, double>
-Acts::GaussianTrackDensity::trackDensityAndDerivatives(const State& state,
-                                                       DensityIndex& index,
-                                                       double z) const {
-  auto* cache = state.evaluationCache.get();
-  // A map treats +0 and -0 as equal; keep their arithmetic independent.
-  const bool cacheable = cache != nullptr && std::isfinite(z) && z != 0.;
-  if (cacheable) {
-    if (auto it = cache->values.find(z); it != cache->values.end()) {
-      return it->second;
-    }
-  }
+Acts::GaussianTrackDensity::uncachedDensityAndDerivatives(const State& state,
+                                                          DensityIndex& index,
+                                                          double z) const {
   GaussianTrackDensityStore densityResult(z);
   if (const auto* candidates = index.query(z)) {
     for (const auto i : *candidates) {
@@ -287,6 +331,57 @@ Acts::GaussianTrackDensity::trackDensityAndDerivatives(const State& state,
     for (const auto& entry : state.trackEntries) {
       densityResult.addTrackToDensity(entry);
     }
+  }
+  return densityResult.densityAndDerivatives();
+}
+
+std::tuple<double, double, double>
+Acts::GaussianTrackDensity::trackDensityAndDerivatives(const State& state,
+                                                       DensityIndex& index,
+                                                       double z) const {
+  auto* cache = state.evaluationCache.get();
+  if (cache == nullptr) {
+    return uncachedDensityAndDerivatives(state, index, z);
+  }
+  // A map treats +0 and -0 as equal; keep their arithmetic independent.
+  const bool cacheable = cache != nullptr && std::isfinite(z) && z != 0.;
+  if (cacheable) {
+    if (auto it = cache->values.find(z); it != cache->values.end()) {
+      return it->second;
+    }
+  }
+  GaussianTrackDensityStore densityResult(z);
+  const auto* candidates = index.query(z);
+  const auto visit = [&](auto&& add) {
+    if (candidates) {
+      for (const auto i : *candidates)
+        add(i);
+    } else {
+      for (std::size_t i = 0; i < state.trackEntries.size(); ++i)
+        add(i);
+    }
+  };
+  std::vector<double>* row = nullptr;
+  if (cacheable) {
+    auto it = cache->contributions.find(z);
+    if (it != cache->contributions.end())
+      row = &it->second;
+  }
+  if (row && !row->empty()) {
+    visit([&](std::size_t i) {
+      densityResult.addCachedTrackToDensity(state.trackEntries[i],
+                                            (*row)[cache->origins[i]]);
+    });
+  } else if (row) {
+    row->resize(cache->originSize);
+    visit([&](std::size_t i) {
+      (*row)[cache->origins[i]] =
+          densityResult.addTrackAndReturnDensity(state.trackEntries[i]);
+    });
+  } else {
+    visit([&](std::size_t i) {
+      densityResult.addTrackToDensity(state.trackEntries[i]);
+    });
   }
   auto result = densityResult.densityAndDerivatives();
   if (cacheable && cache->values.size() < cache->capacity) {

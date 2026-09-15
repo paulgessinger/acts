@@ -1,0 +1,4686 @@
+{
+  "baseline_commit": "57fb2c72c2",
+  "timings": [
+    {
+      "event": 0,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1073,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 2.916568,
+      "mean_ms": 2.922818,
+      "min_ms": 2.904168,
+      "max_ms": 2.958669,
+      "samples_ms": [
+        2.904168,
+        2.909137,
+        2.916568,
+        2.925548,
+        2.958669
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        41.29301244033879,
+        0.08163963703133012
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1006,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 0,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1073,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 2.889757,
+      "mean_ms": 2.9152078,
+      "min_ms": 2.877587,
+      "max_ms": 3.030579,
+      "samples_ms": [
+        2.877587,
+        2.878508,
+        2.889757,
+        2.899608,
+        3.030579
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        41.29301244033879,
+        0.08163963703133012
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1006,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 0,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1073,
+      "reconstructed_vertices": 86,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 88.705814,
+      "mean_ms": 88.7528804,
+      "min_ms": 88.44954,
+      "max_ms": 89.290302,
+      "samples_ms": [
+        88.44954,
+        88.512081,
+        88.705814,
+        88.806665,
+        89.290302
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 0,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1073,
+      "reconstructed_vertices": 86,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 83.248033,
+      "mean_ms": 83.2856316,
+      "min_ms": 82.920879,
+      "max_ms": 83.897361,
+      "samples_ms": [
+        82.920879,
+        83.01399,
+        83.248033,
+        83.347895,
+        83.897361
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 1,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 907,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 2.442672,
+      "mean_ms": 2.453624,
+      "min_ms": 2.438602,
+      "max_ms": 2.493082,
+      "samples_ms": [
+        2.438602,
+        2.442632,
+        2.442672,
+        2.451132,
+        2.493082
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        9.018999231589234,
+        0.04861947825662083
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 863,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 1,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 907,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 2.495623,
+      "mean_ms": 2.5233968,
+      "min_ms": 2.489082,
+      "max_ms": 2.636855,
+      "samples_ms": [
+        2.489082,
+        2.494152,
+        2.495623,
+        2.501272,
+        2.636855
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        9.018999231589234,
+        0.04861947825662083
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 863,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 1,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 907,
+      "reconstructed_vertices": 82,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 65.530073,
+      "mean_ms": 65.5341466,
+      "min_ms": 65.226028,
+      "max_ms": 65.857197,
+      "samples_ms": [
+        65.226028,
+        65.244499,
+        65.530073,
+        65.812936,
+        65.857197
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 1,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 907,
+      "reconstructed_vertices": 82,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 70.71002,
+      "mean_ms": 70.5022412,
+      "min_ms": 69.642206,
+      "max_ms": 71.003194,
+      "samples_ms": [
+        69.642206,
+        70.256594,
+        70.71002,
+        70.899192,
+        71.003194
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 2,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1447,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.769495,
+      "mean_ms": 5.765039,
+      "min_ms": 5.753045,
+      "max_ms": 5.774845,
+      "samples_ms": [
+        5.753045,
+        5.757615,
+        5.769495,
+        5.770195,
+        5.774845
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        0.5273866106500205,
+        0.03214732026822787
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1366,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 2,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1447,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.722404,
+      "mean_ms": 5.7946714,
+      "min_ms": 5.676614,
+      "max_ms": 6.13821,
+      "samples_ms": [
+        5.676614,
+        5.695194,
+        5.722404,
+        5.740935,
+        6.13821
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        0.5273866106500205,
+        0.03214732026822787
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1366,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 2,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1447,
+      "reconstructed_vertices": 117,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 173.241864,
+      "mean_ms": 173.804553,
+      "min_ms": 172.485164,
+      "max_ms": 176.543877,
+      "samples_ms": [
+        172.485164,
+        172.607955,
+        173.241864,
+        174.143906,
+        176.543877
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 2,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1447,
+      "reconstructed_vertices": 117,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 162.92123,
+      "mean_ms": 163.408676,
+      "min_ms": 162.650056,
+      "max_ms": 164.918296,
+      "samples_ms": [
+        162.650056,
+        162.708686,
+        162.92123,
+        163.845112,
+        164.918296
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 3,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1431,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.480392,
+      "mean_ms": 5.4766012,
+      "min_ms": 5.460331,
+      "max_ms": 5.490081,
+      "samples_ms": [
+        5.460331,
+        5.470531,
+        5.480392,
+        5.481671,
+        5.490081
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -15.644104340658076,
+        0.03979574974930867
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1364,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 3,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1431,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.531711,
+      "mean_ms": 5.535638,
+      "min_ms": 5.515481,
+      "max_ms": 5.554503,
+      "samples_ms": [
+        5.515481,
+        5.524522,
+        5.531711,
+        5.551973,
+        5.554503
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -15.644104340658076,
+        0.03979574974930867
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1364,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 3,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1431,
+      "reconstructed_vertices": 116,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 162.843988,
+      "mean_ms": 162.863625,
+      "min_ms": 162.671996,
+      "max_ms": 163.052341,
+      "samples_ms": [
+        162.671996,
+        162.746617,
+        162.843988,
+        163.003181,
+        163.052341
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 3,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1431,
+      "reconstructed_vertices": 116,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 170.159383,
+      "mean_ms": 170.208518,
+      "min_ms": 169.972802,
+      "max_ms": 170.59917,
+      "samples_ms": [
+        169.972802,
+        170.011802,
+        170.159383,
+        170.299435,
+        170.59917
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 4,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1118,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.123571,
+      "mean_ms": 3.1277268,
+      "min_ms": 3.121871,
+      "max_ms": 3.14656,
+      "samples_ms": [
+        3.121871,
+        3.122351,
+        3.123571,
+        3.124281,
+        3.14656
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -32.83225914900333,
+        0.05777602042830077
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1062,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 4,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1118,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.09724,
+      "mean_ms": 3.0998422,
+      "min_ms": 3.08365,
+      "max_ms": 3.11277,
+      "samples_ms": [
+        3.08365,
+        3.09542,
+        3.09724,
+        3.110131,
+        3.11277
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -32.83225914900333,
+        0.05777602042830077
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1062,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 4,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1118,
+      "reconstructed_vertices": 80,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 102.459603,
+      "mean_ms": 102.581043,
+      "min_ms": 102.23123,
+      "max_ms": 103.124762,
+      "samples_ms": [
+        102.23123,
+        102.251121,
+        102.459603,
+        102.838498,
+        103.124762
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 4,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1118,
+      "reconstructed_vertices": 80,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 98.38766,
+      "mean_ms": 98.7206302,
+      "min_ms": 98.247758,
+      "max_ms": 99.475934,
+      "samples_ms": [
+        98.247758,
+        98.292219,
+        98.38766,
+        99.19958,
+        99.475934
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 5,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1177,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 4.102884,
+      "mean_ms": 4.1044374,
+      "min_ms": 4.089883,
+      "max_ms": 4.122083,
+      "samples_ms": [
+        4.089883,
+        4.097693,
+        4.102884,
+        4.109644,
+        4.122083
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        23.18610062894114,
+        0.03406406478243198
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1124,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 5,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1177,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 4.116954,
+      "mean_ms": 4.1184336,
+      "min_ms": 4.113923,
+      "max_ms": 4.125013,
+      "samples_ms": [
+        4.113923,
+        4.116674,
+        4.116954,
+        4.119604,
+        4.125013
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        23.18610062894114,
+        0.03406406478243198
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1124,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 5,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1177,
+      "reconstructed_vertices": 91,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 104.077474,
+      "mean_ms": 104.108606,
+      "min_ms": 103.665689,
+      "max_ms": 104.596801,
+      "samples_ms": [
+        103.665689,
+        103.864971,
+        104.077474,
+        104.338097,
+        104.596801
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 5,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1177,
+      "reconstructed_vertices": 91,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 110.922083,
+      "mean_ms": 110.885925,
+      "min_ms": 110.265724,
+      "max_ms": 111.312879,
+      "samples_ms": [
+        110.265724,
+        110.774281,
+        110.922083,
+        111.154656,
+        111.312879
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 6,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1331,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.172907,
+      "mean_ms": 5.1709132,
+      "min_ms": 5.164057,
+      "max_ms": 5.180277,
+      "samples_ms": [
+        5.164057,
+        5.164247,
+        5.172907,
+        5.173078,
+        5.180277
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        1.3690265020179253,
+        0.04897713218157023
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1271,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 6,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1331,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.093426,
+      "mean_ms": 5.0984602,
+      "min_ms": 5.091286,
+      "max_ms": 5.109677,
+      "samples_ms": [
+        5.091286,
+        5.092856,
+        5.093426,
+        5.105056,
+        5.109677
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        1.3690265020179253,
+        0.04897713218157023
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1271,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 6,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1331,
+      "reconstructed_vertices": 98,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 152.804048,
+      "mean_ms": 152.6239,
+      "min_ms": 151.954247,
+      "max_ms": 153.188963,
+      "samples_ms": [
+        151.954247,
+        152.364322,
+        152.804048,
+        152.807918,
+        153.188963
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 6,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1331,
+      "reconstructed_vertices": 98,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 143.03078,
+      "mean_ms": 143.115268,
+      "min_ms": 142.865349,
+      "max_ms": 143.700569,
+      "samples_ms": [
+        142.865349,
+        142.887799,
+        143.03078,
+        143.091842,
+        143.700569
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 7,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1471,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 6.723828,
+      "mean_ms": 6.7242316,
+      "min_ms": 6.705748,
+      "max_ms": 6.743748,
+      "samples_ms": [
+        6.705748,
+        6.709957,
+        6.723828,
+        6.737877,
+        6.743748
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -41.287896689835726,
+        0.051535440311728346
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1382,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 7,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1471,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 6.799148,
+      "mean_ms": 6.8031924,
+      "min_ms": 6.796938,
+      "max_ms": 6.819068,
+      "samples_ms": [
+        6.796938,
+        6.798599,
+        6.799148,
+        6.802209,
+        6.819068
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -41.287896689835726,
+        0.051535440311728346
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1382,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 7,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1471,
+      "reconstructed_vertices": 105,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 181.867926,
+      "mean_ms": 182.049595,
+      "min_ms": 181.755615,
+      "max_ms": 182.617386,
+      "samples_ms": [
+        181.755615,
+        181.838526,
+        181.867926,
+        182.16852,
+        182.617386
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 7,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1471,
+      "reconstructed_vertices": 105,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 195.4006,
+      "mean_ms": 195.434917,
+      "min_ms": 195.131767,
+      "max_ms": 195.717155,
+      "samples_ms": [
+        195.131767,
+        195.37613,
+        195.4006,
+        195.548932,
+        195.717155
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 8,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1044,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.09058,
+      "mean_ms": 3.1002684,
+      "min_ms": 3.08689,
+      "max_ms": 3.142921,
+      "samples_ms": [
+        3.08689,
+        3.08913,
+        3.09058,
+        3.091821,
+        3.142921
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        41.84601229930504,
+        0.05481124008848047
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 987,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 8,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1044,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.046819,
+      "mean_ms": 3.0641158,
+      "min_ms": 3.03732,
+      "max_ms": 3.116721,
+      "samples_ms": [
+        3.03732,
+        3.04207,
+        3.046819,
+        3.077649,
+        3.116721
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        41.84601229930504,
+        0.05481124008848047
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 987,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 8,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1044,
+      "reconstructed_vertices": 86,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 89.163809,
+      "mean_ms": 89.161137,
+      "min_ms": 88.930876,
+      "max_ms": 89.378312,
+      "samples_ms": [
+        88.930876,
+        89.142349,
+        89.163809,
+        89.190339,
+        89.378312
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 8,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1044,
+      "reconstructed_vertices": 86,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 83.424655,
+      "mean_ms": 83.5210018,
+      "min_ms": 83.328414,
+      "max_ms": 83.89372,
+      "samples_ms": [
+        83.328414,
+        83.339923,
+        83.424655,
+        83.618297,
+        83.89372
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 9,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1333,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 4.712751,
+      "mean_ms": 4.7177932,
+      "min_ms": 4.704181,
+      "max_ms": 4.748221,
+      "samples_ms": [
+        4.704181,
+        4.708902,
+        4.712751,
+        4.714911,
+        4.748221
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        10.094817892400194,
+        0.05494010708914066
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1265,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 9,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1333,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 4.776372,
+      "mean_ms": 4.7801382,
+      "min_ms": 4.759452,
+      "max_ms": 4.799313,
+      "samples_ms": [
+        4.759452,
+        4.769602,
+        4.776372,
+        4.795952,
+        4.799313
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        10.094817892400194,
+        0.05494010708914066
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1265,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 9,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1333,
+      "reconstructed_vertices": 109,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 133.454445,
+      "mean_ms": 133.304805,
+      "min_ms": 132.761486,
+      "max_ms": 133.8025,
+      "samples_ms": [
+        132.761486,
+        132.882478,
+        133.454445,
+        133.623118,
+        133.8025
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 9,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1333,
+      "reconstructed_vertices": 109,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 138.40155,
+      "mean_ms": 138.431894,
+      "min_ms": 138.291438,
+      "max_ms": 138.732474,
+      "samples_ms": [
+        138.291438,
+        138.319069,
+        138.40155,
+        138.41494,
+        138.732474
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    }
+  ],
+  "prototype_timings": [
+    {
+      "event": 0,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1073,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 2.913337,
+      "mean_ms": 2.9151218,
+      "min_ms": 2.900748,
+      "max_ms": 2.937638,
+      "samples_ms": [
+        2.900748,
+        2.909238,
+        2.913337,
+        2.914648,
+        2.937638
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        41.29301244033879,
+        0.08163963703133012
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1006,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 0,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1073,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.10327,
+      "mean_ms": 3.1114524,
+      "min_ms": 3.09212,
+      "max_ms": 3.156991,
+      "samples_ms": [
+        3.09212,
+        3.10048,
+        3.10327,
+        3.104401,
+        3.156991
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        41.29301244033879,
+        0.08163963703133012
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1006,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 0,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1073,
+      "reconstructed_vertices": 86,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 88.389691,
+      "mean_ms": 88.5760146,
+      "min_ms": 88.345269,
+      "max_ms": 88.951017,
+      "samples_ms": [
+        88.345269,
+        88.38097,
+        88.389691,
+        88.813126,
+        88.951017
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 0,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1073,
+      "reconstructed_vertices": 86,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 83.167832,
+      "mean_ms": 83.1578138,
+      "min_ms": 82.872568,
+      "max_ms": 83.399605,
+      "samples_ms": [
+        82.872568,
+        83.087091,
+        83.167832,
+        83.261973,
+        83.399605
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000000-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 1,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 907,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 2.658015,
+      "mean_ms": 2.6554726,
+      "min_ms": 2.634124,
+      "max_ms": 2.686505,
+      "samples_ms": [
+        2.634124,
+        2.639234,
+        2.658015,
+        2.659485,
+        2.686505
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        9.018999231589234,
+        0.04861947825662083
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 863,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 1,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 907,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 2.503083,
+      "mean_ms": 2.5043706,
+      "min_ms": 2.494523,
+      "max_ms": 2.518472,
+      "samples_ms": [
+        2.494523,
+        2.500732,
+        2.503083,
+        2.505043,
+        2.518472
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        9.018999231589234,
+        0.04861947825662083
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 863,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 1,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 907,
+      "reconstructed_vertices": 82,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 65.693355,
+      "mean_ms": 65.7765278,
+      "min_ms": 65.451252,
+      "max_ms": 66.14967,
+      "samples_ms": [
+        65.451252,
+        65.653544,
+        65.693355,
+        65.934818,
+        66.14967
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 1,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 907,
+      "reconstructed_vertices": 82,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 69.362343,
+      "mean_ms": 69.4535722,
+      "min_ms": 69.214891,
+      "max_ms": 69.738258,
+      "samples_ms": [
+        69.214891,
+        69.320143,
+        69.362343,
+        69.632226,
+        69.738258
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000001-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 2,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1447,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.760495,
+      "mean_ms": 5.7986074,
+      "min_ms": 5.743334,
+      "max_ms": 5.976968,
+      "samples_ms": [
+        5.743334,
+        5.745255,
+        5.760495,
+        5.766985,
+        5.976968
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        0.5273866106500205,
+        0.03214732026822787
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1366,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 2,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1447,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 6.15905,
+      "mean_ms": 6.155042,
+      "min_ms": 6.12335,
+      "max_ms": 6.16845,
+      "samples_ms": [
+        6.12335,
+        6.15827,
+        6.15905,
+        6.16609,
+        6.16845
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        0.5273866106500205,
+        0.03214732026822787
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1366,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 2,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1447,
+      "reconstructed_vertices": 117,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 173.266955,
+      "mean_ms": 173.34603,
+      "min_ms": 172.373383,
+      "max_ms": 174.872195,
+      "samples_ms": [
+        172.373383,
+        172.678947,
+        173.266955,
+        173.538668,
+        174.872195
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 2,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1447,
+      "reconstructed_vertices": 117,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 165.947339,
+      "mean_ms": 166.212115,
+      "min_ms": 165.652146,
+      "max_ms": 166.995693,
+      "samples_ms": [
+        165.652146,
+        165.822178,
+        165.947339,
+        166.643219,
+        166.995693
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000002-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 3,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1431,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 6.20225,
+      "mean_ms": 6.227553,
+      "min_ms": 6.09906,
+      "max_ms": 6.429773,
+      "samples_ms": [
+        6.09906,
+        6.12962,
+        6.20225,
+        6.277062,
+        6.429773
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -15.644104340658076,
+        0.03979574974930867
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1364,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 3,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1431,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.551662,
+      "mean_ms": 5.6281714,
+      "min_ms": 5.531333,
+      "max_ms": 5.765665,
+      "samples_ms": [
+        5.531333,
+        5.538252,
+        5.551662,
+        5.753945,
+        5.765665
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -15.644104340658076,
+        0.03979574974930867
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1364,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 3,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1431,
+      "reconstructed_vertices": 116,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 165.178579,
+      "mean_ms": 165.655559,
+      "min_ms": 164.740413,
+      "max_ms": 166.637328,
+      "samples_ms": [
+        164.740413,
+        165.118618,
+        165.178579,
+        166.602858,
+        166.637328
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 3,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1431,
+      "reconstructed_vertices": 116,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 172.762988,
+      "mean_ms": 172.695719,
+      "min_ms": 171.887316,
+      "max_ms": 173.541748,
+      "samples_ms": [
+        171.887316,
+        172.514885,
+        172.762988,
+        172.771658,
+        173.541748
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000003-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 4,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1118,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.158292,
+      "mean_ms": 3.2072056,
+      "min_ms": 3.120351,
+      "max_ms": 3.442154,
+      "samples_ms": [
+        3.120351,
+        3.12724,
+        3.158292,
+        3.187991,
+        3.442154
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -32.83225914900333,
+        0.05777602042830077
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1062,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 4,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1118,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.320813,
+      "mean_ms": 3.3348194,
+      "min_ms": 3.317193,
+      "max_ms": 3.382233,
+      "samples_ms": [
+        3.317193,
+        3.317834,
+        3.320813,
+        3.336024,
+        3.382233
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -32.83225914900333,
+        0.05777602042830077
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1062,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 4,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1118,
+      "reconstructed_vertices": 80,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 103.049561,
+      "mean_ms": 102.893957,
+      "min_ms": 101.795154,
+      "max_ms": 103.649029,
+      "samples_ms": [
+        101.795154,
+        102.496883,
+        103.049561,
+        103.479157,
+        103.649029
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 4,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1118,
+      "reconstructed_vertices": 80,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 97.682181,
+      "mean_ms": 97.4728224,
+      "min_ms": 96.909621,
+      "max_ms": 98.089346,
+      "samples_ms": [
+        96.909621,
+        96.953962,
+        97.682181,
+        97.729002,
+        98.089346
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000004-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 5,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1177,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 4.339417,
+      "mean_ms": 4.3418706,
+      "min_ms": 4.334456,
+      "max_ms": 4.353387,
+      "samples_ms": [
+        4.334456,
+        4.338316,
+        4.339417,
+        4.343777,
+        4.353387
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        23.18610062894114,
+        0.03406406478243198
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1124,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 5,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1177,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 4.101273,
+      "mean_ms": 4.1675564,
+      "min_ms": 4.084784,
+      "max_ms": 4.390787,
+      "samples_ms": [
+        4.084784,
+        4.088244,
+        4.101273,
+        4.172694,
+        4.390787
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        23.18610062894114,
+        0.03406406478243198
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1124,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 5,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1177,
+      "reconstructed_vertices": 91,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 103.062451,
+      "mean_ms": 103.271978,
+      "min_ms": 102.482264,
+      "max_ms": 104.136025,
+      "samples_ms": [
+        102.482264,
+        103.010471,
+        103.062451,
+        103.668679,
+        104.136025
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 5,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1177,
+      "reconstructed_vertices": 91,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 111.40301,
+      "mean_ms": 111.388255,
+      "min_ms": 110.899313,
+      "max_ms": 111.656113,
+      "samples_ms": [
+        110.899313,
+        111.383599,
+        111.40301,
+        111.599242,
+        111.656113
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000005-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 6,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1331,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.200107,
+      "mean_ms": 5.2317982,
+      "min_ms": 5.192138,
+      "max_ms": 5.36329,
+      "samples_ms": [
+        5.192138,
+        5.193038,
+        5.200107,
+        5.210418,
+        5.36329
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        1.3690265020179253,
+        0.04897713218157023
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1271,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 6,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1331,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.500042,
+      "mean_ms": 5.5488042,
+      "min_ms": 5.490831,
+      "max_ms": 5.754025,
+      "samples_ms": [
+        5.490831,
+        5.491671,
+        5.500042,
+        5.507452,
+        5.754025
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        1.3690265020179253,
+        0.04897713218157023
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1271,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 6,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1331,
+      "reconstructed_vertices": 98,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 153.405716,
+      "mean_ms": 153.400544,
+      "min_ms": 152.993921,
+      "max_ms": 153.926303,
+      "samples_ms": [
+        152.993921,
+        153.266674,
+        153.405716,
+        153.410107,
+        153.926303
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 6,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1331,
+      "reconstructed_vertices": 98,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 142.594655,
+      "mean_ms": 142.819532,
+      "min_ms": 142.13606,
+      "max_ms": 143.506357,
+      "samples_ms": [
+        142.13606,
+        142.442243,
+        142.594655,
+        143.418346,
+        143.506357
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000006-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 7,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1471,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 7.225904,
+      "mean_ms": 7.22926,
+      "min_ms": 7.221704,
+      "max_ms": 7.247864,
+      "samples_ms": [
+        7.221704,
+        7.223074,
+        7.225904,
+        7.227754,
+        7.247864
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -41.287896689835726,
+        0.051535440311728346
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1382,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 7,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1471,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 6.793068,
+      "mean_ms": 6.8005444,
+      "min_ms": 6.782069,
+      "max_ms": 6.838629,
+      "samples_ms": [
+        6.782069,
+        6.784178,
+        6.793068,
+        6.804778,
+        6.838629
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        -41.287896689835726,
+        0.051535440311728346
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1382,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 7,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1471,
+      "reconstructed_vertices": 105,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 185.26555,
+      "mean_ms": 184.189651,
+      "min_ms": 180.632191,
+      "max_ms": 188.26475,
+      "samples_ms": [
+        180.632191,
+        181.39523,
+        185.26555,
+        185.390532,
+        188.26475
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 7,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1471,
+      "reconstructed_vertices": 105,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 191.821946,
+      "mean_ms": 191.916867,
+      "min_ms": 191.765465,
+      "max_ms": 192.298262,
+      "samples_ms": [
+        191.765465,
+        191.804155,
+        191.821946,
+        191.894507,
+        192.298262
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000007-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 8,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1044,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.08413,
+      "mean_ms": 3.0948782,
+      "min_ms": 3.0759,
+      "max_ms": 3.13853,
+      "samples_ms": [
+        3.0759,
+        3.08226,
+        3.08413,
+        3.093571,
+        3.13853
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        41.84601229930504,
+        0.05481124008848047
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 987,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 8,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1044,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 3.354734,
+      "mean_ms": 3.3637018,
+      "min_ms": 3.347823,
+      "max_ms": 3.401214,
+      "samples_ms": [
+        3.347823,
+        3.351754,
+        3.354734,
+        3.362984,
+        3.401214
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        41.84601229930504,
+        0.05481124008848047
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 987,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 8,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1044,
+      "reconstructed_vertices": 86,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 89.288632,
+      "mean_ms": 89.3453484,
+      "min_ms": 89.225021,
+      "max_ms": 89.503054,
+      "samples_ms": [
+        89.225021,
+        89.229341,
+        89.288632,
+        89.480694,
+        89.503054
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 8,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1044,
+      "reconstructed_vertices": 86,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 82.697776,
+      "mean_ms": 82.8475262,
+      "min_ms": 82.259591,
+      "max_ms": 83.706409,
+      "samples_ms": [
+        82.259591,
+        82.364402,
+        82.697776,
+        83.209453,
+        83.706409
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000008-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 9,
+      "mode": "seeder",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1333,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 5.081977,
+      "mean_ms": 5.0803542,
+      "min_ms": 5.072356,
+      "max_ms": 5.089896,
+      "samples_ms": [
+        5.072356,
+        5.073866,
+        5.081977,
+        5.083676,
+        5.089896
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        10.094817892400194,
+        0.05494010708914066
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1265,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 9,
+      "mode": "seeder",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1333,
+      "reconstructed_vertices": 0,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 4.775662,
+      "mean_ms": 4.7849664,
+      "min_ms": 4.767081,
+      "max_ms": 4.818453,
+      "samples_ms": [
+        4.767081,
+        4.773973,
+        4.775662,
+        4.789663,
+        4.818453
+      ],
+      "seeder_only": true,
+      "seed_z_width": [
+        10.094817892400194,
+        0.05494010708914066
+      ],
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 1265,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        0.00014400000509340316,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 9,
+      "mode": "amvf",
+      "variant": "optimized",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1333,
+      "reconstructed_vertices": 109,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 132.559665,
+      "mean_ms": 133.090864,
+      "min_ms": 131.853666,
+      "max_ms": 134.531451,
+      "samples_ms": [
+        131.853666,
+        132.20117,
+        132.559665,
+        134.308368,
+        134.531451
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    },
+    {
+      "event": 9,
+      "mode": "amvf",
+      "variant": "baseline",
+      "input": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.0120000002,
+        0.0120000002,
+        50
+      ],
+      "tracks": 1333,
+      "reconstructed_vertices": 109,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "median_ms": 139.649557,
+      "mean_ms": 139.595334,
+      "min_ms": 139.0699,
+      "max_ms": 140.148063,
+      "samples_ms": [
+        139.0699,
+        139.389994,
+        139.649557,
+        139.719158,
+        140.148063
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-10/tracks/event000000009-metadata.txt",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.000144000005,
+        0,
+        0,
+        0,
+        0.000144000005,
+        0,
+        0,
+        0,
+        2500
+      ]
+    }
+  ],
+  "validation": [
+    {
+      "fixture": "odd",
+      "variant": "baseline",
+      "input": "/tmp/odd-mu200-tracks.csv",
+      "athena_era": "run3",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 3,
+      "finder_min_weight": 0.0001,
+      "finder_max_iterations": 100,
+      "beamspot_sigma_mm": [
+        0.15,
+        0.15,
+        53
+      ],
+      "tracks": 1258,
+      "reconstructed_vertices": 74,
+      "warmup_runs": 0,
+      "measured_runs": 3,
+      "median_ms": 56.585256,
+      "mean_ms": 56.1375907,
+      "min_ms": 54.973966,
+      "max_ms": 56.85355,
+      "samples_ms": [
+        54.973966,
+        56.585256,
+        56.85355
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.0225,
+        0,
+        0,
+        0,
+        0.0225,
+        0,
+        0,
+        0,
+        2809
+      ]
+    },
+    {
+      "fixture": "odd",
+      "variant": "optimized",
+      "input": "/tmp/odd-mu200-tracks.csv",
+      "athena_era": "run3",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 3,
+      "finder_min_weight": 0.0001,
+      "finder_max_iterations": 100,
+      "beamspot_sigma_mm": [
+        0.15,
+        0.15,
+        53
+      ],
+      "tracks": 1258,
+      "reconstructed_vertices": 74,
+      "warmup_runs": 0,
+      "measured_runs": 3,
+      "median_ms": 58.735794,
+      "mean_ms": 57.706531,
+      "min_ms": 55.563334,
+      "max_ms": 58.820465,
+      "samples_ms": [
+        55.563334,
+        58.735794,
+        58.820465
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.0225,
+        0,
+        0,
+        0,
+        0.0225,
+        0,
+        0,
+        0,
+        2809
+      ]
+    },
+    {
+      "fixture": "odd",
+      "variant": "baseline",
+      "input": "/tmp/odd-mu200-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.15,
+        0.15,
+        53
+      ],
+      "tracks": 1258,
+      "reconstructed_vertices": 108,
+      "warmup_runs": 0,
+      "measured_runs": 3,
+      "median_ms": 54.411509,
+      "mean_ms": 55.456069,
+      "min_ms": 54.108065,
+      "max_ms": 57.848633,
+      "samples_ms": [
+        54.108065,
+        54.411509,
+        57.848633
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.0225,
+        0,
+        0,
+        0,
+        0.0225,
+        0,
+        0,
+        0,
+        2809
+      ]
+    },
+    {
+      "fixture": "odd",
+      "variant": "optimized",
+      "input": "/tmp/odd-mu200-tracks.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.15,
+        0.15,
+        53
+      ],
+      "tracks": 1258,
+      "reconstructed_vertices": 108,
+      "warmup_runs": 0,
+      "measured_runs": 3,
+      "median_ms": 54.373918,
+      "mean_ms": 55.0543237,
+      "min_ms": 54.197026,
+      "max_ms": 56.592027,
+      "samples_ms": [
+        54.197026,
+        54.373918,
+        56.592027
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.0225,
+        0,
+        0,
+        0,
+        0.0225,
+        0,
+        0,
+        0,
+        2809
+      ]
+    },
+    {
+      "fixture": "dense",
+      "variant": "baseline",
+      "input": "/tmp/amvf-optimization-results/dense.csv",
+      "athena_era": "run3",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 3,
+      "finder_min_weight": 0.0001,
+      "finder_max_iterations": 100,
+      "beamspot_sigma_mm": [
+        0.15,
+        0.15,
+        53
+      ],
+      "tracks": 1258,
+      "reconstructed_vertices": 4,
+      "warmup_runs": 0,
+      "measured_runs": 3,
+      "median_ms": 1714.56074,
+      "mean_ms": 1716.21266,
+      "min_ms": 1712.99921,
+      "max_ms": 1721.07803,
+      "samples_ms": [
+        1712.99921,
+        1714.56074,
+        1721.07803
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.0225,
+        0,
+        0,
+        0,
+        0.0225,
+        0,
+        0,
+        0,
+        2809
+      ]
+    },
+    {
+      "fixture": "dense",
+      "variant": "optimized",
+      "input": "/tmp/amvf-optimization-results/dense.csv",
+      "athena_era": "run3",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 3,
+      "finder_min_weight": 0.0001,
+      "finder_max_iterations": 100,
+      "beamspot_sigma_mm": [
+        0.15,
+        0.15,
+        53
+      ],
+      "tracks": 1258,
+      "reconstructed_vertices": 4,
+      "warmup_runs": 0,
+      "measured_runs": 3,
+      "median_ms": 1719.05119,
+      "mean_ms": 1723.05575,
+      "min_ms": 1717.61221,
+      "max_ms": 1732.50384,
+      "samples_ms": [
+        1717.61221,
+        1719.05119,
+        1732.50384
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.0225,
+        0,
+        0,
+        0,
+        0.0225,
+        0,
+        0,
+        0,
+        2809
+      ]
+    },
+    {
+      "fixture": "dense",
+      "variant": "baseline",
+      "input": "/tmp/amvf-optimization-results/dense.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.15,
+        0.15,
+        53
+      ],
+      "tracks": 1258,
+      "reconstructed_vertices": 8,
+      "warmup_runs": 0,
+      "measured_runs": 3,
+      "median_ms": 2554.91843,
+      "mean_ms": 2552.75096,
+      "min_ms": 2539.04729,
+      "max_ms": 2564.28716,
+      "samples_ms": [
+        2539.04729,
+        2554.91843,
+        2564.28716
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.0225,
+        0,
+        0,
+        0,
+        0.0225,
+        0,
+        0,
+        0,
+        2809
+      ]
+    },
+    {
+      "fixture": "dense",
+      "variant": "optimized",
+      "input": "/tmp/amvf-optimization-results/dense.csv",
+      "athena_era": "run4",
+      "use_beam_constraint": true,
+      "tracks_max_z_interval_mm": 0.5,
+      "finder_min_weight": 0.02,
+      "finder_max_iterations": 200,
+      "beamspot_sigma_mm": [
+        0.15,
+        0.15,
+        53
+      ],
+      "tracks": 1258,
+      "reconstructed_vertices": 8,
+      "warmup_runs": 0,
+      "measured_runs": 3,
+      "median_ms": 2565.62017,
+      "mean_ms": 2566.34218,
+      "min_ms": 2557.85046,
+      "max_ms": 2575.55593,
+      "samples_ms": [
+        2557.85046,
+        2565.62017,
+        2575.55593
+      ],
+      "seeder_only": false,
+      "seed_z_width": null,
+      "metadata": "",
+      "field_tesla": 2,
+      "seeding_tracks": 0,
+      "beamspot_position_mm": [
+        0,
+        0,
+        0
+      ],
+      "beamspot_covariance_mm2": [
+        0.0225,
+        0,
+        0,
+        0,
+        0.0225,
+        0,
+        0,
+        0,
+        2809
+      ]
+    }
+  ],
+  "peak_rss_kib": {
+    "baseline": 23040,
+    "optimized": 31928
+  },
+  "exact_output_parity": true
+}

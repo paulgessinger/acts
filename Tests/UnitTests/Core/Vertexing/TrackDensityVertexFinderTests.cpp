@@ -417,90 +417,92 @@ std::optional<std::pair<double, double>> exhaustiveMaximum(
 }
 
 BOOST_AUTO_TEST_CASE(track_density_interval_lookup_test) {
-  std::mt19937 generator(981);
-  std::uniform_real_distribution<double> position(-100., 100.);
-  std::uniform_real_distribution<double> logWidth(-4., 4.);
-  for (bool gaussian : {false, true}) {
-    GaussianTrackDensity::Config config;
-    config.isGaussianShaped = gaussian;
-    config.extractParameters.connect<&InputTrack::extractParameters>();
-    GaussianTrackDensity density(config);
-    for (unsigned int size : {0u, 1u, 2u, 31u, 32u, 200u, 1258u}) {
-      GaussianTrackDensity::State state(size);
-      for (unsigned int i = 0; i < size; ++i) {
-        const double z = position(generator);
-        const double sigma = std::exp(logWidth(generator));
-        const double c2 = -0.5 / (sigma * sigma);
-        state.trackEntries.emplace_back(z, c2 * z * z, -2. * c2 * z, c2,
-                                        z - 12. * sigma, z + 12. * sigma);
-      }
-      for (int repeat = 0; repeat < 3; ++repeat) {
-        std::shuffle(state.trackEntries.begin(), state.trackEntries.end(),
-                     generator);
-        auto expected = exhaustiveMaximum(state, gaussian);
-        auto actual = density.globalMaximumWithWidth(state, {});
-        BOOST_REQUIRE(actual.ok());
-        BOOST_REQUIRE_EQUAL(actual->has_value(), expected.has_value());
-        if (expected) {
-          BOOST_CHECK_EQUAL(actual->value().first, expected->first);
-          BOOST_CHECK_EQUAL(actual->value().second, expected->second);
+  for (bool cacheQueries : {false, true}) {
+    std::mt19937 generator(981);
+    std::uniform_real_distribution<double> position(-100., 100.);
+    std::uniform_real_distribution<double> logWidth(-4., 4.);
+    for (bool gaussian : {false, true}) {
+      GaussianTrackDensity::Config config;
+      config.isGaussianShaped = gaussian;
+      config.extractParameters.connect<&InputTrack::extractParameters>();
+      GaussianTrackDensity density(config);
+      for (unsigned int size : {0u, 1u, 2u, 31u, 32u, 200u, 1258u}) {
+        GaussianTrackDensity::State state(size, cacheQueries);
+        for (unsigned int i = 0; i < size; ++i) {
+          const double z = position(generator);
+          const double sigma = std::exp(logWidth(generator));
+          const double c2 = -0.5 / (sigma * sigma);
+          state.trackEntries.emplace_back(z, c2 * z * z, -2. * c2 * z, c2,
+                                          z - 12. * sigma, z + 12. * sigma);
+        }
+        for (int repeat = 0; repeat < 3; ++repeat) {
+          std::shuffle(state.trackEntries.begin(), state.trackEntries.end(),
+                       generator);
+          auto expected = exhaustiveMaximum(state, gaussian);
+          auto actual = density.globalMaximumWithWidth(state, {});
+          BOOST_REQUIRE(actual.ok());
+          BOOST_REQUIRE_EQUAL(actual->has_value(), expected.has_value());
+          if (expected) {
+            BOOST_CHECK_EQUAL(actual->value().first, expected->first);
+            BOOST_CHECK_EQUAL(actual->value().second, expected->second);
+          }
         }
       }
-    }
-    // Strict endpoints, equal lower bounds, nested and empty intervals, and
-    // non-finite trials/bounds. NaN intervals must not enter a sorted lookup.
-    GaussianTrackDensity::State state(80);
-    const double infinity = std::numeric_limits<double>::infinity();
-    const double nan = std::numeric_limits<double>::quiet_NaN();
-    state.trackEntries = {{-1., 0., 0., -0.5, -1., 1.},
-                          {1., 0., 0., -0.5, -1., 1.},
-                          {0., 0., 0., -1., -0.1, 0.1},
-                          {2., -2., 2., -0.5, -infinity, infinity},
-                          {0., 0., 0., -1., 0., 0.},
-                          {nan, 0., 0., -1., nan, 1.},
-                          {infinity, 0., 0., -1., -1., nan}};
-    // Force the indexed path, with support endpoints on either side of bin
-    // boundaries and trial positions exactly on the boundaries.
-    for (int i = -32; i <= 32; ++i) {
-      const double z = i;
-      state.trackEntries.emplace_back(z, -0.5 * z * z, z, -0.5,
-                                      std::nextafter(z - 1., -infinity),
-                                      std::nextafter(z + 1., infinity));
-    }
-    auto expected = exhaustiveMaximum(state, gaussian);
-    auto actual = density.globalMaximumWithWidth(state, {});
-    BOOST_REQUIRE(actual.ok());
-    BOOST_REQUIRE(expected.has_value());
-    BOOST_REQUIRE(actual->has_value());
-    BOOST_CHECK_EQUAL(actual->value().first, expected->first);
-    BOOST_CHECK_EQUAL(actual->value().second, expected->second);
+      // Strict endpoints, equal lower bounds, nested and empty intervals, and
+      // non-finite trials/bounds. NaN intervals must not enter a sorted lookup.
+      GaussianTrackDensity::State state(80, cacheQueries);
+      const double infinity = std::numeric_limits<double>::infinity();
+      const double nan = std::numeric_limits<double>::quiet_NaN();
+      state.trackEntries = {{-1., 0., 0., -0.5, -1., 1.},
+                            {1., 0., 0., -0.5, -1., 1.},
+                            {0., 0., 0., -1., -0.1, 0.1},
+                            {2., -2., 2., -0.5, -infinity, infinity},
+                            {0., 0., 0., -1., 0., 0.},
+                            {nan, 0., 0., -1., nan, 1.},
+                            {infinity, 0., 0., -1., -1., nan}};
+      // Force the indexed path, with support endpoints on either side of bin
+      // boundaries and trial positions exactly on the boundaries.
+      for (int i = -32; i <= 32; ++i) {
+        const double z = i;
+        state.trackEntries.emplace_back(z, -0.5 * z * z, z, -0.5,
+                                        std::nextafter(z - 1., -infinity),
+                                        std::nextafter(z + 1., infinity));
+      }
+      auto expected = exhaustiveMaximum(state, gaussian);
+      auto actual = density.globalMaximumWithWidth(state, {});
+      BOOST_REQUIRE(actual.ok());
+      BOOST_REQUIRE(expected.has_value());
+      BOOST_REQUIRE(actual->has_value());
+      BOOST_CHECK_EQUAL(actual->value().first, expected->first);
+      BOOST_CHECK_EQUAL(actual->value().second, expected->second);
 
-    // All starting positions lie below the density maximum. Refinements must
-    // still evaluate tracks outside the range covered by the lookup.
-    state.trackEntries.clear();
-    for (int i = 0; i < 40; ++i) {
-      state.trackEntries.emplace_back(0.1 * i / 40., -0.02, 0.2, -0.5, -10.,
-                                      10.);
-    }
-    expected = exhaustiveMaximum(state, gaussian);
-    actual = density.globalMaximumWithWidth(state, {});
-    BOOST_REQUIRE(actual.ok());
-    BOOST_REQUIRE(expected.has_value());
-    BOOST_REQUIRE(actual->has_value());
-    BOOST_CHECK_EQUAL(actual->value().first, expected->first);
-    BOOST_CHECK_EQUAL(actual->value().second, expected->second);
+      // All starting positions lie below the density maximum. Refinements must
+      // still evaluate tracks outside the range covered by the lookup.
+      state.trackEntries.clear();
+      for (int i = 0; i < 40; ++i) {
+        state.trackEntries.emplace_back(0.1 * i / 40., -0.02, 0.2, -0.5, -10.,
+                                        10.);
+      }
+      expected = exhaustiveMaximum(state, gaussian);
+      actual = density.globalMaximumWithWidth(state, {});
+      BOOST_REQUIRE(actual.ok());
+      BOOST_REQUIRE(expected.has_value());
+      BOOST_REQUIRE(actual->has_value());
+      BOOST_CHECK_EQUAL(actual->value().first, expected->first);
+      BOOST_CHECK_EQUAL(actual->value().second, expected->second);
 
-    // A degenerate trial range also falls back to the exhaustive scan.
-    for (auto& entry : state.trackEntries) {
-      entry.z = 0.;
+      // A degenerate trial range also falls back to the exhaustive scan.
+      for (auto& entry : state.trackEntries) {
+        entry.z = 0.;
+      }
+      expected = exhaustiveMaximum(state, gaussian);
+      actual = density.globalMaximumWithWidth(state, {});
+      BOOST_REQUIRE(actual.ok());
+      BOOST_REQUIRE(expected.has_value());
+      BOOST_REQUIRE(actual->has_value());
+      BOOST_CHECK_EQUAL(actual->value().first, expected->first);
+      BOOST_CHECK_EQUAL(actual->value().second, expected->second);
     }
-    expected = exhaustiveMaximum(state, gaussian);
-    actual = density.globalMaximumWithWidth(state, {});
-    BOOST_REQUIRE(actual.ok());
-    BOOST_REQUIRE(expected.has_value());
-    BOOST_REQUIRE(actual->has_value());
-    BOOST_CHECK_EQUAL(actual->value().first, expected->first);
-    BOOST_CHECK_EQUAL(actual->value().second, expected->second);
   }
 }
 

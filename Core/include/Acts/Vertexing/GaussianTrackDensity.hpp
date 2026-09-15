@@ -168,6 +168,9 @@ class GaussianTrackDensity {
   std::tuple<double, double, double> trackDensityAndDerivatives(
       const State& state, DensityIndex& index, double z) const;
 
+  std::tuple<double, double, double> uncachedDensityAndDerivatives(
+      const State& state, DensityIndex& index, double z) const;
+
   /// @brief Update the current maximum values
   ///
   /// @param newZ The new z value
@@ -200,6 +203,8 @@ class GaussianTrackDensity {
 
     // Add the contribution of a single track to the density
     void addTrackToDensity(const TrackEntry& entry);
+    double addTrackAndReturnDensity(const TrackEntry& entry);
+    void addCachedTrackToDensity(const TrackEntry& entry, double delta);
 
     // Return density, first and second derivatives
     inline std::tuple<double, double, double> densityAndDerivatives() const {
@@ -207,6 +212,8 @@ class GaussianTrackDensity {
     }
 
    private:
+    void addContribution(const TrackEntry& entry, double delta);
+
     // Store density and derivatives for z position m_z
     double m_z;
     double m_density{0};
