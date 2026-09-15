@@ -1,5 +1,8 @@
 # Athena ART track export and standalone AMVF replay
 
+For the cumulative optimization and full 100-event validation, see
+[the final AMVF report](../AMVF_FINAL_REPORT.md).
+
 This small Athena package exports the track population selected by the production
 vertex-track selector, without changing the reconstruction algorithms. It writes
 one full-covariance ACTS `TrackParameterData` CSV and one metadata file per event.
@@ -78,6 +81,7 @@ python3 Examples/Scripts/Benchmarking/AthenaExport/verify_export.py \
 python3 Examples/Scripts/Benchmarking/AthenaExport/replay_exports.py \
   /tmp/acts-amvf-optimized-build/bin/ActsBenchmarkAdaptiveMultiVertexFinder \
   /absolute/path/to/new-output-directory/tracks \
+  --baseline-binary /path/to/baseline/ActsBenchmarkAdaptiveMultiVertexFinder \
   --baseline-library /tmp/acts-amvf-build-main/lib64 \
   --optimized-library /tmp/acts-amvf-optimized-build/lib64 \
   --repetitions 5 --output /absolute/path/to/replay-results.json
@@ -91,7 +95,14 @@ Library substitution requires compatible public class layouts. When layouts
 change, build each revision's executable against its own headers and pass
 `--baseline-binary /path/to/baseline/ActsBenchmarkAdaptiveMultiVertexFinder`.
 The driver then runs each executable with its corresponding library. This is
-required for the third pass, which extends the density/finder state.
+required across the third pass (density/finder state) and eighth pass
+(`TrackAtVertex` cache). Always pair each binary with a library built against
+the same public headers.
+
+For a third build in the same run, add `--reference-library` and, when needed,
+`--reference-binary`. This lets a rolling optimization baseline and the original
+implementation both be compared with the candidate. Three-build runs rotate and
+reverse process order across events and check every output against the baseline.
 
 The seeder-only measurement uses the production track covariance directly and
 requires no field or detector geometry. Full-AMVF replay retains the standalone

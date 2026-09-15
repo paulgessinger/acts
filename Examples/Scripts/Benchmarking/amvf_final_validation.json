@@ -1,0 +1,3296 @@
+{
+  "source_commit": "e38c13787c",
+  "original_library_commit": "d3f0323ac27ce7e5a97fccf9aa3be0c87787fb02",
+  "original_frontend_commit": "85a18896ec",
+  "timing_records_file": "amvf_sixteenth_pass_results.json",
+  "timing_records_key": "matrix",
+  "variant_meaning": {
+    "reference": "original core",
+    "baseline": "d99b0fd900",
+    "optimized": "e38c13787c"
+  },
+  "metrics": {
+    "all_100": {
+      "amvf": {
+        "sum_event_median_ms": {
+          "reference": 42327.26282300001,
+          "baseline": 12797.624073999996,
+          "optimized": 12300.801764
+        },
+        "speedup": 3.4410165804701127,
+        "time_saved_percent": 70.93882064749076,
+        "last_pass_time_saved_percent": 3.8821448975779327
+      },
+      "seeder": {
+        "sum_event_median_ms": {
+          "reference": 1420.7030750000006,
+          "baseline": 463.806514,
+          "optimized": 460.50894399999993
+        },
+        "speedup": 3.085071622409142,
+        "time_saved_percent": 67.5858416791278,
+        "last_pass_time_saved_percent": 0.7109796651109668
+      }
+    },
+    "original_10": {
+      "amvf": {
+        "sum_event_median_ms": {
+          "reference": 3738.6793880000005,
+          "baseline": 1170.069437,
+          "optimized": 1127.641758
+        },
+        "speedup": 3.315485047867481,
+        "time_saved_percent": 69.83850068504456,
+        "last_pass_time_saved_percent": 3.626082150199783
+      },
+      "seeder": {
+        "sum_event_median_ms": {
+          "reference": 129.450208,
+          "baseline": 43.430592999999995,
+          "optimized": 43.125869
+        },
+        "speedup": 3.0016834675261848,
+        "time_saved_percent": 66.68536137075964,
+        "last_pass_time_saved_percent": 0.7016344446413414
+      }
+    },
+    "additional_90": {
+      "amvf": {
+        "sum_event_median_ms": {
+          "reference": 38588.58343500001,
+          "baseline": 11627.554636999996,
+          "optimized": 11173.160006000002
+        },
+        "speedup": 3.453685744612794,
+        "time_saved_percent": 71.04542584513247,
+        "last_pass_time_saved_percent": 3.907912241100686
+      },
+      "seeder": {
+        "sum_event_median_ms": {
+          "reference": 1291.2528670000002,
+          "baseline": 420.375921,
+          "optimized": 417.3830749999999
+        },
+        "speedup": 3.093687656117825,
+        "time_saved_percent": 67.67611630015456,
+        "last_pass_time_saved_percent": 0.7119451544419175
+      }
+    }
+  },
+  "memory": [
+    {
+      "event_index": 2,
+      "variant": "original",
+      "peak_rss_kib": 21688
+    },
+    {
+      "event_index": 2,
+      "variant": "8_mib",
+      "peak_rss_kib": 32256
+    },
+    {
+      "event_index": 2,
+      "variant": "16_mib",
+      "peak_rss_kib": 38912
+    },
+    {
+      "event_index": 2,
+      "variant": "32_mib",
+      "peak_rss_kib": 38668
+    },
+    {
+      "event_index": 40,
+      "variant": "original",
+      "peak_rss_kib": 23592
+    },
+    {
+      "event_index": 40,
+      "variant": "8_mib",
+      "peak_rss_kib": 34816
+    },
+    {
+      "event_index": 40,
+      "variant": "16_mib",
+      "peak_rss_kib": 43520
+    },
+    {
+      "event_index": 40,
+      "variant": "32_mib",
+      "peak_rss_kib": 47916
+    }
+  ],
+  "memory_notes": "16_mib denotes the final implementation including reserved bins; 8_mib and 32_mib are pre-reservation variants.",
+  "profile_shares": {
+    "gaussian_seeding": {
+      "inclusive_percent": 68.53,
+      "line": "68.53%     0.74%  ActsBenchmarkAd  libActsCore.so                          [.] Acts::GaussianTrackDensity::globalMaximumWithWidth(Acts::GaussianTrackDensity::State&, std::vector<Acts::InputTrack, std::allocator<Acts::InputTrack> > const&) const"
+    },
+    "scalar_exp": {
+      "inclusive_percent": 21.88,
+      "line": "21.88%     6.64%  ActsBenchmarkAd  libm.so.6                               [.] exp"
+    },
+    "fitter": {
+      "inclusive_percent": 13.19,
+      "line": "13.19%     0.06%  ActsBenchmarkAd  libActsCore.so                          [.] Acts::AdaptiveMultiVertexFitter::fit(Acts::AdaptiveMultiVertexFitter::State&, Acts::VertexingOptions const&) const"
+    },
+    "index_construction": {
+      "inclusive_percent": 2.22,
+      "line": "2.22%     1.99%  ActsBenchmarkAd  libActsCore.so                          [.] Acts::GaussianTrackDensity::DensityIndex::DensityIndex(Acts::GaussianTrackDensity::State const&)"
+    },
+    "track_attachment": {
+      "inclusive_percent": 2.84,
+      "line": "2.84%     1.97%  ActsBenchmarkAd  libActsCore.so                          [.] Acts::AdaptiveMultiVertexFinder::addCompatibleTracksToVertex(std::vector<Acts::InputTrack, std::allocator<Acts::InputTrack> > const&, Acts::Vertex&, Acts::AdaptiveMultiVertexFitter::State&, Acts::VertexingOptions const&, std::unordered_map<Acts::InputTrack, double, std::hash<Acts::InputTrack>, std::equal_to<Acts::InputTrack>, std::allocator<std::pair<Acts::InputTrack const, double> > > const&) const"
+    },
+    "cache_preparation": {
+      "inclusive_percent": 2.02,
+      "line": "2.02%     0.19%  ActsBenchmarkAd  libActsCore.so                          [.] Acts::GaussianTrackDensity::EvaluationCache::prepare(std::vector<Acts::GaussianTrackDensity::TrackEntry, std::allocator<Acts::GaussianTrackDensity::TrackEntry> > const&)"
+    }
+  },
+  "tests": "Test project /tmp/acts-amvf-optimized-build\n    Start 254: FullBilloirVertexFitter\n1/6 Test #254: FullBilloirVertexFitter ..........   Passed    0.08 sec\n    Start 256: IterativeVertexFinder\n2/6 Test #256: IterativeVertexFinder ............   Passed    0.05 sec\n    Start 257: KalmanVertexUpdater\n3/6 Test #257: KalmanVertexUpdater ..............   Passed    0.01 sec\n    Start 259: AdaptiveMultiVertexFitter\n4/6 Test #259: AdaptiveMultiVertexFitter ........   Passed    0.01 sec\n    Start 260: AdaptiveMultiVertexFinder\n5/6 Test #260: AdaptiveMultiVertexFinder ........   Passed    0.14 sec\n    Start 262: TrackDensityVertexFinder\n6/6 Test #262: TrackDensityVertexFinder .........   Passed    0.35 sec\n\n100% tests passed out of 6\n\nTotal Test time (real) =   0.64 sec\n",
+  "sample": {
+    "export_directory": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100",
+    "provenance": {
+      "input_rdo": "/cvmfs/atlas-nightlies.cern.ch/repo/data/data-art/PhaseIIUpgrade/RDO/ATLAS-P2-RUN4-05-00-00/mc21_14TeV.601229.PhPy8EG_A14_ttbar_hdamp258p75_SingleLep.recon.RDO.e8481_s4676_r17687/RDO.51454445.100evt.pool.root",
+      "conditions": "COND-MC21-SDR-RUN4-06",
+      "athena_release": "/cvmfs/atlas-nightlies.cern.ch/repo/sw/main_Athena_x86_64-el9-gcc15-opt/2026-09-14T2100/Athena/25.0.73/InstallArea/x86_64-el9-gcc15-opt",
+      "preinclude": [
+        "InDetConfig.ConfigurationHelpers.OnlyTrackingRecoPreInclude",
+        "ActsConfig.ActsCIFlags.actsProductionFlags"
+      ]
+    },
+    "export_exit_code": 0,
+    "events": [
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912195",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1824",
+          "selected_tracks": "1073",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000000-tracks.csv",
+        "tracks_sha256": "00ef560d10e30071efb0afd0b4f3798de216bba8041515073df8b068e8c8b90c",
+        "metadata_file": "event000000000-metadata.txt",
+        "metadata_sha256": "372f27f9c1d5ca873ad0d38e1a21539dec801ca9e7d0cd3c8e5c4d911c7bcc9a"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912203",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1514",
+          "selected_tracks": "907",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000001-tracks.csv",
+        "tracks_sha256": "2332fd608d083466da81aea4ed739c533b71d57def422497ca0a7e036a7497aa",
+        "metadata_file": "event000000001-metadata.txt",
+        "metadata_sha256": "84a5b4099c416bfa1634cdf8d0ff55a53fa73d834c8fdf4d7528e66e1bbdfee2"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912208",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2481",
+          "selected_tracks": "1447",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000002-tracks.csv",
+        "tracks_sha256": "fd7a80a721f7e25658630c3a01d7f482a16cb6083d8a187545d11a6c0c09ac69",
+        "metadata_file": "event000000002-metadata.txt",
+        "metadata_sha256": "67baf65765fc21cb257a929527c1521821b870b13b182cdc2bb009d31dd2c05a"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912201",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2396",
+          "selected_tracks": "1431",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000003-tracks.csv",
+        "tracks_sha256": "328cd21bd8177886c034d7ca100463e03488945e05db740298223a0adaf435d3",
+        "metadata_file": "event000000003-metadata.txt",
+        "metadata_sha256": "f05db9d2a2ec2974db2b73e65bf46be2f5480ac53dfad9fc25af8ddca6a8f6b5"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912211",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1806",
+          "selected_tracks": "1118",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000004-tracks.csv",
+        "tracks_sha256": "1e5c590cc1cb4f3458f4778fbe89d0f646799b406c19bceab844dc11b28d822c",
+        "metadata_file": "event000000004-metadata.txt",
+        "metadata_sha256": "c03066f357b6dfa2d9fb99ffbc0bdf30d1192143f3e96a03050167018b66051d"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912207",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2004",
+          "selected_tracks": "1177",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000005-tracks.csv",
+        "tracks_sha256": "58687f3a4f7f886bb175a4f3b1125143534713f45fb17417882459c7377b3509",
+        "metadata_file": "event000000005-metadata.txt",
+        "metadata_sha256": "e340bacb80afc82110139f9ddb7c7954eedfa8747192b908c06f8793576a721d"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912204",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2224",
+          "selected_tracks": "1331",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000006-tracks.csv",
+        "tracks_sha256": "b0adb2556c70745b8d02b0e4cbb75148bd7971797c9c4bc5c8a1bf40f30de2cd",
+        "metadata_file": "event000000006-metadata.txt",
+        "metadata_sha256": "555b84e493d499a54642e1112bae5864547643d2b2ac7c8639b7954ee2036d79"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912206",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2483",
+          "selected_tracks": "1471",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000007-tracks.csv",
+        "tracks_sha256": "f437d67b98d555402882341922bc919a6ddd8e0cb974574f3f609c66648dc865",
+        "metadata_file": "event000000007-metadata.txt",
+        "metadata_sha256": "d6ea28086d87add3d7e960ef074b9a26a135250ec8eabc9b5e818938e2d0c955"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912205",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1709",
+          "selected_tracks": "1044",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000008-tracks.csv",
+        "tracks_sha256": "6d36fdb842def5e99e758e172be57166c5b98e71cd08e0ba3b205514a03cef9f",
+        "metadata_file": "event000000008-metadata.txt",
+        "metadata_sha256": "0ba190be1ae5c673d8be05c34098fa807c66a9d6c5f39cd3e371c10f21c2dec1"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912209",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2234",
+          "selected_tracks": "1333",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000009-tracks.csv",
+        "tracks_sha256": "3e23b9cc980e354982a1d803e8cf5c528c93fc8aeff9bce3e5aa5eaad8398709",
+        "metadata_file": "event000000009-metadata.txt",
+        "metadata_sha256": "3d9401dccb999235fd2c7bd04525d95bc5b0b9bea9a67531eef7d24cfc104602"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912214",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1685",
+          "selected_tracks": "982",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000010-tracks.csv",
+        "tracks_sha256": "40adbac4a089cdb4085e6595e02a8f6901adfeead324578b2d86c7bf2e99d23a",
+        "metadata_file": "event000000010-metadata.txt",
+        "metadata_sha256": "b81899ada12a6dce0ef64fb5bd2ac3421081d3e9f1f0dff2270cf897966ad875"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912213",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2864",
+          "selected_tracks": "1712",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000011-tracks.csv",
+        "tracks_sha256": "38c751ad8c7ce732b5baf691b4acf50c48bb9be910cc138faa941eab03fb6472",
+        "metadata_file": "event000000011-metadata.txt",
+        "metadata_sha256": "1a213b12bfd3422baf87d0394b56a2438c7cfbb4e53bd050af8244697723c181"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912210",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "1789",
+          "selected_tracks": "1076",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000012-tracks.csv",
+        "tracks_sha256": "fbacddb8709617c790b0b42f81562e446eb03fe1009d8715fb00825817464e79",
+        "metadata_file": "event000000012-metadata.txt",
+        "metadata_sha256": "bf1f972a79f9f95aab73e7a11851c9fb96fc431fe8b6560a86e94c56d90ad78b"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912212",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2075",
+          "selected_tracks": "1238",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000013-tracks.csv",
+        "tracks_sha256": "6cb32c88f46590ec4821e0494428f458e59296ad8bbd23aeef2e3cf2bd1500e4",
+        "metadata_file": "event000000013-metadata.txt",
+        "metadata_sha256": "c995ecc022c92de20f051c8d62031842e3103ce6b62564cb3d16e25dc84a5f7a"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912215",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2466",
+          "selected_tracks": "1457",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000014-tracks.csv",
+        "tracks_sha256": "73687302228efd9422de308666052c57f4140951996fbd2ff7f8844615752160",
+        "metadata_file": "event000000014-metadata.txt",
+        "metadata_sha256": "63857d54b2af0645c64cf2e893754f13bee0b7273b2be52ac73f7bff4d945872"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912218",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2252",
+          "selected_tracks": "1330",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000015-tracks.csv",
+        "tracks_sha256": "3e11f4cf389d004c51141c8bd70742ef15f4e920b21da9dcf1b3b25ee496035b",
+        "metadata_file": "event000000015-metadata.txt",
+        "metadata_sha256": "1861b4b31fdafec283df92aeb7ad26ae7dc88444b99ee2bfcad9acce311510b0"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912222",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2303",
+          "selected_tracks": "1354",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000016-tracks.csv",
+        "tracks_sha256": "ee1c5faa8383d0da5c9cc515cb886ce8395627bde5a7f87a5ee6b93b701b8290",
+        "metadata_file": "event000000016-metadata.txt",
+        "metadata_sha256": "3350504d1d6270dd1ffe5eaa5b5454a10955c50224ddd30ccebf0ccd49dca857"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912216",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2235",
+          "selected_tracks": "1356",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000017-tracks.csv",
+        "tracks_sha256": "b359f00464b1b8184746077db019716fb91bd6102e4684cd8d3ba50c69de9776",
+        "metadata_file": "event000000017-metadata.txt",
+        "metadata_sha256": "ec44367f160f182e100eea8f8dc35439957060c09fd6795620bca976042de2ff"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912220",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2309",
+          "selected_tracks": "1380",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000018-tracks.csv",
+        "tracks_sha256": "b2f9c00fe3e334375381ada328c9b542cd91f4aebd0c715da644b940a2e41ae4",
+        "metadata_file": "event000000018-metadata.txt",
+        "metadata_sha256": "26b4e0df23b2979eaa0df44eea2dffa013076fd2ec6ec6947b135228533fe954"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912221",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2358",
+          "selected_tracks": "1402",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000019-tracks.csv",
+        "tracks_sha256": "56354e0520be3bbf5c6cb748facdd355d23885095af40821aa2403aaf3f184e8",
+        "metadata_file": "event000000019-metadata.txt",
+        "metadata_sha256": "1f073e0dbee7291e307ccba543a4f83efd198716d8a85439ad73c21b26954e7f"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912217",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2166",
+          "selected_tracks": "1327",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000020-tracks.csv",
+        "tracks_sha256": "8cf338390eba3adb594dfb099a3a0957d2ca12d32634a87040693ab1f164c711",
+        "metadata_file": "event000000020-metadata.txt",
+        "metadata_sha256": "8bf2578e589c0953433c714fe6e73fa46bb10b52834c44b818f1ef2c4b92a8d5"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912223",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2123",
+          "selected_tracks": "1225",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000021-tracks.csv",
+        "tracks_sha256": "1ee373efe4885f71e15658ed5856258f3957517329750f99e24a49fef9e84f86",
+        "metadata_file": "event000000021-metadata.txt",
+        "metadata_sha256": "49018cf429d1c3bf3950812d74d36ab356173274e9202497fabe8f7a476b6c4a"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912219",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2022",
+          "selected_tracks": "1201",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000022-tracks.csv",
+        "tracks_sha256": "7a9f13733d15e7dae44cf6664338a5278dc8a15a0b0f0ab6909b774580945409",
+        "metadata_file": "event000000022-metadata.txt",
+        "metadata_sha256": "677e93ab2a8234d9e972e6c52f8085203a745dfd0b92da703700f844fa371cec"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912224",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1770",
+          "selected_tracks": "1053",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000023-tracks.csv",
+        "tracks_sha256": "4233352fe8ad3940da0bca9fd4e47f50109fd5de1360fc8ec56f4f11021bba96",
+        "metadata_file": "event000000023-metadata.txt",
+        "metadata_sha256": "da033983d3e51e17a8469290d13ce1c855db0d23f39c7d1397f2a6d18496331d"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912229",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1565",
+          "selected_tracks": "891",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000024-tracks.csv",
+        "tracks_sha256": "8d96d310ff923831b28de5b260588d0d206fe77625d788c1746cf368ca46ed1c",
+        "metadata_file": "event000000024-metadata.txt",
+        "metadata_sha256": "5899d72cb0da4b0dea92e588bba9dd8c4dd3ad88bdd226b1f86520bc68ca37ea"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912228",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2102",
+          "selected_tracks": "1272",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000025-tracks.csv",
+        "tracks_sha256": "07164f1c8df10be48f1f183d95c5575216f61e0676ddd87aa2aafd23f7484cd2",
+        "metadata_file": "event000000025-metadata.txt",
+        "metadata_sha256": "2c62453748be19c9e4dccdb0afdaa2304b656e5b81b55ecc836ab7be6d0eb027"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912230",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2123",
+          "selected_tracks": "1293",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000026-tracks.csv",
+        "tracks_sha256": "7bc4ab8227c2aefc52d1768e57f482abfd570f2d7d634571fb5c48c21a9ec200",
+        "metadata_file": "event000000026-metadata.txt",
+        "metadata_sha256": "83ac82be7c0647d6e74aa390b828730f84c6b49e1f2b08a5a535a18d0a74ac2c"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912225",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1970",
+          "selected_tracks": "1178",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000027-tracks.csv",
+        "tracks_sha256": "6d765d6f86b1e26dba1b3699cb0ebbdfe8167125b1c3f539af187b42606a6ad9",
+        "metadata_file": "event000000027-metadata.txt",
+        "metadata_sha256": "edfe1381b880a0ebbfb75bef57c6e4a44d0ab7ff618ba8d684d134ad86a801d8"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912227",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "1927",
+          "selected_tracks": "1160",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000028-tracks.csv",
+        "tracks_sha256": "80c6f54d463db74249d0de2aa70944ebd7c938848f9118837189050641e10eb6",
+        "metadata_file": "event000000028-metadata.txt",
+        "metadata_sha256": "eedfebad24bb7573672aaa7915ca518a0252742210b5b2f3af625c24c20862c4"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912231",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2023",
+          "selected_tracks": "1228",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000029-tracks.csv",
+        "tracks_sha256": "d3862ed7372f1ffd1db7af33461d900de1bd4cc953b1c98fff834072845395b2",
+        "metadata_file": "event000000029-metadata.txt",
+        "metadata_sha256": "8a47921c272caa6ab0b7bd3125ad13b0ed285b584923f6df22576a26578a29da"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912232",
+          "lumi": "3",
+          "mu": "192",
+          "actual_mu": "192",
+          "input_tracks": "2013",
+          "selected_tracks": "1183",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000030-tracks.csv",
+        "tracks_sha256": "8a4a5fcc184f7919c0508e9de86d36561e99343ff3b0f4a05c9586bb84d17ee0",
+        "metadata_file": "event000000030-metadata.txt",
+        "metadata_sha256": "8c1f40adade04a28034d7ef09c41c1011e7c84c5e72a7f820a103f3385e747cf"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912233",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2419",
+          "selected_tracks": "1459",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000031-tracks.csv",
+        "tracks_sha256": "8684eebfde0b69395e6820976a085d48dbec812a70acdf2db0fbe4decb510f3a",
+        "metadata_file": "event000000031-metadata.txt",
+        "metadata_sha256": "40cc9d07572655eddda980237e6e3647e73b5fe65423d1bb91995796463c463b"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912236",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1610",
+          "selected_tracks": "951",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000032-tracks.csv",
+        "tracks_sha256": "08bb67707a9bb851a76e0291b38782778fa9f014703afa0e2e6937c90c4a898d",
+        "metadata_file": "event000000032-metadata.txt",
+        "metadata_sha256": "e765058528bc40dbc97e5b44ac510df005eefbe889732e2caf6e724776e72b97"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912226",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2058",
+          "selected_tracks": "1233",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000033-tracks.csv",
+        "tracks_sha256": "7b7d8947312df04c322c7b65db9ad19f79cac08447329d5eb900082460bd21d6",
+        "metadata_file": "event000000033-metadata.txt",
+        "metadata_sha256": "b71315da0b62d65c6ffad00ed92198d3f9d6ab77676689e649a6b8b14be261bc"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912240",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1844",
+          "selected_tracks": "1097",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000034-tracks.csv",
+        "tracks_sha256": "8f3321aeacc1aec69072ab5a9d42d2bc5d65cceddbf828507a833ef40ba8f6be",
+        "metadata_file": "event000000034-metadata.txt",
+        "metadata_sha256": "388190723185d247d7289b38722c3aec745f573327a5511e5082ebac06d7204b"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912235",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2403",
+          "selected_tracks": "1443",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000035-tracks.csv",
+        "tracks_sha256": "432e28851987dfd369b1c9679f453d58b233b164686fae2b74e6f769bd51a2f1",
+        "metadata_file": "event000000035-metadata.txt",
+        "metadata_sha256": "9bf751ca7155c52781de2724a01f11daadf8f24c9ade3ff7691e549c2aeb4037"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912234",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1742",
+          "selected_tracks": "1031",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000036-tracks.csv",
+        "tracks_sha256": "7c596184bbc491e65ec6a04443acba518e2eb17cb862de901efaae9f98c37658",
+        "metadata_file": "event000000036-metadata.txt",
+        "metadata_sha256": "eb857603efe088a41f3b13c23acbc0af3c7f1bf071346a2b554294c7a0a1921a"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912238",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2039",
+          "selected_tracks": "1234",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000037-tracks.csv",
+        "tracks_sha256": "c6baf2bac627327cbe97a494c4cfdae0d061cb27b7ace3c4f68bb8a4da2ade11",
+        "metadata_file": "event000000037-metadata.txt",
+        "metadata_sha256": "de8d229c8bd744fd9ebf037fd27b785609b24004bb2b792df66b2a0aca7dfee2"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912239",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2379",
+          "selected_tracks": "1416",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000038-tracks.csv",
+        "tracks_sha256": "a97a630d61bb3980569323c084f4a8606d50f0e375fa6b5dba6346d3325b3b9b",
+        "metadata_file": "event000000038-metadata.txt",
+        "metadata_sha256": "d5aeea5dbcf23c501b826789925b536b2dd90c1323c18ac8960571a8da3f152a"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912241",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1888",
+          "selected_tracks": "1075",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000039-tracks.csv",
+        "tracks_sha256": "7f382313b19654e72dd2ca0b455f44b0871c95d0d80185982f5b5f1209b6391e",
+        "metadata_file": "event000000039-metadata.txt",
+        "metadata_sha256": "21d2f601646a5234090f38b626fa51f6ad2ebb7378ffcafae89261a93f270736"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912243",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2882",
+          "selected_tracks": "1738",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000040-tracks.csv",
+        "tracks_sha256": "f4d95c26bb96a4755c25638010fdbc5fa1d40615de7a16c1703ab5a92600c5f5",
+        "metadata_file": "event000000040-metadata.txt",
+        "metadata_sha256": "ea29f7f5ba08b8e838f0a5ff89a05bf184b334f055c11717de31530528eaef78"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912245",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2622",
+          "selected_tracks": "1544",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000041-tracks.csv",
+        "tracks_sha256": "66906e8146b62348d1f3447f15ff45418c969c314af4d66d3e88c01721bb083b",
+        "metadata_file": "event000000041-metadata.txt",
+        "metadata_sha256": "f118705eff81eb380d75be2b22dbab78fc9407b20f249cdbc26be28beffa96c9"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912242",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2736",
+          "selected_tracks": "1653",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000042-tracks.csv",
+        "tracks_sha256": "6444e4804bc229e5f56d1a3563056bd60b753f74ca45e07e4aea363e77c5bdd8",
+        "metadata_file": "event000000042-metadata.txt",
+        "metadata_sha256": "1b3cdfd8fed5311ad1026e32ebcabb6878356f7763ad0f02521cddf4637aca87"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912237",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2196",
+          "selected_tracks": "1327",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000043-tracks.csv",
+        "tracks_sha256": "66f60175209ff0986f86dfcd464c386cda44e31168312440427b1577d88819f4",
+        "metadata_file": "event000000043-metadata.txt",
+        "metadata_sha256": "c7055b2b94fce1d7a397bb92806bbd522c4f074d7892020c3ca9f4886420a489"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912247",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2241",
+          "selected_tracks": "1306",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000044-tracks.csv",
+        "tracks_sha256": "1c97bd1b56e5fde1ccb0eefdec4d476348ce2e8b34128b3cfe2142816de1c65d",
+        "metadata_file": "event000000044-metadata.txt",
+        "metadata_sha256": "a275be0226b05125804b67b8a93b873af0f705760638c1663a7927fdd4202986"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912248",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2208",
+          "selected_tracks": "1316",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000045-tracks.csv",
+        "tracks_sha256": "81eee3313ffe300726ba45ad4257061788b647f00bd2dd7092e31fd1ffbe552a",
+        "metadata_file": "event000000045-metadata.txt",
+        "metadata_sha256": "dc3518b3aea224e739abec51a8e7f1d3833f40a114fade4390b588a1954739ae"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912244",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2196",
+          "selected_tracks": "1277",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000046-tracks.csv",
+        "tracks_sha256": "0c30cba09628471fc969aee4ecc65cd30d5fc68237d6493452cf886625cb6925",
+        "metadata_file": "event000000046-metadata.txt",
+        "metadata_sha256": "62078d1ae2347f3bab0e1646fa0bd919e1978648bd39b53bc7a838747c715f70"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912246",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2670",
+          "selected_tracks": "1652",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000047-tracks.csv",
+        "tracks_sha256": "cd8c5fce515009c0f737e5e95b8e0fac41ca92a9e405cde4ed6233687fb3065c",
+        "metadata_file": "event000000047-metadata.txt",
+        "metadata_sha256": "6e3aea367ddb579a0dd63719e47fc3d70cfa564b5844514b45997a990ae697f2"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912251",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2330",
+          "selected_tracks": "1378",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000048-tracks.csv",
+        "tracks_sha256": "9d14578f26580d319a5cfd70d822e156606cac413401453472d9093cf1024dac",
+        "metadata_file": "event000000048-metadata.txt",
+        "metadata_sha256": "896258865527a8f9d2e74c46a367a3e480ba015f9e6cb2a1fcad60adf65ab4f5"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912250",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2686",
+          "selected_tracks": "1676",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000049-tracks.csv",
+        "tracks_sha256": "495387dc9e788f6425f70f8282ba0677479d60321f3fc8fec7f8b4b0b9c0c92a",
+        "metadata_file": "event000000049-metadata.txt",
+        "metadata_sha256": "fdae01ea8c21f0e297ff190066db6a8796a5ce6da5abb952c55bd1083f8ed0b7"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912249",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2515",
+          "selected_tracks": "1516",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000050-tracks.csv",
+        "tracks_sha256": "267a8b6dfc6b1f89b3f6ac8c9f77b2ffdf8dbd271c53098c3695b9fbcc36e5c4",
+        "metadata_file": "event000000050-metadata.txt",
+        "metadata_sha256": "6cc639d8a37d17a966371fa8b1d0b111f811e42ea0f210712f37e2490ec694a7"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912254",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "1980",
+          "selected_tracks": "1193",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000051-tracks.csv",
+        "tracks_sha256": "097d2a6e1b3db1ff879ecc7a695d484e48919999db3b24de4d57e451c7ca0de1",
+        "metadata_file": "event000000051-metadata.txt",
+        "metadata_sha256": "a22c5faa1bd6eb4e81e1f6581f3f24ea64794c39ebd0ef8dd4020cc64acaf752"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912256",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2201",
+          "selected_tracks": "1335",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000052-tracks.csv",
+        "tracks_sha256": "ea1bc6c714853ab1904c2c2763096d1926f9a91a67c977bdb7af92db6631e5fa",
+        "metadata_file": "event000000052-metadata.txt",
+        "metadata_sha256": "96da9f19af9147b134e5872361308bdf88c8c7bbb55879e02da44496105844e1"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912260",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2005",
+          "selected_tracks": "1185",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000053-tracks.csv",
+        "tracks_sha256": "555d14573713a2eb85c6ae1fdaa071e4b0b72c1e7fa870764ac7fd80e2dbeb3f",
+        "metadata_file": "event000000053-metadata.txt",
+        "metadata_sha256": "6863b44fb3cb1d682246598e63082b7973b5fab1805de3986245b910ec5e799e"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912257",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2086",
+          "selected_tracks": "1223",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000054-tracks.csv",
+        "tracks_sha256": "3d4d4c183f61fd2ecabf945d615d0c29a47f8f170f591db0f339ae77ceee9d8e",
+        "metadata_file": "event000000054-metadata.txt",
+        "metadata_sha256": "4e974ece147a85d0bf46783905e51330ece9e4b87cd7bfe0ed4dd13ef65c202d"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912258",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2420",
+          "selected_tracks": "1479",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000055-tracks.csv",
+        "tracks_sha256": "a14e2cf85407239721316daa9af605853159f21ebc17f8e5f0cfaaa3a663f292",
+        "metadata_file": "event000000055-metadata.txt",
+        "metadata_sha256": "f23ebdb09a4fc4ea8e05ea21c18f37d9eda3afe28096adc5c9c9f05812ab63c2"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912252",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2723",
+          "selected_tracks": "1632",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000056-tracks.csv",
+        "tracks_sha256": "d095c41b595a42684bb43024c7185bd470c253ea66e5eceb6be835fdb7fe000c",
+        "metadata_file": "event000000056-metadata.txt",
+        "metadata_sha256": "32aa962b0730713058dcb0ae674d2e9ba131a60e0fcfd20ec73d4f7b0d7b1b79"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912259",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2204",
+          "selected_tracks": "1253",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000057-tracks.csv",
+        "tracks_sha256": "e7df8fd5256d6f949322b5f42166dc004465e0b08b2cb896bec6d33f14ff31b2",
+        "metadata_file": "event000000057-metadata.txt",
+        "metadata_sha256": "d5907b7dd611eb2215bd8c4a3d9993a9109d07f3bc0a70d75470c694cd13ccdb"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912261",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2189",
+          "selected_tracks": "1292",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000058-tracks.csv",
+        "tracks_sha256": "b1e5b763921bb7de0d188ddc8cba226aa8936005e402818216759f1edcee34e2",
+        "metadata_file": "event000000058-metadata.txt",
+        "metadata_sha256": "d103bb47642e52cef6ccc16dcf8297fdcac970991ad5fbb5d5f87d428010bcf9"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912255",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2136",
+          "selected_tracks": "1284",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000059-tracks.csv",
+        "tracks_sha256": "3d60481c3aea694cc82f695e62c616155b7810387bf8abae83e20757a0aae04b",
+        "metadata_file": "event000000059-metadata.txt",
+        "metadata_sha256": "422c211cc7f087ac8c8d1e0954260cb24692b54d47218a5cb067cfa5291b09d3"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912266",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2248",
+          "selected_tracks": "1320",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000060-tracks.csv",
+        "tracks_sha256": "9fa51f1cf4c2e7307dbc3a07070f8eaa610504db5a0b0e749d99c53987c92fae",
+        "metadata_file": "event000000060-metadata.txt",
+        "metadata_sha256": "a5eaf41a36d0c8d61f31108462aa990b66bab2507e5223a35b3ac6a057901c18"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912265",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2268",
+          "selected_tracks": "1378",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000061-tracks.csv",
+        "tracks_sha256": "50804972fde37abf351fc586f4215601c7e0eac6e2af0d9e5f727faa477f3a2d",
+        "metadata_file": "event000000061-metadata.txt",
+        "metadata_sha256": "cb6608337a394945b4c9d2f5755bb6214bc230c729ad9106dd56f5ab4d151c2d"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912253",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2554",
+          "selected_tracks": "1556",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000062-tracks.csv",
+        "tracks_sha256": "e3758bff07c86be0f574c8c287a2273eb5030b6e0290f362582990e6421ba2a2",
+        "metadata_file": "event000000062-metadata.txt",
+        "metadata_sha256": "86f56360ef3bac7e7f92056883caacdba50c19d7eb2c459509fe43fb4dbf7ebb"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912262",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2513",
+          "selected_tracks": "1450",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000063-tracks.csv",
+        "tracks_sha256": "00eb141c6584a0c29a872d80f8156061a0466a51db225ae67e8e78010925f85f",
+        "metadata_file": "event000000063-metadata.txt",
+        "metadata_sha256": "ca273d19c3a90c37d999f2519a9100c9f0ef27d4c7c2db76fadc2c6b5247394a"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912264",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2005",
+          "selected_tracks": "1175",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000064-tracks.csv",
+        "tracks_sha256": "cdb3d481182ad1fe502d7999012b0863ac4750fb3401c5a76a2c14b273fd3280",
+        "metadata_file": "event000000064-metadata.txt",
+        "metadata_sha256": "0ecb9d806c058410213e3ba8e9ce6d4e1e54e1e8600e52dde66578608598b93a"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912268",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "1935",
+          "selected_tracks": "1163",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000065-tracks.csv",
+        "tracks_sha256": "bf497c5ee437ccfa15b433f5ff0bcbb4431de13db8b4c29a8c3e9608415c35e8",
+        "metadata_file": "event000000065-metadata.txt",
+        "metadata_sha256": "af5e8a4922ec443dd64f16aae12a29074f8c4bad59e0d6060ba873d7e1e0538c"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912263",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2338",
+          "selected_tracks": "1368",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000066-tracks.csv",
+        "tracks_sha256": "8b52c479cf23c8094193aebc4e6e9fabdbd245822a640f13a752f41d979bf59f",
+        "metadata_file": "event000000066-metadata.txt",
+        "metadata_sha256": "9391ee4e0c7b115ad627f82a14d7835ec462cae30dbd7e8ad0bd01f229515ab4"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912271",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2330",
+          "selected_tracks": "1391",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000067-tracks.csv",
+        "tracks_sha256": "4949cfe881919d3632b3daeafce53deabeb1533ebba892e5c95ded253777c581",
+        "metadata_file": "event000000067-metadata.txt",
+        "metadata_sha256": "07e52edeb1f82e6ac2459a510dafbf871f62ba2c49dcbf7c1294b470a4a0b763"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912267",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "1843",
+          "selected_tracks": "1054",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000068-tracks.csv",
+        "tracks_sha256": "879e6470cf840cdbff8f887e2361231a112f3d2560a9c54b1194cde75f143528",
+        "metadata_file": "event000000068-metadata.txt",
+        "metadata_sha256": "f6a5ce1fc80484375133eeb409dca12cccb2f54f631e4e09c6fda5efe806ee4e"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912270",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "1845",
+          "selected_tracks": "1098",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000069-tracks.csv",
+        "tracks_sha256": "2744c09dca13d79ffbf5a9d67cf34c6ecbb80e3d12b67396c4aa806c2e1353cd",
+        "metadata_file": "event000000069-metadata.txt",
+        "metadata_sha256": "8dd5651dc4d5232f8645a015fe75f40be642abd1121715b828cdc4c7eb2dfd98"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912272",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1889",
+          "selected_tracks": "1103",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000070-tracks.csv",
+        "tracks_sha256": "6feeef939966baf34d2f00e7f3bdcd345c4cc4ed8e58f03b880a3519e710ef01",
+        "metadata_file": "event000000070-metadata.txt",
+        "metadata_sha256": "21ecbd5ee7c51d7a4273a745730b2fd26164edcc7bcb4e84708709de541507ee"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912274",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2363",
+          "selected_tracks": "1438",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000071-tracks.csv",
+        "tracks_sha256": "9a08ef0ad26445b405d094cb5a12f05099c8bd2cf3d46d9782e63090814a90b0",
+        "metadata_file": "event000000071-metadata.txt",
+        "metadata_sha256": "82620ca169c86bc726d491e0d1766797daae987a75d0bc54a99d25828e874388"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912273",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1736",
+          "selected_tracks": "1027",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000072-tracks.csv",
+        "tracks_sha256": "9b9c9672a246e81ea63867a3f582531585b12ee48b62f9b3f448cd0ca459ba20",
+        "metadata_file": "event000000072-metadata.txt",
+        "metadata_sha256": "600d7ef3750657191b4330b4b1782a69cc08d260ae11462b74a4c746c57726db"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912277",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1818",
+          "selected_tracks": "1075",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000073-tracks.csv",
+        "tracks_sha256": "3be90c0e79371c2184d31e830c5c972e9b431faea8aa9f948302ea7c5c9bf102",
+        "metadata_file": "event000000073-metadata.txt",
+        "metadata_sha256": "4d0a5fdaad3eec574473c508efe0a39dfc9431632cccfbab51ac8f4da0339ba4"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912269",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1838",
+          "selected_tracks": "1093",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000074-tracks.csv",
+        "tracks_sha256": "f45dc7e5dd6e64bd083315a966fd6af926fdc312c6c4128d9fbe81a9ff2acc28",
+        "metadata_file": "event000000074-metadata.txt",
+        "metadata_sha256": "82975bc09cd014e3ef7f96632c373bbd72e54af27035df956c7596820c061fde"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912275",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2029",
+          "selected_tracks": "1186",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000075-tracks.csv",
+        "tracks_sha256": "4e32e0a2b72bcdd61a493ce0a9c4b1f2cce16d2af5d797c4fcc3601bb7ff4e00",
+        "metadata_file": "event000000075-metadata.txt",
+        "metadata_sha256": "1306a0573f12075f8d21323bcc28d7b2f841759ee3532d5a22551538420da57d"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912276",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2082",
+          "selected_tracks": "1205",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000076-tracks.csv",
+        "tracks_sha256": "30e2f77d8014b5eed166b15bde5079d4e4ee2d52a70b842d7aee3feb49fd3b22",
+        "metadata_file": "event000000076-metadata.txt",
+        "metadata_sha256": "7346f2f4b34ee35859aa3a938eeeff203f294561aca7c43a4f5dee997d2191a0"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912279",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2179",
+          "selected_tracks": "1288",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000077-tracks.csv",
+        "tracks_sha256": "f4d2e5e366837bbad92a4bab0edc9676b16d4d9f8be069b6663ce2d9ffffebf3",
+        "metadata_file": "event000000077-metadata.txt",
+        "metadata_sha256": "e881d77e86979b8851289f0554c28b3728525172b5706b14120d1c2a113f9bc7"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912282",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2095",
+          "selected_tracks": "1239",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000078-tracks.csv",
+        "tracks_sha256": "add2c3f5d9f8c46efb9d5ac165cc6f05de44743f002a6cdfd1e95b6a0bbde239",
+        "metadata_file": "event000000078-metadata.txt",
+        "metadata_sha256": "10e6ec68fb7fce9f051a1ce6315817893ee52ca68f614076541c76e332e2ed6f"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912278",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2448",
+          "selected_tracks": "1400",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000079-tracks.csv",
+        "tracks_sha256": "c72dc37a317e95a85e389f5ffc9a380d1dbb9e6ce09f0b68b2d12f75efeb319d",
+        "metadata_file": "event000000079-metadata.txt",
+        "metadata_sha256": "a41ad26d5d09c06a8f500e4fa0f911b51cc23b46e8dca5ef791a53e17df0fc8c"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912283",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2098",
+          "selected_tracks": "1234",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000080-tracks.csv",
+        "tracks_sha256": "29f10f95b97f48d256c939985410b1a93962b9d89cc41fbedc790d815e03d9c0",
+        "metadata_file": "event000000080-metadata.txt",
+        "metadata_sha256": "3511aae2a9c5653ff96976eebce7585ad49436a98eecdbeec350e78eab36790c"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912285",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1864",
+          "selected_tracks": "1122",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000081-tracks.csv",
+        "tracks_sha256": "6bd9c0eee1bc0dbe8d1593fec2883d92a014dce4a0d02795093d7384a94d7a72",
+        "metadata_file": "event000000081-metadata.txt",
+        "metadata_sha256": "4568e1d8bdca6eb2f0381a3348d1ceaba19b418869a72ade0d0b39266dec1a65"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912287",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2395",
+          "selected_tracks": "1436",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000082-tracks.csv",
+        "tracks_sha256": "9348bed3d5f23f4af9cf9ebfd2c504f8cd4e4a709af900c0c06940394195275f",
+        "metadata_file": "event000000082-metadata.txt",
+        "metadata_sha256": "3bd94d5507b7bf4353530c045f9448a1f1d290526d6a1ea7dc27100020037d0b"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912286",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2547",
+          "selected_tracks": "1583",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000083-tracks.csv",
+        "tracks_sha256": "18a01db2d37b1647520ad2de4ca65a6e9e1de0062f24502fb4e0f4d4cdda5983",
+        "metadata_file": "event000000083-metadata.txt",
+        "metadata_sha256": "8c44fad9d3729a68fd75be97cf898247aa6725fe54c0592065dba33bcfabbb25"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912281",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2381",
+          "selected_tracks": "1439",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000084-tracks.csv",
+        "tracks_sha256": "2ae06eb39e2493749f77545df80f56dcfc99fe3db49c624a6cf3eccb00ba50f2",
+        "metadata_file": "event000000084-metadata.txt",
+        "metadata_sha256": "12067ab121bf781957f72275eea53695c91252c170e9e957a9531472a1c610cb"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912284",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1945",
+          "selected_tracks": "1189",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000085-tracks.csv",
+        "tracks_sha256": "2c482a7d7c2e9b9ae09105bcb4f127044144362d07f48a2f7fe558ba18774ab1",
+        "metadata_file": "event000000085-metadata.txt",
+        "metadata_sha256": "6f88190181ebac7ac0e0725cbe8ad6a9642040addb2f7b874da736d6c401fbca"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912280",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1932",
+          "selected_tracks": "1188",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000086-tracks.csv",
+        "tracks_sha256": "3f82048b9767a7f9bfdd6bd83761b1af49654a636e43a490f2d44fece90d2a74",
+        "metadata_file": "event000000086-metadata.txt",
+        "metadata_sha256": "5d6bb1541ce60484eb2caa1e7d29a6b9cabeede65626bb22c072e36482f23fed"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912288",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "1766",
+          "selected_tracks": "1002",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000087-tracks.csv",
+        "tracks_sha256": "8160332d548f2e34184e49a5f87c6f1908f92edf60b156177a1aec35b5098541",
+        "metadata_file": "event000000087-metadata.txt",
+        "metadata_sha256": "6142331bc999a8277d3e69ebce17ce3f707f1cdd81322d1d42bb1eb53ec7f49e"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912293",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2158",
+          "selected_tracks": "1303",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000088-tracks.csv",
+        "tracks_sha256": "21f7f7c69bfdf38588b89f0b9e2b26fe175a57e5bd3ac3c87cecbb1f3fa79790",
+        "metadata_file": "event000000088-metadata.txt",
+        "metadata_sha256": "9683a49922e4ac9d27d47e6ee7beacca662eb65ea76db0bb9aec5a3efdd4f2d5"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912289",
+          "lumi": "2",
+          "mu": "191",
+          "actual_mu": "191",
+          "input_tracks": "2225",
+          "selected_tracks": "1342",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000089-tracks.csv",
+        "tracks_sha256": "4a4c24ea9744c013428a4fd86bb7c9e6ae1bd81b277331d3171af4f15b60c394",
+        "metadata_file": "event000000089-metadata.txt",
+        "metadata_sha256": "bc90343ca0581bcca9b6c8e7a44024f631931e0952f9c78e41a5f1461686b791"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912294",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2181",
+          "selected_tracks": "1278",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000090-tracks.csv",
+        "tracks_sha256": "2a8e18377ebe004404dcdd8abd4654ac3517cafccbd3838333476ae8f2feda8e",
+        "metadata_file": "event000000090-metadata.txt",
+        "metadata_sha256": "74ac7b163a0a5c73e0dcef6a3ea3681ec37471cb11d8da960ca55a7b81a29460"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912292",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "1965",
+          "selected_tracks": "1134",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000091-tracks.csv",
+        "tracks_sha256": "b00684a0eb4abe91ac85d498998b25f592e904dfb3a59ec84214f55d58c9a80d",
+        "metadata_file": "event000000091-metadata.txt",
+        "metadata_sha256": "2b55071f738dbff9ad5a2759c61ed7e1686bef80f276daec81387505067fd781"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912296",
+          "lumi": "19",
+          "mu": "208",
+          "actual_mu": "208",
+          "input_tracks": "2120",
+          "selected_tracks": "1233",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000092-tracks.csv",
+        "tracks_sha256": "dedb2fda95aed34a73fb084c9b574ebc264230fe72885789943a326aec9599a5",
+        "metadata_file": "event000000092-metadata.txt",
+        "metadata_sha256": "a36353bf646c35dd5abde60041fb308acec71d57a49b7b82d6d7ac10dd148618"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912295",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2115",
+          "selected_tracks": "1261",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000093-tracks.csv",
+        "tracks_sha256": "e90cebc0e0c0d11c7e18d1746523e9508adbba0ccac595c9a314df1eafa5cb84",
+        "metadata_file": "event000000093-metadata.txt",
+        "metadata_sha256": "80d50eec7079d0eca1cbf607c5d323c16b1d87c007f12827195ec44b8007433e"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912290",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2081",
+          "selected_tracks": "1240",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000094-tracks.csv",
+        "tracks_sha256": "4c2008edc990d56fad6b633d8b4a317565a8f30e632f4fd0a6021eb5c6695770",
+        "metadata_file": "event000000094-metadata.txt",
+        "metadata_sha256": "884370f8aa4d783e6263d28c219374178a7e2337a74bbc213fac31d1c3fc6e56"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912299",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2320",
+          "selected_tracks": "1416",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000095-tracks.csv",
+        "tracks_sha256": "61ecba43e6ca6f67158a1bea717e53006078c28fd551b6a605964cf884498c95",
+        "metadata_file": "event000000095-metadata.txt",
+        "metadata_sha256": "86c25eff4d1ef6c2cb1809969c9fc972e85a2482a22c3c86f115cf9f40fce8ec"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912291",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2651",
+          "selected_tracks": "1579",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000096-tracks.csv",
+        "tracks_sha256": "aa5f6b9446c526d7e69fd60178c75d3d1d34b39fcd184a5bfc801baf88d70948",
+        "metadata_file": "event000000096-metadata.txt",
+        "metadata_sha256": "a507f0461c83bda47c551a42c4f501a716b5709c3393bcca9f77f1fd042da78f"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912300",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2715",
+          "selected_tracks": "1637",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000097-tracks.csv",
+        "tracks_sha256": "a78eeb95e9c8b3ad06bc0ad5aef7fd186ca5001970a9ee70db2a5602cd32f22d",
+        "metadata_file": "event000000097-metadata.txt",
+        "metadata_sha256": "44cc0f1e7a6875c4f533cfc818a952bf4e54ddb77522809dc8d5364845696a6e"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912297",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2187",
+          "selected_tracks": "1329",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000098-tracks.csv",
+        "tracks_sha256": "4316a7c26d641d381d7d9624a7bc9d6090064fdd7b0418c0f284f25b42ac67f7",
+        "metadata_file": "event000000098-metadata.txt",
+        "metadata_sha256": "2a720421b3be865bb2cf0f8d7c3f78917ea6a35442d21c40c7524c2b0af6be51"
+      },
+      {
+        "metadata": {
+          "schema": "1",
+          "run": "242020",
+          "event": "3912298",
+          "lumi": "20",
+          "mu": "209",
+          "actual_mu": "209",
+          "input_tracks": "2073",
+          "selected_tracks": "1204",
+          "missing_covariance": "0",
+          "use_beam_constraint": "1",
+          "beam_position": "0 0 0",
+          "beam_covariance": "0.00014400000509340316 0 0 0 0.00014400000509340316 0 0 0 2500",
+          "perigee_transform": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
+        },
+        "tracks_file": "event000000099-tracks.csv",
+        "tracks_sha256": "9a927797652246f788c12af0ed616b67a1fb28e21ce56a6c458606f5e784a3c4",
+        "metadata_file": "event000000099-metadata.txt",
+        "metadata_sha256": "6e0ed60227995a629ac48cde0428c08a6bf816ac87e3b3efa2f09f4760cd7a44"
+      }
+    ],
+    "imports": [
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000000-tracks.csv",
+        "tracks": 1073,
+        "nonzero_off_diagonal": 21460,
+        "seed_z_width": [
+          41.29301244033879,
+          0.08163963703133012
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000001-tracks.csv",
+        "tracks": 907,
+        "nonzero_off_diagonal": 18136,
+        "seed_z_width": [
+          9.018999231589234,
+          0.04861947825662083
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000002-tracks.csv",
+        "tracks": 1447,
+        "nonzero_off_diagonal": 28940,
+        "seed_z_width": [
+          0.5273866106500205,
+          0.03214732026822787
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000003-tracks.csv",
+        "tracks": 1431,
+        "nonzero_off_diagonal": 28620,
+        "seed_z_width": [
+          -15.644104340658076,
+          0.03979574974930867
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000004-tracks.csv",
+        "tracks": 1118,
+        "nonzero_off_diagonal": 22360,
+        "seed_z_width": [
+          -32.83225914900333,
+          0.05777602042830077
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000005-tracks.csv",
+        "tracks": 1177,
+        "nonzero_off_diagonal": 23540,
+        "seed_z_width": [
+          23.18610062894114,
+          0.03406406478243198
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000006-tracks.csv",
+        "tracks": 1331,
+        "nonzero_off_diagonal": 26620,
+        "seed_z_width": [
+          1.3690265020179253,
+          0.04897713218157023
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000007-tracks.csv",
+        "tracks": 1471,
+        "nonzero_off_diagonal": 29420,
+        "seed_z_width": [
+          -41.287896689835726,
+          0.051535440311728346
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000008-tracks.csv",
+        "tracks": 1044,
+        "nonzero_off_diagonal": 20880,
+        "seed_z_width": [
+          41.84601229930504,
+          0.05481124008848047
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000009-tracks.csv",
+        "tracks": 1333,
+        "nonzero_off_diagonal": 26658,
+        "seed_z_width": [
+          10.094817892400194,
+          0.05494010708914066
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000010-tracks.csv",
+        "tracks": 982,
+        "nonzero_off_diagonal": 19640,
+        "seed_z_width": [
+          27.985933858991977,
+          0.05298666561402367
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000011-tracks.csv",
+        "tracks": 1712,
+        "nonzero_off_diagonal": 34240,
+        "seed_z_width": [
+          -78.85262858659645,
+          0.02625226520961602
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000012-tracks.csv",
+        "tracks": 1076,
+        "nonzero_off_diagonal": 21516,
+        "seed_z_width": [
+          37.57113202394532,
+          0.0762002887974985
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000013-tracks.csv",
+        "tracks": 1238,
+        "nonzero_off_diagonal": 24760,
+        "seed_z_width": [
+          1.0569517933200996,
+          0.05174334101527023
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000014-tracks.csv",
+        "tracks": 1457,
+        "nonzero_off_diagonal": 29140,
+        "seed_z_width": [
+          16.292915308688098,
+          0.02866090315409854
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000015-tracks.csv",
+        "tracks": 1330,
+        "nonzero_off_diagonal": 26598,
+        "seed_z_width": [
+          -4.38395640205043,
+          0.038691805844739184
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000016-tracks.csv",
+        "tracks": 1354,
+        "nonzero_off_diagonal": 27080,
+        "seed_z_width": [
+          18.068570340753006,
+          0.052135336360909605
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000017-tracks.csv",
+        "tracks": 1356,
+        "nonzero_off_diagonal": 27118,
+        "seed_z_width": [
+          -5.023579262610303,
+          0.06040458146155605
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000018-tracks.csv",
+        "tracks": 1380,
+        "nonzero_off_diagonal": 27598,
+        "seed_z_width": [
+          -48.18442068747872,
+          0.028931121592064044
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000019-tracks.csv",
+        "tracks": 1402,
+        "nonzero_off_diagonal": 28040,
+        "seed_z_width": [
+          -36.784931459050526,
+          0.04733051722625342
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000020-tracks.csv",
+        "tracks": 1327,
+        "nonzero_off_diagonal": 26540,
+        "seed_z_width": [
+          36.51663071341175,
+          0.061843882573091195
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000021-tracks.csv",
+        "tracks": 1225,
+        "nonzero_off_diagonal": 24500,
+        "seed_z_width": [
+          24.987235933674167,
+          0.021283592745748897
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000022-tracks.csv",
+        "tracks": 1201,
+        "nonzero_off_diagonal": 24020,
+        "seed_z_width": [
+          10.211637626881163,
+          0.0679665910372367
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000023-tracks.csv",
+        "tracks": 1053,
+        "nonzero_off_diagonal": 21058,
+        "seed_z_width": [
+          -60.21863957482493,
+          0.06305457957651862
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000024-tracks.csv",
+        "tracks": 891,
+        "nonzero_off_diagonal": 17820,
+        "seed_z_width": [
+          -30.06762317490617,
+          0.03862672428264001
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000025-tracks.csv",
+        "tracks": 1272,
+        "nonzero_off_diagonal": 25440,
+        "seed_z_width": [
+          21.3132093809761,
+          0.05288965572575379
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000026-tracks.csv",
+        "tracks": 1293,
+        "nonzero_off_diagonal": 25860,
+        "seed_z_width": [
+          -3.483096068570991,
+          0.046760130230760054
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000027-tracks.csv",
+        "tracks": 1178,
+        "nonzero_off_diagonal": 23560,
+        "seed_z_width": [
+          54.20529427361965,
+          0.044093611519992665
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000028-tracks.csv",
+        "tracks": 1160,
+        "nonzero_off_diagonal": 23200,
+        "seed_z_width": [
+          59.98397651931704,
+          0.07841601185344173
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000029-tracks.csv",
+        "tracks": 1228,
+        "nonzero_off_diagonal": 24560,
+        "seed_z_width": [
+          -21.97581722930356,
+          0.040812321792945416
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000030-tracks.csv",
+        "tracks": 1183,
+        "nonzero_off_diagonal": 23660,
+        "seed_z_width": [
+          -27.44044902927548,
+          0.054711516899324804
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000031-tracks.csv",
+        "tracks": 1459,
+        "nonzero_off_diagonal": 29180,
+        "seed_z_width": [
+          -64.40255646382418,
+          0.04947524776740638
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000032-tracks.csv",
+        "tracks": 951,
+        "nonzero_off_diagonal": 19020,
+        "seed_z_width": [
+          -111.20869013420766,
+          0.022865140062247474
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000033-tracks.csv",
+        "tracks": 1233,
+        "nonzero_off_diagonal": 24660,
+        "seed_z_width": [
+          22.88407559818677,
+          0.039094174532690394
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000034-tracks.csv",
+        "tracks": 1097,
+        "nonzero_off_diagonal": 21938,
+        "seed_z_width": [
+          8.714875619169357,
+          0.04653596174474793
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000035-tracks.csv",
+        "tracks": 1443,
+        "nonzero_off_diagonal": 28860,
+        "seed_z_width": [
+          36.683886064888874,
+          0.12830315411905324
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000036-tracks.csv",
+        "tracks": 1031,
+        "nonzero_off_diagonal": 20620,
+        "seed_z_width": [
+          24.848203259857634,
+          0.06384564419465934
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000037-tracks.csv",
+        "tracks": 1234,
+        "nonzero_off_diagonal": 24680,
+        "seed_z_width": [
+          67.81339146866782,
+          0.04426307922984015
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000038-tracks.csv",
+        "tracks": 1416,
+        "nonzero_off_diagonal": 28320,
+        "seed_z_width": [
+          17.96581825115135,
+          0.048178116114129046
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000039-tracks.csv",
+        "tracks": 1075,
+        "nonzero_off_diagonal": 21500,
+        "seed_z_width": [
+          -9.784165790573777,
+          0.02522720385372059
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000040-tracks.csv",
+        "tracks": 1738,
+        "nonzero_off_diagonal": 34760,
+        "seed_z_width": [
+          40.540440917083515,
+          0.035130366782002896
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000041-tracks.csv",
+        "tracks": 1544,
+        "nonzero_off_diagonal": 30880,
+        "seed_z_width": [
+          -65.97512497303536,
+          0.042711989133047655
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000042-tracks.csv",
+        "tracks": 1653,
+        "nonzero_off_diagonal": 33058,
+        "seed_z_width": [
+          -99.74769690353851,
+          0.03588359654970742
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000043-tracks.csv",
+        "tracks": 1327,
+        "nonzero_off_diagonal": 26540,
+        "seed_z_width": [
+          -26.644542495282785,
+          0.08554615577139954
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000044-tracks.csv",
+        "tracks": 1306,
+        "nonzero_off_diagonal": 26120,
+        "seed_z_width": [
+          -89.64436944984267,
+          0.04229509588100654
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000045-tracks.csv",
+        "tracks": 1316,
+        "nonzero_off_diagonal": 26316,
+        "seed_z_width": [
+          43.519416448665226,
+          0.03810714302847171
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000046-tracks.csv",
+        "tracks": 1277,
+        "nonzero_off_diagonal": 25540,
+        "seed_z_width": [
+          36.21246087269654,
+          0.05080050315244065
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000047-tracks.csv",
+        "tracks": 1652,
+        "nonzero_off_diagonal": 33040,
+        "seed_z_width": [
+          -16.420941697705725,
+          0.06078057403290816
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000048-tracks.csv",
+        "tracks": 1378,
+        "nonzero_off_diagonal": 27560,
+        "seed_z_width": [
+          17.963381112434455,
+          0.047663230571527965
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000049-tracks.csv",
+        "tracks": 1676,
+        "nonzero_off_diagonal": 33520,
+        "seed_z_width": [
+          20.597306064126418,
+          0.04701651035177179
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000050-tracks.csv",
+        "tracks": 1516,
+        "nonzero_off_diagonal": 30320,
+        "seed_z_width": [
+          -56.021055081112735,
+          0.033015105198607314
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000051-tracks.csv",
+        "tracks": 1193,
+        "nonzero_off_diagonal": 23860,
+        "seed_z_width": [
+          -4.944536587089274,
+          0.043913408001420406
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000052-tracks.csv",
+        "tracks": 1335,
+        "nonzero_off_diagonal": 26700,
+        "seed_z_width": [
+          -34.36638042821252,
+          0.037283114808352405
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000053-tracks.csv",
+        "tracks": 1185,
+        "nonzero_off_diagonal": 23700,
+        "seed_z_width": [
+          26.61358007953418,
+          0.03499930480347162
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000054-tracks.csv",
+        "tracks": 1223,
+        "nonzero_off_diagonal": 24460,
+        "seed_z_width": [
+          -4.794312558707026,
+          0.04891488743591199
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000055-tracks.csv",
+        "tracks": 1479,
+        "nonzero_off_diagonal": 29580,
+        "seed_z_width": [
+          7.5171208246196635,
+          0.04613618969550809
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000056-tracks.csv",
+        "tracks": 1632,
+        "nonzero_off_diagonal": 32638,
+        "seed_z_width": [
+          -80.60522882613928,
+          0.06604288649065314
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000057-tracks.csv",
+        "tracks": 1253,
+        "nonzero_off_diagonal": 25058,
+        "seed_z_width": [
+          11.778104720453843,
+          0.04999551453313872
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000058-tracks.csv",
+        "tracks": 1292,
+        "nonzero_off_diagonal": 25838,
+        "seed_z_width": [
+          52.996300053689914,
+          0.07595134149209765
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000059-tracks.csv",
+        "tracks": 1284,
+        "nonzero_off_diagonal": 25680,
+        "seed_z_width": [
+          -6.342927856577684,
+          0.036411510039657514
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000060-tracks.csv",
+        "tracks": 1320,
+        "nonzero_off_diagonal": 26400,
+        "seed_z_width": [
+          100.37106360147285,
+          0.05242990750918134
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000061-tracks.csv",
+        "tracks": 1378,
+        "nonzero_off_diagonal": 27560,
+        "seed_z_width": [
+          -14.74203440906809,
+          0.07354356076218162
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000062-tracks.csv",
+        "tracks": 1556,
+        "nonzero_off_diagonal": 31120,
+        "seed_z_width": [
+          92.1995471159982,
+          0.05937810052520371
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000063-tracks.csv",
+        "tracks": 1450,
+        "nonzero_off_diagonal": 29000,
+        "seed_z_width": [
+          -26.101336915475564,
+          0.03128365830859589
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000064-tracks.csv",
+        "tracks": 1175,
+        "nonzero_off_diagonal": 23500,
+        "seed_z_width": [
+          -15.472460638120124,
+          0.04978693830722226
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000065-tracks.csv",
+        "tracks": 1163,
+        "nonzero_off_diagonal": 23260,
+        "seed_z_width": [
+          36.49011439561128,
+          0.0556239096237105
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000066-tracks.csv",
+        "tracks": 1368,
+        "nonzero_off_diagonal": 27360,
+        "seed_z_width": [
+          23.078973749639946,
+          0.02615438925036158
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000067-tracks.csv",
+        "tracks": 1391,
+        "nonzero_off_diagonal": 27820,
+        "seed_z_width": [
+          19.59125106151883,
+          0.045503041468690934
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000068-tracks.csv",
+        "tracks": 1054,
+        "nonzero_off_diagonal": 21080,
+        "seed_z_width": [
+          13.249018195285826,
+          0.03679114903280749
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000069-tracks.csv",
+        "tracks": 1098,
+        "nonzero_off_diagonal": 21960,
+        "seed_z_width": [
+          50.2131442303416,
+          0.0573867503355219
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000070-tracks.csv",
+        "tracks": 1103,
+        "nonzero_off_diagonal": 22060,
+        "seed_z_width": [
+          95.13368979284927,
+          0.04976332546817574
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000071-tracks.csv",
+        "tracks": 1438,
+        "nonzero_off_diagonal": 28756,
+        "seed_z_width": [
+          37.124457892756936,
+          0.04575827992180778
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000072-tracks.csv",
+        "tracks": 1027,
+        "nonzero_off_diagonal": 20540,
+        "seed_z_width": [
+          -121.79348709305629,
+          0.022971299396115804
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000073-tracks.csv",
+        "tracks": 1075,
+        "nonzero_off_diagonal": 21500,
+        "seed_z_width": [
+          -26.385406232582906,
+          0.05705055594694219
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000074-tracks.csv",
+        "tracks": 1093,
+        "nonzero_off_diagonal": 21858,
+        "seed_z_width": [
+          -52.5349421236593,
+          0.04821741125443682
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000075-tracks.csv",
+        "tracks": 1186,
+        "nonzero_off_diagonal": 23720,
+        "seed_z_width": [
+          -11.276206960002106,
+          0.021039792238208177
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000076-tracks.csv",
+        "tracks": 1205,
+        "nonzero_off_diagonal": 24100,
+        "seed_z_width": [
+          79.1964699957181,
+          0.050661994483131204
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000077-tracks.csv",
+        "tracks": 1288,
+        "nonzero_off_diagonal": 25758,
+        "seed_z_width": [
+          129.02947743897184,
+          0.02984023058822689
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000078-tracks.csv",
+        "tracks": 1239,
+        "nonzero_off_diagonal": 24780,
+        "seed_z_width": [
+          -35.7012996296304,
+          0.0601765161579793
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000079-tracks.csv",
+        "tracks": 1400,
+        "nonzero_off_diagonal": 28000,
+        "seed_z_width": [
+          32.28329658879112,
+          0.026619983286572474
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000080-tracks.csv",
+        "tracks": 1234,
+        "nonzero_off_diagonal": 24680,
+        "seed_z_width": [
+          -107.8963024502773,
+          0.06295103794565682
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000081-tracks.csv",
+        "tracks": 1122,
+        "nonzero_off_diagonal": 22440,
+        "seed_z_width": [
+          -73.8502431120361,
+          0.07236675054944569
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000082-tracks.csv",
+        "tracks": 1436,
+        "nonzero_off_diagonal": 28720,
+        "seed_z_width": [
+          -124.00197102308117,
+          0.019594626174479973
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000083-tracks.csv",
+        "tracks": 1583,
+        "nonzero_off_diagonal": 31660,
+        "seed_z_width": [
+          4.739040140877058,
+          0.03270200022708809
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000084-tracks.csv",
+        "tracks": 1439,
+        "nonzero_off_diagonal": 28780,
+        "seed_z_width": [
+          -16.96716957613667,
+          0.031642224855147616
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000085-tracks.csv",
+        "tracks": 1189,
+        "nonzero_off_diagonal": 23780,
+        "seed_z_width": [
+          20.063947210444333,
+          0.04851294419578441
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000086-tracks.csv",
+        "tracks": 1188,
+        "nonzero_off_diagonal": 23760,
+        "seed_z_width": [
+          24.219057134816705,
+          0.032699119388316406
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000087-tracks.csv",
+        "tracks": 1002,
+        "nonzero_off_diagonal": 20040,
+        "seed_z_width": [
+          -147.67765201457837,
+          0.0422444069811479
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000088-tracks.csv",
+        "tracks": 1303,
+        "nonzero_off_diagonal": 26060,
+        "seed_z_width": [
+          54.20881532761754,
+          0.04419981028555872
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000089-tracks.csv",
+        "tracks": 1342,
+        "nonzero_off_diagonal": 26840,
+        "seed_z_width": [
+          26.399190486074367,
+          0.06146186607652945
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000090-tracks.csv",
+        "tracks": 1278,
+        "nonzero_off_diagonal": 25560,
+        "seed_z_width": [
+          88.74880496423312,
+          0.052620314014002585
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000091-tracks.csv",
+        "tracks": 1134,
+        "nonzero_off_diagonal": 22680,
+        "seed_z_width": [
+          88.88234037845015,
+          0.0556933601968788
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000092-tracks.csv",
+        "tracks": 1233,
+        "nonzero_off_diagonal": 24660,
+        "seed_z_width": [
+          -64.86464841672175,
+          0.047731365843568456
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000093-tracks.csv",
+        "tracks": 1261,
+        "nonzero_off_diagonal": 25220,
+        "seed_z_width": [
+          50.50087002835344,
+          0.08795516100063049
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000094-tracks.csv",
+        "tracks": 1240,
+        "nonzero_off_diagonal": 24800,
+        "seed_z_width": [
+          -13.13826032182145,
+          0.06289288897965019
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000095-tracks.csv",
+        "tracks": 1416,
+        "nonzero_off_diagonal": 28320,
+        "seed_z_width": [
+          -46.12902922400079,
+          0.04056635602460747
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000096-tracks.csv",
+        "tracks": 1579,
+        "nonzero_off_diagonal": 31580,
+        "seed_z_width": [
+          4.204760415135151,
+          0.08074239059524012
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000097-tracks.csv",
+        "tracks": 1637,
+        "nonzero_off_diagonal": 32740,
+        "seed_z_width": [
+          65.60000990139349,
+          0.07887578703597099
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000098-tracks.csv",
+        "tracks": 1329,
+        "nonzero_off_diagonal": 26580,
+        "seed_z_width": [
+          85.48124017913834,
+          0.05636471262182808
+        ]
+      },
+      {
+        "file": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/tracks/event000000099-tracks.csv",
+        "tracks": 1204,
+        "nonzero_off_diagonal": 24080,
+        "seed_z_width": [
+          -93.7666157579456,
+          0.04078943917978627
+        ]
+      }
+    ],
+    "first_ten_identical": [
+      {
+        "file": "event000000000-metadata.txt",
+        "sha256": "372f27f9c1d5ca873ad0d38e1a21539dec801ca9e7d0cd3c8e5c4d911c7bcc9a"
+      },
+      {
+        "file": "event000000000-tracks.csv",
+        "sha256": "00ef560d10e30071efb0afd0b4f3798de216bba8041515073df8b068e8c8b90c"
+      },
+      {
+        "file": "event000000001-metadata.txt",
+        "sha256": "84a5b4099c416bfa1634cdf8d0ff55a53fa73d834c8fdf4d7528e66e1bbdfee2"
+      },
+      {
+        "file": "event000000001-tracks.csv",
+        "sha256": "2332fd608d083466da81aea4ed739c533b71d57def422497ca0a7e036a7497aa"
+      },
+      {
+        "file": "event000000002-metadata.txt",
+        "sha256": "67baf65765fc21cb257a929527c1521821b870b13b182cdc2bb009d31dd2c05a"
+      },
+      {
+        "file": "event000000002-tracks.csv",
+        "sha256": "fd7a80a721f7e25658630c3a01d7f482a16cb6083d8a187545d11a6c0c09ac69"
+      },
+      {
+        "file": "event000000003-metadata.txt",
+        "sha256": "f05db9d2a2ec2974db2b73e65bf46be2f5480ac53dfad9fc25af8ddca6a8f6b5"
+      },
+      {
+        "file": "event000000003-tracks.csv",
+        "sha256": "328cd21bd8177886c034d7ca100463e03488945e05db740298223a0adaf435d3"
+      },
+      {
+        "file": "event000000004-metadata.txt",
+        "sha256": "c03066f357b6dfa2d9fb99ffbc0bdf30d1192143f3e96a03050167018b66051d"
+      },
+      {
+        "file": "event000000004-tracks.csv",
+        "sha256": "1e5c590cc1cb4f3458f4778fbe89d0f646799b406c19bceab844dc11b28d822c"
+      },
+      {
+        "file": "event000000005-metadata.txt",
+        "sha256": "e340bacb80afc82110139f9ddb7c7954eedfa8747192b908c06f8793576a721d"
+      },
+      {
+        "file": "event000000005-tracks.csv",
+        "sha256": "58687f3a4f7f886bb175a4f3b1125143534713f45fb17417882459c7377b3509"
+      },
+      {
+        "file": "event000000006-metadata.txt",
+        "sha256": "555b84e493d499a54642e1112bae5864547643d2b2ac7c8639b7954ee2036d79"
+      },
+      {
+        "file": "event000000006-tracks.csv",
+        "sha256": "b0adb2556c70745b8d02b0e4cbb75148bd7971797c9c4bc5c8a1bf40f30de2cd"
+      },
+      {
+        "file": "event000000007-metadata.txt",
+        "sha256": "d6ea28086d87add3d7e960ef074b9a26a135250ec8eabc9b5e818938e2d0c955"
+      },
+      {
+        "file": "event000000007-tracks.csv",
+        "sha256": "f437d67b98d555402882341922bc919a6ddd8e0cb974574f3f609c66648dc865"
+      },
+      {
+        "file": "event000000008-metadata.txt",
+        "sha256": "0ba190be1ae5c673d8be05c34098fa807c66a9d6c5f39cd3e371c10f21c2dec1"
+      },
+      {
+        "file": "event000000008-tracks.csv",
+        "sha256": "6d36fdb842def5e99e758e172be57166c5b98e71cd08e0ba3b205514a03cef9f"
+      },
+      {
+        "file": "event000000009-metadata.txt",
+        "sha256": "3d9401dccb999235fd2c7bd04525d95bc5b0b9bea9a67531eef7d24cfc104602"
+      },
+      {
+        "file": "event000000009-tracks.csv",
+        "sha256": "3e23b9cc980e354982a1d803e8cf5c528c93fc8aeff9bce3e5aa5eaad8398709"
+      }
+    ],
+    "configuration_files": {
+      "amvf-config-flags.txt": {
+        "path": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/amvf-config-flags.txt",
+        "sha256": "79cdd12865e3018a8fd0ef4deb3edf0f4b9d3c6b9779dc2372f805a207daeade"
+      },
+      "amvf-reco-config.pkl": {
+        "path": "/home/pagessin/dev/acts/projects/amvf-art-data/run4-production-100/amvf-reco-config.pkl",
+        "sha256": "e49e6494b6ea9264f6cc1f6d6ee783bd8f893e1bea1f163855d00afd588d6cc2"
+      }
+    },
+    "relevant_flags": [
+      "GeoModel.AtlasVersion                    : 'ATLAS-P2-RUN4-05-00-00'",
+      "GeoModel.Run                             : <LHCPeriod.Run4: 'RUN4'>",
+      "IOVDb.GlobalTag                          : 'COND-MC21-SDR-RUN4-06'",
+      "Tracking.PriVertex.HSGNN.nnFile          : 'InDetGNNHardScatterSelection/v2.0/network.onnx'",
+      "Tracking.PriVertex.doMaxTracksCut        : False [function]",
+      "Tracking.PriVertex.gridMainGridSize      : 20",
+      "Tracking.PriVertex.gridMaxD0Significance : 3.5",
+      "Tracking.PriVertex.gridMaxZ0Significance : 12.0",
+      "Tracking.PriVertex.gridTrkGridSize       : 10",
+      "Tracking.PriVertex.gridUseHighestSumZPosition : False",
+      "Tracking.PriVertex.maxAbsEta             : 9999.0",
+      "Tracking.PriVertex.maxD0                 : 1.0",
+      "Tracking.PriVertex.maxNPixelHoles        : 1",
+      "Tracking.PriVertex.maxSigmaD0            : 0.35",
+      "Tracking.PriVertex.maxSigmaZ0SinTheta    : 2.5",
+      "Tracking.PriVertex.maxTracks             : 3000",
+      "Tracking.PriVertex.maxVertices           : 200 [function]",
+      "Tracking.PriVertex.maxZ0                 : 1000.0",
+      "Tracking.PriVertex.maxZ0SinTheta         : 1000.0",
+      "Tracking.PriVertex.maxZinterval          : 0.5",
+      "Tracking.PriVertex.minNInnermostLayerHits : 0",
+      "Tracking.PriVertex.minNPixelHits         : 3",
+      "Tracking.PriVertex.minNSctHits           : 0",
+      "Tracking.PriVertex.minNSiHits            : 7",
+      "Tracking.PriVertex.minNTrtHits           : 0",
+      "Tracking.PriVertex.minPt                 : 900.0",
+      "Tracking.PriVertex.setup                 : <VertexSetup.ActsGaussAMVF: 'ActsGaussAdaptiveMultiFinding'>",
+      "Tracking.PriVertex.sortingSetup          : <VertexSortingSetup.SumPt2Sorting: 'SumPt2Sorting'>",
+      "Tracking.PriVertex.useBeamConstraint     : True",
+      "Tracking.recoChain                       : [<TrackingComponent.ActsChain: 'ActsChain'>]"
+    ]
+  },
+  "code_equivalence": {
+    "identical_text": true,
+    "measured_sha256": "6aeba86eb4b8b256b13974c6ee9798151e09de42147b2a678d405539fc5e90a3",
+    "final_sha256": "6aeba86eb4b8b256b13974c6ee9798151e09de42147b2a678d405539fc5e90a3"
+  }
+}
