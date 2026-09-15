@@ -11,6 +11,7 @@
 #include "Acts/Vertexing/VertexingError.hpp"
 
 #include <algorithm>
+#include <array>
 #include <bit>
 #include <cmath>
 #include <cstdint>
@@ -149,7 +150,11 @@ struct GaussianTrackDensity::DensityIndex {
     if (!(width > 0.) || !std::isfinite(width)) {
       return;
     }
-    bins.resize(64);
+    constexpr std::size_t nBins = 64;
+    bins.resize(nBins);
+    std::array<std::size_t, nBins> counts{};
+    std::vector<std::pair<std::size_t, std::size_t>> ranges(
+        state.trackEntries.size(), {nBins, 0});
     for (std::size_t i = 0; i < state.trackEntries.size(); ++i) {
       const auto& entry = state.trackEntries[i];
       if (!(entry.lowerBound < entry.upperBound) || entry.upperBound <= minZ ||
@@ -158,6 +163,16 @@ struct GaussianTrackDensity::DensityIndex {
       }
       const auto first = bin(entry.lowerBound);
       const auto last = bin(entry.upperBound);
+      ranges[i] = {first, last};
+      for (auto j = first; j <= last; ++j) {
+        ++counts[j];
+      }
+    }
+    for (std::size_t j = 0; j < bins.size(); ++j) {
+      bins[j].reserve(counts[j]);
+    }
+    for (std::size_t i = 0; i < ranges.size(); ++i) {
+      const auto [first, last] = ranges[i];
       for (auto j = first; j <= last; ++j) {
         bins[j].push_back(i);
       }
