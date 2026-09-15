@@ -504,6 +504,49 @@ BOOST_AUTO_TEST_CASE(track_density_interval_lookup_test) {
   }
 }
 
+BOOST_AUTO_TEST_CASE(track_density_query_cache_test) {
+  for (bool gaussian : {false, true}) {
+    GaussianTrackDensity::Config config;
+    config.isGaussianShaped = gaussian;
+    config.extractParameters.connect<&InputTrack::extractParameters>();
+    GaussianTrackDensity density(config);
+    GaussianTrackDensity::State state(100, true);
+    for (int i = 0; i < 100; ++i) {
+      double z = (i - 50) * 0.7;
+      state.trackEntries.emplace_back(z, -z * z / 2., z, -0.5, z - 4., z + 4.);
+    }
+    auto check = [&](GaussianTrackDensity::State& candidate) {
+      const auto expected = exhaustiveMaximum(candidate, gaussian);
+      const auto actual = density.globalMaximumWithWidth(candidate, {});
+      BOOST_REQUIRE(actual.ok());
+      BOOST_REQUIRE_EQUAL(actual->has_value(), expected.has_value());
+      if (expected) {
+        BOOST_CHECK_EQUAL(actual->value().first, expected->first);
+        BOOST_CHECK_EQUAL(actual->value().second, expected->second);
+      }
+    };
+    check(state);
+    check(state);  // Reuse an unchanged collection.
+    auto copy = state;
+    for (int i = 0; i < 60; ++i) {
+      state.trackEntries.erase(state.trackEntries.begin() + (i % 7));
+      check(state);  // Removal preserves the remaining summation order.
+    }
+    check(
+        copy);  // Mutating a copied State must not corrupt its original cache.
+    std::reverse(state.trackEntries.begin(), state.trackEntries.end());
+    check(state);
+    state.trackEntries[3].c0 += 0.1;
+    check(state);
+    state.trackEntries.push_back({0., 0., 0., -1., -2., 2.});
+    check(state);
+    state.trackEntries.clear();
+    check(state);
+    state.trackEntries = copy.trackEntries;
+    check(state);
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }  // namespace ActsTests

@@ -11,8 +11,9 @@
 Acts::Result<std::vector<Acts::Vertex>> Acts::TrackDensityVertexFinder::find(
     const std::vector<InputTrack>& trackVector,
     const VertexingOptions& vertexingOptions,
-    IVertexFinder::State& /*state*/) const {
-  GaussianTrackDensity::State densityState(trackVector.size());
+    IVertexFinder::State& state) const {
+  auto& densityState = state.as<State>().density;
+  densityState.trackEntries.clear();
 
   // Calculate z seed position
   auto zAndWidthRes = m_cfg.trackDensityEstimator.globalMaximumWithWidth(

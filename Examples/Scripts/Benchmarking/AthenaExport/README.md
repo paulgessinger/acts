@@ -87,8 +87,11 @@ The verifier compares every parsed parameter and covariance element against the
 CSV. The replay driver alternates A/B order across events, pins the executable
 to one CPU, checks exact seed position/width equality, and compares vertex/track
 output dumps byte-for-byte. Input parsing and output writing are outside timing.
-Library substitution here relies on the unchanged public class layouts of these
-two ACTS builds; it is not a general cross-version loading mechanism.
+Library substitution requires compatible public class layouts. When layouts
+change, build each revision's executable against its own headers and pass
+`--baseline-binary /path/to/baseline/ActsBenchmarkAdaptiveMultiVertexFinder`.
+The driver then runs each executable with its corresponding library. This is
+required for the third pass, which extends the density/finder state.
 
 The seeder-only measurement uses the production track covariance directly and
 requires no field or detector geometry. Full-AMVF replay retains the standalone

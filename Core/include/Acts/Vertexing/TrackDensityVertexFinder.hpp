@@ -36,14 +36,17 @@ class TrackDensityVertexFinder final : public IVertexFinder {
     GaussianTrackDensity trackDensityEstimator;
   };
 
-  /// State struct for fulfilling interface
-  struct State {};
+  /// Per-event density state for repeated seed searches
+  struct State {
+    /// Density entries are rebuilt each call; reusable query results persist.
+    GaussianTrackDensity::State density{0, true};
+  };
 
   /// @brief Function that finds single vertex candidate
   ///
   /// @param trackVector Input track collection
   /// @param vertexingOptions Vertexing options
-  /// @param state State for fulfilling interfaces
+  /// @param state Density state retaining reusable queries
   ///
   /// @return Vector of vertices, filled with a single
   ///         vertex (for consistent interfaces)
@@ -59,7 +62,7 @@ class TrackDensityVertexFinder final : public IVertexFinder {
   void setTracksToRemove(
       IVertexFinder::State& /*state*/,
       const std::vector<InputTrack>& /*removedTracks*/) const override {
-    // Nothing to do here
+    // find compares the supplied density entries, including removals.
   }
 
   /// @brief Constructor for user-defined InputTrack type

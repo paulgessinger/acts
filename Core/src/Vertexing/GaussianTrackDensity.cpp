@@ -11,7 +11,9 @@
 #include "Acts/Vertexing/VertexingError.hpp"
 
 #include <algorithm>
+#include <bit>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <numbers>
 
@@ -31,6 +33,41 @@ Acts::GaussianTrackDensity::GaussianTrackDensityStore::addTrackToDensity(
     m_secondDerivative += 2. * entry.c2 * delta + qPrime * deltaPrime;
   }
 }
+
+// Cache complete sums, never subtract contributions from a previous sum.
+struct GaussianTrackDensity::EvaluationCache {
+  using Value = std::tuple<double, double, double>;
+  std::vector<TrackEntry> previous;
+  std::map<double, Value> values;
+  std::size_t capacity = 0;
+
+  static bool same(const TrackEntry& a, const TrackEntry& b) {
+    const auto bits = [](double x) { return std::bit_cast<std::uint64_t>(x); };
+    return bits(a.z) == bits(b.z) && bits(a.c0) == bits(b.c0) &&
+           bits(a.c1) == bits(b.c1) && bits(a.c2) == bits(b.c2) &&
+           bits(a.lowerBound) == bits(b.lowerBound) &&
+           bits(a.upperBound) == bits(b.upperBound);
+  }
+
+  void prepare(const std::vector<TrackEntry>& entries) {
+    // Only a subsequence preserves the accumulation order. Any addition,
+    // coefficient change or reordering conservatively resets the cache.
+    std::size_t next = 0;
+    for (const auto& old : previous) {
+      if (next < entries.size() && same(old, entries[next])) {
+        ++next;
+      } else if (old.lowerBound < old.upperBound) {
+        values.erase(values.upper_bound(old.lowerBound),
+                     values.lower_bound(old.upperBound));
+      }
+    }
+    capacity = 8 * entries.size();
+    if (next != entries.size() || values.size() > capacity) {
+      values.clear();
+    }
+    previous = entries;
+  }
+};
 
 // Index support intervals, not density values: every query still evaluates the
 // original Gaussian and its derivatives with the original strict bounds and
@@ -99,6 +136,16 @@ Acts::GaussianTrackDensity::globalMaximumWithWidth(
     return result.error();
   }
 
+  if (state.cacheQueries) {
+    if (!state.evaluationCache) {
+      state.evaluationCache = std::make_shared<EvaluationCache>();
+    } else if (!state.evaluationCache.unique()) {
+      // Copying a State must not share subsequent cache mutations.
+      state.evaluationCache =
+          std::make_shared<EvaluationCache>(*state.evaluationCache);
+    }
+    state.evaluationCache->prepare(state.trackEntries);
+  }
   DensityIndex index(state);
 
   double maxPosition = 0.;
@@ -215,6 +262,14 @@ std::tuple<double, double, double>
 Acts::GaussianTrackDensity::trackDensityAndDerivatives(const State& state,
                                                        DensityIndex& index,
                                                        double z) const {
+  auto* cache = state.evaluationCache.get();
+  // A map treats +0 and -0 as equal; keep their arithmetic independent.
+  const bool cacheable = cache != nullptr && std::isfinite(z) && z != 0.;
+  if (cacheable) {
+    if (auto it = cache->values.find(z); it != cache->values.end()) {
+      return it->second;
+    }
+  }
   GaussianTrackDensityStore densityResult(z);
   if (const auto* candidates = index.query(z)) {
     for (const auto i : *candidates) {
@@ -225,7 +280,11 @@ Acts::GaussianTrackDensity::trackDensityAndDerivatives(const State& state,
       densityResult.addTrackToDensity(entry);
     }
   }
-  return densityResult.densityAndDerivatives();
+  auto result = densityResult.densityAndDerivatives();
+  if (cacheable && cache->values.size() < cache->capacity) {
+    cache->values.emplace(z, result);
+  }
+  return result;
 }
 
 std::tuple<double, double, double> Acts::GaussianTrackDensity::updateMaximum(

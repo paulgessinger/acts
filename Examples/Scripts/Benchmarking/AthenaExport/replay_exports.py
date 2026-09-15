@@ -12,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("binary", type=Path)
     parser.add_argument("directory", type=Path)
+    parser.add_argument("--baseline-binary", type=Path)
     parser.add_argument("--baseline-library", type=Path, required=True)
     parser.add_argument("--optimized-library", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
@@ -44,7 +45,11 @@ def main():
                         "taskset",
                         "-c",
                         str(args.cpu),
-                        str(args.binary),
+                        str(
+                            args.baseline_binary
+                            if variant == "baseline" and args.baseline_binary
+                            else args.binary
+                        ),
                         "--input",
                         str(tracks),
                         "--metadata",

@@ -11,6 +11,7 @@
 #include "Acts/Vertexing/TrackAtVertex.hpp"
 
 #include <map>
+#include <memory>
 #include <set>
 
 namespace Acts {
@@ -21,6 +22,8 @@ namespace Acts {
 /// their d0 and z0 perigee parameters (mean value) and covariance
 /// matrices (determining the width of the function)
 class GaussianTrackDensity {
+  struct EvaluationCache;
+
  public:
   /// @brief Struct to store information for a single track
   struct TrackEntry {
@@ -88,9 +91,18 @@ class GaussianTrackDensity {
   struct State {
     /// Constructor with expected number of tracks
     /// @param nTracks Expected number of tracks (used to reserve memory)
-    explicit State(unsigned int nTracks) { trackEntries.reserve(nTracks); }
+    /// @param enableQueryCache Reuse density queries across successive track subsets
+    explicit State(unsigned int nTracks, bool enableQueryCache = false)
+        : cacheQueries(enableQueryCache) {
+      trackEntries.reserve(nTracks);
+    }
     /// Vector to cache track information for density calculation
     std::vector<TrackEntry> trackEntries;
+
+   private:
+    friend class GaussianTrackDensity;
+    bool cacheQueries = false;
+    std::shared_ptr<EvaluationCache> evaluationCache;
   };
 
   /// Constructor with config
