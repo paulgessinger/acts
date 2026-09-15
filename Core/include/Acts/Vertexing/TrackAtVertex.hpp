@@ -13,7 +13,9 @@
 #include "Acts/Vertexing/LinearizedTrack.hpp"
 
 #include <any>
+#include <cstring>
 #include <functional>
+#include <memory>
 #include <typeindex>
 
 namespace Acts {
@@ -144,6 +146,37 @@ struct TrackAtVertex {
 
   /// Is already linearized
   bool isLinearized = false;
+
+  /// Return the inverse covariance block for the current linearized track.
+  /// Mutating the covariance or switching fit dimension invalidates the cache.
+  /// Cache storage is allocated on first use; copies share it until mutation.
+  /// @tparam nParams Number of fitted parameters (5 spatial or 6 spacetime)
+  template <unsigned int nParams>
+  SquareMatrix<nParams> parameterWeight() {
+    static_assert(nParams == 5 || nParams == 6);
+    const auto& covariance = linearizedState.covarianceAtPCA;
+    if (!m_weightCache || m_weightCache->dimension != nParams ||
+        std::memcmp(covariance.data(), m_weightCache->covariance.data(),
+                    eBoundSize * eBoundSize * sizeof(double)) != 0) {
+      if (!m_weightCache || !m_weightCache.unique()) {
+        m_weightCache = std::make_shared<WeightCache>();
+      }
+      const SquareMatrix<nParams> weight =
+          covariance.template block<nParams, nParams>(0, 0).inverse();
+      m_weightCache->covariance = covariance;
+      m_weightCache->weight.template block<nParams, nParams>(0, 0) = weight;
+      m_weightCache->dimension = nParams;
+    }
+    return m_weightCache->weight.template block<nParams, nParams>(0, 0);
+  }
+
+ private:
+  struct WeightCache {
+    BoundMatrix covariance = BoundMatrix::Zero();
+    BoundMatrix weight = BoundMatrix::Zero();
+    unsigned int dimension = 0;
+  };
+  std::shared_ptr<WeightCache> m_weightCache;
 };
 
 }  // namespace Acts

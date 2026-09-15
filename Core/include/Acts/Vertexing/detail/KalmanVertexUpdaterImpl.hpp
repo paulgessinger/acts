@@ -46,16 +46,17 @@ struct Cache {
 /// fit its spatial coordinates) or 4 (if we also fit time).
 ///
 /// @param vtx Vertex
-/// @param linTrack Linearized track to be added or removed
+/// @param track Track with linearized state to be added or removed
 /// @param trackWeight Track weight
 /// @param sign +1 (add track) or -1 (remove track)
 /// @note Tracks are removed during the smoothing procedure to compute
 /// the chi2 of the track wrt the updated vertex position
 /// @param[out] cache A cache to store the results of this function
 template <unsigned int nDimVertex>
-void calculateUpdate(const Vertex& vtx, const Acts::LinearizedTrack& linTrack,
+void calculateUpdate(const Vertex& vtx, TrackAtVertex& track,
                      const double trackWeight, const int sign,
                      Cache<nDimVertex>& cache) {
+  const auto& linTrack = track.linearizedState;
   constexpr unsigned int nBoundParams = nDimVertex + 2;
   using ParameterVector = Vector<nBoundParams>;
   using ParameterMatrix = SquareMatrix<nBoundParams>;
@@ -81,9 +82,7 @@ void calculateUpdate(const Vertex& vtx, const Acts::LinearizedTrack& linTrack,
   // with the track weight from the AMVF formalism. Here, we choose to
   // consider these two multiplicative factors directly in the updates of
   // newVertexWeight and newVertexPos.
-  cache.trkParamWeight =
-      linTrack.covarianceAtPCA.block<nBoundParams, nBoundParams>(0, 0)
-          .inverse();
+  cache.trkParamWeight = track.template parameterWeight<nBoundParams>();
   const ParameterMatrix& trkParamWeight = cache.trkParamWeight;
 
   // Retrieve current position of the vertex and its current weight matrix
@@ -249,7 +248,7 @@ void updateVertexWithTrackImpl(Vertex& vtx, TrackAtVertex& trk, int sign) {
   Cache<nDimVertex> cache;
 
   // Calculate update and save result in cache
-  calculateUpdate(vtx, trk.linearizedState, trackWeight, sign, cache);
+  calculateUpdate(vtx, trk, trackWeight, sign, cache);
 
   // Get fit quality parameters wrt to old vertex
   auto [chi2, ndf] = vtx.fitQuality();
@@ -343,7 +342,7 @@ void updateTrackWithVertexImpl(TrackAtVertex& track, const Vertex& vtx) {
 
   // Calculate the update of the vertex position when the track is removed. This
   // might be unintuitive, but it is needed to compute a symmetric chi2.
-  calculateUpdate(vtx, linTrack, track.trackWeight, -1, cache);
+  calculateUpdate(vtx, track, track.trackWeight, -1, cache);
 
   // Refit track momentum with the final vertex position
   Vector3 newTrkMomentum = cache.wMat * momJac.transpose() * trkParamWeight *

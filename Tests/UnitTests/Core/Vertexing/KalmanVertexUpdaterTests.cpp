@@ -323,6 +323,45 @@ BOOST_AUTO_TEST_CASE(Kalman_Vertex_TrackUpdater) {
 
 }  // end test case
 
+BOOST_AUTO_TEST_CASE(track_weight_cache_invalidation) {
+  auto surface = Surface::makeShared<PerigeeSurface>(Vector3::Zero());
+  BoundVector pars = BoundVector::Zero();
+  pars[eBoundTheta] = 1.;
+  pars[eBoundQOverP] = 0.01;
+  BoundTrackParameters bound(surface, pars, BoundMatrix::Identity(),
+                             ParticleHypothesis::pion());
+  TrackAtVertex track(bound, InputTrack{&bound});
+  track.linearizedState.covarianceAtPCA = BoundMatrix::Identity();
+  // Time correlations make a block of the full inverse unsuitable for 3D.
+  track.linearizedState.covarianceAtPCA(0, 5) = 0.3;
+  track.linearizedState.covarianceAtPCA(5, 0) = 0.3;
+  auto check = [](TrackAtVertex& candidate) {
+    const SquareMatrix<5> expected5 =
+        candidate.linearizedState.covarianceAtPCA.block<5, 5>(0, 0).inverse();
+    const SquareMatrix<6> expected6 =
+        candidate.linearizedState.covarianceAtPCA.block<6, 6>(0, 0).inverse();
+    for (int i = 0; i < 2; ++i) {
+      BOOST_CHECK(
+          (candidate.parameterWeight<5>().array() == expected5.array()).all());
+    }
+    for (int i = 0; i < 2; ++i) {
+      BOOST_CHECK(
+          (candidate.parameterWeight<6>().array() == expected6.array()).all());
+    }
+  };
+  check(track);
+  track.linearizedState.covarianceAtPCA(0, 0) = 2.;
+  check(track);
+  auto copy = track;
+  copy.linearizedState.covarianceAtPCA(1, 1) = 3.;
+  check(copy);
+  check(track);
+  // Replacement of the full linearized state also invalidates the cache.
+  track.linearizedState = LinearizedTrack{};
+  track.linearizedState.covarianceAtPCA = 4. * BoundMatrix::Identity();
+  check(track);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }  // namespace ActsTests
