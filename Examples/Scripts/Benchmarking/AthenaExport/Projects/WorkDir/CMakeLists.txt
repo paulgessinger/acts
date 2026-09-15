@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.25)
+project(AmvfExportWorkDir)
+find_package(Athena REQUIRED)
+project(AmvfExportWorkDir VERSION ${Athena_VERSION} LANGUAGES C CXX)
+atlas_project(USE Athena ${Athena_VERSION} PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../)
+lcg_generate_env(SH_FILE ${CMAKE_BINARY_DIR}/${ATLAS_PLATFORM}/env_setup.sh)

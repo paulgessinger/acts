@@ -133,6 +133,8 @@ class GaussianTrackDensity {
       State& state, const std::vector<InputTrack>& trackList) const;
 
  private:
+  struct DensityIndex;
+
   /// The configuration
   Config m_cfg;
 
@@ -147,11 +149,12 @@ class GaussianTrackDensity {
   /// derivatives at the specified coordinate along the beamline
   ///
   /// @param state The track density state
+  /// @param index Lookup of track intervals
   /// @param z z-position along the beamline
   ///
   /// @return Track density, first and second derivatives
-  std::tuple<double, double, double> trackDensityAndDerivatives(State& state,
-                                                                double z) const;
+  std::tuple<double, double, double> trackDensityAndDerivatives(
+      const State& state, DensityIndex& index, double z) const;
 
   /// @brief Update the current maximum values
   ///

@@ -10,10 +10,71 @@
 
 #include "Acts/Vertexing/VertexingError.hpp"
 
+#include <algorithm>
 #include <cmath>
+#include <limits>
 #include <numbers>
 
 namespace Acts {
+
+// Index support intervals, not density values: every query still evaluates the
+// original Gaussian and its derivatives with the original strict bounds and
+// summation order. A fixed maximum number of bins bounds storage by O(nTracks).
+struct GaussianTrackDensity::DensityIndex {
+  explicit DensityIndex(const State& state) {
+    if (state.trackEntries.size() < 32) {
+      return;
+    }
+    minZ = std::numeric_limits<double>::infinity();
+    maxZ = -std::numeric_limits<double>::infinity();
+    for (const auto& entry : state.trackEntries) {
+      if (std::isfinite(entry.z)) {
+        minZ = std::min(minZ, entry.z);
+        maxZ = std::max(maxZ, entry.z);
+      }
+    }
+    width = maxZ - minZ;
+    if (!(width > 0.) || !std::isfinite(width)) {
+      return;
+    }
+    bins.resize(64);
+    for (std::size_t i = 0; i < state.trackEntries.size(); ++i) {
+      const auto& entry = state.trackEntries[i];
+      if (!(entry.lowerBound < entry.upperBound) || entry.upperBound <= minZ ||
+          entry.lowerBound >= maxZ) {
+        continue;
+      }
+      const auto first = bin(entry.lowerBound);
+      const auto last = bin(entry.upperBound);
+      for (auto j = first; j <= last; ++j) {
+        bins[j].push_back(i);
+      }
+    }
+  }
+
+  std::size_t bin(double z) const {
+    // Clamping also handles infinite support bounds. Use the same monotonic
+    // mapping for construction and queries so rounding at bin edges cannot
+    // omit a contributing interval.
+    const double fraction = std::clamp((z - minZ) / width, 0., 1.);
+    return std::min(static_cast<std::size_t>(fraction * bins.size()),
+                    bins.size() - 1);
+  }
+
+  const std::vector<std::size_t>* query(double z) const {
+    // Refinement steps can leave the range of the initial trial positions.
+    // Evaluate those uncommon queries with the exhaustive scan.
+    if (bins.empty() || !std::isfinite(z) || z < minZ || z > maxZ) {
+      return nullptr;
+    }
+    return &bins[bin(z)];
+  }
+
+  double minZ = 0.;
+  double maxZ = 0.;
+  double width = 0.;
+  std::vector<std::vector<std::size_t>> bins;
+};
 
 Result<std::optional<std::pair<double, double>>>
 Acts::GaussianTrackDensity::globalMaximumWithWidth(
@@ -23,6 +84,8 @@ Acts::GaussianTrackDensity::globalMaximumWithWidth(
     return result.error();
   }
 
+  DensityIndex index(state);
+
   double maxPosition = 0.;
   double maxDensity = 0.;
   double maxSecondDerivative = 0.;
@@ -31,7 +94,7 @@ Acts::GaussianTrackDensity::globalMaximumWithWidth(
     double trialZ = track.z;
 
     auto [density, firstDerivative, secondDerivative] =
-        trackDensityAndDerivatives(state, trialZ);
+        trackDensityAndDerivatives(state, index, trialZ);
     if (secondDerivative >= 0. || density <= 0.) {
       continue;
     }
@@ -41,7 +104,7 @@ Acts::GaussianTrackDensity::globalMaximumWithWidth(
 
     trialZ += stepSize(density, firstDerivative, secondDerivative);
     std::tie(density, firstDerivative, secondDerivative) =
-        trackDensityAndDerivatives(state, trialZ);
+        trackDensityAndDerivatives(state, index, trialZ);
 
     if (secondDerivative >= 0. || density <= 0.) {
       continue;
@@ -51,7 +114,7 @@ Acts::GaussianTrackDensity::globalMaximumWithWidth(
                       maxDensity, maxSecondDerivative);
     trialZ += stepSize(density, firstDerivative, secondDerivative);
     std::tie(density, firstDerivative, secondDerivative) =
-        trackDensityAndDerivatives(state, trialZ);
+        trackDensityAndDerivatives(state, index, trialZ);
     if (secondDerivative >= 0. || density <= 0.) {
       continue;
     }
@@ -134,11 +197,18 @@ Result<void> Acts::GaussianTrackDensity::addTracks(
 }
 
 std::tuple<double, double, double>
-Acts::GaussianTrackDensity::trackDensityAndDerivatives(State& state,
+Acts::GaussianTrackDensity::trackDensityAndDerivatives(const State& state,
+                                                       DensityIndex& index,
                                                        double z) const {
   GaussianTrackDensityStore densityResult(z);
-  for (const auto& trackEntry : state.trackEntries) {
-    densityResult.addTrackToDensity(trackEntry);
+  if (const auto* candidates = index.query(z)) {
+    for (const auto i : *candidates) {
+      densityResult.addTrackToDensity(state.trackEntries[i]);
+    }
+  } else {
+    for (const auto& entry : state.trackEntries) {
+      densityResult.addTrackToDensity(entry);
+    }
   }
   return densityResult.densityAndDerivatives();
 }

@@ -37,3 +37,11 @@ add_benchmark(Stepper StepperBenchmark.cpp)
 add_benchmark(SourceLink SourceLinkBenchmark.cpp)
 add_benchmark(TrackEdm TrackEdmBenchmark.cpp)
 add_benchmark(GsfComponentReduction GsfComponentReductionBenchmark.cpp)
+add_executable(
+    ActsBenchmarkAdaptiveMultiVertexFinder
+    AdaptiveMultiVertexFinderBenchmark.cpp
+)
+target_link_libraries(
+    ActsBenchmarkAdaptiveMultiVertexFinder
+    PRIVATE Acts::Core Boost::program_options
+)
