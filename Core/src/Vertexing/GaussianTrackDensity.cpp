@@ -17,6 +17,21 @@
 
 namespace Acts {
 
+// Keep the per-candidate calculation visible to the compiler in the hot loop.
+inline void
+Acts::GaussianTrackDensity::GaussianTrackDensityStore::addTrackToDensity(
+    const TrackEntry& entry) {
+  // Take track only if it's within bounds
+  if (entry.lowerBound < m_z && m_z < entry.upperBound) {
+    double delta = std::exp(entry.c0 + m_z * (entry.c1 + m_z * entry.c2));
+    double qPrime = entry.c1 + 2. * m_z * entry.c2;
+    double deltaPrime = delta * qPrime;
+    m_density += delta;
+    m_firstDerivative += deltaPrime;
+    m_secondDerivative += 2. * entry.c2 * delta + qPrime * deltaPrime;
+  }
+}
+
 // Index support intervals, not density values: every query still evaluates the
 // original Gaussian and its derivatives with the original strict bounds and
 // summation order. A fixed maximum number of bins bounds storage by O(nTracks).
@@ -227,19 +242,6 @@ std::tuple<double, double, double> Acts::GaussianTrackDensity::updateMaximum(
 double Acts::GaussianTrackDensity::stepSize(double y, double dy,
                                             double ddy) const {
   return (m_cfg.isGaussianShaped ? (y * dy) / (dy * dy - y * ddy) : -dy / ddy);
-}
-
-void Acts::GaussianTrackDensity::GaussianTrackDensityStore::addTrackToDensity(
-    const TrackEntry& entry) {
-  // Take track only if it's within bounds
-  if (entry.lowerBound < m_z && m_z < entry.upperBound) {
-    double delta = std::exp(entry.c0 + m_z * (entry.c1 + m_z * entry.c2));
-    double qPrime = entry.c1 + 2. * m_z * entry.c2;
-    double deltaPrime = delta * qPrime;
-    m_density += delta;
-    m_firstDerivative += deltaPrime;
-    m_secondDerivative += 2. * entry.c2 * delta + qPrime * deltaPrime;
-  }
 }
 
 }  // namespace Acts
