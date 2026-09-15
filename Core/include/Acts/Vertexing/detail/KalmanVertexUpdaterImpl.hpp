@@ -31,6 +31,9 @@ struct Cache {
   VertexMatrix newVertexWeight = VertexMatrix::Zero();
   // C_{k-1}^-1
   VertexMatrix oldVertexWeight = VertexMatrix::Zero();
+  // G_k: shared by the vertex update and its track chi2 calculation.
+  SquareMatrix<nDimVertex + 2> trkParamWeight =
+      SquareMatrix<nDimVertex + 2>::Zero();
   // W_k
   SquareMatrix3 wMat = SquareMatrix3::Zero();
 };
@@ -78,9 +81,10 @@ void calculateUpdate(const Vertex& vtx, const Acts::LinearizedTrack& linTrack,
   // with the track weight from the AMVF formalism. Here, we choose to
   // consider these two multiplicative factors directly in the updates of
   // newVertexWeight and newVertexPos.
-  const ParameterMatrix trkParamWeight =
+  cache.trkParamWeight =
       linTrack.covarianceAtPCA.block<nBoundParams, nBoundParams>(0, 0)
           .inverse();
+  const ParameterMatrix& trkParamWeight = cache.trkParamWeight;
 
   // Retrieve current position of the vertex and its current weight matrix
   const Vector<nDimVertex> oldVtxPos =
@@ -139,12 +143,8 @@ double trackParametersChi2(const LinearizedTrack& linTrack,
       linTrack.parametersAtPCA.head<nBoundParams>();
   // c_k
   const ParameterVector constTerm = linTrack.constantTerm.head<nBoundParams>();
-  // TODO we could use `linTrack.weightAtPCA` but only if we would always fit
-  // time.
-  // G_k
-  const ParameterMatrix trkParamWeight =
-      linTrack.covarianceAtPCA.block<nBoundParams, nBoundParams>(0, 0)
-          .inverse();
+  // Reuse G_k calculated from this linearized track by calculateUpdate.
+  const ParameterMatrix& trkParamWeight = cache.trkParamWeight;
 
   // A_k * \tilde{x_k}
   const ParameterVector posJacVtxPos = posJac * cache.newVertexPos;
