@@ -111,11 +111,11 @@ struct GaussianTrackDensity::EvaluationCache {
       nextOrigins.resize(originSize);
       std::iota(nextOrigins.begin(), nextOrigins.end(), 0);
       contributions.clear();
-      // Bound retained scalar exponentials to 8 MiB, with at most 1024 rows.
+      // Bound retained scalar exponentials to 16 MiB, with at most 2048 rows.
       const std::size_t maxRows =
           originSize < 32
               ? 0
-              : std::min<std::size_t>(1024, (1024 * 1024) / originSize);
+              : std::min<std::size_t>(2048, (2 * 1024 * 1024) / originSize);
       for (const auto& entry : entries) {
         if (contributions.size() >= maxRows)
           break;
