@@ -698,6 +698,46 @@ BOOST_AUTO_TEST_CASE(
   }
 }
 
+BOOST_AUTO_TEST_CASE(adaptive_multi_vertex_finder_skips_unused_positions) {
+  auto bField = std::make_shared<ConstantBField>(Vector3(0., 0., 2_T));
+  auto propagator = std::make_shared<Propagator>(EigenStepper<>(bField));
+  ImpactPointEstimator ipEst(ImpactPointEstimator::Config(bField, propagator));
+  Linearizer::Config linearizerConfig;
+  linearizerConfig.bField = bField;
+  linearizerConfig.propagator = propagator;
+  Linearizer linearizer(linearizerConfig);
+  AdaptiveMultiVertexFitter::Config fitterConfig(ipEst);
+  fitterConfig.extractParameters.connect<&InputTrack::extractParameters>();
+  fitterConfig.trackLinearizer.connect<&Linearizer::linearizeTrack>(&linearizer);
+
+  auto csvData = readTracksAndVertexCSV(toolString);
+  const auto& tracks = std::get<TracksData>(csvData);
+  std::vector<InputTrack> inputTracks;
+  for (const auto& track : tracks) {
+    inputTracks.emplace_back(&track);
+  }
+  VertexingOptions options(geoContext, magFieldContext,
+                          std::get<BeamSpotData>(csvData));
+  std::size_t extractions = 0;
+  auto extract = [&extractions](const InputTrack& track) {
+    ++extractions;
+    return InputTrack::extractParameters(track);
+  };
+  for (int iterations : {0, 1}) {
+    auto seeds = std::make_shared<FixedVertexSeedFinder>(std::vector<Vertex>{});
+    AdaptiveMultiVertexFinder::Config config(
+        AdaptiveMultiVertexFitter(fitterConfig), seeds, ipEst, bField);
+    config.extractParameters.connect(extract);
+    config.maxIterations = iterations;
+    AdaptiveMultiVertexFinder finder(std::move(config));
+    auto state = finder.makeState(magFieldContext);
+    auto result = finder.find(inputTracks, options, state);
+    BOOST_REQUIRE(result.ok());
+    BOOST_CHECK(result->empty());
+    BOOST_CHECK_EQUAL(extractions, 0u);
+  }
+}
+
 BOOST_AUTO_TEST_CASE(adaptive_multi_vertex_finder_removes_rejected_seed) {
   auto bField = std::make_shared<ConstantBField>(Vector3(0., 0., 2_T));
 

@@ -38,11 +38,6 @@ Result<std::vector<Vertex>> AdaptiveMultiVertexFinder::find(
 
   // Input parameters and geometry context are fixed during this find call.
   TrackZPositions trackZPositions;
-  trackZPositions.reserve(allTracks.size());
-  for (const auto& track : allTracks) {
-    trackZPositions.emplace(track, m_cfg.extractParameters(track).position(
-                                       vertexingOptions.geoContext)[eZ]);
-  }
 
   int iteration = 0;
   std::vector<InputTrack> removedSeedTracks;
@@ -62,6 +57,15 @@ Result<std::vector<Vertex>> AdaptiveMultiVertexFinder::find(
       ACTS_DEBUG(
           "No seed found anymore. Break and stop primary vertex finding.");
       break;
+    }
+
+    // Delay extraction until a seed actually needs compatible tracks.
+    if (trackZPositions.empty()) {
+      trackZPositions.reserve(allTracks.size());
+      for (const auto& track : allTracks) {
+        trackZPositions.emplace(track, m_cfg.extractParameters(track).position(
+                                           vertexingOptions.geoContext)[eZ]);
+      }
     }
 
     newVerticesPtr.clear();
