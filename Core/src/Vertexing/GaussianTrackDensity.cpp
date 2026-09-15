@@ -15,6 +15,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <memory_resource>
 #include <numbers>
 
 namespace Acts {
@@ -37,9 +38,16 @@ Acts::GaussianTrackDensity::GaussianTrackDensityStore::addTrackToDensity(
 // Cache complete sums, never subtract contributions from a previous sum.
 struct GaussianTrackDensity::EvaluationCache {
   using Value = std::tuple<double, double, double>;
+  std::pmr::unsynchronized_pool_resource pool;
   std::vector<TrackEntry> previous;
-  std::map<double, Value> values;
+  std::pmr::map<double, Value> values;
   std::size_t capacity = 0;
+
+  EvaluationCache() : values(&pool) {}
+  EvaluationCache(const EvaluationCache& other)
+      : previous(other.previous),
+        values(other.values, &pool),
+        capacity(other.capacity) {}
 
   static bool same(const TrackEntry& a, const TrackEntry& b) {
     const auto bits = [](double x) { return std::bit_cast<std::uint64_t>(x); };
