@@ -1,0 +1,262 @@
+digraph BlueprintNode {
+Root [label=<World>, shape=house, style=solid];
+"Root" -> "sPHENIX";
+sPHENIX [label=<<b>sPHENIX</b><br/>CylinderContainer<br/>dir: AxisR>, shape=doubleoctagon, style=solid];
+
+  "sPHENIX" -> "BeamPipeRegion" [style=solid];
+
+BeamPipeRegion [label=<<b>BeamPipeRegion</b><br/>Cylinder>, shape=rectangle, style=solid];
+  "sPHENIX" -> "MVTX" [style=solid];
+
+MVTX [label=<<br/><b>MVTX</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+  "sPHENIX" -> "Silicon" [style=solid];
+
+Silicon [label=<<br/><b>Silicon</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+  "sPHENIX" -> "TPC" [style=solid];
+
+TPC [label=<<b>TPC</b><br/>CylinderContainer<br/>dir: AxisR>, shape=doubleoctagon, style=solid];
+
+    "TPC" -> "TPC|L0_Mat" [style=solid];
+
+TPC|L0_Mat [label=<<b>TPC|L0_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L0_Mat" -> "TPC|L0";
+TPC|L0 [label=<<br/><b>TPC|L0</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L1_Mat" [style=solid];
+
+TPC|L1_Mat [label=<<b>TPC|L1_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L1_Mat" -> "TPC|L1";
+TPC|L1 [label=<<br/><b>TPC|L1</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L2_Mat" [style=solid];
+
+TPC|L2_Mat [label=<<b>TPC|L2_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L2_Mat" -> "TPC|L2";
+TPC|L2 [label=<<br/><b>TPC|L2</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L3_Mat" [style=solid];
+
+TPC|L3_Mat [label=<<b>TPC|L3_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L3_Mat" -> "TPC|L3";
+TPC|L3 [label=<<br/><b>TPC|L3</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L4_Mat" [style=solid];
+
+TPC|L4_Mat [label=<<b>TPC|L4_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L4_Mat" -> "TPC|L4";
+TPC|L4 [label=<<br/><b>TPC|L4</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L5_Mat" [style=solid];
+
+TPC|L5_Mat [label=<<b>TPC|L5_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L5_Mat" -> "TPC|L5";
+TPC|L5 [label=<<br/><b>TPC|L5</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L6_Mat" [style=solid];
+
+TPC|L6_Mat [label=<<b>TPC|L6_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L6_Mat" -> "TPC|L6";
+TPC|L6 [label=<<br/><b>TPC|L6</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L7_Mat" [style=solid];
+
+TPC|L7_Mat [label=<<b>TPC|L7_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L7_Mat" -> "TPC|L7";
+TPC|L7 [label=<<br/><b>TPC|L7</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L8_Mat" [style=solid];
+
+TPC|L8_Mat [label=<<b>TPC|L8_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L8_Mat" -> "TPC|L8";
+TPC|L8 [label=<<br/><b>TPC|L8</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L9_Mat" [style=solid];
+
+TPC|L9_Mat [label=<<b>TPC|L9_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L9_Mat" -> "TPC|L9";
+TPC|L9 [label=<<br/><b>TPC|L9</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L10_Mat" [style=solid];
+
+TPC|L10_Mat [label=<<b>TPC|L10_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L10_Mat" -> "TPC|L10";
+TPC|L10 [label=<<br/><b>TPC|L10</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L11_Mat" [style=solid];
+
+TPC|L11_Mat [label=<<b>TPC|L11_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L11_Mat" -> "TPC|L11";
+TPC|L11 [label=<<br/><b>TPC|L11</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L12_Mat" [style=solid];
+
+TPC|L12_Mat [label=<<b>TPC|L12_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L12_Mat" -> "TPC|L12";
+TPC|L12 [label=<<br/><b>TPC|L12</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L13_Mat" [style=solid];
+
+TPC|L13_Mat [label=<<b>TPC|L13_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L13_Mat" -> "TPC|L13";
+TPC|L13 [label=<<br/><b>TPC|L13</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L14_Mat" [style=solid];
+
+TPC|L14_Mat [label=<<b>TPC|L14_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L14_Mat" -> "TPC|L14";
+TPC|L14 [label=<<br/><b>TPC|L14</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L15_Mat" [style=solid];
+
+TPC|L15_Mat [label=<<b>TPC|L15_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L15_Mat" -> "TPC|L15";
+TPC|L15 [label=<<br/><b>TPC|L15</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L16_Mat" [style=solid];
+
+TPC|L16_Mat [label=<<b>TPC|L16_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L16_Mat" -> "TPC|L16";
+TPC|L16 [label=<<br/><b>TPC|L16</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L17_Mat" [style=solid];
+
+TPC|L17_Mat [label=<<b>TPC|L17_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L17_Mat" -> "TPC|L17";
+TPC|L17 [label=<<br/><b>TPC|L17</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L18_Mat" [style=solid];
+
+TPC|L18_Mat [label=<<b>TPC|L18_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L18_Mat" -> "TPC|L18";
+TPC|L18 [label=<<br/><b>TPC|L18</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L19_Mat" [style=solid];
+
+TPC|L19_Mat [label=<<b>TPC|L19_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L19_Mat" -> "TPC|L19";
+TPC|L19 [label=<<br/><b>TPC|L19</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L20_Mat" [style=solid];
+
+TPC|L20_Mat [label=<<b>TPC|L20_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L20_Mat" -> "TPC|L20";
+TPC|L20 [label=<<br/><b>TPC|L20</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L21_Mat" [style=solid];
+
+TPC|L21_Mat [label=<<b>TPC|L21_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L21_Mat" -> "TPC|L21";
+TPC|L21 [label=<<br/><b>TPC|L21</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L22_Mat" [style=solid];
+
+TPC|L22_Mat [label=<<b>TPC|L22_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L22_Mat" -> "TPC|L22";
+TPC|L22 [label=<<br/><b>TPC|L22</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L23_Mat" [style=solid];
+
+TPC|L23_Mat [label=<<b>TPC|L23_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L23_Mat" -> "TPC|L23";
+TPC|L23 [label=<<br/><b>TPC|L23</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L24_Mat" [style=solid];
+
+TPC|L24_Mat [label=<<b>TPC|L24_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L24_Mat" -> "TPC|L24";
+TPC|L24 [label=<<br/><b>TPC|L24</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L25_Mat" [style=solid];
+
+TPC|L25_Mat [label=<<b>TPC|L25_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L25_Mat" -> "TPC|L25";
+TPC|L25 [label=<<br/><b>TPC|L25</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L26_Mat" [style=solid];
+
+TPC|L26_Mat [label=<<b>TPC|L26_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L26_Mat" -> "TPC|L26";
+TPC|L26 [label=<<br/><b>TPC|L26</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L27_Mat" [style=solid];
+
+TPC|L27_Mat [label=<<b>TPC|L27_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L27_Mat" -> "TPC|L27";
+TPC|L27 [label=<<br/><b>TPC|L27</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L28_Mat" [style=solid];
+
+TPC|L28_Mat [label=<<b>TPC|L28_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L28_Mat" -> "TPC|L28";
+TPC|L28 [label=<<br/><b>TPC|L28</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L29_Mat" [style=solid];
+
+TPC|L29_Mat [label=<<b>TPC|L29_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L29_Mat" -> "TPC|L29";
+TPC|L29 [label=<<br/><b>TPC|L29</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L30_Mat" [style=solid];
+
+TPC|L30_Mat [label=<<b>TPC|L30_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L30_Mat" -> "TPC|L30";
+TPC|L30 [label=<<br/><b>TPC|L30</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L31_Mat" [style=solid];
+
+TPC|L31_Mat [label=<<b>TPC|L31_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L31_Mat" -> "TPC|L31";
+TPC|L31 [label=<<br/><b>TPC|L31</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L32_Mat" [style=solid];
+
+TPC|L32_Mat [label=<<b>TPC|L32_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L32_Mat" -> "TPC|L32";
+TPC|L32 [label=<<br/><b>TPC|L32</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L33_Mat" [style=solid];
+
+TPC|L33_Mat [label=<<b>TPC|L33_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L33_Mat" -> "TPC|L33";
+TPC|L33 [label=<<br/><b>TPC|L33</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L34_Mat" [style=solid];
+
+TPC|L34_Mat [label=<<b>TPC|L34_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L34_Mat" -> "TPC|L34";
+TPC|L34 [label=<<br/><b>TPC|L34</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L35_Mat" [style=solid];
+
+TPC|L35_Mat [label=<<b>TPC|L35_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L35_Mat" -> "TPC|L35";
+TPC|L35 [label=<<br/><b>TPC|L35</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L36_Mat" [style=solid];
+
+TPC|L36_Mat [label=<<b>TPC|L36_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L36_Mat" -> "TPC|L36";
+TPC|L36 [label=<<br/><b>TPC|L36</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L37_Mat" [style=solid];
+
+TPC|L37_Mat [label=<<b>TPC|L37_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L37_Mat" -> "TPC|L37";
+TPC|L37 [label=<<br/><b>TPC|L37</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L38_Mat" [style=solid];
+
+TPC|L38_Mat [label=<<b>TPC|L38_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L38_Mat" -> "TPC|L38";
+TPC|L38 [label=<<br/><b>TPC|L38</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L39_Mat" [style=solid];
+
+TPC|L39_Mat [label=<<b>TPC|L39_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L39_Mat" -> "TPC|L39";
+TPC|L39 [label=<<br/><b>TPC|L39</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L40_Mat" [style=solid];
+
+TPC|L40_Mat [label=<<b>TPC|L40_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L40_Mat" -> "TPC|L40";
+TPC|L40 [label=<<br/><b>TPC|L40</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L41_Mat" [style=solid];
+
+TPC|L41_Mat [label=<<b>TPC|L41_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L41_Mat" -> "TPC|L41";
+TPC|L41 [label=<<br/><b>TPC|L41</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L42_Mat" [style=solid];
+
+TPC|L42_Mat [label=<<b>TPC|L42_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L42_Mat" -> "TPC|L42";
+TPC|L42 [label=<<br/><b>TPC|L42</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L43_Mat" [style=solid];
+
+TPC|L43_Mat [label=<<b>TPC|L43_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L43_Mat" -> "TPC|L43";
+TPC|L43 [label=<<br/><b>TPC|L43</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L44_Mat" [style=solid];
+
+TPC|L44_Mat [label=<<b>TPC|L44_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L44_Mat" -> "TPC|L44";
+TPC|L44 [label=<<br/><b>TPC|L44</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L45_Mat" [style=solid];
+
+TPC|L45_Mat [label=<<b>TPC|L45_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L45_Mat" -> "TPC|L45";
+TPC|L45 [label=<<br/><b>TPC|L45</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L46_Mat" [style=solid];
+
+TPC|L46_Mat [label=<<b>TPC|L46_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L46_Mat" -> "TPC|L46";
+TPC|L46 [label=<<br/><b>TPC|L46</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+    "TPC" -> "TPC|L47_Mat" [style=solid];
+
+TPC|L47_Mat [label=<<b>TPC|L47_Mat</b><br/>MaterialDesignator<br/><i>Cylinder Binning</i><br/> at: InnerCylinder: AxisRPhi=36, AxisZ=50<br/> at: OuterCylinder: AxisRPhi=36, AxisZ=50>, shape=hexagon, style=solid];
+      "TPC|L47_Mat" -> "TPC|L47";
+TPC|L47 [label=<<br/><b>TPC|L47</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+  "sPHENIX" -> "MICROMEGAS" [style=solid];
+
+MICROMEGAS [label=<<br/><b>MICROMEGAS</b><br/>Layer<br/><i>Cylinder</i>>, shape=diamond, style=solid];
+}
