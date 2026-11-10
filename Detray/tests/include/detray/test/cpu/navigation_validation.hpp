@@ -242,10 +242,12 @@ class navigation_validation : public test::fixture_base<> {
                     << nav_printer.to_string() << "\nSTEPPER\n\n"
                     << step_printer.to_string();
 
-        detector_scanner::display_error(
-            m_gctx, m_det, m_names, m_cfg.name(), test_traj, truth_trace,
-            m_cfg.svg_style(), n_tracks, m_cfg.n_tracks(),
-            obj_tracer.object_trace);
+        if (m_cfg.display_on_failure()) {
+          detector_scanner::display_error(
+              m_gctx, m_det, m_names, m_cfg.name(), test_traj, truth_trace,
+              m_cfg.svg_style(), n_tracks, m_cfg.n_tracks(),
+              obj_tracer.object_trace);
+        }
       }
 
       recorded_traces.push_back(std::move(obj_tracer.object_trace));

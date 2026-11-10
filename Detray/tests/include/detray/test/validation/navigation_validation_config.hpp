@@ -53,6 +53,8 @@ struct navigation_validation_config
   bool m_display_svg{false};
   /// Drop an SVG only if navigation missed a surface
   bool m_display_only_missed{false};
+  /// Drop an SVG for every track that fails the check
+  bool m_display_on_failure{true};
   /// Whether to stop execution at the first error
   bool m_fail_on_diff{true};
   /// Verbosity of the console output
@@ -99,6 +101,9 @@ struct navigation_validation_config
   /// Check whether SVG output is limited to missed surfaces.
   /// @return Whether SVG output is limited to missed surfaces.
   bool display_only_missed() const { return m_display_only_missed; }
+  /// Check whether an SVG is written for every failed track.
+  /// @return Whether failed tracks are displayed.
+  bool display_on_failure() const { return m_display_on_failure; }
   /// Check whether validation stops at the first difference.
   /// @return Whether validation stops at the first difference.
   bool fail_on_diff() const { return m_fail_on_diff; }
@@ -175,6 +180,13 @@ struct navigation_validation_config
   /// @return This configuration.
   navigation_validation_config &display_only_missed(const bool only_missed) {
     m_display_only_missed = only_missed;
+    return *this;
+  }
+  /// Set whether an SVG is written for every failed track.
+  /// @param do_display Whether to display failed tracks.
+  /// @return This configuration.
+  navigation_validation_config &display_on_failure(const bool do_display) {
+    m_display_on_failure = do_display;
     return *this;
   }
   /// Set whether validation stops at the first difference.

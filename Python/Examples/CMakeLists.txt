@@ -298,6 +298,22 @@ add_examples_binding_if(
     FLAG ACTS_BUILD_PLUGIN_TRACCC
     PLUGIN_IMPORT FALSE
 )
+# The detray navigation validation runs through gtest and needs the detray
+# validation utilities
+if(
+    TARGET ActsExamplesPythonBindingsDetray
+    AND TARGET detray::validation_utils
+    AND TARGET GTest::gtest
+)
+    target_link_libraries(
+        ActsExamplesPythonBindingsDetray
+        PRIVATE detray::validation_utils detray::test_common GTest::gtest
+    )
+    target_compile_definitions(
+        ActsExamplesPythonBindingsDetray
+        PRIVATE ACTS_DETRAY_NAVIGATION_VALIDATION
+    )
+endif()
 add_examples_binding_if(
     NAME TruthJet
     LINK_LIBRARIES Acts::ExamplesJets

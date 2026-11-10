@@ -53,6 +53,8 @@ struct detector_scan_config
   float m_overlaps_tol{1e-4f * unit<float>::mm};
   /// Write intersection points for plotting
   bool m_write_inters{false};
+  /// Drop an SVG for every overlap or failed trace
+  bool m_display_on_failure{true};
   /// Visualization style to be applied to the svgs
   detray::svgtools::styling::style m_style =
       detray::svgtools::styling::tableau_colorblind::style;
@@ -89,6 +91,9 @@ struct detector_scan_config
   /// Get the overlap tolerance.
   /// @return The overlap tolerance.
   float overlaps_tol() const { return m_overlaps_tol; }
+  /// Check whether an SVG is written for every overlap or failed trace.
+  /// @return Whether failures are displayed.
+  bool display_on_failure() const { return m_display_on_failure; }
   /// Get the SVG style.
   /// @return The SVG style.
   const auto &svg_style() const { return m_style; }
@@ -160,6 +165,13 @@ struct detector_scan_config
   /// @return This configuration.
   detector_scan_config &write_intersections(const bool do_write) {
     m_write_inters = do_write;
+    return *this;
+  }
+  /// Set whether an SVG is written for every overlap or failed trace.
+  /// @param do_display Whether to display failures.
+  /// @return This configuration.
+  detector_scan_config &display_on_failure(const bool do_display) {
+    m_display_on_failure = do_display;
     return *this;
   }
   /// @}

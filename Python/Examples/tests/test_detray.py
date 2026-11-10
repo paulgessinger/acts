@@ -7,11 +7,25 @@ u = acts.UnitConstants
 
 
 @pytest.mark.skipif(not detrayEnabled, reason="Detray plugin not available")
-def test_detray_propagator_bindings():
+def test_detray_itk_bindings():
+    from acts import detray
     import acts.examples.detray as exdetray
 
-    assert hasattr(exdetray, "StraightLinePropagatorODD")
-    assert hasattr(exdetray, "HelixPropagatorODD")
+    # The ITk detector type sits next to the ODD one
+    assert hasattr(detray, "DetrayDetectorITk")
+    assert hasattr(detray, "readITk")
+    assert hasattr(detray.DetrayGeometryConverter, "convertITk")
+    for tag in ("ODD", "ITk"):
+        assert hasattr(exdetray, f"StraightLinePropagator{tag}")
+        assert hasattr(exdetray, f"HelixPropagator{tag}")
+
+    if hasattr(exdetray, "NavigationValidationConfig"):
+        cfg = exdetray.NavigationValidationConfig()
+        assert cfg.rays and cfg.helices
+        assert not cfg.displayOnFailure
+        cfg.nTracks = 10
+        cfg.pTRange = [1 * u.GeV, 2 * u.GeV]
+        assert cfg.nTracks == 10
 
 
 @pytest.mark.skipif(not detrayEnabled, reason="Detray plugin not available")

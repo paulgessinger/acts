@@ -21,6 +21,7 @@
 #include <optional>
 #include <string>
 
+#include <detray/detectors/itk_metadata.hpp>
 #include <detray/detectors/odd_metadata.hpp>
 #include <detray/io/frontend/detector_reader_config.hpp>
 #include <detray/io/frontend/detector_writer.hpp>
@@ -34,27 +35,26 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-PYBIND11_MODULE(ActsPluginsPythonBindingsDetray, detray) {
-  using namespace ActsPlugins;
+namespace {
 
-  using DetrayMetaDataODD = detray::odd_metadata<detray::array<float>>;
-  using DetrayDetectorODD = detray::host::detector<DetrayMetaDataODD>;
+using namespace ActsPlugins;
 
-  py::class_<DetrayDetectorODD::name_map>(detray, "DetrayDetectorODDNameMap");
+/// Bind the detector type and its JSON reader for one metadata as
+/// DetrayDetector<tag> and read<tag>
+template <typename metadata_t>
+void bindDetector(py::module_& m, const std::string& tag) {
+  using Detector = detray::host::detector<metadata_t>;
 
-  // Register the raw detector type so shared_ptr<DetrayDetectorODD> can be
-  // passed to functions in other pybind11 modules (e.g.
-  // StraightLinePropagatorODD).
-  py::class_<DetrayDetectorODD, std::shared_ptr<DetrayDetectorODD>>(
-      detray, "DetrayDetectorODD")
-      .def("volumes", [](DetrayDetectorODD& self) { return self.volumes(); })
-      .def("surfaces", [](DetrayDetectorODD& self) { return self.surfaces(); })
+  // Registered so shared_ptr<Detector> can be passed to functions in other
+  // pybind11 modules (e.g. StraightLinePropagator<tag>)
+  py::class_<Detector, std::shared_ptr<Detector>>(
+      m, ("DetrayDetector" + tag).c_str())
+      .def("volumes", [](Detector& self) { return self.volumes(); })
+      .def("surfaces", [](Detector& self) { return self.surfaces(); })
       .def("checkConsistency",
-           [](DetrayDetectorODD& self) {
-             detray::detail::check_consistency(self);
-           })
+           [](Detector& self) { detray::detail::check_consistency(self); })
       .def("writeToJson",
-           [](DetrayDetectorODD& self, const DetrayDetectorODD::name_map& names,
+           [](Detector& self, const typename Detector::name_map& names,
               const std::string& source, const std::string& fname) {
              auto cfg = detray::io::detector_writer_config{}
                             .format(detray::io::format::json)
@@ -64,15 +64,51 @@ PYBIND11_MODULE(ActsPluginsPythonBindingsDetray, detray) {
              detray::io::write_detector(self, names, cfg);
            });
 
-  detray.def(
-      "readODD",
-      [](vecmem::memory_resource& mr, const std::vector<std::string>& files) {
-        detray::io::detector_reader_config cfg{};
-        cfg.do_check(false).add_files(files);
+  m.def(("read" + tag).c_str(),
+        [](vecmem::memory_resource& mr, const std::vector<std::string>& files) {
+          detray::io::detector_reader_config cfg{};
+          cfg.do_check(false).add_files(files);
+          return detray::io::read_detector_json<Detector>(mr, cfg);
+        },
+        "mr"_a, "files"_a);
+}
 
-        return detray::io::read_detector_json<DetrayDetectorODD>(mr, cfg);
+/// Bind the conversion result for one metadata as @p name, and the
+/// conversion itself as the converter method @p method
+template <typename metadata_t, typename converter_class_t>
+void bindConversion(converter_class_t& converter, const std::string& name,
+                    const std::string& method) {
+  using Geometry = DetrayGeometryConverter::DetrayGeometry<metadata_t>;
+  py::class_<Geometry>(converter, name.c_str())
+      .def_readonly("detector", &Geometry::detector)
+      .def_readonly("names", &Geometry::names)
+      .def_readonly("surfaceIds", &Geometry::surfaceIds);
+
+  converter.def(
+      method.c_str(),
+      [](const DetrayGeometryConverter& self, vecmem::memory_resource& mr,
+         const Acts::GeometryContext& gctx,
+         std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry) {
+        return self.convert<metadata_t>(mr, gctx, std::move(trackingGeometry));
       },
-      "mr"_a, "files"_a);
+      "mr"_a, "gctx"_a, "trackingGeometry"_a);
+}
+
+}  // namespace
+
+PYBIND11_MODULE(ActsPluginsPythonBindingsDetray, detray) {
+  using namespace ActsPlugins;
+
+  using DetrayMetaDataODD = detray::odd_metadata<detray::array<float>>;
+  using DetrayDetectorODD = detray::host::detector<DetrayMetaDataODD>;
+
+  using DetrayMetaDataITk = detray::itk_metadata<detray::array<float>>;
+
+  // Shared by all detector types; the name predates the ITk type
+  py::class_<DetrayDetectorODD::name_map>(detray, "DetrayDetectorODDNameMap");
+
+  bindDetector<DetrayMetaDataODD>(detray, "ODD");
+  bindDetector<DetrayMetaDataITk>(detray, "ITk");
 
   // ── Surface grid policy ────────────────────────────────────────────────
   {
@@ -190,8 +226,6 @@ PYBIND11_MODULE(ActsPluginsPythonBindingsDetray, detray) {
       .def_readwrite("deduplicateMaterial",
                      &DetrayGeometryConverter::Config::deduplicateMaterial);
 
-  using DetrayGeometryODD =
-      DetrayGeometryConverter::DetrayGeometry<DetrayMetaDataODD>;
   py::class_<DetraySurfaceIdMap, std::shared_ptr<DetraySurfaceIdMap>>(
       detray, "DetraySurfaceIdMap")
       // detray identifiers are exposed as their integer value
@@ -214,26 +248,17 @@ PYBIND11_MODULE(ActsPluginsPythonBindingsDetray, detray) {
           "detrayId"_a)
       .def("__len__", &DetraySurfaceIdMap::size);
 
-  py::class_<DetrayGeometryODD>(geometryConverter, "DetrayGeometry")
-      .def_readonly("detector", &DetrayGeometryODD::detector)
-      .def_readonly("names", &DetrayGeometryODD::names)
-      .def_readonly("surfaceIds", &DetrayGeometryODD::surfaceIds);
+  geometryConverter.def(
+      py::init([](DetrayGeometryConverter::Config config,
+                  Acts::Logging::Level level) {
+        return std::make_shared<DetrayGeometryConverter>(
+            std::move(config),
+            Acts::getDefaultLogger("DetrayGeometryConverter", level));
+      }),
+      "config"_a, "level"_a = Acts::Logging::INFO);
 
-  geometryConverter
-      .def(py::init([](DetrayGeometryConverter::Config config,
-                       Acts::Logging::Level level) {
-             return std::make_shared<DetrayGeometryConverter>(
-                 std::move(config),
-                 Acts::getDefaultLogger("DetrayGeometryConverter", level));
-           }),
-           "config"_a, "level"_a = Acts::Logging::INFO)
-      .def(
-          "convert",
-          [](const DetrayGeometryConverter& self, vecmem::memory_resource& mr,
-             const Acts::GeometryContext& gctx,
-             std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry) {
-            return self.convert<DetrayMetaDataODD>(mr, gctx,
-                                                   std::move(trackingGeometry));
-          },
-          "mr"_a, "gctx"_a, "trackingGeometry"_a);
+  bindConversion<DetrayMetaDataODD>(geometryConverter, "DetrayGeometry",
+                                    "convert");
+  bindConversion<DetrayMetaDataITk>(geometryConverter, "DetrayGeometryITk",
+                                    "convertITk");
 }

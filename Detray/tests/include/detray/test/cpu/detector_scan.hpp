@@ -133,7 +133,8 @@ class detector_scan : public test::fixture_base<> {
             intersection_trace, m_cfg.overlaps_tol());
 
         // Drop an svg of the trajectory where the overlap was found
-        if (overlap_idx[1] - overlap_idx[0] != 0u) {
+        if (m_cfg.display_on_failure() &&
+            overlap_idx[1] - overlap_idx[0] != 0u) {
           constexpr bool verbose{false};
           detector_scanner::display_error(
               m_gctx, m_det, m_names, "OVERLAP_" + m_cfg.name(), test_traj,
@@ -147,7 +148,7 @@ class detector_scan : public test::fixture_base<> {
           intersection_trace, start_index, adj_mat_scan, obj_hashes);
 
       // Display the detector, track and intersections for debugging
-      if (!success) {
+      if (!success && m_cfg.display_on_failure()) {
         detector_scanner::display_error(
             m_gctx, m_det, m_names, m_cfg.name(), test_traj, intersection_trace,
             m_cfg.svg_style(), n_tracks, n_helices, intersection_trace_t{});
