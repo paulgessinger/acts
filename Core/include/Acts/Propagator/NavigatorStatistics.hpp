@@ -21,6 +21,9 @@ struct NavigatorStatistics {
 
   /// Number of volume switches
   std::size_t nVolumeSwitches = 0;
+
+  /// Number of times the navigator stepped back onto an overlooked portal
+  std::size_t nPortalBacktracks = 0;
 };
 
 }  // namespace Acts

@@ -256,6 +256,48 @@ class Navigator final {
     /// Stream for navigation debugging and monitoring
     NavigationStream stream;
 
+    /// What the per-step check needs to tell that a bent trajectory left the
+    /// current volume without the propagation targeting the portal
+    struct VolumeExitCheck {
+      /// How to test the containment. An aligned cylinder is one without a
+      /// rotation.
+      enum class Kind { eNone, eAlignedCylinder, eCylinder, eGeneric };
+      /// The kind of test to run
+      Kind kind = Kind::eNone;
+      /// Transform into the volume frame
+      const Transform3* globalToLocal{};
+      /// The translation of the volume
+      Vector3 center = Vector3::Zero();
+      /// Squared inner radius, shrunk by the tolerance
+      double rMin2{};
+      /// Squared outer radius, grown by the tolerance
+      double rMax2{};
+      /// Half length along z, grown by the tolerance
+      double halfLengthZ{};
+      /// Squared radius below which a position is on the inner cylinder
+      double rMinFace2{};
+      /// Squared radius above which a position is on the outer cylinder
+      double rMaxFace2{};
+      /// Distance along z above which a position is on a disc
+      double zFace{};
+      /// Position of the previous check
+      Vector3 position = Vector3::Zero();
+      /// Radial velocity at the previous check, up to a positive factor
+      double radial{};
+      /// The step since the previous check ended on a surface
+      bool reachedSurface = false;
+    };
+
+    /// Exit check of the current volume
+    VolumeExitCheck exitCheck;
+
+    /// Progress of stepping back onto an overlooked portal
+    enum class Backtrack { eIdle, ePending, eActive, eFailed };
+    /// Backtracking in the current volume
+    Backtrack backtrack = Backtrack::eIdle;
+    /// The portal to step back onto, while pending
+    NavigationTarget backtrackTarget = NavigationTarget::None();
+
     /// Reset navigation state after switching layers
     void resetAfterLayerSwitch() {
       navSurfaces.clear();
@@ -277,6 +319,9 @@ class Navigator final {
       policyStateIsDefault = true;
 
       stream.reset();
+
+      exitCheck.kind = VolumeExitCheck::Kind::eNone;
+      backtrack = Backtrack::eIdle;
     }
 
     /// Reset navigation state for renavigating within the same navigation run
@@ -499,6 +544,85 @@ class Navigator final {
   void createPolicyState(State& state, const TrackingVolume& volume,
                          const Vector3& position,
                          const Vector3& direction) const;
+
+  /// @brief Set up the exit check for a volume the navigation switched to
+  ///
+  /// @param state The navigation state
+  /// @param volume The volume
+  /// @param position The current position
+  /// @param direction The current direction
+  void initializeExitCheck(State& state, const TrackingVolume& volume,
+                           const Vector3& position,
+                           const Vector3& direction) const;
+
+  /// @brief Whether the position is outside of the current volume
+  ///
+  /// @param state The navigation state
+  /// @param position The position to test
+  /// @return True if the position is outside
+  bool outsideCurrentVolume(const State& state, const Vector3& position) const;
+
+  /// @brief Check if the last step left the current volume
+  ///
+  /// The candidates follow a straight line, so a bent trajectory can leave the
+  /// volume through a portal they do not hold, or dip out of it and back in.
+  /// On detection the portal to step back onto is left pending in the state.
+  ///
+  /// @param state The navigation state
+  /// @param position The current position
+  /// @param direction The current direction
+  /// @param onPortal The step ended on the portal the candidates target
+  /// @return True if the last step left the volume
+  bool checkVolumeExit(State& state, const Vector3& position,
+                       const Vector3& direction, bool onPortal = false) const {
+    // Runs on every step, so settle the common case right here
+    State::VolumeExitCheck& check = state.exitCheck;
+    if (check.kind == State::VolumeExitCheck::Kind::eAlignedCylinder) {
+      const double x = position.x() - check.center.x();
+      const double y = position.y() - check.center.y();
+      const double z = position.z() - check.center.z();
+      const double r2 = x * x + y * y;
+      if (r2 <= check.rMax2 && r2 >= check.rMin2 &&
+          std::abs(z) <= check.halfLengthZ) {
+        if (check.rMin2 == 0.) {
+          return false;
+        }
+        const double radial = x * direction.x() + y * direction.y();
+        if (check.reachedSurface || check.radial >= 0. || radial <= 0.) {
+          check.position = position;
+          check.radial = radial;
+          check.reachedSurface = false;
+          return false;
+        }
+      }
+    }
+    return resolveVolumeExit(state, position, direction, onPortal);
+  }
+
+  /// @brief Check if the last step left the current volume, in full
+  ///
+  /// @param state The navigation state
+  /// @param position The current position
+  /// @param direction The current direction
+  /// @param onPortal The step ended on the portal the candidates target
+  /// @return True if the last step left the volume
+  bool resolveVolumeExit(State& state, const Vector3& position,
+                         const Vector3& direction, bool onPortal) const;
+
+  /// @brief Find the portal the propagation left the current volume through
+  ///
+  /// Follows the straight line back from the position.
+  ///
+  /// @param state The navigation state
+  /// @param position The current position
+  /// @param direction The current direction
+  /// @param reentered The position is inside of the volume again, so the exit
+  ///        is the crossing before the last one, within @p range
+  /// @param range How far back a re-entered trajectory can have left
+  /// @return The portal to step back onto, or none
+  NavigationTarget findExitPortal(const State& state, const Vector3& position,
+                                  const Vector3& direction, bool reentered,
+                                  double range) const;
 
   /// @brief Resolve compatible surfaces
   ///

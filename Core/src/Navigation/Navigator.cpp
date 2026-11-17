@@ -10,6 +10,7 @@
 
 #include "Acts/Definitions/Units.hpp"
 #include "Acts/Geometry/BoundarySurfaceT.hpp"
+#include "Acts/Geometry/CylinderVolumeBounds.hpp"
 #include "Acts/Geometry/GeometryIdentifier.hpp"
 #include "Acts/Geometry/Portal.hpp"
 #include "Acts/Propagator/NavigatorError.hpp"
@@ -18,11 +19,13 @@
 #include "Acts/Utilities/Helpers.hpp"
 #include "Acts/Utilities/Intersection.hpp"
 #include "Acts/Utilities/Logger.hpp"
+#include "Acts/Utilities/MathHelpers.hpp"
 #include "Acts/Utilities/StringHelpers.hpp"
 
 #include <algorithm>
 #include <cassert>
 #include <format>
+#include <numbers>
 #include <sstream>
 
 namespace Acts {
@@ -477,6 +480,13 @@ bool Navigator::checkTargetValid(State& state, const Vector3& position,
     return false;
   }
 
+  if (state.exitCheck.kind != State::VolumeExitCheck::Kind::eNone &&
+      state.backtrack == State::Backtrack::eIdle &&
+      checkVolumeExit(state, position, direction)) {
+    ACTS_VERBOSE(volInfo(state) << "Left the volume, target is not valid.");
+    return false;
+  }
+
   if (state.currentVolume != nullptr &&
       state.currentVolume->navigationPolicy() != nullptr) {
     // A default (EmptyState) policy state signals no validity constraint, so
@@ -511,6 +521,7 @@ void Navigator::handleSurfaceReached(State& state, const Vector3& position,
   ACTS_VERBOSE(volInfo(state) << "Entering Navigator::handleSurfaceReached.");
 
   state.currentSurface = &surface;
+  state.exitCheck.reachedSurface = true;
 
   ACTS_VERBOSE(volInfo(state)
                << "Current surface: " << state.currentSurface->geometryId());
@@ -537,6 +548,20 @@ void Navigator::handleSurfaceReached(State& state, const Vector3& position,
     if (state.navCandidate().isPortalTarget() &&
         &state.navCandidate().surface() == &surface) {
       ACTS_VERBOSE(volInfo(state) << "Handling portal status.");
+
+      if (state.exitCheck.kind != State::VolumeExitCheck::Kind::eNone &&
+          state.backtrack == State::Backtrack::eIdle) {
+        // The portal can extend beyond the face of this volume, and the step
+        // onto it can have left the volume before. Actors have not seen the
+        // portal yet, so there is still a way back.
+        state.exitCheck.reachedSurface = false;
+        if (checkVolumeExit(state, position, direction, true)) {
+          ACTS_VERBOSE(volInfo(state)
+                       << "Left the volume before reaching the portal.");
+          state.currentSurface = nullptr;
+          return;
+        }
+      }
 
       // Switch to the next volume using the portal
       const Portal* portal = &state.navCandidate().portal();
@@ -716,6 +741,33 @@ NavigationTarget Navigator::getNextTargetGen3(State& state,
     return NavigationTarget::None();
   }
 
+  if (state.exitCheck.kind != State::VolumeExitCheck::Kind::eNone) {
+    using enum State::Backtrack;
+    if (state.backtrack == eActive) {
+      // The portal was dropped before the propagation got onto it
+      ACTS_VERBOSE(volInfo(state) << "Stepping back onto the portal failed.");
+      state.backtrack = eFailed;
+      state.stream.reset();
+    }
+    if (state.backtrack == eIdle) {
+      checkVolumeExit(state, position, direction);
+    }
+    if (state.backtrack == ePending) {
+      ACTS_VERBOSE(volInfo(state) << "Left the volume, step back onto "
+                                  << state.backtrackTarget);
+      state.backtrack = eActive;
+      ++state.statistics.nPortalBacktracks;
+      state.stream.reset();
+      state.stream.addPortalCandidate(state.backtrackTarget.portal());
+      state.stream.currentCandidate() = state.backtrackTarget;
+      return state.backtrackTarget;
+    }
+    if (outsideCurrentVolume(state, position)) {
+      ACTS_VERBOSE(volInfo(state) << "Left the volume. Renavigate.");
+      return NavigationTarget::None();
+    }
+  }
+
   // Only consult isValid() when the policy state is non-default; a default
   // (EmptyState) state signals the resolved sequence cannot be invalidated.
   // The defaultness is cached in the navigator state since it only changes at
@@ -793,6 +845,11 @@ void Navigator::createPolicyState(State& state, const TrackingVolume& volume,
                                   const Vector3& direction) const {
   const INavigationPolicy& policy = *volume.navigationPolicy();
 
+  if (m_geometryVersion == GeometryVersion::Gen3 &&
+      state.options.portalBacktracking) {
+    initializeExitCheck(state, volume, position, direction);
+  }
+
   // Statelessness is probed once at construction and fixed thereafter, so it is
   // the single source of truth for whether this volume's policy carries a
   // validity constraint. Cache it here so the per-step checks read a local bool
@@ -810,6 +867,223 @@ void Navigator::createPolicyState(State& state, const TrackingVolume& volume,
                       .direction = direction,
                       .curvature = state.curvature},
                      state.policyStateManager, logger());
+}
+
+void Navigator::initializeExitCheck(State& state, const TrackingVolume& volume,
+                                    const Vector3& position,
+                                    const Vector3& direction) const {
+  using Kind = State::VolumeExitCheck::Kind;
+  State::VolumeExitCheck& check = state.exitCheck;
+  // A position on a portal is off the volume by up to the surface tolerance
+  const double tolerance = 2 * state.options.surfaceTolerance;
+
+  check.kind = Kind::eGeneric;
+  state.backtrack = State::Backtrack::eIdle;
+
+  const VolumeBounds& bounds = volume.volumeBounds();
+  if (bounds.type() != VolumeBounds::eCylinder) {
+    return;
+  }
+  const auto& cylinder = static_cast<const CylinderVolumeBounds&>(bounds);
+  if (cylinder.get(CylinderVolumeBounds::eHalfPhiSector) < std::numbers::pi) {
+    return;
+  }
+  const double rMin = cylinder.get(CylinderVolumeBounds::eMinR);
+  const double rMax = cylinder.get(CylinderVolumeBounds::eMaxR);
+  const double halfLengthZ = cylinder.get(CylinderVolumeBounds::eHalfLengthZ);
+  check.rMin2 = square(std::max(0., rMin - tolerance));
+  check.rMax2 = square(rMax + tolerance);
+  check.halfLengthZ = halfLengthZ + tolerance;
+  check.rMinFace2 = square(rMin + tolerance);
+  check.rMaxFace2 = square(rMax - tolerance);
+  check.zFace = halfLengthZ - tolerance;
+
+  const Transform3& localToGlobal =
+      volume.localToGlobalTransform(state.options.geoContext);
+  check.center = localToGlobal.translation();
+  if (localToGlobal.linear() == SquareMatrix3::Identity()) {
+    check.kind = Kind::eAlignedCylinder;
+  } else {
+    check.kind = Kind::eCylinder;
+    check.globalToLocal =
+        &volume.globalToLocalTransform(state.options.geoContext);
+  }
+
+  // Only a volume with an inner cylinder looks at the radial velocity
+  if (check.rMin2 > 0.) {
+    Vector3 local = position - check.center;
+    Vector3 localDirection = direction;
+    if (check.kind == Kind::eCylinder) {
+      local = *check.globalToLocal * position;
+      localDirection = check.globalToLocal->linear() * direction;
+    }
+    check.position = position;
+    check.radial =
+        local.x() * localDirection.x() + local.y() * localDirection.y();
+    check.reachedSurface = false;
+  }
+}
+
+bool Navigator::outsideCurrentVolume(const State& state,
+                                     const Vector3& position) const {
+  using Kind = State::VolumeExitCheck::Kind;
+  const State::VolumeExitCheck& check = state.exitCheck;
+  if (check.kind == Kind::eGeneric) {
+    return !state.currentVolume->inside(state.options.geoContext, position,
+                                        2 * state.options.surfaceTolerance);
+  }
+  const Vector3 local = check.kind == Kind::eAlignedCylinder
+                            ? Vector3(position - check.center)
+                            : Vector3(*check.globalToLocal * position);
+  const double r2 = local.x() * local.x() + local.y() * local.y();
+  return r2 > check.rMax2 || r2 < check.rMin2 ||
+         std::abs(local.z()) > check.halfLengthZ;
+}
+
+bool Navigator::resolveVolumeExit(State& state, const Vector3& position,
+                                  const Vector3& direction,
+                                  bool onPortal) const {
+  using Kind = State::VolumeExitCheck::Kind;
+  State::VolumeExitCheck& check = state.exitCheck;
+
+  bool outside = false;
+  // Converging onto an overstepped portal leaves the volume as well
+  bool overstepped = false;
+  // Set if the trajectory can have left the volume and come back
+  std::optional<double> turnedWithin;
+
+  const NavigationTarget* portalCandidate =
+      !onPortal && state.stream.isValid() &&
+              state.navCandidate().isPortalTarget()
+          ? &state.navCandidate()
+          : nullptr;
+
+  if (check.kind == Kind::eGeneric) {
+    outside = outsideCurrentVolume(state, position);
+    if (!outside) {
+      return false;
+    }
+    if (portalCandidate != nullptr) {
+      const Intersection3D intersection =
+          portalCandidate->surface()
+              .intersect(state.options.geoContext, position, direction,
+                         portalCandidate->boundaryTolerance(),
+                         state.options.surfaceTolerance)
+              .at(portalCandidate->intersectionIndex());
+      overstepped = intersection.isValid() && intersection.pathLength() < 0. &&
+                    !outsideCurrentVolume(state, intersection.position());
+    }
+  } else {
+    const bool aligned = check.kind == Kind::eAlignedCylinder;
+    auto toLocal = [&check, aligned](const Vector3& global) -> Vector3 {
+      if (aligned) {
+        return global - check.center;
+      }
+      return *check.globalToLocal * global;
+    };
+    const Vector3 local = toLocal(position);
+    const double r2 = local.x() * local.x() + local.y() * local.y();
+    const bool beyondOuter = r2 > check.rMax2;
+    const bool beyondInner = r2 < check.rMin2;
+    const bool beyondDisc = std::abs(local.z()) > check.halfLengthZ;
+    outside = beyondOuter || beyondInner || beyondDisc;
+
+    if (!outside) {
+      if (check.rMin2 == 0.) {
+        return false;
+      }
+      // Passing the closest approach to the axis is what it takes to dip into
+      // the inner cylinder and back out within one step. Actors handled a
+      // surface the step ended on, so there is no going back behind it.
+      const Vector3 localDirection =
+          aligned ? direction
+                  : Vector3(check.globalToLocal->linear() * direction);
+      const double radial =
+          local.x() * localDirection.x() + local.y() * localDirection.y();
+      if (!check.reachedSurface && check.radial < 0. && radial > 0.) {
+        turnedWithin = (position - check.position).norm();
+      }
+      check.position = position;
+      check.radial = radial;
+      check.reachedSurface = false;
+      if (!turnedWithin.has_value()) {
+        return false;
+      }
+    } else if (portalCandidate != nullptr &&
+               static_cast<int>(beyondOuter) + static_cast<int>(beyondInner) +
+                       static_cast<int>(beyondDisc) ==
+                   1) {
+      // Beyond a single face, and the candidate is the portal on that face
+      const Vector3 target = toLocal(portalCandidate->position());
+      const double targetR2 = target.x() * target.x() + target.y() * target.y();
+      overstepped = beyondOuter   ? targetR2 > check.rMaxFace2
+                    : beyondInner ? targetR2 < check.rMinFace2
+                                  : (std::abs(target.z()) > check.zFace &&
+                                     target.z() * local.z() > 0.);
+    }
+  }
+
+  if (overstepped) {
+    return false;
+  }
+
+  state.backtrackTarget = findExitPortal(state, position, direction, !outside,
+                                         turnedWithin.value_or(0.));
+  if (!state.backtrackTarget.isNone()) {
+    state.backtrack = State::Backtrack::ePending;
+    return true;
+  }
+  return outside;
+}
+
+NavigationTarget Navigator::findExitPortal(const State& state,
+                                           const Vector3& position,
+                                           const Vector3& direction,
+                                           bool reentered, double range) const {
+  // The two crossings closest behind the position
+  NavigationTarget last = NavigationTarget::None();
+  NavigationTarget secondToLast = NavigationTarget::None();
+
+  for (const Portal& portal : state.currentVolume->portals()) {
+    const MultiIntersection3D multiIntersection = portal.surface().intersect(
+        state.options.geoContext, position, direction,
+        BoundaryTolerance::None(), state.options.surfaceTolerance);
+
+    for (const auto [intersectionIndex, intersection] :
+         enumerate(multiIntersection)) {
+      if (intersection.status() != IntersectionStatus::reachable ||
+          intersection.pathLength() >= 0.) {
+        continue;
+      }
+      if (reentered && -intersection.pathLength() > range) {
+        continue;
+      }
+      // A portal can extend beyond the face of this volume
+      if (outsideCurrentVolume(state, intersection.position())) {
+        continue;
+      }
+      NavigationTarget crossing(
+          intersection, static_cast<IntersectionIndex>(intersectionIndex),
+          portal, BoundaryTolerance::None());
+      if (last.isNone() || crossing.pathLength() > last.pathLength()) {
+        secondToLast = last;
+        last = crossing;
+      } else if (secondToLast.isNone() ||
+                 crossing.pathLength() > secondToLast.pathLength()) {
+        secondToLast = crossing;
+      }
+    }
+  }
+
+  if (!reentered) {
+    return last;
+  }
+  // Back inside, the last crossing is where the trajectory came back in. It
+  // left through the same portal right before.
+  if (secondToLast.isNone() || &secondToLast.surface() != &last.surface()) {
+    return NavigationTarget::None();
+  }
+  return secondToLast;
 }
 
 void Navigator::resolveCandidates(State& state, const Vector3& position,
