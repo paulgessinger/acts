@@ -1,7 +1,10 @@
 # Secondary vertex finding in Athena — survey, and what it implies for ACTS
 
-**Status:** survey + agreed architecture + phased plan. One concrete refactor is proposed (E.5, Phase 0);
-no code has been written yet.
+**Status (2026-11-24):** interface groundwork merged; Athena fitter ports and the secondary-vertex
+algorithm phases remain planned. Parts E and H reflect the current design on upstream main.
+The Athena survey and its source-line references describe the original August 2026 checkout;
+they have not been re-audited against current Athena. This survey branch itself is historical:
+merged implementation status below refers to upstream main, not this branch’s code.
 **Athena source surveyed:** `/scratch/pagessin/dev/acts-in-athena/athena` (nightly checkout, ~1.9 GB).
 **ACTS reference:** this repository, `Core/{include/Acts,src}/Vertexing`, `Examples/Algorithms/Vertexing`.
 
@@ -48,10 +51,10 @@ this is dead code, so "newest" here means "most recent design", not "the one tha
 others".
 
 **The single most important finding for ACTS:** ACTS has a complete, well-tested primary-vertexing
-stack (fitters, updaters, impact-point estimation, annealing, finders) but **every one of its seed
-finders is one-dimensional in `z`, with `x`/`y` taken from the beam constraint.** See
+stack (fitters, updaters, impact-point estimation, annealing, finders) but **its standard primary-vertex density/scan seed
+finders are one-dimensional in `z`, with `x`/`y` taken from the beam constraint.** See
 `Core/src/Vertexing/ZScanVertexFinder.cpp:104-107`. That is the structural blocker: a secondary
-vertex is by definition displaced in `x`/`y`, so no existing ACTS seeder can propose it. Everything
+vertex is by definition displaced in `x`/`y`, so those seeders cannot propose it without a displaced transverse constraint. Everything
 else in the ACTS vertexing stack — `AdaptiveMultiVertexFitter`, `FullBilloirVertexFitter`,
 `ImpactPointEstimator`, `KalmanVertexUpdater`, `IVertexFinder` — is geometry-agnostic and reusable
 as-is.
@@ -59,23 +62,21 @@ as-is.
 Consequently the minimum viable baseline is roughly: **one 3D seeder + one selection/merging layer**,
 both bolted onto the existing `IVertexFinder` interface. The fitting machinery needs no changes.
 
-**Adopted architecture (Part E):** secondary vertexing is delivered as `IVertexFinder`
-implementations paired with an existing vertex fitter. `IVertexFinder` is already the composition
-point for both finders and seeders, so no new abstraction is needed on the finder side. The fitter
-side needs one: ACTS has no `IVertexFitter`, and the two existing fitters have different shapes
-(one-shot stateless vs. stateful multi-vertex).
+**Adopted architecture (Part E):** secondary vertexing remains an `IVertexFinder` composition.
+Single-candidate fitting uses the merged `IVertexFitter`, implemented by Billoir. AMVF retains its
+concrete multi-vertex API with a separate `VertexFitProblem` and `Cache`. A future multi-vertex,
+constrained or cascade interface should be introduced only when an actual port needs it.
+The earlier proposal to unify Billoir and AMVF under one multi-vertex contract is superseded.
 
-**They can nonetheless be unified, and this has been verified (E.5).**
-`AdaptiveMultiVertexFitter::State` turns out to be mostly *problem* rather than *state* — and the
-finder touches only the problem-level members, with **zero** accesses to `annealingState`, `ipState`
-or `fieldCache`. Factoring a `VertexFitProblem` out of the fitter therefore lets both fitters speak
-one vocabulary, with the single-vertex case falling out as a convenience overload. This refactor is
-**Phase 0 and blocks all SV work**; it is a pure refactor whose gate is "no behaviour change".
+**Where we are:** the Phase-0 foundation is complete in its revised form. The next step is to select
+one Athena fitter or SV use case and exercise the interface with concrete implementation work.
+Making `IterativeVertexFinder` accept `IVertexFitter` is a small integration follow-up when needed;
+it is not a prerequisite for starting geometric primitives or a two-track prototype.
 
-**Sequencing (Part H):** Phase 0 refactor → 1 primitives → 2 3D seeder → 3 two-track feasibility
-spike → 4 validation infrastructure → 5 baseline finder → 6 presets. Phases 2 and 3 are the
-project-killing gates (seeds near truth SVs; a K⁰ₛ mass peak) and are deliberately reached early and
-cheaply. Validation tooling lands before the baseline, because tuning without it is tuning blind.
+**Sequencing (Part H):** completed foundation → select first port/use case → shared primitives →
+3D seeder and two-track feasibility spike → validation infrastructure → baseline finder → presets.
+The 3D seeder and K⁰ₛ mass-peak checks remain the early feasibility gates. No new opaque fitter-state
+abstraction is required to begin them.
 
 ---
 
@@ -432,10 +433,9 @@ Vector4 output(vertexingOptions.constraint.position().x(),
                vertexingOptions.constraint.position().y(), ZResult,
                vertexingOptions.constraint.time());
 ```
-
-The same holds for the grid/density seeders: they histogram `z0` (and optionally `t`) and return the
-beam-line `x`,`y`. Every ACTS vertex seed therefore lies on the beam axis. There is currently **no
-way to propose a candidate at `r > 0`**.
+pThe same holds for the grid/density seeders: they histogram z0 (and optionally t) and return the
+constraint `x`,`y`, normally on the beam axis. The missing component is a general displaced
+track-pair 3D seeder; the specialized Hough finder noted above is not that implementation.
 
 ### D.3 Gap table
 
@@ -480,59 +480,55 @@ The Examples layer also benefits: an SV algorithm looks like
 `AdaptiveMultiVertexFinderAlgorithm` with a different finder plugged in, rather than a new parallel
 structure.
 
-### E.2 The snag — there is no `IVertexFitter`
+### E.2 Current fitter contracts
 
-The finder half composes cleanly. The fitter half does not, and this is worth knowing before
-committing to a design.
-
-There is **no vertex fitter interface in ACTS**. Fitters are concrete types, hard-wired into each
-finder by a type alias and held *by value* in the config:
+The single-vertex interface is now merged in [#6150](https://github.com/acts-project/acts/pull/6150):
 
 ```cpp
-// IterativeVertexFinder.hpp:57,74
-using VertexFitter = FullBilloirVertexFitter;
-VertexFitter vertexFitter;
+struct VertexFitInput {
+  std::span<const InputTrack> tracks;
+  Vector4 seedPosition = Vector4::Zero();
+  std::optional<Vertex> constraint;
+};
 
-// AdaptiveMultiVertexFinder.hpp:25,50
-using VertexFitter = AdaptiveMultiVertexFitter;
-VertexFitter vertexFitter;
+// IVertexFitter, implemented by FullBilloirVertexFitter:
+Result<Vertex> fit(const VertexFitInput& input,
+                   const GeometryContext& gctx,
+                   MagneticFieldQuery& field) const;
 ```
 
-`DummyVertexFitter` is not a counter-example — it is a stub "only to be used for ensuring interfaces
-where a vertex fitter type is required but no fitter is actually needed", and its constructor is
-`= delete`d. It is a relic of the older templated design.
+The seed and optional fit constraint have separate meanings. Billoir also retains its query-taking
+`VertexingOptions` overload. `VertexingOptions` accepts an optional constraint, but still stores a
+vertex and `useConstraintInFit`: its vertex position can seed finding even when the constraint is
+disabled. Finder-to-fit conversion must preserve the seed independently of that flag.
 
-Worse, the two real fitters are not trivially unifiable, because they have different *shapes*:
+AMVF intentionally has a different contract:
 
-| | `FullBilloirVertexFitter` | `AdaptiveMultiVertexFitter` |
-|---|---|---|
-| Call | `fit(tracks, …) -> Result<Vertex>` | `addVtxToFit(State&, …) -> Result<void>`, `fit(State&, …) -> Result<void>` |
-| State | stateless, one-shot | stateful, mutates a shared multi-vertex `State` |
-| Scope | one vertex | *all* vertices simultaneously |
+```cpp
+Result<void> fit(VertexFitProblem& problem,
+                 const VertexingOptions& options,
+                 AdaptiveMultiVertexFitter::Cache& cache) const;
+```
 
-An `IVertexFitter` that spans both would have to abstract over "returns a vertex" versus "mutates a
-shared collection of vertices", which is not a thin adapter.
+It also exposes `addVtxToFit` to update the coupled multi-vertex problem. Repeated independent
+Billoir fits are not a substitute for simultaneous fitting of vertices sharing tracks.
 
-### E.3 What "pair with a fitter" can and cannot mean
+### E.3 Composition and future Athena ports
 
-Consequently the pairing is free *within* a family and structurally impossible *across* families:
+- **Single-vertex fits:** use `IVertexFitter`; keep runtime polymorphism rather than introducing
+  finder templates again. The original template removal aimed to reduce compilation memory.
+- **Coupled multi-vertex fits:** keep AMVF concrete for now. Its problem/cache split is useful
+  preparation for a separate interface if another implementation needs that contract.
+- **Mass constraints and cascades:** evaluate the actual inputs and outputs of the selected port.
+  Introduce a separate interface when the semantics require it; do not force these through
+  `VertexFitInput` or enlarge the common interface speculatively.
 
-- **One-shot family** (VKal-style clique finders, V0/conversion finders, anything that fits one
-  candidate at a time): genuinely fitter-agnostic. Template the finder on the fitter type and erase
-  it behind `IVertexFinder` — the template parameter never escapes the interface, so callers still
-  see a plain `IVertexFinder`. This is the recommended mechanism.
-- **Simultaneous multi-vertex family** (AMVF-style): structurally bound to
-  `AdaptiveMultiVertexFitter`, because the finder drives the fitter's shared state directly
-  (`addVtxToFit`, `removeVertexFromCollection`). Swapping the fitter here is not a configuration
-  change, it is a different algorithm.
+The long-term intention is to accommodate the Athena fitters, potentially all of them, rather than
+promise that every fitter conforms to one interface. No first port has been selected here.
 
-Three ways to implement the pairing, in increasing order of blast radius:
-
-| | Approach | Cost | Verdict |
-|---|---|---|---|
-| (a) | Hard-wire per finder, as the two existing finders do | zero | consistent with current ACTS style, but "pair with a fitter" becomes an authoring-time choice |
-| (b) | Template the SV finder on the fitter type, erase behind `IVertexFinder` | small | **recommended** — keeps the flexibility, adds no new public interface |
-| (c) | Introduce a real `IVertexFitter` | large, touches existing Core API | probably not justified by this work alone; revisit if a third fitter appears |
+`IterativeVertexFinder::Config` still stores `FullBilloirVertexFitter` by value, so an arbitrary
+`IVertexFitter` cannot yet be supplied. Generalizing that dependency is a pending integration task.
+`AdaptiveMultiVertexFinder` remains bound to AMVF intentionally.
 
 ### E.4 Open EDM question
 
@@ -545,93 +541,30 @@ So a decision is needed on how SV-specific output is carried: extend `Vertex`, r
 structure from the SV finders, or push it to the Examples EDM. This does not block a prototype but
 it does shape the public API, so it is better settled early than retrofitted.
 
-### E.5 Prerequisite refactor — split the fitter state (verified)
+### E.5 Completed preparation and remaining boundaries
 
-**This is Phase 0 of the plan (Part H) and blocks all SV work.** The verification below was done
-against the current sources; it is the reason the refactor is believed to be cheap.
-
-**The observation.** `AdaptiveMultiVertexFitter::State` is not really fitter state. Of its six
-members, four describe *the problem being solved* and three are scratch:
-
-| Member | Nature |
+| Work | Status |
 |---|---|
-| `vertexCollection` | **problem** |
-| `vtxInfoMap` | **problem** (partly — see below) |
-| `trackToVerticesMultiMap` | **problem** |
-| `tracksAtVerticesMap` | **problem** |
-| `annealingState` | fitter scratch |
-| `ipState` | fitter scratch |
-| `fieldCache` | fitter scratch |
+| Split AMVF problem data from scratch/cache | [#5879](https://github.com/acts-project/acts/pull/5879), merged 2026-09-15 |
+| First `IVertexFitter` implemented by AMVF | [#6091](https://github.com/acts-project/acts/pull/6091), subsequently reverted by [#6151](https://github.com/acts-project/acts/pull/6151) |
+| Move remaining Billoir implementation into `.cpp` | [#6420](https://github.com/acts-project/acts/pull/6420), merged 2026-10-30 |
+| Query-based field access and linearizer migration | [#6421](https://github.com/acts-project/acts/pull/6421), merged 2026-11-16; cleanup in [#6547](https://github.com/acts-project/acts/pull/6547) |
+| Single-vertex interface with Billoir implementation | [#6150](https://github.com/acts-project/acts/pull/6150), merged 2026-11-19 |
 
-`VertexInfo` (`Core/include/Acts/Vertexing/AMVFInfo.hpp`) splits the same way — `constraint`,
-`seedPosition` and `trackLinks` are problem; `linPoint`, `oldPosition`, `relinearize` and
-`impactParams3D` are per-iteration fitter scratch.
+The state split remains valid even though the original unified interface was reverted: the finder
+owns the description of vertices/tracks and AMVF owns scratch data in its concrete cache. AMVF’s
+pre-split `State` adapters are still deprecated compatibility APIs; their removal is a separate
+cleanup, not a blocker for SV development.
 
-**The verification.** Every access to the fitter state from `AdaptiveMultiVertexFinder` was
-enumerated (`Core/src/Vertexing/AdaptiveMultiVertexFinder.cpp`, ~27 sites at lines 92, 268–338,
-364–476, 601–646). Results:
+`MagneticFieldQuery` borrows a provider and magnetic-field context and owns a reusable cache.
+Both borrowed objects must outlive it. Tools keep the existing `Config::trackLinearizer` name;
+the delegate now accepts the query. The finder creates the query from its provider and passes it
+through Billoir to the linearizer. Billoir needs no separate field-provider configuration.
 
-- All of them touch only `vertexCollection`, `vtxInfoMap[...].trackLinks`, `tracksAtVerticesMap`,
-  or the multimap helpers (`addVertexToMultiMap`, `removeVertexFromMultiMap`,
-  `removeVertexFromCollection`).
-- **There is not a single access to `annealingState`, `ipState` or `fieldCache`.**
-- The only whole-`VertexInfo` writes are `vtxInfoMap[&vtx] = VertexInfo(currentConstraint,
-  vtx.fullPosition())` at lines 306 and 338 — i.e. the finder only ever supplies *(constraint, seed
-  position)*, never the linearization scratch.
-
-So the finder already speaks exclusively in problem-level terms. The seam holds.
-
-**The refactor.**
-
-```cpp
-// Per-event, caller-owned, fitter-agnostic.
-struct VertexFitProblem {
-  std::vector<Vertex*> vertices;
-  std::map<Vertex*, VertexConstraintAndTracks> trackLinks;  // constraint, seedPos, tracks
-  std::multimap<InputTrack, Vertex*> trackToVertices;
-  std::map<std::pair<InputTrack, Vertex*>, TrackAtVertex> tracksAtVertices;
-};
-
-class IVertexFitter {
- public:
-  using Cache = Acts::AnyBase<N>;   // same type-erasure as IVertexFinder::State
-  virtual Cache makeCache(const MagneticFieldContext&) const = 0;
-  virtual Result<void> fit(VertexFitProblem&, const VertexingOptions&, Cache&) const = 0;
-  virtual Result<void> addVertices(VertexFitProblem&, std::span<Vertex* const>,
-                                   const VertexingOptions&, Cache&) const = 0;
-
-  /// Convenience for the single-vertex case; non-virtual, defined in terms of fit().
-  Result<Vertex> fitSingle(const std::vector<InputTrack>&, const VertexingOptions&, Cache&) const;
-};
-```
-
-- **`AdaptiveMultiVertexFitter`**: `fit` and `addVertices` *are* the existing `fit` and
-  `addVtxToFit`. Four `State` members move to `VertexFitProblem`, three become the `Cache`;
-  `VertexInfo` splits along the line above, with the scratch half living in the `Cache` keyed by
-  `Vertex*`.
-- **`FullBilloirVertexFitter`**: an adapter of roughly 40 lines. `fit` loops the problem's vertices,
-  calls the existing one-shot `fit(trackLinks, options, cache.fieldCache)`, writes results back with
-  weight 1. `addVertices` appends and fits only the new ones. Note it *already* takes a
-  `MagneticFieldProvider::Cache&`, so the caller-owns-scratch shape is not new to it.
-
-**Direction of the abstraction.** The single-vertex case is not a subtype of the multi-vertex case;
-rather, once the problem is factored out, both fitters speak one vocabulary and the difference
-demotes to a documented semantic property: *does this fitter couple vertices that share tracks?*
-Billoir: no. AMVF: yes. `fitSingle` then falls out as a convenience overload rather than a second
-interface.
-
-**The residual hazard, and the chosen mitigation.** A common interface would let
-`AdaptiveMultiVertexFinder` be constructed with a Billoir-backed fitter; it would compile, run, and
-silently not be AMVF, because the coupling is the algorithm rather than an optimisation.
-**Mitigation: leave `AdaptiveMultiVertexFinder` bound to the concrete `AdaptiveMultiVertexFitter`
-(as it is today), and let only the new SV finders take `IVertexFitter`.** This keeps the full benefit
-with none of the risk. The alternatives — a `couplesSharedTracks()` capability predicate, or an
-`IMultiVertexFitter : IVertexFitter` split — are recorded as fallbacks if a case appears that needs
-genuine substitutability.
-
-**Side benefits:** removes the `/// @todo Does this have to be a mutable pointer?` in AMVF's state,
-and cleanly separates per-event data (the problem) from per-thread scratch (the cache), improving
-the const-correctness and reentrancy story.
+Propagation uses the query’s context but has its own cache and configured provider. The query
+keeps its own provider/cache pair consistent; it does **not** verify that the propagator’s provider
+matches. Keep that residual configuration requirement explicit. No additional type-erased cache
+layer or provider-synchronization abstraction is planned without a concrete need.
 
 ---
 
@@ -719,21 +652,30 @@ The ordering below is chosen so that **the cheapest question that can kill the p
 first**, and so that no tuning happens before there is something to tune against. Each phase states
 what it proves, what would falsify it, and what has to be true to proceed.
 
-Phases 0–3 are deliberately small. If the project is going to fail, it should fail by the end of
+The remaining primitives and feasibility phases (1–3) are deliberately small. If the project is going to fail, it should fail by the end of
 Phase 3, having consumed a few weeks rather than a few months.
 
-### Phase 0 — fitter-state refactor *(prerequisite, blocks everything)*
+### Phase 0 — interface foundation *(complete in revised form)*
 
-Split `AdaptiveMultiVertexFitter::State` into `VertexFitProblem` + `Cache`, split `VertexInfo`,
-introduce `IVertexFitter`, add the Billoir adapter. Spec and verification in E.5.
+The AMVF problem/cache split, reusable field query, and single-vertex Billoir interface are merged
+(Part E.5). This replaces the original plan for one interface spanning single- and multi-vertex
+fits. Do not revive that unification as a prerequisite for the algorithm work.
 
-- **Proves:** that SV finders can be written against a fitter interface at all.
-- **Feasibility:** already established (E.5) — the finder touches no fitter-private state.
-- **Gate:** *pure refactor, no behaviour change.* All `Tests/UnitTests/Core/Vertexing/` tests pass
-  unchanged; AMVF and Iterative finder outputs identical (ideally bit-level) on a reference sample.
-- **Falsified if:** the refactor cannot preserve AMVF results, which would mean the state coupling is
-  deeper than the access analysis suggests.
-- **Reversible:** yes, and independently valuable regardless of the SV outcome.
+### Next — choose and exercise the first implementation
+
+1. Select a concrete Athena fitter port or SV use case. Record its required inputs, constraints,
+   outputs and validation reference before extending an API.
+2. For ordinary single-vertex fits, implement against `IVertexFitter`. Generalize
+   `IterativeVertexFinder` to accept that interface when integration requires it; preserve existing
+   Billoir behavior and make ownership explicit.
+3. If the selected functionality is coupled multi-vertex or cascade fitting, design the separate
+   contract around that implementation rather than adding speculative methods to `IVertexFitter`.
+4. For the SV path, begin Phase 1 and the minimal two-track spike with Billoir. A second fitter,
+   removal of AMVF’s deprecated adapters, and provider-consistency enforcement are not blockers.
+
+**Gate:** a second implementation or concrete prototype exercises the public contract, with
+reference-result tests and no regression in existing primary-vertex reconstruction. Selecting a
+first port does not commit us to supporting only that fitter in the long term.
 
 ### Phase 1 — shared primitives
 
@@ -762,7 +704,7 @@ track–track 3D DCA, 3D FSMW mode on top of the existing `FsmwMode1dFinder`.
 ### Phase 3 — feasibility spike: minimal end-to-end SV finder
 
 Deliberately the smallest thing that can work: **2-track vertices only, no clustering, no merging.**
-Charge-split or all-pairs, analytic seed, one fit through the Phase-0 interface, mass-window tagging.
+Charge-split or all-pairs, analytic seed, one fit through the merged single-vertex interface, mass-window tagging.
 
 - **Proves:** the whole chain runs and produces vertices at r > 0 with sane covariances.
 - **Gate (go / no-go):** a visible K⁰ₛ → π⁺π⁻ mass peak at the right position with plausible width.
@@ -810,7 +752,8 @@ Expose the configuration surface (B.2) and tune preset points against the Phase-
 
 | Phase | Deliverable | Kills the project if it fails? | Gate |
 |---|---|---|---|
-| 0 | fitter-state refactor + `IVertexFitter` | no (but blocks) | no behaviour change |
+| 0 | revised interface foundation — merged | complete | existing fitter/finder validation |
+| Next | choose first port/use case; integrate interface as needed | no | concrete implementation validates contract |
 | 1 | geometric primitives | no | closed-form unit tests |
 | 2 | 3D seeder | **yes** | seeds near truth SVs |
 | 3 | 2-track spike | **yes** | K⁰ₛ peak |
