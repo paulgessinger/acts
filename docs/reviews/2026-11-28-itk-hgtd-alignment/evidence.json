@@ -1,0 +1,583 @@
+{
+  "reviewed_at": "2026-11-28",
+  "scope": "ITk spatial alignment first; HGTD spatial alignment",
+  "baselines": {
+    "acts": "8f6c4e323480ccf35b6fbe4c62967e4785a8c37b",
+    "athena": "68da56621c9da6be17ccc5e8ee69e0e723e199f5"
+  },
+  "method": "Live upstream heads verified; immutable source review and live GitHub PR/review inspection. No alignment jobs run.",
+  "references": [
+    {
+      "label": "DetectorAlignCondAlg::execute",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsAlignmentAlgs/src/DetectorAlignCondAlg.cxx#L37",
+      "research": "athena"
+    },
+    {
+      "label": "ITk accumulation configuration",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignConfig/python/AccumulateITkConfig.py#L83",
+      "research": "athena"
+    },
+    {
+      "label": "ActsToTrkFitterWrapTool interface",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsEventCnv/src/ActsToTrkFitterWrapTool.h#L20",
+      "research": "athena"
+    },
+    {
+      "label": "H14 \u2014 ACTS alignment/context configuration, missing HGTD branch",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsAlignmentAlgs/python/AlignmentAlgsConfig.py#L109",
+      "research": "hgtd"
+    },
+    {
+      "label": "H15 \u2014 HGTD_DetectorElementCondAlg infinite IOV and nominal element cloning",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_Conditions/HGTD_ConditionsAlgorithms/src/HGTD_DetectorElementCondAlg.cxx#L54",
+      "research": "hgtd"
+    },
+    {
+      "label": "AlignStoreProviderAlg::execute",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsAlignmentAlgs/src/AlignStoreProviderAlg.cxx#L58",
+      "research": "athena"
+    },
+    {
+      "label": "GeometryContextAlg::execute",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsAlignmentAlgs/src/GeometryContextAlg.cxx#L29",
+      "research": "athena"
+    },
+    {
+      "label": "ITk alignability defaults",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetConfig/python/ITkConfigFlags.py#L41",
+      "research": "athena"
+    },
+    {
+      "label": "runITkAlign.py",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignConfig/scripts/runITkAlign.py#L95",
+      "research": "athena"
+    },
+    {
+      "label": "ITk matrix configuration",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignConfig/python/ITkAlignToolsConfig.py#L129",
+      "research": "athena"
+    },
+    {
+      "label": "IGlobalTrackFitter alignment contract",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/TrkFitter/TrkFitterInterfaces/TrkFitterInterfaces/IGlobalTrackFitter.h#L42",
+      "research": "athena"
+    },
+    {
+      "label": "BeamspotVertexPreProcessor alignment refit",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/TrkAlignment/TrkAlignGenTools/src/BeamspotVertexPreProcessor.cxx#L617",
+      "research": "athena"
+    },
+    {
+      "label": "ITk Pixel endcap L2 builder",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignGeomTools/src/PixelGeometryManagerTool.cxx#L1293",
+      "research": "athena"
+    },
+    {
+      "label": "ITk geometry manager configuration",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignConfig/python/ITkAlignToolsConfig.py#L12",
+      "research": "athena"
+    },
+    {
+      "label": "Alignment.ipp, evaluateTrackAlignmentState, lines 25\u201363",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/include/ActsAlignment/Kernel/Alignment.ipp#L25",
+      "research": "acts"
+    },
+    {
+      "label": "TrackAlignmentState",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/include/ActsAlignment/Kernel/detail/AlignmentEngine.hpp#L34",
+      "research": "acts"
+    },
+    {
+      "label": "AlignableStructure",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/include/ActsAlignment/Geometry/AlignableStructure.hpp#L31",
+      "research": "acts"
+    },
+    {
+      "label": "compositeToComponentJacobian",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Core/include/Acts/Surfaces/detail/AlignmentHelper.hpp#L37",
+      "research": "acts"
+    },
+    {
+      "label": "AlignmentParameterDirectory",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/include/ActsAlignment/Kernel/detail/AlignmentParameterDirectory.hpp#L34",
+      "research": "acts"
+    },
+    {
+      "label": "solveAlignmentParameters",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/src/Kernel/detail/AlignmentEngine.cpp#L89",
+      "research": "acts"
+    },
+    {
+      "label": "ITk reconstruction misalignment generator",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignAlgs/InDetAlignGenAlgs/share/CreateMisalignmentITk.py#L1",
+      "research": "athena"
+    },
+    {
+      "label": "local conditions staging",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignConfig/scripts/runITkAlign.py#L56",
+      "research": "athena"
+    },
+    {
+      "label": "alignment\u2192DB frame conversion",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignDBTools/src/SiTrkAlignDBTool.cxx#L576",
+      "research": "athena"
+    },
+    {
+      "label": "ITk solve/output configuration",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignConfig/python/SolveITkConfig.py#L38",
+      "research": "athena"
+    },
+    {
+      "label": "ActsToMille",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Plugins/Mille/include/ActsPlugins/Mille/ActsToMille.hpp#L26",
+      "research": "acts"
+    },
+    {
+      "label": "sandbox",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Examples/Algorithms/AlignmentMillePede/src/MillePedeAlignmentSandbox.cpp#L111",
+      "research": "acts"
+    },
+    {
+      "label": "H1 \u2014 HGTD_AlignDBTool module payload and ignored hierarchy level",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_AlignAlgs/HGTD_AlignGenTools/src/HGTD_AlignDBTool.cxx#L84",
+      "research": "hgtd"
+    },
+    {
+      "label": "H6 \u2014 HGTD_DetectorManager::setAlignableTransformDelta and align",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_DetDescr/HGTD_ReadoutGeometry/src/HGTD_DetectorManager.cxx#L133",
+      "research": "hgtd"
+    },
+    {
+      "label": "H10 \u2014 HGTDTrackExtensionAlg ITk starting state and CKF",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsTrackReconstruction/src/HGTDTrackExtensionAlg.cxx#L280",
+      "research": "hgtd"
+    },
+    {
+      "label": "#6218",
+      "url": "https://github.com/acts-project/acts/pull/6218",
+      "research": "acts"
+    },
+    {
+      "label": "#5411",
+      "url": "https://github.com/acts-project/acts/pull/5411",
+      "research": "acts"
+    },
+    {
+      "label": "#6299",
+      "url": "https://github.com/acts-project/acts/pull/6299",
+      "research": "acts"
+    },
+    {
+      "label": "#6473",
+      "url": "https://github.com/acts-project/acts/pull/6473",
+      "research": "acts"
+    },
+    {
+      "label": "#6479",
+      "url": "https://github.com/acts-project/acts/pull/6479",
+      "research": "acts"
+    },
+    {
+      "label": "#6550",
+      "url": "https://github.com/acts-project/acts/pull/6550",
+      "research": "acts"
+    },
+    {
+      "label": "Commit 4d0f49922f80385258ba8720248d6b32563c801c, 18 Nov 2026",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/commit/4d0f49922f80385258ba8720248d6b32563c801c",
+      "research": "athena"
+    },
+    {
+      "label": "ITkPixelAlignCondAlgCfg",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetConditions/PixelConditionsAlgorithms/python/ITkPixelConditionsConfig.py#L49",
+      "research": "athena"
+    },
+    {
+      "label": "ITkStripAlignCondAlgCfg",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetConditions/SCT_ConditionsAlgorithms/python/ITkStripConditionsAlgorithmsConfig.py#L9",
+      "research": "athena"
+    },
+    {
+      "label": "alignment-store transform unit test",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsGeoUtils/test/test_AlignStoreAccess.cxx#L125",
+      "research": "athena"
+    },
+    {
+      "label": "IMatrixTool scalar input interface",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/TrkAlignment/TrkAlignInterfaces/TrkAlignInterfaces/IMatrixTool.h#L48",
+      "research": "athena"
+    },
+    {
+      "label": "SiTrkAlignDBTool output and update",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/InnerDetector/InDetAlignment/InDetAlignDBTools/src/SiTrkAlignDBTool.cxx#L284",
+      "research": "athena"
+    },
+    {
+      "label": "H2 \u2014 HGTD payload output and IOV registration",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_AlignAlgs/HGTD_AlignGenTools/src/HGTD_AlignDBTool.cxx#L329",
+      "research": "hgtd"
+    },
+    {
+      "label": "H8 \u2014 ACTS HGTD PlaneSurface and store-aware transform",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsGeometry/src/ActsDetectorElement.cxx#L182",
+      "research": "hgtd"
+    },
+    {
+      "label": "H18 \u2014 ACTS null-store nominal-cache fallback",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsGeoUtils/ActsGeoUtils/TransformCache.icc#L12",
+      "research": "hgtd"
+    },
+    {
+      "label": "ordinary ACTS fit and Trk conversion",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsEventCnv/src/ActsToTrkFitterWrapTool.cxx#L160",
+      "research": "athena"
+    },
+    {
+      "label": "implemented scalar accumulation",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/TrkAlignment/TrkAlignGenTools/src/MatrixTool.cxx#L1433",
+      "research": "athena"
+    },
+    {
+      "label": "matrix/vector/identity file output",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/TrkAlignment/TrkAlignGenTools/src/MatrixTool.cxx#L725",
+      "research": "athena"
+    },
+    {
+      "label": "ACTS GX2F source-link fit",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsTrackReconstruction/src/GlobalChiSquareFitterTool.cxx#L168",
+      "research": "athena"
+    },
+    {
+      "label": "GX2F track-proxy refit stub",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsTrackReconstruction/src/GlobalChiSquareFitterTool.cxx#L158",
+      "research": "athena"
+    },
+    {
+      "label": "Head header",
+      "url": "https://github.com/knutzk/acts/blob/f754188b733258f3cdabc396ac9879aac2d826cd/Alignment/include/ActsAlignment/Kernel/TrackAlignmentState.hpp",
+      "research": "acts"
+    },
+    {
+      "label": "Finalizer",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/src/Kernel/detail/AlignmentEngine.cpp#L59",
+      "research": "acts"
+    },
+    {
+      "label": "correlated residual weights",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/TrkAlignment/TrkAlignGenTools/src/AnalyticalDerivCalcTool.cxx#L210",
+      "research": "athena"
+    },
+    {
+      "label": "GlobalChi2AlignTool gradient/Hessian accumulation",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/TrkAlignment/TrkGlobalChi2AlignTools/src/GlobalChi2AlignTool.cxx#L266",
+      "research": "athena"
+    },
+    {
+      "label": "#6215",
+      "url": "https://github.com/acts-project/acts/pull/6215",
+      "research": "acts"
+    },
+    {
+      "label": "Representation discussion",
+      "url": "https://github.com/acts-project/acts/pull/6217#discussion_r4183287708",
+      "research": "acts"
+    },
+    {
+      "label": "Structure derivative helper",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/src/Kernel/detail/AlignmentEngine.cpp#L19",
+      "research": "acts"
+    },
+    {
+      "label": "Frame documentation",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/docs/pages/alignment_structure_frames.md#L10",
+      "research": "acts"
+    },
+    {
+      "label": "lines 321\u2013331",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/include/ActsAlignment/Kernel/detail/AlignmentEngine.hpp#L321",
+      "research": "acts"
+    },
+    {
+      "label": "hierarchy lines 126\u2013142",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/include/ActsAlignment/Geometry/AlignmentHierarchy.hpp#L126",
+      "research": "acts"
+    },
+    {
+      "label": "AlignmentIndices",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Core/include/Acts/Definitions/Alignment.hpp#L22",
+      "research": "acts"
+    },
+    {
+      "label": "updateAlignmentParameters",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/include/ActsAlignment/Kernel/Alignment.ipp#L159",
+      "research": "acts"
+    },
+    {
+      "label": "ActsDetectorElement transforms",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsGeometry/src/ActsDetectorElement.cxx#L212",
+      "research": "athena"
+    },
+    {
+      "label": "Context documentation",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/docs/pages/examples/alignment.md#L15",
+      "research": "acts"
+    },
+    {
+      "label": "#6325",
+      "url": "https://github.com/acts-project/acts/pull/6325",
+      "research": "acts"
+    },
+    {
+      "label": "#6433",
+      "url": "https://github.com/acts-project/acts/pull/6433",
+      "research": "acts"
+    },
+    {
+      "label": "#6415",
+      "url": "https://github.com/acts-project/acts/pull/6415",
+      "research": "acts"
+    },
+    {
+      "label": "#6558",
+      "url": "https://github.com/acts-project/acts/pull/6558",
+      "research": "acts"
+    },
+    {
+      "label": "H5 \u2014 HGTD_GmxInterface::addAlignable, module-only registration",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_DetDescr/HGTD_GeoModelXml/src/HGTD_GmxInterface.cxx#L264",
+      "research": "hgtd"
+    },
+    {
+      "label": "H7 \u2014 HGTD_DetectorElement optional alignment store",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_DetDescr/HGTD_ReadoutGeometry/HGTD_ReadoutGeometry/HGTD_DetectorElement.h#L47",
+      "research": "hgtd"
+    },
+    {
+      "label": "H17 \u2014 HGTD alignment disabled by default",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_Config/python/HGTD_ConfigFlags.py#L24",
+      "research": "hgtd"
+    },
+    {
+      "label": "H3 \u2014 HGTD_MisalignAlg generation, diagnostics and finalize",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_AlignAlgs/HGTD_AlignGenAlgs/src/HGTD_MisalignAlg.cxx#L207",
+      "research": "hgtd"
+    },
+    {
+      "label": "H4 \u2014 HGTD_CreateMisalignment runnable configuration",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/HighGranularityTimingDetector/HGTD_AlignAlgs/HGTD_AlignGenAlgs/share/HGTD_CreateMisalignment.py#L76",
+      "research": "hgtd"
+    },
+    {
+      "label": "H11 \u2014 OnTrackCalibrator 3D HGTD projector and time units",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsTrackReconstruction/src/detail/OnTrackCalibrator.icc#L78",
+      "research": "hgtd"
+    },
+    {
+      "label": "H19 \u2014 HGTD extension configuration, 3D measurement selection",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/68da56621c9da6be17ccc5e8ee69e0e723e199f5/Tracking/Acts/ActsConfig/python/ActsHGTDTrackExtensionAlgConfig.py#L28",
+      "research": "hgtd"
+    },
+    {
+      "label": "H13 \u2014 ACTS AlignmentEngine measurement projection and path approximation",
+      "url": "https://github.com/acts-project/acts/blob/8f6c4e323480ccf35b6fbe4c62967e4785a8c37b/Alignment/include/ActsAlignment/Kernel/detail/AlignmentEngine.hpp#L275",
+      "research": "hgtd"
+    }
+  ],
+  "pull_requests": [
+    {
+      "url": "https://github.com/acts-project/acts/pull/6607",
+      "number": 6607,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "draft": false,
+      "title": "feat: make TrackAlignmentState and finaliseTrackAlignState public",
+      "base_sha": "094004ebcded05ed6c1bea06ff3fa32cd8e49c0c",
+      "head_sha": "f754188b733258f3cdabc396ac9879aac2d826cd",
+      "head_repo_full_name": "knutzk/acts",
+      "created_at": "2026-11-26T16:27:23Z",
+      "updated_at": "2026-11-26T16:53:46Z",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6503",
+      "number": 6503,
+      "state": "open",
+      "merged": false,
+      "mergeable": false,
+      "draft": false,
+      "title": "feat: align across events and write the CSV particle map",
+      "base_sha": "20779acb491ba2d5e29aacc5cd84f33ee717c0f9",
+      "head_sha": "b113efb7cf867d88487a6de11f9994c387baaaa1",
+      "head_repo_full_name": "Zequn-SUN/acts",
+      "created_at": "2026-11-11T03:23:31Z",
+      "updated_at": "2026-11-24T15:36:17Z",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6217",
+      "number": 6217,
+      "state": "open",
+      "merged": false,
+      "mergeable": false,
+      "draft": true,
+      "title": "fix: Make ActsSolverFromMille agree with Millepede",
+      "base_sha": "3391278f81ad1c354dc96cd802a2d93ab40a5d92",
+      "head_sha": "31073f4339c6ef123baa14a247d438f90702353c",
+      "head_repo_full_name": "pbutti/acts",
+      "created_at": "2026-10-02T18:45:16Z",
+      "updated_at": "2026-11-14T14:16:11Z",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6502",
+      "number": 6502,
+      "state": "open",
+      "merged": false,
+      "mergeable": false,
+      "draft": true,
+      "title": "chore: Update Mille and Millepede-II",
+      "base_sha": "b9852cfd345902f733f3646f93d148c4a813db7f",
+      "head_sha": "e909d1bb8b396c59ddb24e858a36f5550858bdb9",
+      "head_repo_full_name": "goblirsc/acts",
+      "created_at": "2026-11-10T17:02:41Z",
+      "updated_at": "2026-11-16T09:16:38Z",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6550",
+      "number": 6550,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "title": "feat: add alignment target selection and layouts",
+      "base_sha": "73c635289ee36fd1afccdc4fc7a24804a740f6e7",
+      "head_sha": "ca4957e613a4911a07135a0e97d06f87324cc194",
+      "head_repo_full_name": "knutzk/acts",
+      "created_at": "2026-11-17T12:30:02Z",
+      "updated_at": "2026-11-27T17:41:48Z",
+      "merged_at": "2026-11-27T17:24:40Z"
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6479",
+      "number": 6479,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "title": "feat: Add derivatives for structure alignment",
+      "base_sha": "85508627dcee292a87b282204b45c7038e1e1e16",
+      "head_sha": "07f477ed0dd450489532e2f0d48dcfef1f3f206a",
+      "head_repo_full_name": "knutzk/acts",
+      "created_at": "2026-11-06T16:26:19Z",
+      "updated_at": "2026-11-23T07:27:09Z",
+      "merged_at": "2026-11-20T11:44:42Z"
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6473",
+      "number": 6473,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "title": "feat: Add frames to alignable structures",
+      "base_sha": "5d622a35c893a46aea4ce5d4cb70d3aaf92ffb74",
+      "head_sha": "87936a19dfe3098aa51d640f204d23cff757f661",
+      "head_repo_full_name": "knutzk/acts",
+      "created_at": "2026-11-06T13:46:12Z",
+      "updated_at": "2026-11-23T07:33:39Z",
+      "merged_at": "2026-11-16T11:51:22Z"
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6299",
+      "number": 6299,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "title": "feat!: align surfaces in local coordinates",
+      "base_sha": "56951bad0b773ef4c0f4798f72d62343fe2f719d",
+      "head_sha": "23015ad258e1bb4a1b7a6b0db4c828ed3f2b25d7",
+      "head_repo_full_name": "Zequn-SUN/acts",
+      "created_at": "2026-10-12T05:50:36Z",
+      "updated_at": "2026-11-23T07:38:55Z",
+      "merged_at": "2026-11-09T07:58:00Z"
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6218",
+      "number": 6218,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "title": "feat: Add composite alignment Jacobians",
+      "base_sha": "2d198e765aa902559a6c99ccfb2b6ceb57cf41a3",
+      "head_sha": "6b5ea0a1bc3042bf37906a1168523dc4f65d5357",
+      "head_repo_full_name": "pbutti/acts",
+      "created_at": "2026-10-02T21:18:57Z",
+      "updated_at": "2026-11-07T07:50:55Z",
+      "merged_at": "2026-11-02T09:55:32Z"
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/5411",
+      "number": 5411,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "title": "feat: Add hierarchical alignment structures",
+      "base_sha": "a6c8ea1dd8aae779de790400ae97bc60640562b5",
+      "head_sha": "0da34828935c470235e5751c10bde759e12039f4",
+      "head_repo_full_name": "knutzk/acts",
+      "created_at": "2026-05-06T10:44:08Z",
+      "updated_at": "2026-11-07T07:52:42Z",
+      "merged_at": "2026-11-05T18:18:47Z"
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6215",
+      "number": 6215,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "title": "fix: Keep the smoothed track at the Mille local-fit minimum",
+      "base_sha": "469dcd584556d52777ecdab940d85fc88497a622",
+      "head_sha": "c3d22af21c6cb9dc51dcc1c8a4d242027d68d632",
+      "head_repo_full_name": "pbutti/acts",
+      "created_at": "2026-10-02T13:12:54Z",
+      "updated_at": "2026-10-09T18:05:58Z",
+      "merged_at": "2026-10-05T16:47:43Z"
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6325",
+      "number": 6325,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "title": "chore: bump Mille(pede) versions",
+      "base_sha": "8bf52dcea11e2bbfa8c238fe7e48f84d4fe3e168",
+      "head_sha": "9352e4019f1efb9afe41883e8e2c5bc7d1013c4e",
+      "head_repo_full_name": "goblirsc/acts",
+      "created_at": "2026-10-15T07:28:31Z",
+      "updated_at": "2026-10-17T06:51:29Z",
+      "merged_at": "2026-10-15T08:51:47Z"
+    },
+    {
+      "url": "https://github.com/acts-project/acts/pull/6433",
+      "number": 6433,
+      "state": "open",
+      "merged": false,
+      "mergeable": false,
+      "draft": true,
+      "title": "fix: Correct dense-material Jacobian transport in SympyStepper",
+      "base_sha": "27bb22ae6b5af8dd601562b5450ede0d8015abd6",
+      "head_sha": "88d63a025b2608dea428dbed0a4b17ae935ce9b4",
+      "head_repo_full_name": "acts-project/acts",
+      "created_at": "2026-10-31T13:36:37Z",
+      "updated_at": "2026-11-06T19:49:24Z",
+      "merged_at": null
+    }
+  ]
+}
